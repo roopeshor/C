@@ -1,4 +1,3 @@
-//codechange
 function C (c, fx, cfg = {}) {
 	var container = c,
 		AR = cfg.aspectRatio || [16, 9],
