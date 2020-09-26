@@ -31,6 +31,21 @@ function C(c, fx, cfg = {}) {
     fill: "#fff",
     strokeWidth: 1,
     recentAnimation: null,
+    ctx: ctx,
+    cvs: cvs,
+    
+    rest: function () {
+      ctx.resetTransform();
+      ctx.scale(dpr, dpr);
+    },
+    saveState: function () {
+      ctx.save();
+    },
+
+    restoreState: function () {
+      ctx.restore();
+    },
+
     line: function (x1, y1, x2, y2) {
       ctx.beginPath();
       ctx.strokeStyle = this.stroke;
@@ -38,11 +53,13 @@ function C(c, fx, cfg = {}) {
       ctx.moveTo(x1, y1);
       ctx.lineTo(x2, y2);
       ctx.stroke();
+      ctx.closePath();
     },
     background: function (c) {
       ctx.beginPath();
       ctx.fillStyle = c;
       ctx.fillRect(0, 0, width, height);
+      ctx.closePath();
     },
     translate: function (x = 0, y = x) {
       ctx.translate(x, y);
@@ -61,6 +78,7 @@ function C(c, fx, cfg = {}) {
       ctx.arc(x, y, r, sa, ea);
       if (fill) ctx.fill();
       if (stroke) ctx.stroke();
+      ctx.closePath();
     },
     circle: function (x, y, r) {
       this.arc(x, y, r, 0, TAU);
@@ -80,6 +98,7 @@ function C(c, fx, cfg = {}) {
       clearInterval(this.recentAnimation);
       this.recentAnimation = null;
       fx.bind(this)();
+      ctx.animating = false;
     },
     drawPlayBtn: function (c = {}) {
       c = Object.assign(c, {
@@ -108,6 +127,7 @@ function C(c, fx, cfg = {}) {
       }
       ctx.fill();
       ctx.restore();
+      ctx.closePath();
     }
   };
   var binded = fx.bind(CDF);
@@ -115,10 +135,13 @@ function C(c, fx, cfg = {}) {
     binded();
   } else {
     cvs.onclick=  function () {
-      ctx.clearRect(0, 0, width, height);
-      ctx.resetTransform();
-      ctx.scale(dpr, dpr);
-      binded();
+      if (!ctx.animating) {
+        ctx.clearRect(0, 0, width, height);
+        ctx.resetTransform();
+        ctx.scale(dpr, dpr);
+        binded();
+        ctx.animating = true;
+      }
     };
     thumbnail.bind(CDF)();
   }

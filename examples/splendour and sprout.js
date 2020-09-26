@@ -141,9 +141,12 @@ C(animated, drawAnimated, {
       this.strokeWidth = dc.strokeWidth;
       this.background("#000");
       this.translate(this.W / 2, this.H / 2);
-      this.stroke = "cyan";
+      this.stroke = "#fff";
       this.circle(0, 0, radius);
+      this.stroke = "#fff";
       this.line(0, -radius, 0, radius);
+      this.rest();
+      this.background("#aaa2")
       this.drawPlayBtn();
     }
 });
