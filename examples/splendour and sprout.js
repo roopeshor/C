@@ -123,7 +123,9 @@ function drawAnimated() {
   var i = 0;
   this.loop(function () {
     linePairs(this.line, i, dots.length);
-    if (i >= dots.length) this.stopLoop();
+    if (i >= dots.length){
+      this.stopLoop(this.drawPlayBtn);
+    };
     i++;
   }, dc.time);
 }
@@ -134,5 +136,13 @@ C(static, drawStatic, {
 
 C(animated, drawAnimated, {
     width: W,
-    autoPlay : false
+    autoPlay : false,
+    thumbnail: function () {
+      this.strokeWidth = dc.strokeWidth;
+      this.background("#000");
+      this.translate(this.W / 2, this.H / 2);
+      this.circle(0, 0, radius);
+      this.stroke = "cyan";
+      this.line(0, -radius, 0, radius);
+    }
 });

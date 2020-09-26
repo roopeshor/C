@@ -7,6 +7,7 @@ function C(c, fx, cfg = {}) {
     ),
     height = int(cfg.height, (width / AR[0]) * AR[1]),
     autoPlay = bool(cfg.autoPlay, true),
+    thumbnail = cfg.thumbnail,
     dpr = devicePixelRatio;
 
   var cvs = getCanvas(),
@@ -21,7 +22,6 @@ function C(c, fx, cfg = {}) {
     cvs.style.width = width + "px";
     cvs.style.height = height + "px";
     cvs.style.position = "relative";
-    cvs.style.zIndex = "-10";
     return cvs;
   }
   var CDF = {
@@ -76,26 +76,45 @@ function C(c, fx, cfg = {}) {
     loop: function (fx, dt = 10) {
       this.recentAnimation = setInterval(fx.bind(this), dt);
     },
-    stopLoop: function () {
+    stopLoop: function (fx = function () {}) {
       clearInterval(this.recentAnimation);
       this.recentAnimation = null;
+      fx.bind(this)();
     },
+    drawPlayBtn: function () {
+      ctx.save();
+      ctx.resetTransform();
+      ctx.beginPath();
+      ctx.scale(dpr, dpr);
+      ctx.fillStyle = "#00ff5f";
+      ctx.strokeStyle = "#000";
+      ctx.lineWidth = 0.5;
+      ctx.translate(width/2, height/2);
+      ctx.arc(0, 0, 20, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.fillStyle = "#fff";
+      ctx.moveTo(Math.cos(0) * 11, Math.sin(0) * 11);
+      for (var i = 1; i < 3; i++) {
+        ctx.lineTo(Math.cos(i * Math.PI*2 / 3) * 11, Math.sin(i * Math.PI*2 / 3) * 11)
+      }
+      ctx.fill();
+      ctx.restore();
+    }
   };
 
   var binded = fx.bind(CDF);
   if (autoPlay) {
     binded();
   } else {
-    var pscreen = document.createElement("div");
-    pscreen.className += " cjs-play-div";
-    pscreen.style.width = width + "px";
-    pscreen.style.height = height + "px";
-    pscreen.style.marginTop = -height + "px";
-    pscreen.innerHTML = "<span class='cjs-ctrl-play-btn' >play</span>"
-    container.appendChild(pscreen);
-    container.onclick = function () {
-      container.removeChild(pscreen);
+    cvs.onclick=  function () {
+      ctx.clearRect(0, 0, width, height);
+      ctx.resetTransform();
+      ctx.scale(dpr, dpr);
       binded();
     };
+    thumbnail.bind(CDF)();
+    CDF.drawPlayBtn();
   }
 }
