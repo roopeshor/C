@@ -1,4 +1,3 @@
-
 function C(c, fx, cfg = {}) {
   var container = c,
     AR = cfg.aspectRatio || [16, 9],
@@ -8,8 +7,8 @@ function C(c, fx, cfg = {}) {
     ),
     height = int(cfg.height, (width / AR[0]) * AR[1]),
     autoPlay = bool(cfg.autoPlay, true),
+    thumbnail = cfg.thumbnail||function () {CDF.drawPlayBtn()},
     dpr = devicePixelRatio;
-    // console.log(thumbnail)
 
   var cvs = getCanvas(),
     ctx = cvs.getContext("2d");
@@ -64,7 +63,6 @@ function C(c, fx, cfg = {}) {
       if (stroke) ctx.stroke();
     },
     circle: function (x, y, r) {
-        console.log(this)
       this.arc(x, y, r, 0, TAU);
     },
 
@@ -112,13 +110,7 @@ function C(c, fx, cfg = {}) {
       ctx.restore();
     }
   };
-  var str = addScript(fx)();
-  var binded = str.bind(CDF);
-  window.fx = binded;
-  thumbnail = addScript(
-      cfg.thumbnail||function () {CDF.drawPlayBtn()}
-    )();
-//   window.th = thumbnail.bind(CDF)
+  var binded = fx.bind(CDF);
   if (autoPlay) {
     binded();
   } else {
