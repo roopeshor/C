@@ -1,109 +1,138 @@
-var c = document.querySelector(".container");
-function drawAll () {
+var static = document.querySelector(".static");
+var animated = document.querySelector(".animated");
+const W = getWidth() * 3 / 4;
+const H = (W / 16) * 9;
+var dc = {
+  //drawingConfigs
+  pr: 30, // points in radius
+  strokeWidth: 0.8,
+  time: 50, // time to draw a 2 pairs of line
+};
+var radius = Math.round(H / 2.1);
 
-	var radius = Math.round(this.H/2.02);
-	var ds = radius / 50;
-	this.stroke = "#ff0";
-	this.fill = NONE;
-	this.strokeWidth = 0.4;
-	
-	this.background("#000")
-	this.translate(this.W/2, this.H/2);
-	this.invertYAxis();
-	this.circle (0, 0, radius);
-	var dots = [];
-	var t = 0;
-	var ratio = ds / radius;
-	
-	// sprout
-	for (var i = 0;i <= radius / ds; i++) dots.push([0, i * ds]);
-	for (var i = 0; i <= Math.PI / ratio / 2; i++) {
-		var x = -Math.sin(t) * radius,
-		y = Math.cos(t)* radius;
-		t += ratio;
-		dots.push([x, y]);
-	}
-	// splendour
- 	for (var i = -radius / ds;i <= -1; i++) dots.push([i * ds, 0]);
-	
-	var colors = [
-		"#9CDCEB",
-		"#76DDC0",
-		"#5CD0B3",
-		"#55C1A7",
-		"#49A88F",
-		"#58C4DD",
-		"#29ABCA",
-		"#236B8E",
-		"#1C758A",
-		"#A6CF8C",
-		"#83C167",
-		"#77B05D",
-		"#699C52",
-		"#FFEA94",
-		"#F4D345",
-		"#E8C11C",
-		"#FFFF00",
-		"#F9B775",
-		"#F0AC5F",
-		"#E1A158",
-		"#C78D46",
-		"#CD853F",
-		"#8B4513",
-		"#FF8080",
-		"#FC6255",
-		"#E65A4C",
-		"#CF5044",
-		"#FF862F",
-		"#C55F73",
-		"#A24D61",
-		"#94424F",
-		"#B189C6",
-		"#9A72AC",
-		"#715582",
-		"#644172",
-		"#FFFFFF",
-		"#888888",
-		"#736357",
-		"#D147BD",
-		"#DC75CD",
-		"#00FF00",
-	];
-	var i = 0;
-	var ii = radius / ds;
-	var ln = this.line;
-	var s = setInterval(function () {
-		this.stroke = colors[i % colors.length];
-		ln (
-			dots[(i) % dots.length][0],
-			dots[(i) % dots.length][1],
-			dots[ii % dots.length][0],
-			dots[ii % dots.length][1],
-		);
-		ln (
-			-dots[(i) % dots.length][0],
-			dots[(i) % dots.length][1],
-			-dots[ii % dots.length][0],
-			dots[ii % dots.length][1],
-		);
-		ln (
-			dots[(i) % dots.length][0],
-			-dots[(i) % dots.length][1],
-			dots[ii % dots.length][0],
-			-dots[ii % dots.length][1],
-		);
-		ln (
-			-dots[(i) % dots.length][0],
-			-dots[(i) % dots.length][1],
-			-dots[ii % dots.length][0],
-			-dots[ii % dots.length][1],
-		);
-		if (i >= dots.length) clearInterval(s);
-		i++;
-		ii++;
-	},50);
+var colors = [
+  "#9CDCEB",
+  "#76DDC0",
+  "#5CD0B3",
+  "#55C1A7",
+  "#49A88F",
+  "#58C4DD",
+  "#29ABCA",
+  "#236B8E",
+  "#1C758A",
+  "#A6CF8C",
+  "#83C167",
+  "#77B05D",
+  "#699C52",
+  "#FFEA94",
+  "#F4D345",
+  "#E8C11C",
+  "#FFFF00",
+  "#F9B775",
+  "#F0AC5F",
+  "#E1A158",
+  "#C78D46",
+  "#CD853F",
+  "#8B4513",
+  "#FF8080",
+  "#FC6255",
+  "#E65A4C",
+  "#CF5044",
+  "#FF862F",
+  "#C55F73",
+  "#A24D61",
+  "#94424F",
+  "#B189C6",
+  "#9A72AC",
+  "#715582",
+  "#644172",
+  "#FFFFFF",
+  "#888888",
+  "#736357",
+  "#D147BD",
+  "#DC75CD",
+  "#00FF00",
+];
+
+var dots = [];
+
+var ratio = 1 / dc.pr;
+// points in a vertical radius line
+for (var i = 0; i <= dc.pr; i++) dots.push([0, i * radius * ratio]);
+
+// points on a arc
+for (var i = 0; i <= Math.PI * dc.pr / 2; i++) {
+var x = -Math.sin(i / dc.pr) * radius,
+    y = Math.cos(i / dc.pr) * radius;
+dots.push([x, y]);
 }
-C (c, drawAll, {
-	width: window.innerWidth,
-	aspectRatio: [16, 11]
-})
+
+//points in a horizontal radius line
+for (var i = -dc.pr; i <= 0; i++) dots.push([i * radius * ratio, 0]);
+
+function linePairs(lineFunction, i, l) {
+    this.stroke = colors[i % colors.length];
+    // Left Bottom
+    lineFunction(
+        dots[i % l][0],
+        dots[i % l][1],
+        dots[(i + dc.pr) % l][0],
+        dots[(i + dc.pr) % l][1]
+    );
+
+    // Right Bottom
+    lineFunction(
+        -dots[i % l][0],
+        dots[i % l][1],
+        -dots[(i + dc.pr) % l][0],
+        dots[(i + dc.pr) % l][1]
+    );
+  
+    //Left Top
+    lineFunction(
+        dots[i % l][0],
+        -dots[i % l][1],
+        dots[(i + dc.pr) % l][0],
+        -dots[(i + dc.pr) % l][1]
+    );
+  
+    // Right top
+    lineFunction(
+        -dots[i % l][0],
+        -dots[i % l][1],
+        -dots[(i + dc.pr) % l][0],
+        -dots[(i + dc.pr) % l][1]
+    );
+}
+
+function init (ctx) {
+    ctx.strokeWidth = dc.strokeWidth;
+    ctx.background("#000");
+    ctx.translate(ctx.W / 2, ctx.H / 2);
+    ctx.circle(0, 0, radius);
+}
+function drawStatic() {
+    init(this);
+    for (var i = 0; i <= dots.length; i++) {
+      linePairs(this.line, i, dots.length);
+    }
+}
+
+function drawAnimated() {
+  init(this);
+  var i = 0;
+  this.loop(function () {
+    linePairs(this.line, i, dots.length);
+    if (i >= dots.length) this.stopLoop();
+    i++;
+  }, dc.time);
+}
+
+C(static, drawStatic, {
+  width: W,
+});
+
+C(animated, drawAnimated, {
+    width: W,
+    autoPlay : false
+});
