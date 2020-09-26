@@ -1,3 +1,20 @@
+function addScript(fx) {
+  var str = "return " + fx.toString();
+  var i = 0;
+  var s = "";
+  for (var ch of str) {
+    i++;
+    if (ch == "{") {
+      str = s + `{
+  const line = this.line,
+        circle = this.circle;` + str.substr(i);
+      break;
+    }
+    s += ch;
+  }
+  str = Function(str);
+ return str;
+}
 function C(c, fx, cfg = {}) {
   var container = c,
     AR = cfg.aspectRatio || [16, 9],
@@ -7,8 +24,9 @@ function C(c, fx, cfg = {}) {
     ),
     height = int(cfg.height, (width / AR[0]) * AR[1]),
     autoPlay = bool(cfg.autoPlay, true),
-    thumbnail = cfg.thumbnail,
+    thumbnail = addScript(cfg.thumbnail||function () {})(),
     dpr = devicePixelRatio;
+    console.log(thumbnail)
 
   var cvs = getCanvas(),
     ctx = cvs.getContext("2d");
@@ -81,30 +99,38 @@ function C(c, fx, cfg = {}) {
       this.recentAnimation = null;
       fx.bind(this)();
     },
-    drawPlayBtn: function () {
+    drawPlayBtn: function (c = {}) {
+      c = Object.assign(c, {
+        radius: 20,
+        playRadius: 10,
+        background: "#00ff5f",
+        triFill: "#fff",
+        outline: "#000",
+      })
       ctx.save();
       ctx.resetTransform();
       ctx.beginPath();
       ctx.scale(dpr, dpr);
-      ctx.fillStyle = "#00ff5f";
-      ctx.strokeStyle = "#000";
+      ctx.fillStyle = c.background;
+      ctx.strokeStyle = c.outline;
       ctx.lineWidth = 0.5;
       ctx.translate(width/2, height/2);
-      ctx.arc(0, 0, 20, 0, Math.PI * 2);
+      ctx.arc(0, 0, c.radius, 0, Math.PI * 2);
       ctx.fill();
       ctx.stroke();
       ctx.beginPath();
-      ctx.fillStyle = "#fff";
-      ctx.moveTo(Math.cos(0) * 11, Math.sin(0) * 11);
+      ctx.fillStyle = c.triFill;
+      ctx.moveTo(Math.cos(0) * c.playRadius, Math.sin(0) * c.playRadius);
       for (var i = 1; i < 3; i++) {
-        ctx.lineTo(Math.cos(i * Math.PI*2 / 3) * 11, Math.sin(i * Math.PI*2 / 3) * 11)
+        ctx.lineTo(Math.cos(i * Math.PI*2 / 3) * c.playRadius, Math.sin(i * Math.PI*2 / 3) * c.playRadius)
       }
       ctx.fill();
       ctx.restore();
     }
   };
-
-  var binded = fx.bind(CDF);
+  var str = addScript(fx)();
+  window.fx = str.bind(CDF);
+  var binded = str.bind(CDF);
   if (autoPlay) {
     binded();
   } else {
