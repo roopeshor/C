@@ -1,6 +1,6 @@
 var static = document.querySelector(".static");
 var animated = document.querySelector(".animated");
-const W = getWidth() * 3 / 4;
+const W = getWidth();
 const H = (W / 16) * 9;
 var dc = {
   //drawingConfigs
@@ -141,8 +141,9 @@ C(animated, drawAnimated, {
       this.strokeWidth = dc.strokeWidth;
       this.background("#000");
       this.translate(this.W / 2, this.H / 2);
-      circle(0, 0, radius);
+        this.drawPlayBtn()
       this.stroke = "cyan";
+      circle(0, 0, radius);
       this.line(0, -radius, 0, radius);
     }
 });
