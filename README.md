@@ -52,4 +52,5 @@ C (
     );
   ```
 ### Publish
- Is your extension is Useful? Add it to our ```Extenstions``` folder by opening a pull request
+ Is your extension is Useful? Add it to our ```Extenstions``` folder by opening a pull request. 
+ > Note: Test your extension before publishing
