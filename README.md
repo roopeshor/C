@@ -27,8 +27,15 @@ C (
 * ```autoPLay``` if you have animated drawing in your function you can specify whether to start it when page loads or not. If you don't want to start when page loads set it's value to ```false```. Default is ```true```.
 * ```thumbnail``` when you set ```autoPlay``` to false a blank canvas will appear with a play button in it. You can specify what to show at this time by ```thumbnail```. Put the code to draw in a function and set it to thumbnail in the config object.
 
+## Inside drawFunction
+ There are few functions to draw things. They are:
+ arc({
+     
+ })
+
+
 ## Extensions
- A great thing which everyone loves - extension. You can add extension and use it easly in Cjs. 
+ A great thing hwhich everyone loves - extension. You can add extension and use it easly in Cjs. 
  ### Creating an extension
  Wrap your all functions in a object and pass it to ```addCJSExtension``` function, like this:
  ```javascript
@@ -39,18 +46,19 @@ C (
    ...
  })
  ```
+ 
  ### Using extensions
-  To use extensions call it inside your ```drawFuncion```.
+  To use extensions call it inside your ```drawFunction```.
   and don't forget to put a ```this.``` before calling a function.
   eg. :
   ```javascript
     C (container,
       function () {
         this.myExtFunction1(...);
-      }
+      },
       {...}
     );
   ```
 ### Publish
  Is your extension is Useful? Add it to our ```Extenstions``` folder by opening a pull request. 
- > Note: Test your extension before publishing
+ > Note: Test your extension before publishing and other than the intended recipient you are no
