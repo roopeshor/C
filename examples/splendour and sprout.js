@@ -3,11 +3,26 @@ var animated = document.querySelector(".animated");
 var ext = document.querySelector(".ext");
 const W = getWidth();
 const H = (W / 16) * 9;
+
+var animatedDrawingCfg = {
+  width: W,
+  autoPlay : false,
+  thumbnail: function () {
+    this.strokeWidth = dc.lw;
+    this.background("#000");
+    this.translate(this.W / 2, this.H / 2);
+    this.stroke = "#fff";
+    this.circle(0, 0, radius);
+    this.line(0, -radius, 0, radius);
+    this.rest();
+    this.drawPlayBtn();
+  }
+}
 var dc = {
   //drawingConfigs
-  pr: 30, // points in radius
-  strokeWidth: 0.8,
-  time: 50, // time to draw a 2 pairs of line
+  ppr: 15, // points per radius
+  lw: 0.8, // line width
+  tpf: 50, // time per frame,  time to draw a 2 pairs of line
 };
 var radius = Math.round(H / 2.1);
 
@@ -57,19 +72,25 @@ var colors = [
 
 var dots = [];
 
-var ratio = 1 / dc.pr;
-// points in a vertical radius line
-for (var i = 0; i <= dc.pr; i++) dots.push([0, i * radius * ratio]);
 
-// points on a arc
-for (var i = 0; i <= Math.PI * dc.pr / 2; i++) {
-var x = -Math.sin(i / dc.pr) * radius,
-    y = Math.cos(i / dc.pr) * radius;
-dots.push([x, y]);
+function computePoints () {
+  dots = [];
+  var ratio = 1 / dc.ppr;
+  // points in a vertical radius line
+  for (var i = 0; i <= dc.ppr; i++) dots.push([0, i * radius * ratio]);
+  
+  // points on a arc
+  for (var i = 0; i <= Math.PI * dc.ppr / 2; i++) {
+  var x = -Math.sin(i / dc.ppr) * radius,
+      y = Math.cos(i / dc.ppr) * radius;
+  dots.push([x, y]);
+  }
+  
+  //points in a horizontal radius line
+  for (var i = -dc.ppr; i <= 0; i++) dots.push([i * radius * ratio, 0]);
 }
 
-//points in a horizontal radius line
-for (var i = -dc.pr; i <= 0; i++) dots.push([i * radius * ratio, 0]);
+computePoints();
 
 function linePairs(lineFunction, i, l) {
     this.stroke = colors[i % colors.length];
@@ -77,37 +98,37 @@ function linePairs(lineFunction, i, l) {
     lineFunction(
         dots[i % l][0],
         dots[i % l][1],
-        dots[(i + dc.pr) % l][0],
-        dots[(i + dc.pr) % l][1]
+        dots[(i + dc.ppr) % l][0],
+        dots[(i + dc.ppr) % l][1]
     );
 
     // Right Bottom
     lineFunction(
         -dots[i % l][0],
         dots[i % l][1],
-        -dots[(i + dc.pr) % l][0],
-        dots[(i + dc.pr) % l][1]
+        -dots[(i + dc.ppr) % l][0],
+        dots[(i + dc.ppr) % l][1]
     );
   
     //Left Top
     lineFunction(
         dots[i % l][0],
         -dots[i % l][1],
-        dots[(i + dc.pr) % l][0],
-        -dots[(i + dc.pr) % l][1]
+        dots[(i + dc.ppr) % l][0],
+        -dots[(i + dc.ppr) % l][1]
     );
   
     // Right top
     lineFunction(
         -dots[i % l][0],
         -dots[i % l][1],
-        -dots[(i + dc.pr) % l][0],
-        -dots[(i + dc.pr) % l][1]
+        -dots[(i + dc.ppr) % l][0],
+        -dots[(i + dc.ppr) % l][1]
     );
 }
 
 function init (ctx) {
-    ctx.strokeWidth = dc.strokeWidth;
+    ctx.strokeWidth = dc.lw;
     ctx.background("#000");
     ctx.translate(ctx.W / 2, ctx.H / 2);
     ctx.circle(0, 0, radius);
@@ -122,40 +143,24 @@ function drawStatic() {
 function drawAnimated() {
   init(this);
   var i = 0;
-  this.loop(function () {
+  this.startLoop(function () {
     linePairs(this.line, i, dots.length);
     if (i >= dots.length){
       this.stopLoop(this.drawPlayBtn);
     };
     i++;
-  }, dc.time);
+  }, dc.tpf);
 }
 
-C(static, drawStatic, {
-  width: W,
-});
+C(static, drawStatic, {width: W});
+C(animated, drawAnimated, animatedDrawingCfg);
 
-C(animated, drawAnimated, {
-    width: W,
-    autoPlay : false,
-    thumbnail: function () {
-      this.strokeWidth = dc.strokeWidth;
-      this.background("#000");
-      this.translate(this.W / 2, this.H / 2);
-      this.stroke = "#fff";
-      this.circle(0, 0, radius);
-      this.stroke = "#fff";
-      this.line(0, -radius, 0, radius);
-      this.rest();
-      this.background("#aaa2")
-      this.drawPlayBtn();
-    }
-});
-
-C (ext, function () {
-    this.background("#000")
-    this.translate(this.W/2, this.H/2)
-    this.sq(0, 0, 50);
-}, {
-    width: W
-})
+function render (id) {
+  var v = document.querySelector("#" + id).value;
+  document.querySelector("#" + id + "-op").value = v;
+  if (id == "tpf") document.querySelector("#" + id + "-op").value+= " ms"
+  dc[id] = Number(v);
+  computePoints();
+  C(static, drawStatic, {width: W});
+  C(animated, drawAnimated, animatedDrawingCfg);
+}
