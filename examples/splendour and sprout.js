@@ -1,5 +1,6 @@
 var static = document.querySelector(".static");
 var animated = document.querySelector(".animated");
+var ext = document.querySelector(".ext");
 const W = getWidth();
 const H = (W / 16) * 9;
 var dc = {
@@ -150,3 +151,11 @@ C(animated, drawAnimated, {
       this.drawPlayBtn();
     }
 });
+
+C (ext, function () {
+    this.background("#000")
+    this.translate(this.W/2, this.H/2)
+    this.sq(0, 0, 50);
+}, {
+    width: W
+})
