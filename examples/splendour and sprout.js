@@ -12,7 +12,10 @@ var animatedDrawingCfg = {
     this.background("#000");
     this.translate(this.W / 2, this.H / 2);
     this.stroke = "#fff";
-    this.circle(0, 0, radius);
+    this.circle({
+      p: [0, 0],
+      r: radius
+    });
     this.line(0, -radius, 0, radius);
     this.rest();
     this.drawPlayBtn();
@@ -131,7 +134,11 @@ function init (ctx) {
     ctx.strokeWidth = dc.lw;
     ctx.background("#000");
     ctx.translate(ctx.W / 2, ctx.H / 2);
-    ctx.circle(0, 0, radius);
+    ctx.stroke = "#fff";
+    ctx.circle({
+      p: [0, 0],
+      r: radius
+    });
 }
 function drawStatic() {
     init(this);

@@ -12,8 +12,7 @@ function C(c, fx, cfg = {}) {
 
   var cvs = getCanvas(),
     ctx = cvs.getContext("2d");
-  ctx.scale(dpr, dpr);
-  if (cfg.replaceCurrent) container.innerHTML = "";
+  if (bool(cfg.replaceCurrent, true)) container.innerHTML = "";
   container.appendChild(cvs);
   function getCanvas() {
     var cvs = document.createElement("canvas");
@@ -26,14 +25,14 @@ function C(c, fx, cfg = {}) {
   }
   var CDF = getCDFObject(cvs, width, height);
   var binded = fx.bind(CDF);
+  CDF.rest();
   if (autoPlay) {
     binded();
   } else {
-    cvs.onclick=  function () {
+    cvs.onclick = function () {
       if (!ctx.animating) {
+        CDF.rest();
         ctx.clearRect(0, 0, width, height);
-        ctx.resetTransform();
-        ctx.scale(dpr, dpr);
         binded();
         ctx.animating = true;
       }
