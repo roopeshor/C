@@ -9,20 +9,57 @@
     <script defer src="./C.js"></script>
     <script defer src="./examples/splendour and sprout.js"></script>
     <link rel="stylesheet" href="controls-styles.css">
-    </script>
     <style>
         body {
             background-color: #eee;
             font-family: sans-serif;
+        }
+        .controls {
+            padding: 10px;
+        }
+
+        .controls label[for="ppr"] {
+            margin-top: -10px;
         }
     </style>
 </head>
 <body>
     <h1>splendour & sprout: geometric pattern</h1>
     <hr/><br/>
+    
     <p>
         Geometric Patterns are wonderful piece of math. It is literally an art! The follow one is one of my favourite pattern
     </p>
+    <table class="controls">
+        <tr><th>Controls</th></tr>
+        <tr>
+            <td>Points in a radius line </td>
+            <td>
+                : <input type="range" min="2" id="ppr" value="15" onchange="render('ppr')"/>
+            </td>
+            <td>
+                <output id="ppr-op">15</output>
+            </td>
+        </tr>
+        <tr>
+            <td>Line width </td>
+            <td>
+                : <input type="range" min="0.01" max="10" id="lw" value="0.8" step="0.01"  onchange="render('lw')"/>
+            </td>
+            <td>
+                <output id="lw-op">0.8</output>
+            </td>
+        </tr>
+        <tr>
+            <td>Time to run a frame (for animation)</td>
+            <td>
+                : <input type="range" min="0" max="10000" id="tpf" value="50" onchange="render('tpf')"/>
+            </td>
+            <td>
+                <output id="tpf-op">50 ms</output>
+            </td>
+        </tr>
+    </table>
     <div class="static"></div>
     <p>
         And here is the animated drawing of the pattern above
