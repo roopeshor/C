@@ -21,6 +21,35 @@ C (
  #### 3<sup>rd</sup>: configs
    Configuration object which contains all about canvas and can be used to manipulate canvas
    contains:
-* ```width``` width of canvas
+* ```width``` width of canvas. Default: width of screen.
 * ```height``` height of canvas
 * ```aspectRatio``` array representing ratio between width and height. Only works when height is not defined. Default value : ```[16:9]```.
+* ```autoPLay``` if you have animated drawing in your function you can specify whether to start it when page loads or not. If you don't want to start when page loads set it's value to ```false```. Default is ```true```.
+* ```thumbnail``` when you set ```autoPlay``` to false a blank canvas will appear with a play button in it. You can specify what to show at this time by ```thumbnail```. Put the code to draw in a function and set it to thumbnail in the config object.
+
+## Extensions
+ A great thing which everyone loves - extension. You can add extension and use it easly in Cjs. 
+ ### Creating an extension
+ Wrap your all functions in a object and pass it to ```addCJSExtension``` function, like this:
+ ```javascript
+ addCJSExtension({
+   myExtFunction1: function (args) {...},
+   myExtFunction2: function (args) {...},
+   myExtFunction3: function (args) {...},
+   ...
+ })
+ ```
+ ### Using extensions
+  To use extensions call it inside your ```drawFuncion```.
+  and don't forget to put a ```this.``` before calling a function.
+  eg. :
+  ```javascript
+    C (container,
+      function () {
+        this.myExtFunction1(...);
+      }
+      {...}
+    );
+  ```
+### Publish
+ Is your extension is Useful? Add it to our ```Extenstions``` folder by opening a pull request
