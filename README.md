@@ -1,6 +1,7 @@
 # C.js 
  JavaScript library for drawing figures and diagrams in blog or articles
 ## Get started
+ Download [C.complete.min.js](https://github.com/Roopesh2/C.js/blob/master/C.complete.min.js) and link it to your html file.
  ### Boilerplate
  Cjs is simple.
  ```javascript
@@ -57,4 +58,4 @@ C (
   ```
 ### Publish
  Is your extension is Useful? Add it to our ```Extenstions``` folder by opening a pull request. 
- > Note: Test your extension before publishing and other than the intended recipient you are no
+ > Note: Test your extension before publishing.
