@@ -29,10 +29,6 @@ C (
 
 ## Inside drawFunction
  There are few functions to draw things. They are:
- arc({
-     
- })
-
 
 ## Extensions
  A great thing hwhich everyone loves - extension. You can add extension and use it easly in Cjs. 
