@@ -29,7 +29,7 @@ C (
 * ```thumbnail``` when you set ```autoPlay``` to false a blank canvas will appear with a play button in it. You can specify what to show at this time by ```thumbnail```. Put the code to draw in a function and set it to thumbnail in the config object.
 
 ## Inside drawFunction
- There are few functions to draw things. They are:
+ Documentation are comming soon.
 
 ## Extensions
  A great thing hwhich everyone loves - extension. You can add extension and use it easly in Cjs. 
