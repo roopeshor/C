@@ -139,19 +139,23 @@
     const getCDFObject = function (cvs, width, height) {
       var ctx = cvs.getContext("2d"),
         dpr = window.devicePixelRatio;
-    
       return Object.assign(
         {
           cvs: cvs,
           ctx: ctx,
           W: width,
           H: height,
+          _toFill: true,
+          _toStroke: true,
           line: function (x1, y1, x2, y2) {
             ctx.beginPath();
             ctx.moveTo(x1, y1);
             ctx.lineTo(x2, y2);
-            ctx.stroke();
+            if (this._toStroke) ctx.stroke();
             ctx.closePath();
+          },
+          rect: function (x, y, w, h) {
+
           },
           background: function (c) {
             ctx.save();
@@ -160,22 +164,33 @@
             ctx.fillRect(-W, -H, W*2, H*2);
             ctx.restore();
           },
-          translate: function (x, y = x) {
-            ctx.translate(x, y);
-          },
+          noFill : function() { this._toFill = false; },
+          noStroke : function() { this._toStroke = false; },
+          translate: function (x, y = 0) { ctx.translate(x, y); },
+          enableSmoothing() { ctx.imageSmoothingEnabled = true; },
+          disableSmoothing() { ctx.imageSmoothingEnabled = false; },
           rest: function () {
             ctx.resetTransform();
+            ctx.imageSmoothingEnabled = false;
             ctx.scale(dpr, dpr);
           },
-          stroke: function (c) {
-            this.ctx.strokeStyle = c;
+          stroke: function (c) { 
+            if (c != undefined){
+              ctx.strokeStyle = c;
+              this._toStroke = true;
+            } else {
+              ctx.stroke();
+            }
           },
-          fill: function (c) {
-            this.ctx.fillStyle = c;
+          fill: function (c) { 
+            if (c != undefined){
+              ctx.fillStyle = c;
+              this._toFill = true;
+            } else {
+              ctx.fill();
+            }
           },
-          strokeWidth: function (n) {
-            this.ctx.lineWidth = Number(n);
-          },
+          strokeWidth: function (w) { ctx.lineWidth = Number(w); },
           getDrawConfigs: function () {
             return {
               stroke: ctx.strokeStyle,
@@ -183,36 +198,54 @@
               strokeWidth: ctx.lineWidth
             }
           },
-          arc: function (c) {
+          arc: function (c = {}) {
             ctx.beginPath();
             ctx.arc(
-              c.p[0],
-              c.p[1],
+              c.x,
+              c.y,
               c.r,
               c.sa || 0,
-              int(c.ea, Math.PI * 2)
+              int(c.ea, Math.PI * 2),
+              c.ac
             );
-            if (bool(c.fill, false)) ctx.fill();
-            if (bool(c.stroke, true)) ctx.stroke();
+            if (this._toFill) ctx.fill();
+            if (this._toStroke) ctx.stroke();
             ctx.closePath();
           },
-          circle: function (c) {
+          circle: function (x, y, r) {
             this.arc({
-              p: c.p,
-              r: c.r,
+              x: x,
+              y: y,
+              r: r,
               sa: 0,
               ea: Math.PI * 2,
-              fill: c.fill,
-              stroke: c.stroke,
             });
           },
           startLoop: function (fx, time) {
-            var s = setInterval(fx.bind(this), time);
-            this.recentAnimation = s;
+            var s;
+            var binded = fx.bind(this)
+            if (time != undefined) {
+              s = setInterval(binded, time);
+              this.recentLoop = s;
+              this.recentLoopType = "SI";
+            } else {
+              function a () {
+                binded();
+                window.requestAnimationFrame(a);
+              }
+              this.recentLoop = a;
+              this.recentLoopType = "WRAF";
+              a();
+            }
           },
           stopLoop: function (fx = function () {}) {
-            if (this.recentAnimation) clearInterval(this.recentAnimation);
-            this.recentAnimation = null;
+            if (this.recentLoopType == "WRAF") {
+              window.cancelAnimationFrame(this.recentLoop);
+            } else {
+              clearInterval(this.recentLoop);
+            }
+            this.recentLoop = null;
+            this.recentLoopType = null;
             ctx.animating = false;
             fx.bind(this)();
           },
@@ -226,7 +259,8 @@
             this.translate(p[0], p[1]);
             this.fill(c.background || "#3fffac");
             this.arc({
-              p: [0, 0],
+              x: 0,
+              y: 0,
               r: c.r || 20,
               fill: true,
               stroke: false
@@ -266,10 +300,10 @@
       container.appendChild(cvs);
       function getCanvas() {
         var cvs = document.createElement("canvas");
+        cvs.style.width =  width + "px";
+        cvs.style.height = height + "px";
         cvs.width = dpr * width;
         cvs.height = dpr * height;
-        cvs.style.width = width + "px";
-        cvs.style.height = height + "px";
         cvs.style.position = "relative";
         return cvs;
       }
