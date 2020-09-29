@@ -3,6 +3,7 @@ if (w > 790) {
   W = w / 1.2
 }
 if (w > 1000) W = w / 1.4;
+// W *= 1.5;
 const H = (W / 16) * 9;
 function getEl (id, before = "#") { return document.querySelector(before + id); }
 
@@ -93,11 +94,9 @@ function init (th) {
     th.strokeWidth(DC.lw);
     th.background("#000");
     th.translate(th.W / 2, th.H / 2);
+    th.noFill();
     th.stroke("#fff");
-    th.circle({
-      p: [0, 0],
-      r: radius
-    });
+    th.circle(0, 0, radius);
 }
 
 function drawStatic() {
@@ -113,7 +112,7 @@ var animatedDrawingCfg = {
     this.background("#000");
     this.translate(W/2, H/2);
     this.stroke("#fff");
-    this.circle({p:[0, 0], r : radius});
+    this.circle(0, 0, radius);
     linePairs(this, 0, points.length)
     linePairs(this, (points.length - DC.shift), points.length)
     this.drawPlayBtn();
@@ -126,7 +125,7 @@ function drawAnimated() {
   this.startLoop(function () {
     linePairs(this, i, points.length);
     if (points.length <= i++) this.stopLoop(this.drawPlayBtn);
-  }, DC.tpf);
+  });
 }
 
 function drawEverything () {
