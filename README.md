@@ -28,7 +28,7 @@ C (
 * ```autoPLay``` if you have animated drawing in your function you can specify whether to start it when page loads or not. If you don't want to start when page loads set it's value to ```false```. Default is ```true```.
 * ```thumbnail``` when you set ```autoPlay``` to false a blank canvas will appear with a play button in it. You can specify what to show at this time by ```thumbnail```. Put the code to draw in a function and set it to thumbnail in the config object.
 
-## Inside drawFunction
+## Inside drawFunction (Documentation)
  Documentation are comming soon.
 
 ## Extensions
