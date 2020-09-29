@@ -70,7 +70,7 @@ computePoints();
 DC.shift = DC.ppr + 1;
 shift.max = points.length-1;
 
-function linePairs(co, i) {
+function linePairs(i) {
   // multiplying each positions by 1s and -1s to position correctly
   var actions = [
     [1, 1, 1, 1], // Left Bottom
@@ -79,9 +79,9 @@ function linePairs(co, i) {
     [-1, -1, -1, -1], // Right top
   ], l = points.length;
   i = abs(i);
-  co.stroke(colors[i % colors.length]);
+  stroke(colors[i % colors.length]);
   for (var act of actions) {
-    co.line(
+    line(
         act[0] * points[i % l][0],
         act[1] * points[i % l][1],
         act[2] * points[(i + DC.shift) % l][0],
@@ -90,42 +90,41 @@ function linePairs(co, i) {
   }
 }
 
-function init (th) {
-    th.strokeWidth(DC.lw);
-    th.background("#000");
-    th.translate(th.W / 2, th.H / 2);
-    th.noFill();
-    th.stroke("#fff");
-    th.circle(0, 0, radius);
+function init () {
+    strokeWidth(DC.lw);
+    background("#000");
+    translate(W / 2, H / 2);
+    noFill();
+    stroke("#fff");
+    circle(0, 0, radius);
 }
-
 function drawStatic() {
-    init(this);
+    init();
     for (var i = 0; i <= points.length; i++) {
-      linePairs(this, i, points.length);
+      linePairs(i, points.length);
     }
 }
 var animatedDrawingCfg = {
   width: W,
   autoPlay : false,
   thumbnail: function () {
-    this.background("#000");
-    this.translate(W/2, H/2);
-    this.stroke("#fff");
-    this.circle(0, 0, radius);
-    linePairs(this, 0, points.length)
-    linePairs(this, (points.length - DC.shift), points.length)
-    this.drawPlayBtn();
+    background("#000");
+    translate(W/2, H/2);
+    stroke("#fff");
+    circle(0, 0, radius);
+    linePairs(0, points.length);
+    linePairs((points.length - DC.shift), points.length)
+    drawPlayBtn();
   }
 };
 
 function drawAnimated() {
-  init(this);
+  init();
   var i = 0;
-  this.startLoop(function () {
-    linePairs(this, i, points.length);
-    if (points.length <= i++) this.stopLoop(this.drawPlayBtn);
-  });
+  startLoop(function () {
+    linePairs(i, points.length);
+    if (points.length <= i++) stopLoop(drawPlayBtn);
+  }, DC.tpf);
 }
 
 function drawEverything () {
