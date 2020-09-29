@@ -1,18 +1,7 @@
-(function(){
+(function () {
   'use strict';
-  window.CJS = {
-    setCurrentContext: function (Obj, ctx) {
-      for (var p of Object.keys(Obj)) {
-        window[p] = Obj[p];
-      }
-      this.__currentCtx = ctx;
-      this._currentContext = Obj;
-    },
-    currentContext: {}
-  };
-  const getCDFObject = function (cvs, width, height) {
-    var ctx = cvs.getContext("2d"),
-      dpr = window.devicePixelRatio;
+  const getCDFObject = function (cvs, width, height, dpr) {
+    var ctx = cvs.getContext("2d");
     return Object.assign(
       {
         cvs: cvs,
@@ -35,11 +24,11 @@
           ctx.save();
           rest()
           ctx.fillStyle = c;
-          ctx.fillRect(-W, -H, W*2, H*2);
+          ctx.fillRect(-W, -H, W * 2, H * 2);
           ctx.restore();
         },
-        noFill : function() { _toFill = false; },
-        noStroke : function() { _toStroke = false; },
+        noFill: function () { _toFill = false; },
+        noStroke: function () { _toStroke = false; },
         translate: function (x, y = 0) { ctx.translate(x, y); },
         enableSmoothing() { ctx.imageSmoothingEnabled = true; },
         disableSmoothing() { ctx.imageSmoothingEnabled = false; },
@@ -48,16 +37,16 @@
           ctx.imageSmoothingEnabled = false;
           ctx.scale(dpr, dpr);
         },
-        stroke: function (c) { 
-          if (c != undefined){
+        stroke: function (c) {
+          if (c != undefined) {
             ctx.strokeStyle = c;
             _toStroke = true;
           } else {
             ctx.stroke();
           }
         },
-        fill: function (c) { 
-          if (c != undefined){
+        fill: function (c) {
+          if (c != undefined) {
             ctx.fillStyle = c;
             _toFill = true;
           } else {
@@ -95,23 +84,30 @@
             ea: Math.PI * 2,
           });
         },
-        startLoop: function (fx, fps) {
-          var binded = fx.bind(CJS._currentContext)
-          CJS._currentContext.currentLoop = setInterval(binded, 1000 / (fps || 60));
+        startLoop: function (fx, dx) {
+          var binded = fx.bind(CJS._currentContext);
           ctx.animating = true;
+          if (dx != undefined) {
+            CJS._currentContext.currentLoop = setInterval(binded, dx);
+          } else {
+            (function a(dx) {
+              CJS._currentContext.currentLoop = window.requestAnimationFrame(a);
+              binded(dx);
+            })();
+          }
         },
-        stopLoop: function (fx=function(){}) {
+        stopLoop: function () {
           clearInterval(CJS._currentContext.currentLoop);
+          window.cancelAnimationFrame(CJS._currentContext.currentLoop);
           ctx.animating = false;
-          fx.bind(CJS._currentContext)();
         },
         getFPS: function () {
-  
+
         },
         drawPlayBtn: function (c = {}) {
           ctx.save();
           rest();
-          var p = c.p || [W/2, H/2];
+          var p = c.p || [W / 2, H / 2];
           translate(p[0], p[1]);
           fill(c.background || "#3fffac");
           noStroke();
@@ -148,23 +144,23 @@
       ),
       height = int(cfg.height, (width / AR[0]) * AR[1]),
       autoPlay = bool(cfg.autoPlay, true),
-      thumbnail = cfg.thumbnail||function () {CDF.drawPlayBtn()},
-      dpr = devicePixelRatio;
-  
+      thumbnail = cfg.thumbnail || function () { CDF.drawPlayBtn() },
+      dpr = cfg.scale || ceil(window.devicePixelRatio) || 1;
+
     var cvs = getCanvas(),
       ctx = cvs.getContext("2d");
     if (bool(cfg.replaceCurrent, true)) container.innerHTML = "";
     container.appendChild(cvs);
     function getCanvas() {
       var cvs = document.createElement("canvas");
-      cvs.style.width =  width + "px";
+      cvs.style.width = width + "px";
       cvs.style.height = height + "px";
       cvs.width = dpr * width;
       cvs.height = dpr * height;
       cvs.style.position = "relative";
       return cvs;
     }
-    var CDF = getCDFObject(cvs, width, height);
+    var CDF = getCDFObject(cvs, width, height, dpr);
     var binded = fx.bind(CDF);
     CDF.rest();
     var c = CDF.ctx;

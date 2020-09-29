@@ -5,7 +5,7 @@ if (w > 790) {
 if (w > 1000) W = w / 1.4;
 // W *= 1.5;
 const H = (W / 16) * 9;
-function getEl (id, before = "#") { return document.querySelector(before + id); }
+function getEl(id, before = "#") { return document.querySelector(before + id); }
 
 var static = getEl("static", "."),
   animated = getEl("animated", "."),
@@ -14,7 +14,7 @@ var static = getEl("static", "."),
   DC = {
     //drawingConfigs
     ppr: 15, // points per radius
-    lw: 0.8, // line width
+    lw: 1, // line width
     tpf: 50, // time per frame,  time to draw a 2 pairs of line
   },
   radius = Math.round(H / 2.1),
@@ -48,19 +48,19 @@ var static = getEl("static", "."),
     "#BBBBBB",
   ];
 
-function computePoints () {
+function computePoints() {
   points = [];
   var ratio = 1 / DC.ppr;
   // points in a vertical radius line
   for (var i = 0; i <= DC.ppr; i++) points.push([0, i * radius * ratio]);
-  
+
   // points on a arc
   for (var i = 0; i <= Math.PI * DC.ppr / 2; i++) {
-  var x = -Math.sin(i / DC.ppr) * radius,
+    var x = -Math.sin(i / DC.ppr) * radius,
       y = Math.cos(i / DC.ppr) * radius;
-  points.push([x, y]);
+    points.push([x, y]);
   }
-  
+
   //points in a horizontal radius line
   for (var i = -DC.ppr; i <= 0; i++) points.push([i * radius * ratio, 0]);
 }
@@ -68,7 +68,7 @@ function computePoints () {
 computePoints();
 
 DC.shift = DC.ppr + 1;
-shift.max = points.length-1;
+shift.max = points.length - 1;
 
 function linePairs(i) {
   // multiplying each positions by 1s and -1s to position correctly
@@ -82,34 +82,34 @@ function linePairs(i) {
   stroke(colors[i % colors.length]);
   for (var act of actions) {
     line(
-        act[0] * points[i % l][0],
-        act[1] * points[i % l][1],
-        act[2] * points[(i + DC.shift) % l][0],
-        act[3] * points[(i + DC.shift) % l][1],
+      act[0] * points[i % l][0],
+      act[1] * points[i % l][1],
+      act[2] * points[(i + DC.shift) % l][0],
+      act[3] * points[(i + DC.shift) % l][1],
     );
   }
 }
 
-function init () {
-    strokeWidth(DC.lw);
-    background("#000");
-    translate(W / 2, H / 2);
-    noFill();
-    stroke("#fff");
-    circle(0, 0, radius);
+function init() {
+  strokeWidth(DC.lw);
+  background("#000");
+  translate(W / 2, H / 2);
+  noFill();
+  stroke("#fff");
+  circle(0, 0, radius);
 }
 function drawStatic() {
-    init();
-    for (var i = 0; i <= points.length; i++) {
-      linePairs(i, points.length);
-    }
+  init();
+  for (var i = 0; i <= points.length; i++) {
+    linePairs(i, points.length);
+  }
 }
 var animatedDrawingCfg = {
   width: W,
-  autoPlay : false,
+  autoPlay: false,
   thumbnail: function () {
     background("#000");
-    translate(W/2, H/2);
+    translate(W / 2, H / 2);
     stroke("#fff");
     circle(0, 0, radius);
     linePairs(0, points.length);
@@ -123,22 +123,25 @@ function drawAnimated() {
   var i = 0;
   startLoop(function () {
     linePairs(i, points.length);
-    if (points.length <= i++) stopLoop(drawPlayBtn);
-  }, DC.tpf);
+    if (points.length <= i++) {
+      drawPlayBtn();
+      stopLoop();
+    };
+  });
 }
 
-function drawEverything () {
-  C(static, drawStatic, {width: W});
+function drawEverything() {
+  C(static, drawStatic, { width: W });
   C(animated, drawAnimated, animatedDrawingCfg);
 }
 
 drawEverything();
 
-function updateDC (id, reverse) {
+function updateDC(id, reverse) {
   var i1 = getEl(id);
   var i2 = getEl(id + "-op");
 
-  if (reverse){
+  if (reverse) {
     ii = i1;
     i1 = i2;
     i2 = ii;
@@ -154,11 +157,11 @@ function updateDC (id, reverse) {
     }
   } else if (id == "ppr") {
     DC.shift = shift.value = getEl("shift-op").value = DC.ppr + 1;
-    shift.max = points.length-1;
+    shift.max = points.length - 1;
   }
   drawEverything();
 }
-function incShift () {
+function incShift() {
   var e1 = getEl("shift");
   var e2 = getEl("shift-op");
   var nv = Number(e1.value) + 1;
@@ -167,7 +170,7 @@ function incShift () {
   DC.shift = nv;
   drawEverything();
 }
-function autoIncShift (el) {
+function autoIncShift(el) {
   el.innerText = "Stop Auto Incrementing";
   el.onclick = function () {
     clearInterval(window.AIS);
