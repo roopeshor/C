@@ -3,17 +3,6 @@ function assignPropsToWind(obj) {
     window[i] = obj[i];
 }
 (function () {
-  window.CJS = {
-    setCurrentContext: function (Obj, ctx) {
-      for (var p of Object.keys(Obj)) {
-        window[p] = Obj[p];
-      }
-      this.__currentCtx = ctx;
-      this._currentContext = Obj;
-    },
-    currentContext: {},
-    extensions: {},
-  };
   const CList = {
     DARK_BLUE: "#236B8E",
     DARK_BROWN: "#8B4513",

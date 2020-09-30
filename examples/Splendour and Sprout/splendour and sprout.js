@@ -121,13 +121,13 @@ var animatedDrawingCfg = {
 function drawAnimated() {
   init();
   var i = 0;
-  startLoop(function () {
+  loop(function () {
     linePairs(i, points.length);
     if (points.length <= i++) {
       drawPlayBtn();
-      stopLoop();
+      noLoop();
     };
-  });
+  }, DC.tpf, this);
 }
 
 function drawEverything() {

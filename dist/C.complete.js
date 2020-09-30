@@ -4,15 +4,15 @@
       window[i] = obj[i];
   }
   (function () {
-    window.CJS = {
-      setCurrentContext: function (Obj, ctx) {
+    window.C = {
+      setcurrentConfigs: function (Obj, ctx) {
         for (var p of Object.keys(Obj)) {
           window[p] = Obj[p];
         }
         this.__currentCtx = ctx;
-        this._currentContext = Obj;
+        this.currentConfigs = Obj;
       },
-      currentContext: {},
+      currentConfigs: {},
       extensions: {},
     };
     const CList = {

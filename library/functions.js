@@ -8,14 +8,24 @@
   }
 
   function ACE(extObj) {
-    window.CJS.extensions = Object.assign(window.CJS.extensions, extObj);
+    window.C.extensions = Object.assign(window.C.extensions, extObj);
   }
-
+  function getCanvas(width, height, dpr) {
+    var cvs = document.createElement("canvas");
+    cvs.style.width = width + "px";
+    cvs.style.height = height + "px";
+    cvs.width = dpr * width;
+    cvs.height = dpr * height;
+    cvs.style.position = "relative";
+    return cvs;
+  }
+  // addding to window
   assignPropsToWind({
     int: int,
     bool: bool,
     getWidth: gW,
-    addCJSExtension: ACE,
+    addCExtension: ACE,
+    getCanvas: getCanvas,
     // functions
     E: Math.E,
     LN2: Math.LN2,

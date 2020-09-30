@@ -3,7 +3,7 @@
 ## Get started
  Download [C.complete.min.js](https://github.com/Roopesh2/C.js/blob/master/C.complete.min.js) and link it to your html file.
  ### Boilerplate
- Cjs is simple.
+ C is simple.
  ```javascript
 C (
   containerElement,
@@ -32,11 +32,11 @@ C (
  Documentation are comming soon.
 
 ## Extensions
- A great thing hwhich everyone loves - extension. You can add extension and use it easly in Cjs. 
+ A great thing hwhich everyone loves - extension. You can add extension and use it easly in C. 
  ### Creating an extension
- Wrap your all functions in a object and pass it to ```addCJSExtension``` function, like this:
+ Wrap your all functions in a object and pass it to ```addCExtension``` function, like this:
  ```javascript
- addCJSExtension({
+ addCExtension({
    myExtFunction1: function (args) {...},
    myExtFunction2: function (args) {...},
    myExtFunction3: function (args) {...},
