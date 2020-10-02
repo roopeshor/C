@@ -94,8 +94,8 @@ function init() {
   strokeWidth(DC.lw);
   background("#000");
   translate(W / 2, H / 2);
-  noFill();
   stroke("#fff");
+  noFill();
   circle(0, 0, radius);
 }
 function drawStatic() {
@@ -114,17 +114,18 @@ var animatedDrawingCfg = {
     circle(0, 0, radius);
     linePairs(0, points.length);
     linePairs((points.length - DC.shift), points.length)
-    drawPlayBtn();
+    Icons.playBtn();
   }
 };
-
+var a;
 function drawAnimated() {
   init();
   var i = 0;
+  a = this._ctx;
   loop(function () {
     linePairs(i, points.length);
     if (points.length <= i++) {
-      drawPlayBtn();
+      Icons.playBtn();
       noLoop();
     };
   }, DC.tpf, this);

@@ -1,133 +1,151 @@
 (function () {
-  var dpr = ceil(window.devicePixelRatio) || 1;
-
   // C.js basic functions 
-  var C_Functions = {};
+
+  C.prototype.line = function (x1, y1, x2, y2) {
+    var c = this._ctx;
+    c.beginPath();
+    c.moveTo(x1, y1);
+    c.lineTo(x2, y2);
+    if (_toStroke) c.stroke();
+    c.closePath();
+  }
+
+  C.prototype.background = function (c) {
+    var ct = this._ctx;
+    ct.save();
+    C.prototype.rest();
+    ct.fillStyle = c;
+    ct.fillRect(-W, -H, W * 2, H * 2);
+    ct.restore();
+  }
+
+  C.prototype.noFill = function () { this._toFill = false; }
+  C.prototype.noStroke = function () { this._toStroke = false; }
+  C.prototype.translate = function (x, y = 0) { this._ctx.translate(x, y); }
+  C.prototype.enableSmoothing = function () { this._ctx.imageSmoothingEnabled = true; }
+  C.prototype.disableSmoothing = function () { this._ctx.imageSmoothingEnabled = false; }
+  C.prototype.strokeWidth = function (w) { this._ctx.lineWidth = Number(w); }
 
 
-  C_Functions.line = function (x1, y1, x2, y2) {
-    var c = window.C.currentConfigs.ctx;
-    ctx.beginPath();
-    ctx.moveTo(x1, y1);
-    ctx.lineTo(x2, y2);
-    if (_toStroke) ctx.stroke();
-    ctx.closePath();
+  C.prototype.rest = function () {
+    var c = this._ctx;
+    c.setTransform(1, 0, 0, 1, 0, 0);
+    var d = this.dpr;
+    c.scale(d, d);
   }
-  C_Functions.background = function (c) {
-    ctx.save();
-    C_Functions.rest();
-    ctx.fillStyle = c;
-    ctx.fillRect(-W, -H, W * 2, H * 2);
-    ctx.restore();
-  }
-  C_Functions.noFill = function () { C.currentConfigs._toFill = false; }
-  C_Functions.noStroke = function () { C.currentConfigs._toStroke = false; }
-  C_Functions.translate = function (x, y = 0) { ctx.translate(x, y); }
-  C_Functions.enableSmoothing = function () { ctx.imageSmoothingEnabled = true; }
-  C_Functions.disableSmoothing = function () { ctx.imageSmoothingEnabled = false; }
-  C_Functions.rest = function () {
-    ctx.resetTransform();
-    ctx.imageSmoothingEnabled = false;
-    var d = C.currentConfigs.dpr;
-    ctx.scale(d, d);
-  }
-  C_Functions.stroke = function (c) {
-    if (c != undefined) {
-      ctx.strokeStyle = c;
-      C.currentConfigs._toStroke = true;
+
+  C.prototype.stroke = function (col) {
+    if (col != undefined) {
+      this._ctx.strokeStyle = col;
+      this._toStroke = true;
     } else {
-      ctx.stroke();
+      this._ctx.stroke();
     }
   }
-  C_Functions.fill = function (c) {
-    if (c != undefined) {
-      ctx.fillStyle = c;
-      C.currentConfigs._toFill = true;
+
+  C.prototype.fill = function (col) {
+    if (col != undefined) {
+      this._ctx.fillStyle = col;
+      this._toFill = true;
     } else {
-      ctx.fill();
+      this._ctx.fill();
     }
   }
-  C_Functions.strokeWidth = function (w) { ctx.lineWidth = Number(w); }
-  C_Functions.getDrawConfigs = function () {
+
+  C.prototype.getDrawConfigs = function () {
+    var c = this._ctx;
     return {
-      stroke: ctx.strokeStyle,
-      fill: ctx.fillStyle,
-      strokeWidth: ctx.lineWidth
+      stroke: c.strokeStyle,
+      fill: c.fillStyle,
+      strokeWidth: c.lineWidth,
+      toStroke: this._toStroke,
+      toFill: this._toFill,
     }
   }
-  C_Functions.arc = function (c = {}) {
-    ctx.beginPath();
-    ctx.arc(
-      c.x,
-      c.y,
-      c.r,
-      c.sa || 0,
-      int(c.ea, Math.PI * 2),
-      c.ac
+
+  C.prototype.arc = function (x, y, r, sa = 0, ea = Math.PI / 2) {
+    var c = this._ctx;
+    c.beginPath();
+    c.arc(
+      x,
+      y,
+      r,
+      sa || 0,
+      int(ea, Math.PI * 2),
     );
-    if (C.currentConfigs._toFill) ctx.fill();
-    if (C.currentConfigs._toStroke) ctx.stroke();
-    ctx.closePath();
+    if (this._toFill) c.fill();
+    if (this._toStroke) c.stroke();
+    c.closePath();
   }
-  C_Functions.circle = function (x, y, r) {
-    arc({
-      x: x,
-      y: y,
-      r: r,
-      sa: 0,
-      ea: Math.PI * 2,
-    });
+  C.prototype.sector = function (x, y, r, sa, ea) {
+    this._ctx.moveTo(x, y);
+    this.arc(x, y, r, sa, ea);
   }
-  C_Functions.loop = function (fx, dx, th) {
-    var binded = fx.bind(C.currentConfigs);
-    ctx.animating = true;
+
+  C.prototype.circle = function (x, y, r) {
+    arc(x, y, r, 0, Math.PI * 2);
+  }
+
+  C.prototype.triangle = function (x1, y1, x2, y2, x3, y3) {
+    var c = this._ctx;
+    c.imageSmoothingQuality = "high"
+    c.beginPath();
+    c.moveTo(x1, y1);
+    c.lineTo(x2, y2);
+    c.lineTo(x3, y3);
+    if (this._toFill) c.fill();
+    if (this._toStroke) {
+      c.lineTo(x1, y1);
+      c.stroke();
+    }
+  }
+
+  C.prototype.equiTriangle = function (x, y, len, angle = 0) {
+    var vertices = [];
+    var i = 0;
+    var e = Math.PI * 2 / 3;
+    while (i++ < 3) {
+      vertices.push(Math.cos(i * e + angle) * len + x, Math.sin(i * e + angle) * len + y);
+    }
+    console.log(this.getDrawConfigs())
+    this.triangle(...vertices)
+  }
+
+  C.prototype.loop = function (fx, dx, th) {
+    var binded = fx.bind(C.prototype);
+    this._ctx.animating = true;
     if (dx) {
       C.currentConfigs.currentLoop = setInterval(function () {
-        C.setcurrentConfigsAttrs(th);
+        C.setcurrentConfigs(th);
         binded();
       }, dx);
     } else {
       (function a(dx) {
         C.currentConfigs.currentLoop = window.requestAnimationFrame(a);
-        C.setcurrentConfigsAttrs(th);
+        C.setcurrentConfigs(th);
         binded(dx);
       })();
     }
   }
-  C_Functions.noLoop = function () {
+
+  C.prototype.noLoop = function () {
     clearInterval(C.currentConfigs.currentLoop);
     window.cancelAnimationFrame(C.currentConfigs.currentLoop);
-    ctx.animating = false;
+    this._ctx.animating = false;
   }
 
-  C_Functions.drawPlayBtn = function (c = {}) {
-    ctx.save();
-    rest();
-    var p = c.p || [W / 2, H / 2];
-    translate(p[0], p[1]);
-    fill(c.background || "#3fffac");
-    noStroke();
-    arc({
-      x: 0,
-      y: 0,
-      r: c.r || 20,
-      fill: true,
-      stroke: false
-    });
-    var len = c.playLen || 11;
-    ctx.beginPath();
-    ctx.moveTo(len, 0);
-    C_Functions.fill(c.playCol || "#fff");
-    for (var i = 1; i < 3; i++) {
-      ctx.lineTo(
-        Math.cos(i * Math.PI * 2 / 3) * len,
-        Math.sin(i * Math.PI * 2 / 3) * len,
-      )
-    }
-    ctx.fill();
-    ctx.closePath();
+  C.prototype.save = function () {
+    this._ctx.save();
+  }
+  C.prototype.restore = function () {
+    this._ctx.restore();
+  }
+  C.prototype.startPath = function () {
+    this._ctx.beginPath();
+  }
+  C.prototype.endPath = function () {
+    this._ctx.closePath();
   }
 
-  var finalObj = Object.assign(C_Functions, C.extensions);
-  assignPropsToWind(finalObj);
+  assignPropsToWind(C.prototype);
 })();

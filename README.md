@@ -31,9 +31,9 @@ C (
 ## Inside drawFunction (Documentation)
  Documentation are comming soon.
 
-## Extensions
- A great thing hwhich everyone loves - extension. You can add extension and use it easly in C. 
- ### Creating an extension
+## Addons
+ A great thing which everyone loves - addon. You can add addon and use it easly in C. 
+ ### Creating an addon
  Wrap your all functions in a object and pass it to ```addCExtension``` function, like this:
  ```javascript
  addCExtension({
@@ -44,8 +44,8 @@ C (
  })
  ```
  
- ### Using extensions
-  To use extensions call it inside your ```drawFunction```.
+ ### Using addons
+  To use addons call it inside your ```drawFunction```.
   and don't forget to put a ```this.``` before calling a function.
   eg. :
   ```javascript
@@ -57,5 +57,5 @@ C (
     );
   ```
 ### Publish
- Is your extension is Useful? Add it to our ```Extenstions``` folder by opening a pull request. 
- > Note: Test your extension before publishing.
+ Is your addon is Useful? Add it to our ```Extenstions``` folder by opening a pull request. 
+ > Note: Test your addon before publishing.

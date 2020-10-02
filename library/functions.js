@@ -7,8 +7,11 @@
     return window.innerWidth - parseInt(cs.marginLeft) * 2;
   }
 
-  function ACE(extObj) {
-    window.C.extensions = Object.assign(window.C.extensions, extObj);
+  function addAddons(extObj) {
+    window.C.addons = Object.assign(window.C.addons, extObj);
+    for (var addon of Object.keys(C.addons)) {
+      C.prototype[addon] = window[addon] = C.addons[addon]
+    }
   }
   function getCanvas(width, height, dpr) {
     var cvs = document.createElement("canvas");
@@ -24,8 +27,8 @@
     int: int,
     bool: bool,
     getWidth: gW,
-    addCExtension: ACE,
     getCanvas: getCanvas,
+    addAddons: addAddons,
     // functions
     E: Math.E,
     LN2: Math.LN2,

@@ -13,7 +13,7 @@
         this.currentConfigs = Obj;
       },
       currentConfigs: {},
-      extensions: {},
+      addons: {},
     };
     const CList = {
       DARK_BLUE: "#236B8E",

@@ -19,7 +19,7 @@
     container.appendChild(cvs);
     var CO = {
       cvs: cvs,
-      ctx: ctx,
+      _ctx: ctx,
       W: width,
       H: height,
       _toFill: true,
@@ -27,14 +27,14 @@
       dpr: dpr
     };
     var binded = fx.bind(CO);
-    C.setcurrentConfigsAttrs(CO);
+    C.setcurrentConfigs(CO);
     rest();
     if (autoPlay) {
       binded();
     } else {
       cvs.onclick = function () {
         if (!ctx.animating) {
-          C.setcurrentConfigsAttrs(CO);
+          C.setcurrentConfigs(CO);
           rest();
           ctx.clearRect(0, 0, width, height);
           binded();
@@ -46,12 +46,12 @@
   };
 
   C.currentConfigs = {};
-  C.extensions = {};
+  C.addons = {};
 
-  C.setcurrentConfigsAttrs = function (attrs) {
+  C.setcurrentConfigs = function (attrs) {
     if (Object.prototype.toString.call(attrs) == "[object Object]") {
       for (var p of Object.keys(attrs)) {
-        window[p] = this.currentConfigs[p] = attrs[p];
+        window[p] = C.prototype[p] = attrs[p];
       }
       C.currentConfigs = attrs;
     }
