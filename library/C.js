@@ -1,7 +1,7 @@
 (function () {
   'use strict';
   function C(c, fx, cfg = {}) {
-    var container = c,
+    var container = document.querySelector(c),
       AR = cfg.aspectRatio || [16, 9],
       width = int(
         cfg.width,
