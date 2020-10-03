@@ -121,7 +121,7 @@ var a;
 function drawAnimated() {
   init();
   var i = 0;
-  a = this._ctx;
+  a = this.ctx;
   loop(function () {
     linePairs(i, points.length);
     if (points.length <= i++) {

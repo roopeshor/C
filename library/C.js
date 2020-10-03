@@ -1,7 +1,7 @@
 (function () {
   'use strict';
   function C(c, fx, cfg = {}) {
-    var container = document.querySelector(c),
+    var container = c instanceof HTMLElement ? c : document.querySelector(c),
       AR = cfg.aspectRatio || [16, 9],
       width = int(
         cfg.width,
@@ -9,7 +9,7 @@
       ),
       height = int(cfg.height, (width / AR[0]) * AR[1]),
       autoPlay = bool(cfg.autoPlay, true),
-      thumbnail = cfg.thumbnail || function () { CO.drawPlayBtn() },
+      thumbnail = cfg.thumbnail || function () { },
       dpr = cfg.scale || ceil(window.devicePixelRatio) || 1;
 
     var cvs = getCanvas(width, height, dpr),
@@ -19,7 +19,7 @@
     container.appendChild(cvs);
     var CO = {
       cvs: cvs,
-      _ctx: ctx,
+      ctx: ctx,
       W: width,
       H: height,
       _toFill: true,
