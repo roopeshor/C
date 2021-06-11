@@ -2,8 +2,7 @@
  JavaScript library for drawing figures and diagrams in blog or articles
 ## Get started
  Download [C.complete.min.js](https://github.com/Roopesh2/C.js/blob/master/C.complete.min.js) and link it to your html file.
- ### Boilerplate
- C is simple.
+ ### Start using
  ```javascript
 C (
   containerElement,
@@ -12,7 +11,6 @@ C (
 );
 ```
  ### Argumets
- Well it's not noting more than 3.
  #### 1<sup>st</sup>: containerElement
    The element name in which the canvas (HTML5 Canvas Element) is added.
    You'd better not to add any HTML to this container.
@@ -32,7 +30,7 @@ C (
  Documentation are comming soon.
 
 ## Addons
- A great thing which everyone loves - addon. You can add addon and use it easly in C. 
+ You can add addon and use it easly. 
  ### Creating an addon
  Wrap your all functions in a object and pass it to ```addCExtension``` function, like this:
  ```javascript
@@ -56,6 +54,3 @@ C (
       {...}
     );
   ```
-### Publish
- Is your addon is Useful? Add it to our ```Extenstions``` folder by opening a pull request. 
- > Note: Test your addon before publishing.
