@@ -1,47 +1,32 @@
-function defineFunctions(obj) {
-  for (var i = 0, props = Object.keys(obj); i < props.length; i++) {
-    var prop = props[i], op = obj[prop];
-    // console.log(prop, op)
-    Object.defineProperty(window, prop, {
-      configurable: true,
-      enumerable: true,
-      get: function get() {
-        return op;
-      },
-      set: function set(newValue) {
-        Object.defineProperty(window, prop, {
-          configurable: true,
-          enumerable: true,
-          value: newValue,
-          writable: true
-        });
-        console.warn('You changed value of "'+ prop + '" which is a function of C. Be careful while using it');
-      }
-    });
-  }
-}
-
-function defineConstants (obj) {
+function defineProperties(obj, toAssign = window) {
   for (var i = 0, consts = Object.keys(obj); i < consts.length; i++) {
-    var name = consts[i], value = obj[name];
-    console.log(name, value)
-    Object.defineProperty(window, name, {
-      configurable: true,
-      enumerable: true,
-      get: function get() {
-        return value;
-      },
-      set: function set(newValue) {
-        Object.defineProperty(window, name, {
-          configurable: true,
-          enumerable: true,
-          value: newValue,
-          writable: true
-        });
-        console.warn('You changed value of "'+ name + '" which is a function of C. Be careful while using it');
-      }
-    });
-    console.log(window[name], value)
+    var name = consts[i],
+        value = obj[name];
+    console.log(name, value);
+
+    // definer in IIFE to avoid assigning same values to all properties
+    (function (name, value, toAssign) {
+      Object.defineProperty(toAssign, name, {
+        configurable: true,
+        enumerable: true,
+        get: function get() {
+          return value;
+        },
+        set: function set(value) {
+          Object.defineProperty(toAssign, name, {
+            configurable: true,
+            enumerable: true,
+            value: value,
+            writable: true,
+          });
+          console.warn(
+            'You changed value of "' +
+              name +
+              '" which is a function of C. Be careful while using it'
+          );
+        },
+      });
+    })(name, value, toAssign)
   }
 }
 const CList = {
@@ -102,15 +87,15 @@ const CList = {
   PINK: "#D147BD",
   LIGHT_PINK: "#DC75CD",
   GREEN_SCREEN: "#00FF00",
-  ORANGE: "#FF862F"
+  ORANGE: "#FF862F",
 };
-defineConstants(CList)
+defineProperties(CList);
 const cnst = {
-  E    : "2.718281828459045",
-  LN2  : "0.6931471805599453",
-  LN10 : "2.302585092994046",
-  PI   : "3.141592653589793",
-  TAU  : "6.283185307179586",
-  SQRT2: "1.4142135623730951",
+  E    : 2.718281828459045,
+  LN2  : 0.6931471805599453,
+  LN10 : 2.302585092994046,
+  PI   : 3.141592653589793,
+  TAU  : 6.283185307179586,
+  SQRT2: 1.4142135623730951,
 }
-defineConstants(cnst)
+defineProperties(cnst)
