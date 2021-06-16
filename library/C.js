@@ -11,7 +11,6 @@
       autoPlay = bool(cfg.autoPlay, true),
       thumbnail = cfg.thumbnail || function () { },
       dpr = cfg.scale || ceil(window.devicePixelRatio) || 1;
-
     var cvs = getCanvas(width, height, dpr),
       ctx = cvs.getContext("2d");
 

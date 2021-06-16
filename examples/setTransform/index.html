@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Set Transform</title>
+  <script src="../../library/constants.js"></script>
+  <script src="../../library/functions.js"></script>
+  <script src="../../library/C.js"></script>
+  <script src="../../library/drawer-functions.js"></script>
+  <script src="../../Addons/Mobject/mobject.js"></script>
+  <link rel="stylesheet" href="./CMU.css" type="text/css"/>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: sans-serif;
+    }
+    table {
+      border-collapse: collapse;
+    }
+    .controls {
+      width: 97.5px;
+      height: 67px;
+      position: relative;
+      margin-bottom: 50px;
+      background-color: #fff;
+      border: 5px solid #fff;
+      text-align: center;
+    }
+    div[mLeft] {
+      position: absolute;
+      height: 125%;
+      top: -12.3%;
+      left: -7.5px;
+      width: 15px;
+      background-color: #000;
+      z-index: -1;
+    }
+    div[mRight] {
+      position: absolute;
+      height: 125%;
+      top: -12.2%;
+      left: calc(100% - 7.5px);
+      width: 15px;
+      background-color: #000;
+      z-index: -1;
+    }
+    .matrix {
+      text-align: center;
+    }
+    .matrix input {
+      width: 25px;
+      height: 25px;
+      border: 0.1px solid #1115;
+      margin: 1px;
+      font-size: 16px;
+      text-align: center;
+      outline: none;
+      font-family: 'CMUSerifRoman', sans-serif;
+    }
+    div[ctrls] {
+      margin: auto;
+      width: 200px;
+      height: auto;
+      position: relative;
+      text-align: right;
+      font-family: 'CMUSerifItalic', sans-serif;
+      font-weight: normal;
+      font-style: normal;
+    }
+
+    p[txt] {
+      font-size: 35px;
+      position: absolute;
+      left: calc(50% - 190px);
+      top: -20px;
+    }
+    p[txt] sub {
+      font-size: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h2>ctx.setTransform visualization</h2>
+  <div ctrls>
+    <p txt>T<sub>m</sub>=</p>
+    <div class="controls">
+      <div mLeft></div>
+      <table class="matrix">
+        <tr>
+          <td><input id="m0" value="1"></td>
+          <td><input id="m1" value="0"></td>
+          <td><input id="m2" value="0"></td>
+        </tr>
+        <tr>
+          <td><input id="m3" value="1"></td>
+          <td><input id="m4" value="0"></td>
+          <td><input id="m5" value="0"></td>
+        </tr>
+      </table>
+      <div mRight></div>
+      <button onclick="a()">Show</button>
+    </div>
+  </div>
+  <div style="position: relative;">
+    <div class="c2" style="position: absolute;"></div>
+    <div class="c"></div>
+  </div>
+  <script src="./index.js"></script>
+</body>
+</html>

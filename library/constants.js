@@ -1,6 +1,47 @@
-function assignPropsToWind(obj) {
-  for (var i of Object.keys(obj))
-    window[i] = obj[i];
+function defineFunction(obj) {
+  for (var i = 0, props = Object.keys(obj); i < props.length; i++) {
+    var prop = props[i], op = obj[prop];
+    // console.log(prop, op)
+    Object.defineProperty(window, prop, {
+      configurable: true,
+      enumerable: true,
+      get: function get() {
+        return op;
+      },
+      set: function set(newValue) {
+        Object.defineProperty(window, prop, {
+          configurable: true,
+          enumerable: true,
+          value: newValue,
+          writable: true
+        });
+        console.warn('You changed value of "'+ prop + '" which is a function of C. Be careful while using it');
+      }
+    });
+  }
+}
+
+function defineConstant (obj) {
+  for (var i = 0, props = Object.keys(obj); i < props.length; i++) {
+    var prop = props[i], op = obj[prop];
+    console.log(prop,op)
+    Object.defineProperty(window, prop, {
+      configurable: true,
+      enumerable: true,
+      get: function get() {
+        return op;
+      },
+      set: function set(newValue) {
+        Object.defineProperty(window, prop, {
+          configurable: true,
+          enumerable: true,
+          value: newValue,
+          writable: true
+        });
+        console.warn('You changed value of "'+ prop + '" which is a function of C. Be careful while using it');
+      }
+    });
+  }
 }
 (function () {
   const CList = {
@@ -63,8 +104,14 @@ function assignPropsToWind(obj) {
     GREEN_SCREEN: "#00FF00",
     ORANGE: "#FF862F"
   };
-  window.COLOR_LIST = CList;
-  for (var color of Object.keys(CList)) {
-    window[color] = CList[color];
+  defineConstant(CList)
+  const cnst = {
+    E    : "2.718281828459045",
+    LN2  : "0.6931471805599453",
+    LN10 : "2.302585092994046",
+    PI   : "3.141592653589793",
+    TAU  : "6.283185307179586",
+    SQRT2: "1.4142135623730951",
   }
+  defineConstant(cnst)
 })();
