@@ -123,11 +123,12 @@ function drawAnimated() {
   var i = 0;
   a = this.ctx;
   loop(function () {
-    linePairs(i, points.length);
     if (points.length <= i++) {
       Icons.playBtn();
       noLoop();
-    };
+    } else {
+      linePairs(i, points.length);
+    }
   }, DC.tpf, this);
 }
 

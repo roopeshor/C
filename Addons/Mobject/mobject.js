@@ -6,7 +6,7 @@
   function bool (a, b) {
       return a == undefined ? b : a;
   }
-  window.addAddons({
+  window.addExtension({
     arrow: function (x1, y1, x2, y2, size = 15) {
       var ex = x2 - x1,
         ey = y2 - y1,

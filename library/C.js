@@ -45,7 +45,7 @@
   };
 
   C.currentConfigs = {};
-  C.addons = {};
+  C.extensions = {};
 
   C.setcurrentConfigs = function (attrs) {
     if (Object.prototype.toString.call(attrs) == "[object Object]") {

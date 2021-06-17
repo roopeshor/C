@@ -29,9 +29,9 @@ C (
 ## Inside drawFunction (Documentation)
  Documentation are comming soon.
 
-## Addons
- You can add addon and use it easly. 
- ### Creating an addon
+## Extensions
+ You can add extension and use it easly. 
+ ### Creating an extension
  Wrap your all functions in a object and pass it to ```addCExtension``` function, like this:
  ```javascript
  addCExtension({
@@ -42,8 +42,8 @@ C (
  })
  ```
  
- ### Using addons
-  To use addons call it inside your ```drawFunction```.
+ ### Using extensions
+  To use extensions call it inside your ```drawFunction```.
   and don't forget to put a ```this.``` before calling a function.
   eg. :
   ```javascript

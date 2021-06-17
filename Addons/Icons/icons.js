@@ -1,4 +1,4 @@
-addAddons({
+addExtension({
   Icons: {
     playBtn: function (c = {}) {
       var p = c.pos || [W / 2, H / 2];

@@ -80,10 +80,10 @@
       return window.innerWidth - parseInt(cs.marginLeft) * 2;
     }
 
-    function addAddons(extObj) {
-      window.C.addons = Object.assign(window.C.addons, extObj);
-      for (var addon of Object.keys(C.addons)) {
-        C.prototype[addon] = window[addon] = C.addons[addon]
+    function addExtension(extObj) {
+      window.C.extensions = Object.assign(window.C.extensions, extObj);
+      for (var extension of Object.keys(C.extensions)) {
+        C.prototype[extension] = window[extension] = C.extensions[extension]
       }
     }
     function getCanvas(width, height, dpr) {
@@ -101,7 +101,7 @@
       bool: bool,
       getWidth: gW,
       getCanvas: getCanvas,
-      addAddons: addAddons,
+      addExtension: addExtension,
       // functions
       E: Math.E,
       LN2: Math.LN2,
@@ -189,7 +189,7 @@
     };
 
     C.currentConfigs = {};
-    C.addons = {};
+    C.extensions = {};
 
     C.setcurrentConfigs = function (attrs) {
       if (Object.prototype.toString.call(attrs) == "[object Object]") {
@@ -429,18 +429,17 @@
     }
 
     C.prototype.loop = function (fx, dx, th) {
-      var binded = fx.bind(C.prototype);
       this.ctx.animating = true;
       if (dx) {
         C.currentConfigs.currentLoop = setInterval(function () {
           C.setcurrentConfigs(th);
-          binded();
+          fx();
         }, dx);
       } else {
         function a(dx) {
           C.currentConfigs.currentLoop = window.requestAnimationFrame(a);
           C.setcurrentConfigs(th);
-          binded(dx);
+          fx(dx);
         }
         a();
       }

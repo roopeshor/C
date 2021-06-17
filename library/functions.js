@@ -64,10 +64,10 @@
       return window.innerWidth - parseInt(cs.marginLeft) * 2;
     },
     
-    addAddons: function addAddons(extObj) {
-      window.C.addons = Object.assign(window.C.addons, extObj);
-      for (var addon of Object.keys(C.addons)) {
-        C.prototype[addon] = window[addon] = C.addons[addon]
+    addExtension: function addExtension(extObj) {
+      window.C.extensions = Object.assign(window.C.extensions, extObj);
+      for (var extension of Object.keys(C.extensions)) {
+        C.prototype[extension] = window[extension] = C.extensions[extension]
       }
     },
     getCanvas: function getCanvas(width, height, dpr) {
