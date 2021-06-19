@@ -17,18 +17,22 @@ const helpers = {
     defineProperties(extObj)
     defineProperties(extObj, CData.extensions)
   },
-  makeCanvas: function (cfgs) {
-    /** 
-     * create canvas with given parameters
-     */
+
+  getResizedCanvas : function (cvs, cfgs) {
     var width = cfgs.width;
     var height = cfgs.height;
     var dpr = cfgs.dpr;
-    var cvs = document.createElement("canvas");
     cvs.style.width = width + "px";
     cvs.style.height = height + "px";
     cvs.width = dpr * width;
     cvs.height = dpr * height;
+  },
+  makeCanvas: function (cfgs) {
+    /** 
+     * create canvas with given parameters
+     */
+    var cvs = document.createElement("canvas");
+    this.getResizedCanvas(cvs, cfgs);
     return cvs;
   }
 }

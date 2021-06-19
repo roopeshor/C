@@ -2,11 +2,13 @@
 const defaultConfig = {
   width: 200, // width of canvas multiplied by dpr
   height: 200, // height of canvas  multiplied by dpr
-  dpr: window.devicePixelRatio || 1, // device pixel ratio for clear drawings
+  dpr: ceil(devicePixelRatio || 1), // device pixel ratio for clear drawings
   W: 200, // actual width of canvas
   H: 200, // actual height of canvas
   _doFill: true, 
   _doStroke: true,
+  fillStyle: WHITE,
+  strokeStyle: BLACK,
 };
 
 /**
@@ -29,28 +31,43 @@ function C(fx, container = document.body, configs = {}) {
   // initialize canvas
   var canvas = makeCanvas(configs);
 
+  var canvasName;
+  if (configs.name != undefined) {
+    canvasName = configs.name;
+    var cvs = document.getElementById(canvasName);
+    if (cvs != undefined) {
+      // if already exist 
+      canvas = cvs;
+      prepareCanvas();
+      fx()
+      return;
+    }
+  } else {
   // finds a name for canvas that already don't exist
-  while (document.getElementById("canvas-" + C.data.recentId) != undefined) {
-    C.data.recentId++;
-  }
+    while (document.getElementById("canvas-" + C.nameID) != undefined) {
+      C.nameID++;
+    }
 
-  var canvasName = "canvas-" + C.data.recentId;
-  // set canvas's id and class to `canvasName 
+    canvasName = "canvas-" + C.nameID;
+  }
+  function prepareCanvas() {
+
+    // add additional information to rendererContext
+    getResizedCanvas(canvas, configs);
+    canvas.context = Object.assign(canvas.getContext("2d"), configs);
+    canvas.context.setTransform(configs.dpr,0,0, configs.dpr,0,0);
+    C.workingCanvas = canvas.context
+  }
+  // set canvas's id and class to its name
   canvas.id = canvasName;
   canvas.classList.add(canvasName);
-
-  // add additional information to rendererContext
-  canvas.context = Object.assign(canvas.getContext("2d"), configs);
-
-  // add canvas to 
-  C.data.canvasList.push(canvas);
+  // add canvas to container
   container.appendChild(canvas);
-
-  fx();
+  prepareCanvas()
+  C.canvasList[canvasName] = canvas.context;
+  fx()
 }
 
-C.data = {
-  canvasList: [],
-  recentId: 0,
-  workingCanvas: 0 // index of current working canvas in `canvasList`
-};
+C.canvasList = {};
+C.nameID = 0;
+C.workingCanvas = undefined; // index of current working canvas in `canvasList`

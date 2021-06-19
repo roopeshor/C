@@ -1,51 +1,93 @@
-var w = W = getWidth();
-if (w > 790) {
-  W = w / 1.2
-}
-if (w > 1000) W = w / 1.4;
-// W *= 1.5;
-const H = (W / 16) * 9;
-function getEl(id, before = "#") { return document.querySelector(before + id); }
+var w, H, radius, animatedDrawingCfg, staticDrawingCfg;
 
-var static = getEl("static", "."),
-  animated = getEl("animated", "."),
-  ext = getEl("ext", "."),
-  shift = getEl("shift"),
+function initSize(){
+  W = getContentWidth()/1.2;
+  // W *= 1.5;
+  H = (W / 16) * 9;
+  radius = round(H / 2.1);
+  animatedDrawingCfg = {
+    width: W,
+    height: H,
+    autoPlay: false,
+    name:"animatedCvs",
+    thumbnail: function () {
+      background("#000");
+      translate(W / 2, H / 2);
+      stroke("#fff");
+      circle(0, 0, radius);
+      linePairs(0, points.length);
+      linePairs((points.length - DC.shift), points.length)
+      Icons.playBtn();
+    }
+  };
+  staticDrawingCfg = { width: W , height: H, name: "staticCvs" }
+}
+initSize();
+function getEl(id) { return document.querySelector(id); }
+
+var static = getEl(".static"),
+  animated = getEl(".animated"),
+  ext = getEl(".ext"),
+  shift = getEl("#shift"),
   DC = {
     //drawingConfigs
     ppr: 15, // points per radius
     lw: 1, // line width
     tpf: 50, // time per frame,  time to draw a 2 pairs of line
   },
-  radius = Math.round(H / 2.1),
   points = [],
   // custom color list
   colors = [
-    "#236B8E",
-    "#58C4DD",
-    "#29ABCA",
-    "#1C758A",
-    "#55C1A7",
-    "#49A88F",
-    "#A6CF8C",
-    "#83C167",
-    "#77B05D",
-    "#699C52",
-    "#FFFF00",
-    "#F4D345",
-    "#E8C11C",
-    "#F0AC5F",
-    "#E1A158",
-    "#C78D46",
-    "#FF862F",
-    "#FF8080",
-    "#FC6255",
-    "#E65A4C",
-    "#C55F73",
-    "#A24D61",
-    "#B189C6",
-    "#FFFFFF",
-    "#BBBBBB",
+    DARK_BLUE,
+    DARK_BROWN,
+    LIGHT_BROWN,
+    BLUE_A,
+    BLUE_B,
+    BLUE_C,
+    BLUE_D,
+    BLUE_E,
+    TEAL_A,
+    TEAL_B,
+    TEAL_C,
+    TEAL_D,
+    TEAL_E,
+    GREEN_A,
+    GREEN_B,
+    GREEN_C,
+    GREEN_D,
+    GREEN_E,
+    YELLOW_A,
+    YELLOW_B,
+    YELLOW_C,
+    YELLOW_D,
+    YELLOW_E,
+    GOLD_A,
+    GOLD_B,
+    GOLD_C,
+    GOLD_D,
+    GOLD_E,
+    RED_A,
+    RED_B,
+    RED_C,
+    RED_D,
+    RED_E,
+    MAROON_A,
+    MAROON_B,
+    MAROON_C,
+    MAROON_D,
+    MAROON_E,
+    PURPLE_A,
+    PURPLE_B,
+    PURPLE_C,
+    PURPLE_D,
+    PURPLE_E,
+    WHITE,
+    LIGHT_GREY,
+    GREY_BROWN,
+    PINK,
+    LIGHT_PINK,
+    GREEN_SCREEN,
+    ORANGE,
   ];
 
 function computePoints() {
@@ -55,9 +97,9 @@ function computePoints() {
   for (var i = 0; i <= DC.ppr; i++) points.push([0, i * radius * ratio]);
 
   // points on a arc
-  for (var i = 0; i <= Math.PI * DC.ppr / 2; i++) {
-    var x = -Math.sin(i / DC.ppr) * radius,
-      y = Math.cos(i / DC.ppr) * radius;
+  for (var i = 0; i <= PI * DC.ppr / 2; i++) {
+    var x = -sin(i / DC.ppr) * radius,
+      y = cos(i / DC.ppr) * radius;
     points.push([x, y]);
   }
 
@@ -104,27 +146,14 @@ function drawStatic() {
     linePairs(i, points.length);
   }
 }
-var animatedDrawingCfg = {
-  width: W,
-  autoPlay: false,
-  thumbnail: function () {
-    background("#000");
-    translate(W / 2, H / 2);
-    stroke("#fff");
-    circle(0, 0, radius);
-    linePairs(0, points.length);
-    linePairs((points.length - DC.shift), points.length)
-    Icons.playBtn();
-  }
-};
 var a;
 function drawAnimated() {
   init();
   var i = 0;
-  a = this.ctx;
-  loop(function () {
+  a = C.canvasList.animatedCvs;
+  if (a.currentLoop != undefined) noLoop();
+  loop(function (fx) {
     if (points.length <= i++) {
-      Icons.playBtn();
       noLoop();
     } else {
       linePairs(i, points.length);
@@ -133,15 +162,15 @@ function drawAnimated() {
 }
 
 function drawEverything() {
-  C(static, drawStatic, { width: W });
-  C(animated, drawAnimated, animatedDrawingCfg);
+  C(drawStatic,static, staticDrawingCfg);
+  C(drawAnimated,animated, animatedDrawingCfg);
 }
 
 drawEverything();
 
 function updateDC(id, reverse) {
-  var i1 = getEl(id);
-  var i2 = getEl(id + "-op");
+  var i1 = getEl("#" + id);
+  var i2 = getEl("#" + id + "-op");
 
   if (reverse) {
     ii = i1;
@@ -158,14 +187,14 @@ function updateDC(id, reverse) {
       window.AIS = setInterval(incShift, v);
     }
   } else if (id == "ppr") {
-    DC.shift = shift.value = getEl("shift-op").value = DC.ppr + 1;
+    DC.shift = shift.value = getEl("#shift-op").value = DC.ppr + 1;
     shift.max = points.length - 1;
   }
   drawEverything();
 }
 function incShift() {
-  var e1 = getEl("shift");
-  var e2 = getEl("shift-op");
+  var e1 = getEl("#shift");
+  var e2 = getEl("#shift-op");
   var nv = Number(e1.value) + 1;
   e1.max = e2.max = nv;
   e1.value = e2.value = nv;
@@ -180,4 +209,10 @@ function autoIncShift(el) {
     el.setAttribute("onclick", "autoIncShift(this)");
   }
   window.AIS = setInterval(incShift, DC.tpf);
+}
+
+window.onresize = function () {
+  initSize();
+  computePoints();
+  drawEverything();
 }

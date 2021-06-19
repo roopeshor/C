@@ -4,15 +4,20 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
-  
-  <script defer src="../../src/constants.js"></script>
-  <script defer src="../../src/helpers.js"></script>
-  <script defer src="../../src/main.js"></script>
-    <!-- <script defer src="../../dist/C.complete.js"></script>
-    <script defer src="../../Extensions/Icons/icons.js"></script>
-    <script defer src="./main.js"></script> -->
+  <!-- <script defer src="../../dist/C.complete.js"></script>
+    <script defer src="../../Extensions/Icons/icons.js"></script> -->
+    
+    <script defer src="../../src/constants.js"></script>
+    <script defer src="../../src/helpers.js"></script>
+    <script defer src="../../src/colors.js"></script>
+    <script defer src="../../src/main.js"></script>
+    <script defer src="../../src/drawing-functions.js"></script>
+    
+    <script defer src="./main.js" ></script>
   <style>
     body {
+      margin: 0;
+      padding: 0;
       background-color: #eee;
       font-family: sans-serif;
     }
@@ -79,10 +84,13 @@
       border-radius: 20px;
       background-color: #34afff;
     }
+    canvas {
+      background-color: #34afff;
+    }
   </style>
 </head>
 <body>
-  <!-- <h1>splendour & sprout: geometric pattern</h1>
+  <h1>splendour & sprout: geometric pattern</h1>
   <hr/><br/>
   <p>
     Geometric Patterns are wonderful piece of math. It is literally an art! The follow one is one of my favourite pattern
@@ -133,6 +141,6 @@
   <p>
     And here is the animated drawing of the pattern above
   </p>
-  <div class="animated"></div> -->
+  <div class="animated"></div>
 </body>
 </html>
