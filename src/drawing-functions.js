@@ -289,7 +289,7 @@ function _regularPoly (x, y, sides, len, rotation = 0) {
   ctx.closePath();
 }
 
-function _loop (fx, dx, cvs) {
+function _loop (fx, cvs, dx) {
   var ctx = C.workingCanvas;
   if (!cvs) {
     cvs = ctx.name;
@@ -338,6 +338,24 @@ function _endPath () {
   ctx._pathStart = false;
 }
 
+function _getFont() {
+  var ctx = C.workingCanvas;
+  return ctx.fontSize + " " + ctx.fontFamily;
+}
+
+function _fontSize(size) {
+  var ctx = C.workingCanvas;
+  size = !isNaN(size)? size + "px": size;
+  ctx.fontSize = size
+  ctx.font = getFont();
+}
+
+function _fontFamily(family) {
+  var ctx = C.workingCanvas;
+  ctx.fontFamily = family;
+  ctx.font = getFont();
+}
+
 C.functions = {
   line             : _line,
   lineTo           : _lineTo,
@@ -376,6 +394,9 @@ C.functions = {
   noLoop           : _noLoop,
   startPath        : _startPath,
   endPath          : _endPath,
-  text          : _text,
+  text             : _text,
+  fontSize         : _fontSize,
+  fontFamily       : _fontFamily,
+  getFont          : _getFont,
 };
 defineProperties(C.functions);

@@ -9,6 +9,8 @@ const defaultConfig = {
   _doStroke: true,
   fillStyle: WHITE,
   strokeStyle: BLACK,
+  fontSize: "20px",
+  fontfamily: "sans-serif",
 };
 
 function assignDefaultConfigs(cfgs) {

@@ -17,7 +17,6 @@ function $(id) { return document.querySelector(id); }
 
 var static = $(".static"),
   animated = $(".animated"),
-  rand = $(".rand"),
   shift = $("#shift"),
   DC = {
     //drawingConfigs
@@ -124,9 +123,9 @@ function linePairs(i) {
 
 function init() {
   strokeWidth(DC.lw);
-  background("#000");
+  background(BLACK);
   translate(W / 2, H / 2);
-  stroke("#fff");
+  stroke(WHITE);
   noFill();
   circle(0, 0, radius);
 }
@@ -147,31 +146,18 @@ function drawAnimated() {
     if (points.length <= i++) {
       noLoop();
     } else {
-      fill("#000");
-      rect(98, -109, 100, 10);
-      fill("#fff")
-      text(elapsed/count, 100, -100)
       linePairs(i, points.length);
+      fill(BLACK);
+      rect(98, -109, 100, 10);
+      fill(WHITE)
+      text(1000/(elapsed/count), 100, -100)
     }
-  }, DC.tpf, "animatedCvs");
-}
-
-function drawRandom() {
-  background(DARK_BROWN);
-  var count = 0;
-  loop(function (elapsed) {
-    count++;
-    background("#000")
-    text(elapsed/count, 100, 50)
-    stroke(DARK_BLUE);
-    line(elapsed/100, 0, 150, 150)
-  }, DC.tpf, "rand")
+  }, "animatedCvs");
 }
 
 function drawEverything() {
   C(drawStatic,static, staticDrawingCfg);
   C(drawAnimated, animated, animatedDrawingCfg);
-  // C(drawRandom, rand, {width: 300, height: 300, name: "rand"})
 }
 
 drawEverything();
