@@ -8,32 +8,23 @@ function initSize(){
   animatedDrawingCfg = {
     width: W,
     height: H,
-    autoPlay: false,
-    name:"animatedCvs",
-    thumbnail: function () {
-      background("#000");
-      translate(W / 2, H / 2);
-      stroke("#fff");
-      circle(0, 0, radius);
-      linePairs(0, points.length);
-      linePairs((points.length - DC.shift), points.length)
-      Icons.playBtn();
-    }
+    name:"animatedCvs"
   };
   staticDrawingCfg = { width: W , height: H, name: "staticCvs" }
 }
 initSize();
-function getEl(id) { return document.querySelector(id); }
+function $(id) { return document.querySelector(id); }
 
-var static = getEl(".static"),
-  animated = getEl(".animated"),
-  ext = getEl(".ext"),
-  shift = getEl("#shift"),
+var static = $(".static"),
+  animated = $(".animated"),
+  rand = $(".rand"),
+  shift = $("#shift"),
   DC = {
     //drawingConfigs
     ppr: 15, // points per radius
     lw: 1, // line width
     tpf: 50, // time per frame,  time to draw a 2 pairs of line
+    shift: 16
   },
   points = [],
   // custom color list
@@ -109,7 +100,6 @@ function computePoints() {
 
 computePoints();
 
-DC.shift = DC.ppr + 1;
 shift.max = points.length - 1;
 
 function linePairs(i) {
@@ -146,31 +136,49 @@ function drawStatic() {
     linePairs(i, points.length);
   }
 }
-var a;
 function drawAnimated() {
   init();
   var i = 0;
-  a = C.canvasList.animatedCvs;
+  var a = C.canvasList.animatedCvs;
   if (a.currentLoop != undefined) noLoop();
-  loop(function (fx) {
+  var count = 0;
+  loop(function (elapsed) {
+    count++;
     if (points.length <= i++) {
       noLoop();
     } else {
+      fill("#000");
+      rect(98, -109, 100, 10);
+      fill("#fff")
+      text(elapsed/count, 100, -100)
       linePairs(i, points.length);
     }
-  }, DC.tpf, this);
+  }, DC.tpf, "animatedCvs");
+}
+
+function drawRandom() {
+  background(DARK_BROWN);
+  var count = 0;
+  loop(function (elapsed) {
+    count++;
+    background("#000")
+    text(elapsed/count, 100, 50)
+    stroke(DARK_BLUE);
+    line(elapsed/100, 0, 150, 150)
+  }, DC.tpf, "rand")
 }
 
 function drawEverything() {
   C(drawStatic,static, staticDrawingCfg);
-  C(drawAnimated,animated, animatedDrawingCfg);
+  C(drawAnimated, animated, animatedDrawingCfg);
+  // C(drawRandom, rand, {width: 300, height: 300, name: "rand"})
 }
 
 drawEverything();
 
 function updateDC(id, reverse) {
-  var i1 = getEl("#" + id);
-  var i2 = getEl("#" + id + "-op");
+  var i1 = $("#" + id);
+  var i2 = $("#" + id + "-op");
 
   if (reverse) {
     ii = i1;
@@ -187,14 +195,14 @@ function updateDC(id, reverse) {
       window.AIS = setInterval(incShift, v);
     }
   } else if (id == "ppr") {
-    DC.shift = shift.value = getEl("#shift-op").value = DC.ppr + 1;
+    DC.shift = shift.value = $("#shift-op").value = DC.ppr + 1;
     shift.max = points.length - 1;
   }
   drawEverything();
 }
 function incShift() {
-  var e1 = getEl("#shift");
-  var e2 = getEl("#shift-op");
+  var e1 = $("#shift");
+  var e2 = $("#shift-op");
   var nv = Number(e1.value) + 1;
   e1.max = e2.max = nv;
   e1.value = e2.value = nv;

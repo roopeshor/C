@@ -1,3 +1,38 @@
+// helpers
+
+function readColor (colors) {
+  var color1, color2, color3, alpha = 255, read = "";
+  if (typeof colors[0] == "number") {
+    if (colors.length == 1) {
+      color1 = color2 = color3 = colors[0]
+    } else if (colors.length == 2) {
+      color1 = colors[0];
+      color2 = colors[1];
+      color3 = 0;
+    } else if (colors.length == 3) {
+      color1 = colors[0];
+      color2 = colors[1];
+      color3 = colors[2];
+    } else if (colors.length == 4) {
+      color1 = colors[0];
+      color2 = colors[1];
+      color3 = colors[2];
+      alpha  = colors[3];
+    }
+    var mode = C.workingCanvas._ColorMode
+    if (mode == "HSL"){
+      read = `hsl(${color1}, ${color2}, ${color3})`;
+    } else if (mode == "rgb") {
+      read = `rgb(${color1}, ${color2}, ${color3})`;
+    } else if (mode == "rgba") {
+      read = `rgba(${color1}, ${color2}, ${color3}, ${alpha})`;
+    }
+  } else {
+    read = colors[0];
+  }
+  return read;
+}
+
 // C.js drawing functions 
 
 function _line (x1, y1, x2, y2) {
@@ -14,7 +49,8 @@ function _moveTo (x, y) {
   ctx.moveTo(x, y);
 }
 function _lineTo (x, y) { C.workingCanvas.lineTo(x, y); }
-function _background (col) {
+function _background () {
+  var col = readColor(arguments);
   var ctx = C.workingCanvas;
   ctx.save();
   _rest();
@@ -46,9 +82,10 @@ function _rest () {
   ctx.setTransform(d, 0, 0, d, 0, 0);
 }
 
-function _stroke (col) {
+function _stroke () {
   var ctx = C.workingCanvas;
-  if (col != undefined) {
+  if (arguments.length != 0) {
+    var col = readColor(arguments);
     ctx.strokeStyle = col;
     ctx._doStroke = true;
   } else {
@@ -56,9 +93,10 @@ function _stroke (col) {
   }
 }
 
-function _fill (col) {
+function _fill () {
   var ctx = C.workingCanvas;
-  if (col != undefined) {
+  if (arguments.length != 0) {
+    var col = readColor(arguments);
     ctx.fillStyle = col;
     ctx._doFill = true;
   } else {
@@ -72,8 +110,8 @@ function _getDrawConfigs () {
     stroke: ctx.strokeStyle,
     fill: ctx.fillStyle,
     strokeWidth: ctx.lineWidth,
-    toStroke: ctx._doStroke,
-    toFill: ctx._doFill,
+    doStroke: ctx._doStroke,
+    doFill: ctx._doFill,
   }
 }
 
@@ -96,6 +134,12 @@ function _sector (x, y, r, sa, ea) {
   var ctx = C.workingCanvas;
   ctx.moveTo(x, y);
   ctx.arc(x, y, r, sa, ea);
+}
+
+function _text (text, x, y=x, maxwidth) {
+  var ctx = C.workingCanvas;
+  if (ctx._doFill) ctx.fillText(text, x, y, maxwidth)
+  else if (ctx._doStroke) ctx.strokeText(text, x, y, maxwidth)
 }
 
 function _rect (x, y, w, h = w) {
@@ -245,17 +289,25 @@ function _regularPoly (x, y, sides, len, rotation = 0) {
   ctx.closePath();
 }
 
-function _loop (fx, dx, th) {
+function _loop (fx, dx, cvs) {
   var ctx = C.workingCanvas;
+  if (!cvs) {
+    cvs = ctx.name;
+  } else {
+    ctx = C.canvasList[cvs];
+  }
   ctx.animating = true;
+  var timeStart = window.performance.now();
   if (dx) {
     ctx.currentLoop = setInterval(function () {
-      fx(ctx.currentLoop);
+      C.workingCanvas = ctx;
+      fx(window.performance.now() - timeStart);
     }, dx);
   } else {
     function a(dx) {
+      C.workingCanvas = ctx;
       ctx.currentLoop = window.requestAnimationFrame(a);
-      fx(ctx.currentLoop);
+      fx(window.performance.now() - timeStart);
     }
     a();
   }
@@ -324,5 +376,6 @@ C.functions = {
   noLoop           : _noLoop,
   startPath        : _startPath,
   endPath          : _endPath,
+  text          : _text,
 };
 defineProperties(C.functions);

@@ -11,6 +11,13 @@ const defaultConfig = {
   strokeStyle: BLACK,
 };
 
+function assignDefaultConfigs(cfgs) {
+  for (var i = 0, properties = Object.keys(defaultConfig); i < properties.length; i++) {
+    var property = properties[i];
+    if (cfgs[property] == undefined) cfgs[property] = defaultConfig[property];
+  }
+}
+
 /**
  *
  * @param {function} fx codes to exeecute
@@ -19,7 +26,7 @@ const defaultConfig = {
  */
 function C(fx, container = document.body, configs = {}) {
   // assign configs
-  configs = Object.assign(defaultConfig, configs);
+  assignDefaultConfigs(configs);
   var W = configs.W,
     H = configs.H;
 
@@ -49,6 +56,7 @@ function C(fx, container = document.body, configs = {}) {
     }
 
     canvasName = "canvas-" + C.nameID;
+    configs.name = canvasName;
   }
   function prepareCanvas() {
 
