@@ -1,4 +1,3 @@
-
 const ColorList = {
   // from Manim
   DARK_BLUE: "#236B8E",
@@ -59,27 +58,29 @@ const ColorList = {
   LIGHT_PINK: "#DC75CD",
   GREEN_SCREEN: "#00FF00",
   ORANGE: "#FF862F",
-}
+};
 var __defined_colors__ = Object.keys(ColorList);
-defineProperties(ColorList);
+defineProperties(ColorList, window, false);
 
 // other color functions
 
-function _randomColor () {
+function _randomColor() {
   var color = "#";
   for (var i = 0; i < 3; i++) {
     var randNum = randomInt(255).toString(16);
     randNum = randNum.length == 1 ? 0 + randNum : randNum;
-    color += randNum
+    color += randNum;
   }
   return color;
 }
 
 function _randomDefinedColor() {
-  return ColorList[__defined_colors__[randomInt(__defined_colors__.length-1)]];
+  return ColorList[
+    __defined_colors__[randomInt(__defined_colors__.length - 1)]
+  ];
 }
 
-defineProperties ({
+defineProperties({
   randomColor: _randomColor,
-  randomDefinedColor: _randomDefinedColor
-})
+  randomDefinedColor: _randomDefinedColor,
+});

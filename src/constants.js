@@ -1,12 +1,12 @@
-const lg = function(){console.log(...arguments)}
 /**
  * defines new properties to a given Object
  *
  * @param {Object} obj source object
+ * @param {boolean} [specific=true] whether to create a specific object
  * @param {Object} [toAssign=window] target object
  * @param {Function} [message] message given on redefining value
  */
-function defineProperties(obj, toAssign = window, message) {
+function defineProperties(obj, toAssign = window, specific = true, message) {
   message =
     typeof message == "function"
       ? message
@@ -15,31 +15,34 @@ function defineProperties(obj, toAssign = window, message) {
             'You changed value of "' + k + '" which C uses. Be careful'
           );
         };
-  for (var i = 0, consts = Object.keys(obj); i < consts.length; i++) {
+  for (var i = 0, props = Object.keys(obj); i < props.length; i++) {
     // definer in IIFE to avoid assigning same values to all properties
-    (function (name, value, toAssign, message) {
-      Object.defineProperty(toAssign, name, {
-        configurable: true,
-        enumerable: true,
-        get: function get() {
-          return value;
-        },
-        set: function set(value) {
-          Object.defineProperty(toAssign, name, {
-            configurable: true,
-            enumerable: true,
-            value: value,
-            writable: true,
-          });
-          message(name);
-        },
-      });
-    })(consts[i], obj[consts[i]], toAssign, message);
+    if (specific) {
+      (function (name, value, toAssign, message) {
+        Object.defineProperty(toAssign, name, {
+          configurable: true,
+          enumerable: true,
+          get: function get() {
+            return value;
+          },
+          set: function set(value) {
+            Object.defineProperty(toAssign, name, {
+              configurable: true,
+              enumerable: true,
+              value: value,
+              writable: true,
+            });
+            message(name);
+          },
+        });
+      })(props[i], obj[props[i]], toAssign, message);
+    } else {
+      window[props[i]] = obj[props[i]];
+    }
   }
 }
 
-const 
-  mathConsts = {
+const mathConsts = {
     E: 2.718281828459045,
     LN2: 0.6931471805599453,
     LN10: 2.302585092994046,
@@ -83,7 +86,7 @@ const
       return sqrt((p1[0] - p2[0]) ** 2 + (p1[1] - p2[1]) ** 2);
     },
     randomInt: function (max = 10, min = 0) {
-      return Math.round(Math.random() * (max - min) + min)
+      return Math.round(Math.random() * (max - min) + min);
     },
     sigmoid: function sigmoid(x) {
       return 1.0 / (1 + Math.exp(-x));
@@ -114,11 +117,11 @@ const
     },
   },
   drawingConstants = {
-    BUTT  : "butt",
+    BUTT: "butt",
     SQUARE: "square",
-    ROUND : "round"
+    ROUND: "round",
   };
 
 defineProperties(mathConsts);
 defineProperties(mathFunctions);
-defineProperties(drawingConstants);
+defineProperties(drawingConstants, window, false);

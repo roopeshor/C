@@ -1,19 +1,21 @@
 var w, H, radius, animatedDrawingCfg, staticDrawingCfg;
 
-function initSize(){
-  W = getContentWidth()/1.2;
+function initSize() {
+  W = getContentWidth() / 1.2;
   // W *= 1.5;
   H = (W / 16) * 9;
   radius = round(H / 2.1);
   animatedDrawingCfg = {
     width: W,
     height: H,
-    name:"animatedCvs"
+    name: "animatedCvs",
   };
-  staticDrawingCfg = { width: W , height: H, name: "staticCvs" }
+  staticDrawingCfg = { width: W, height: H, name: "staticCvs" };
 }
 initSize();
-function $(id) { return document.querySelector(id); }
+function $(id) {
+  return document.querySelector(id);
+}
 
 var static = $(".static"),
   animated = $(".animated"),
@@ -23,7 +25,7 @@ var static = $(".static"),
     ppr: 15, // points per radius
     lw: 1, // line width
     tpf: 50, // time per frame,  time to draw a 2 pairs of line
-    shift: 16
+    shift: 16,
   },
   points = [],
   // custom color list
@@ -87,7 +89,7 @@ function computePoints() {
   for (var i = 0; i <= DC.ppr; i++) points.push([0, i * radius * ratio]);
 
   // points on a arc
-  for (var i = 0; i <= PI * DC.ppr / 2; i++) {
+  for (var i = 0; i <= (PI * DC.ppr) / 2; i++) {
     var x = -sin(i / DC.ppr) * radius,
       y = cos(i / DC.ppr) * radius;
     points.push([x, y]);
@@ -104,11 +106,12 @@ shift.max = points.length - 1;
 function linePairs(i) {
   // multiplying each positions by 1s and -1s to position correctly
   var actions = [
-    [1, 1, 1, 1], // Left Bottom
-    [-1, 1, -1, 1], // Right Bottom
-    [1, -1, 1, -1], //Left Top
-    [-1, -1, -1, -1], // Right top
-  ], l = points.length;
+      [1, 1, 1, 1], // Left Bottom
+      [-1, 1, -1, 1], // Right Bottom
+      [1, -1, 1, -1], //Left Top
+      [-1, -1, -1, -1], // Right top
+    ],
+    l = points.length;
   i = abs(i);
   stroke(colors[i % colors.length]);
   for (var act of actions) {
@@ -116,7 +119,7 @@ function linePairs(i) {
       act[0] * points[i % l][0],
       act[1] * points[i % l][1],
       act[2] * points[(i + DC.shift) % l][0],
-      act[3] * points[(i + DC.shift) % l][1],
+      act[3] * points[(i + DC.shift) % l][1]
     );
   }
 }
@@ -149,14 +152,14 @@ function drawAnimated() {
       linePairs(i, points.length);
       fill(BLACK);
       rect(98, -109, 100, 10);
-      fill(WHITE)
-      text(1000/(elapsed/count), 100, -100)
+      fill(WHITE);
+      text(1000 / (elapsed / count), 100, -100);
     }
   }, "animatedCvs");
 }
 
 function drawEverything() {
-  C(drawStatic,static, staticDrawingCfg);
+  C(drawStatic, static, staticDrawingCfg);
   C(drawAnimated, animated, animatedDrawingCfg);
 }
 
@@ -201,7 +204,7 @@ function autoIncShift(el) {
     clearInterval(window.AIS);
     el.innerText = "Auto Increment Shift";
     el.setAttribute("onclick", "autoIncShift(this)");
-  }
+  };
   window.AIS = setInterval(incShift, DC.tpf);
 }
 
@@ -209,4 +212,4 @@ window.onresize = function () {
   initSize();
   computePoints();
   drawEverything();
-}
+};
