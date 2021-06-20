@@ -343,6 +343,45 @@ function _getFont() {
   return ctx.fontSize + " " + ctx.fontFamily;
 }
 
+function _measureText(text) {
+  return C.workingCanvas.measureText(text);
+}
+
+/**
+ * creates a linear gradient
+ *
+ * @param {array} p1 initial point as [x, y]
+ * @param {array} p2 final point as [x, y]
+ * @param {Object|array} colorStops color stops
+ * @example var color = linearGradient(
+  * [0, 0],
+  * [200, 0],
+  * {
+      0: "green",
+      0.5: "cyan",
+      1: "yellow"
+  * }
+ * );
+ * 
+ */
+function _linearGradient(p1, p2, colorStops) {
+  var ctx = C.workingCanvas;
+  var gradient = ctx.createLinearGradient(p1[0], p1[1], p2[0], p2[1]);
+  if (Array.isArray(colorStops)) {
+    var stops = {};
+    var step = 1/colorStops.length;
+    for (var i = 0; i < colorStops.length; i++) {
+      stops[step*i] = colorStops[i];
+    }
+    colorStops = stops;
+  }
+  for (var stops = Object.keys(colorStops), i = 0; i < stops.length; i++) {
+    var stop = stops[i];
+    gradient.addColorStop(stop, colorStops[stop]);
+  }
+  return gradient;
+}
+
 function _fontSize(size) {
   var ctx = C.workingCanvas;
   size = !isNaN(size)? size + "px": size;
@@ -354,6 +393,18 @@ function _fontFamily(family) {
   var ctx = C.workingCanvas;
   ctx.fontFamily = family;
   ctx.font = getFont();
+}
+
+function _getCanvasData(datURL="image/png"){
+  return C.workingCanvas.canvas.toDataURL(datURL);
+}
+
+function _saveCanvas(name="drawing", datURL) {
+  var link = getCanvasData().replace(datURL, "image/octet-stream");
+  var a =document.createElement("a");
+  a.download = name + ".png";
+  a.href = link;
+  a.click()
 }
 
 C.functions = {
@@ -398,5 +449,9 @@ C.functions = {
   fontSize         : _fontSize,
   fontFamily       : _fontFamily,
   getFont          : _getFont,
+  linearGradient   : _linearGradient,
+  measureText      : _measureText,
+  saveCanvas       : _saveCanvas,
+  getCanvasData    : _getCanvasData,
 };
 defineProperties(C.functions);

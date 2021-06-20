@@ -40,6 +40,7 @@ function C(fx, container = document.body, configs = {}) {
   // initialize canvas
   var canvas = makeCanvas(configs);
 
+  if (typeof container == "string") container = document.querySelector(container);
   var canvasName;
   if (configs.name != undefined) {
     canvasName = configs.name;

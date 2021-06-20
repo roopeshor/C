@@ -1,6 +1,6 @@
 
 const ColorList = {
-  // borrowed from Manim
+  // from Manim
   DARK_BLUE: "#236B8E",
   DARK_BROWN: "#8B4513",
   LIGHT_BROWN: "#CD853F",
