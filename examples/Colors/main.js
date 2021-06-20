@@ -46,6 +46,7 @@ C(
           "Purple",
         ],
         colorIntensities = ["A", "B", "C", "D", "E"];
+
       noFill();
       stroke(BLUE_C);
       rect(0, 0, boxW, boxH);
@@ -110,10 +111,10 @@ C(
       for (var i = 0, k = 0; i < colors.length; i++) {
         var col = colors[i];
         for (var k = 0; k < col.length; k++) {
-          fill(ColorList[col[k]]);
+          fill(COLORLIST[col[k]]);
           if (k == 4) translate(-w * 4, h);
           box(col[k], k);
-          col[k] = ColorList[col[k]];
+          col[k] = COLORLIST[col[k]];
         }
         translate(0, h);
 
