@@ -11,6 +11,7 @@ const defaultConfig = {
   strokeStyle: BLACK,
   fontSize: "20px",
   fontfamily: "sans-serif",
+  _ColorMode: "rgba"
 };
 
 function assignDefaultConfigs(cfgs) {
@@ -86,3 +87,15 @@ function C(fx, container = document.body, configs = {}) {
 C.canvasList = {};
 C.nameID = 0;
 C.workingCanvas = undefined; // index of current working canvas in `canvasList`
+
+// more helpers
+
+/**
+ * add extension to window and C
+ *
+ * @param {Object} extObj
+ */
+ C.addExtension = function(extObj, editable) {
+  defineProperties(extObj, window, !editable);
+  defineProperties(extObj, C.extensions, !editable);
+}

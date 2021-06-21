@@ -120,6 +120,7 @@ const mathConsts = {
     BUTT: "butt",
     SQUARE: "square",
     ROUND: "round",
+    MILTER: "milter"
   };
 
 defineProperties(mathConsts);

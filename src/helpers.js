@@ -7,16 +7,6 @@ function _getContentWidth() {
   return window.innerWidth - parseInt(cs.marginLeft) - parseInt(cs.marginRight);
 }
 
-/**
- * add extension to window and CData
- *
- * @param {Object} extObj
- */
-function _addExtension(extObj, editable) {
-  defineProperties(extObj, window, !editable);
-  defineProperties(extObj, CData.extensions, !editable);
-}
-
 function _getResizedCanvas(cvs, cfgs) {
   var width = cfgs.width;
   var height = cfgs.height;
@@ -37,7 +27,6 @@ function _makeCanvas(cfgs) {
 
 defineProperties({
   getContentWidth: _getContentWidth,
-  addExtension: _addExtension,
   getResizedCanvas: _getResizedCanvas,
   makeCanvas: _makeCanvas,
 });
