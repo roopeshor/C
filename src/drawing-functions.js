@@ -46,7 +46,7 @@ C.functions.line = function (x1, y1, x2, y2) {
   ctx.beginPath();
   ctx.moveTo(x1, y1);
   ctx.lineTo(x2, y2);
-  if (ctx._doStroke) ctx.stroke();
+  ctx.stroke();
   ctx.closePath();
 };
 C.functions.moveTo = function (x, y) {
@@ -66,6 +66,19 @@ C.functions.background = function () {
   ctx.fillRect(0, 0, ctx.W, ctx.H);
   ctx.restore();
 };
+C.functions.clear = function (x=0, y=0,width, height) {
+  var ctx = C.workingCanvas;
+  width = width || ctx.width;
+  height = height || ctx.height;
+  ctx.clearRect(x, y, width, height);
+}
+C.functions.permaBackground = function () {
+  var dat = this.getCanvasData();
+  var cvs = C.workingCanvas.canvas;
+  cvs.style.background= 'url("'+dat+'")'
+  cvs.style.backgroundPosition = "center";
+  cvs.style.backgroundSize = "cover";
+}
 C.functions.transform = function (a1, a2, a3, a4, a5, a6) {
   var ctx = C.workingCanvas;
   ctx.setTransform(a1, a2, a3, a4, a5, a6);
@@ -265,11 +278,6 @@ C.functions.loop = function (fx, cvs, dx) {
     a();
   }
 };
-C.functions.clear = function () {
-  var ctx = C.workingCanvas;
-  ctx.rest();
-  ctx.clearRect(0, 0, ctx.W, ctx.H);
-};
 C.functions.noLoop = function () {
   var ctx = C.workingCanvas;
   clearInterval(ctx.currentLoop);
@@ -377,6 +385,7 @@ C.functions.triangle = function (x1, y1, x2, y2, x3, y3) {
 C.functions.equiTriangle = function (x, y, len, rotation = 0) {
   this.regularPolygon(x, y, 3, len, rotation);
 };
+
 /**
  * Draws a regular polygon with centre position number of sides length of a side and rotation
  * @param {number} x        x position
@@ -386,25 +395,39 @@ C.functions.equiTriangle = function (x, y, len, rotation = 0) {
  * @param {number} rotation rotation
  */
 C.functions.regularPolygon = function (x, y, sides, len, rotation = 0) {
+  len = len / (2 * Math.sin(Math.PI / sides)); // actual radius
+  this.regularPolygonWithRadius(x, y, sides, len, rotation);
+};
+
+/**
+ * Draws a regular polygon that is inside a circle with `radius`
+ * with position of centre, number of sides and rotation
+ * @param {number} x        x position
+ * @param {number} y        y position
+ * @param {number} sides    number of sides
+ * @param {number} radius   radius
+ * @param {number} rotation rotation
+ */
+C.functions.regularPolygonWithRadius = function (x, y, sides, radius, rotation = 0) {
   var i = 0;
   var e = (Math.PI * 2) / sides;
   var ctx = C.workingCanvas;
   rotation += e / 2;
-  len = len / (2*Math.sin(e/2)); // actual radius
-  var initial = [Math.cos(rotation) * len + x, Math.sin(rotation) * len + y];
+  var initial = [Math.cos(rotation) * radius + x, Math.sin(rotation) * radius + y];
   ctx.beginPath();
   ctx.moveTo(initial[0], initial[1]);
   while (i++ < sides) {
     ctx.lineTo(
-      Math.cos(i * e + rotation) * len + x,
-      Math.sin(i * e + rotation) * len + y
+      Math.cos(i * e + rotation) * radius + x,
+      Math.sin(i * e + rotation) * radius + y
     );
   }
   ctx.lineTo(initial[0], initial[1]);
   ctx.closePath();
   if (ctx._doFill) ctx.fill();
   if (ctx._doStroke) ctx.stroke();
-};
+}
+
 C.functions.FPSText = function (
   elapsed,
   rounding = 2,

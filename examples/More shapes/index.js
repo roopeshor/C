@@ -1,27 +1,30 @@
+const W = getContentWidth(),
+H = innerHeight;
 C(
   function () {
     background(0);
-    stroke(TEAL_C);
     fill(TRANSPARENT)
     strokeWidth(2);
     lineJoin(ROUND);
+    translate(W/2, H/2);
+    
+    stroke(WHITE + "a0");
+    line(0, -H, 0, H);
+    line(-W, 0, W, 0);
 
-    var len = 100, x = 300, y = 300;
-    equiTriangle(x, y, 400, 0);
-    regularPolygon(300, 300, 6, len);
-    for (var i = 1/2, e = PI/3; i <= 5; i+=2) {
-      line(
-        cos(i * e) * len/1.15 + x,
-        sin(i * e) * len/1.15 + y,
-        cos((i+1) * e) * len/1.15 + x,
-        sin((i+1) * e) * len/1.15 + y
-      );
+    var radius = 10;
+    for (var i = 3; i < 7; i++) {
+      radius += 50
+      stroke(TEAL_C);
+      regularPolygonWithRadius(0, 0, i, radius);
+      stroke(PURPLE_C + "50")
+      circle(0, 0, radius)
     }
   },
   ".container",
   {
-    width: getContentWidth(),
-    height: innerHeight,
+    width: W,
+    height: H,
     name: "mycvs",
   }
 );
