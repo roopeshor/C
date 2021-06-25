@@ -9,8 +9,8 @@ var consts = {
 
 function arange(start, end, step, rev = false) {
   var arr = [];
-  if (rev) for (var i = end; i >= start; i -= step) arr.push(i);
-  else for (var i = start; i <= end; i += step) arr.push(i);
+  if (rev) for (let i = end; i >= start; i -= step) arr.push(i);
+  else for (let i = start; i <= end; i += step) arr.push(i);
   return arr;
 }
 
@@ -30,24 +30,26 @@ function applyDefault(_default, target = {}) {
   return target;
 }
 
-for (var constNames = Object.keys(consts), i = 0; i < constNames.length; i++) {
+function _def_(name, getter) {
+  console.log(name);
+  Object.defineProperty(window, name, {
+    configurable: true,
+    enumerable: true,
+    get: getter,
+    set: function set(value) {
+      Object.defineProperty(window, name, {
+        configurable: true,
+        enumerable: true,
+        value: value,
+        writable: true,
+      });
+    },
+  });
+}
+
+for (let constNames = Object.keys(consts), i = 0; i < constNames.length; i++) {
   var _const = constNames[i];
-  (function (name, getter) {
-    console.log(name);
-    Object.defineProperty(window, name, {
-      configurable: true,
-      enumerable: true,
-      get: getter,
-      set: function set(value) {
-        Object.defineProperty(window, name, {
-          configurable: true,
-          enumerable: true,
-          value: value,
-          writable: true,
-        });
-      },
-    });
-  })(_const, consts[_const]);
+  _def_(_const, consts[_const]);
 }
 
 /**
@@ -299,7 +301,6 @@ ext.numberLine = function (config = {}) {
   var lineLength = config.length,
     rotation = config.rotation,
     center = config.center,
-    range = config.range,
     numbersToExclude = config.numbersToExclude,
     numbersToInclude = config.numbersToInclude,
     numbersWithElongatedTicks = config.numbersWithElongatedTicks,
@@ -325,7 +326,7 @@ ext.numberLine = function (config = {}) {
   // if number of decimal places is not defined
   // find it using `step`
   if (isNaN(decimalPlaces)) {
-    decimalPlaces = range[2].toString().split(".")[1]?.length || 0;
+    decimalPlaces = (range[2].toString().split(".")[1] || []).length || 0;
   }
 
   var min = range[0],
@@ -538,7 +539,7 @@ ext.numberPlane = function (config = {}) {
     }
     translate(-xMin, yMin);
     // vertical grid lines
-    for (var i = 0; i <= yNums; i++) {
+    for (let i = 0; i <= yNums; i++) {
       // draw major grid lines
       drawMajor(
         0, // x - shift
@@ -550,7 +551,7 @@ ext.numberPlane = function (config = {}) {
       );
 
       // draw subgrid grid lines
-      for (var k = 1; k <= subgrids && i < yNums; k++) {
+      for (let k = 1; k <= subgrids && i < yNums; k++) {
         drawMinor(xMin, k * subgrid_yDX, xMax, k * subgrid_yDX);
       }
       translate(0, -i * yDX);

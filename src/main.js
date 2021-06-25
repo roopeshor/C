@@ -11,7 +11,7 @@ const defaultConfig = {
   strokeStyle: BLACK,
   fontSize: "20px",
   fontfamily: "sans-serif",
-  _ColorMode: "rgba"
+  _ColorMode: "rgba",
 };
 
 function assignDefaultConfigs(cfgs) {
@@ -95,7 +95,7 @@ C.workingCanvas = undefined; // index of current working canvas in `canvasList`
  *
  * @param {Object} extObj
  */
- C.addExtension = function(extObj, editable) {
+C.addExtension = function (extObj, editable) {
   defineProperties(extObj, window, !editable);
   defineProperties(extObj, C.extensions, !editable);
-}
+};

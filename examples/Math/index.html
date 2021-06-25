@@ -11,13 +11,15 @@
   <script defer src="../../src/drawing-functions.js"></script>
   <script defer src="../../Extensions/Math/main.js"></script>
   
+  <script src="https://cdn.jsdelivr.net/gh/Roopesh2/Colorful@master/src/core.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/gh/Roopesh2/Colorful@master/src/JavaScript.js" defer></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Roopesh2/Colorful@master/src/style.css" />
   <script defer src="./index.js" ></script>
   <style>
     body, html {
       margin-top: 0;
       padding: 10px;
       padding-top: 0;
-      position: fixed;
       font-family: sans-serif;
       background-color: #232323;
       color: white;
@@ -26,9 +28,26 @@
 </head>
 <body>
   <div class="graph-example">
-    <h1>Unit Graph</h1>
-    <div class="container"></div>
-    <div class="JS-language"></div>
+    <h1>Graph</h1>
+    <div class="graph"></div>
+    <pre class="cf-JS">
+numberPlane({
+  xAxis: {
+    range: [-1, 1, 0.25],
+    length: 400,
+    textSize: 12
+  },
+  yAxis: {
+    range: [-1, 1, 0.25],
+    length: 400,
+    textSize: 12
+  },
+  grid: {
+    draw: true, // draw grid
+    subgrids: 2 // number of sub-grids
+  }
+});
+    </pre>
   </div>
 </body>
 </html>

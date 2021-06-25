@@ -7,10 +7,12 @@
    * @param {Object} [toAssign=window] target object
    * @param {Function} [message] message given on redefining value
    */
-  function _defineProperties(obj, toAssign = window, specific = true, message) {
+  function defineProperties(obj, toAssign, specific, message) {
+    toAssign = toAssign || window;
+    specific = specific == undefined || specific == null ? window : specific;
+    toAssign = toAssign || window;
     message =
-      typeof message == "function"
-        ? message
+      typeof message == "function" ? message
         : function (k) {
             console.warn(
               'You changed value of "' + k + '" which C uses. Be careful'
@@ -86,7 +88,9 @@
            * @return {number} distance between p1 and p2
            */
           dist: function dist(p1, p2) {
-            return sqrt((p1[0] - p2[0]) ** 2 + (p1[1] - p2[1]) ** 2);
+            return sqrt(
+              Math.pow(p1[0] - p2[0], 2) + Math.pow(p1[1] - p2[1], 2)
+            );
           },
           randomInt: function (max = 10, min = 0) {
             return Math.round(Math.random() * (max - min) + min);
@@ -501,7 +505,8 @@
           doFill: ctx._doFill,
         };
       }
-      function _arc(x, y, r, sa = 0, ea) {
+      function _arc(x, y, r, sa, ea) {
+        sa = sa || 0;
         var ctx = C.workingCanvas;
         ctx.beginPath();
         ctx.arc(x, y, r, sa || 0, isNaN(ea) ? PI * 2 : ea);
@@ -514,7 +519,7 @@
         ctx.moveTo(x, y);
         ctx.arc(x, y, r, sa, ea);
       }
-      function _text(text, x, y = x, maxwidth) {
+      function _text(text, x, y = x, maxwidth = undefined) {
         var ctx = C.workingCanvas;
         if (ctx._doFill) ctx.fillText(text, x, y, maxwidth);
         else if (ctx._doStroke) ctx.strokeText(text, x, y, maxwidth);
@@ -674,12 +679,12 @@
             fx(window.performance.now() - timeStart);
           }, dx);
         } else {
-          function a(dx) {
-            C.workingCanvas = ctx;
-            ctx.currentLoop = window.requestAnimationFrame(a);
-            fx(window.performance.now() - timeStart);
-          }
           a();
+        }
+        function a(dx) {
+          C.workingCanvas = ctx;
+          ctx.currentLoop = window.requestAnimationFrame(a);
+          fx(window.performance.now() - timeStart);
         }
       }
       function _clear() {
@@ -734,13 +739,13 @@
         if (Array.isArray(colorStops)) {
           let stops = {};
           var step = 1 / colorStops.length;
-          for (var i = 0; i < colorStops.length; i++) {
+          for (let i = 0; i < colorStops.length; i++) {
             stops[step * i] = colorStops[i];
           }
           colorStops = stops;
         }
         for (
-          var stops = Object.keys(colorStops), i = 0;
+          let stops = Object.keys(colorStops), i = 0;
           i < stops.length;
           i++
         ) {
@@ -763,7 +768,7 @@
       function _getCanvasData(datURL = "image/png") {
         return C.workingCanvas.canvas.toDataURL(datURL);
       }
-      function _saveCanvas(name = "drawing", datURL) {
+      function _saveCanvas(name = "drawing", datURL = "image/png") {
         var link = getCanvasData().replace(datURL, "image/octet-stream");
         var a = document.createElement("a");
         a.download = name + ".png";

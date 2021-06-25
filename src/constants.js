@@ -6,10 +6,12 @@
  * @param {Object} [toAssign=window] target object
  * @param {Function} [message] message given on redefining value
  */
-function defineProperties(obj, toAssign = window, specific = true, message) {
+function defineProperties(obj, toAssign, specific, message) {
+  toAssign = toAssign || window;
+  specific = (specific == undefined || specific == null) ? window : specific;
+  toAssign = toAssign || window;
   message =
-    typeof message == "function"
-      ? message
+    typeof message == "function" ? message
       : function (k) {
           console.warn(
             'You changed value of "' + k + '" which C uses. Be careful'
@@ -83,7 +85,7 @@ const mathConsts = {
      * @return {number} distance between p1 and p2
      */
     dist: function dist(p1, p2) {
-      return sqrt((p1[0] - p2[0]) ** 2 + (p1[1] - p2[1]) ** 2);
+      return sqrt(Math.pow(p1[0] - p2[0], 2) + Math.pow(p1[1] - p2[1], 2));
     },
     randomInt: function (max = 10, min = 0) {
       return Math.round(Math.random() * (max - min) + min);

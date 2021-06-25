@@ -86,10 +86,10 @@ function computePoints() {
   points = [];
   var ratio = 1 / DC.ppr;
   // points in a vertical radius line
-  for (var i = 0; i <= DC.ppr; i++) points.push([0, i * radius * ratio]);
+  for (let i = 0; i <= DC.ppr; i++) points.push([0, i * radius * ratio]);
 
   // points on a arc
-  for (var i = 0; i <= (PI * DC.ppr) / 2; i++) {
+  for (let i = 0; i <= (PI * DC.ppr) / 2; i++) {
     var x = -sin(i / DC.ppr) * radius,
       y = cos(i / DC.ppr) * radius;
     points.push([x, y]);

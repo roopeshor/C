@@ -1,5 +1,5 @@
-var W = 450//getContentWidth(),
-  H = 450//innerHeight;
+var W = 450, //getContentWidth(),
+  H = 450; //innerHeight;
 
 C(
   function () {
@@ -8,20 +8,20 @@ C(
       xAxis: {
         range: [-1, 1, 0.25],
         length: 400,
-        textSize: 12
+        textSize: 12,
       },
       yAxis: {
         range: [-1, 1, 0.25],
         length: 400,
-        textSize: 12
+        textSize: 12,
       },
       grid: {
         draw: true,
-        subgrids: 2
-      }
+        subgrids: 2,
+      },
     });
   },
-  ".container",
+  ".graph",
   {
     width: W,
     height: H,

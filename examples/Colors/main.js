@@ -55,7 +55,7 @@ C(
       fill(BLUE_A);
       for (var i = 0, k = 0; i < colors.length; i++) {
         var col = colors[i];
-        for (var k = 0; k < col.length; k++) {
+        for (let k = 0; k < col.length; k++) {
           fill(col[k]);
 
           // header
@@ -84,7 +84,8 @@ C(
       // second set
       w = 145;
       paddingX = 5;
-      (boxW = w * 5 + paddingX + 10), (boxH = h * 4 + paddingY);
+      boxW = w * 5 + paddingX + 10;
+      boxH = h * 4 + paddingY;
       fontSize(18);
       var colors = [
           ["DARK_BLUE", "DARK_BROWN", "LIGHT_BROWN"],
@@ -110,7 +111,7 @@ C(
 
       for (var i = 0, k = 0; i < colors.length; i++) {
         var col = colors[i];
-        for (var k = 0; k < col.length; k++) {
+        for (let k = 0; k < col.length; k++) {
           fill(COLORLIST[col[k]]);
           if (k == 4) translate(-w * 4, h);
           box(col[k], k);

@@ -66,20 +66,22 @@ C.functions.background = function () {
   ctx.fillRect(0, 0, ctx.W, ctx.H);
   ctx.restore();
 };
-C.functions.clear = function (x=0, y=0,width, height) {
+C.functions.clear = function (x, y, width, height) {
   var ctx = C.workingCanvas;
+  x = x || 0;
+  y = y || 0;
   width = width || ctx.width;
   height = height || ctx.height;
   ctx.clearRect(x, y, width, height);
-}
+};
 C.functions.permaBackground = function () {
   var dat = this.getCanvasData();
   var cvs = C.workingCanvas.canvas;
 
-  cvs.style.background= 'url("'+dat+'")'
+  cvs.style.background = 'url("' + dat + '")';
   cvs.style.backgroundPosition = "center";
   cvs.style.backgroundSize = "cover";
-}
+};
 C.functions.transform = function (a1, a2, a3, a4, a5, a6) {
   var ctx = C.workingCanvas;
   ctx.setTransform(a1, a2, a3, a4, a5, a6);
@@ -159,7 +161,8 @@ C.functions.getDrawConfigs = function () {
     doFill: ctx._doFill,
   };
 };
-C.functions.arc = function (x, y, r, sa = 0, ea) {
+C.functions.arc = function (x, y, r, sa, ea) {
+  sa = sa || 0;
   var ctx = C.workingCanvas;
   ctx.beginPath();
   ctx.arc(x, y, r, sa || 0, isNaN(ea) ? Math.PI * 2 : ea);
@@ -167,7 +170,7 @@ C.functions.arc = function (x, y, r, sa = 0, ea) {
   if (ctx._doStroke) ctx.stroke();
   ctx.closePath();
 };
-C.functions.text = function (text, x, y = x, maxwidth) {
+C.functions.text = function (text, x, y = x, maxwidth = undefined) {
   var ctx = C.workingCanvas;
   if (ctx._doFill) ctx.fillText(text, x, y, maxwidth);
   else if (ctx._doStroke) ctx.strokeText(text, x, y, maxwidth);
@@ -266,12 +269,12 @@ C.functions.loop = function (fx, cvs, dx) {
       fx();
     }, dx);
   } else {
-    function a() {
-      C.workingCanvas = ctx;
-      ctx.currentLoop = window.requestAnimationFrame(a);
-      fx();
-    }
     a();
+  }
+  function a() {
+    C.workingCanvas = ctx;
+    ctx.currentLoop = window.requestAnimationFrame(a);
+    fx();
   }
 };
 C.functions.noLoop = function () {
@@ -324,7 +327,7 @@ C.functions.linearGradient = function _linearGradient(p1, p2, colorStops) {
     }
     colorStops = stops;
   }
-  for (var stops = Object.keys(colorStops), i = 0; i < stops.length; i++) {
+  for (let stops = Object.keys(colorStops), i = 0; i < stops.length; i++) {
     var stop = stops[i];
     gradient.addColorStop(stop, colorStops[stop]);
   }
@@ -344,14 +347,16 @@ C.functions.fontFamily = function _fontFamily(family) {
 C.functions.getCanvasData = function _getCanvasData(datURL = "image/png") {
   return C.workingCanvas.canvas.toDataURL(datURL);
 };
-C.functions.saveCanvas = function _saveCanvas(name = "drawing", datURL) {
+C.functions.saveCanvas = function _saveCanvas(
+  name = "drawing",
+  datURL = "image/png"
+) {
   var link = getCanvasData().replace(datURL, "image/octet-stream");
   var a = document.createElement("a");
   a.download = name + ".png";
   a.href = link;
   a.click();
 };
-
 
 // more
 C.functions.point = function (x, y, size = 1) {
@@ -404,12 +409,21 @@ C.functions.regularPolygon = function (x, y, sides, len, rotation = 0) {
  * @param {number} radius   radius
  * @param {number} rotation rotation
  */
-C.functions.regularPolygonWithRadius = function (x, y, sides, radius, rotation = 0) {
+C.functions.regularPolygonWithRadius = function (
+  x,
+  y,
+  sides,
+  radius,
+  rotation = 0
+) {
   var i = 0;
   var e = (Math.PI * 2) / sides;
   var ctx = C.workingCanvas;
   rotation += e / 2;
-  var initial = [Math.cos(rotation) * radius + x, Math.sin(rotation) * radius + y];
+  var initial = [
+    Math.cos(rotation) * radius + x,
+    Math.sin(rotation) * radius + y,
+  ];
   ctx.beginPath();
   ctx.moveTo(initial[0], initial[1]);
   while (i++ < sides) {
@@ -422,7 +436,7 @@ C.functions.regularPolygonWithRadius = function (x, y, sides, radius, rotation =
   ctx.closePath();
   if (ctx._doFill) ctx.fill();
   if (ctx._doStroke) ctx.stroke();
-}
+};
 
 C.functions.FPSText = function (
   elapsed,
@@ -433,6 +447,5 @@ C.functions.FPSText = function (
   var t = 1000 / elapsed;
   text("FPS: " + t.toFixed(rounding), 300, 90);
 };
-
 
 defineProperties(C.functions);

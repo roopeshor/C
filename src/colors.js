@@ -83,5 +83,9 @@ defineProperties({
   randomColor: _randomColor,
   randomDefinedColor: _randomDefinedColor,
 });
-defineProperties(Object.assign({TRANSPARENT: "rgba(0,0,0,0)"}, ColorList), window, false);
+defineProperties(
+  Object.assign({ TRANSPARENT: "rgba(0,0,0,0)" }, ColorList),
+  window,
+  false
+);
 defineProperties({ COLORLIST: ColorList }, window, false);
