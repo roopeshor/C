@@ -1,32 +1,30 @@
-var W = getContentWidth(),
-H = innerHeight;
+var W = 450//getContentWidth(),
+  H = 450//innerHeight;
 
 C(
   function () {
     init_Canvas();
-    var r = PI / 3;
-    background(0);
-    stroke(GREY);
-    var unitLength = numberLine({
-      includeLeftTip: 1,
-      includeRightTip: 1
+    numberPlane({
+      xAxis: {
+        range: [-1, 1, 0.25],
+        length: 400,
+        textSize: 12
+      },
+      yAxis: {
+        range: [-1, 1, 0.25],
+        length: 400,
+        textSize: 12
+      },
+      grid: {
+        draw: true,
+        subgrids: 2
+      }
     });
-    strokeWidth(1);
-    noFill(GREEN_C);
-    stroke(GREEN_C);
-    circle(0, 0, unitLength);
-    permaBackground();
-    loop(function(){
-      clear();
-      arrow(0, 0, cos(r) * unitLength, sin(r) * unitLength, 30, 0.7);
-      r -= PI / 500;
-
-    }, "ex")
   },
   ".container",
   {
     width: W,
     height: H,
-    name: "ex",
+    name: "graph",
   }
 );

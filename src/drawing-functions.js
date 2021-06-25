@@ -75,6 +75,7 @@ C.functions.clear = function (x=0, y=0,width, height) {
 C.functions.permaBackground = function () {
   var dat = this.getCanvasData();
   var cvs = C.workingCanvas.canvas;
+
   cvs.style.background= 'url("'+dat+'")'
   cvs.style.backgroundPosition = "center";
   cvs.style.backgroundSize = "cover";
@@ -259,21 +260,16 @@ C.functions.loop = function (fx, cvs, dx) {
   } else {
     ctx = C.canvasList[cvs];
   }
-  var Dx = 0.01; // ms
   if (dx) {
     ctx.currentLoop = setInterval(function () {
-      var timeStart = window.performance.now();
       C.workingCanvas = ctx;
-      fx(Dx);
-      Dx = window.performance.now() - timeStart;
+      fx();
     }, dx);
   } else {
     function a() {
-      var timeStart = window.performance.now();
       C.workingCanvas = ctx;
       ctx.currentLoop = window.requestAnimationFrame(a);
-      fx(Dx);
-      Dx = window.performance.now() - timeStart;
+      fx();
     }
     a();
   }
