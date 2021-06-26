@@ -31,7 +31,6 @@ function applyDefault(_default, target = {}) {
 }
 
 function _def_(name, getter) {
-  console.log(name);
   Object.defineProperty(window, name, {
     configurable: true,
     enumerable: true,
@@ -97,7 +96,6 @@ ext.arrow = function (x1, y1, x2, y2, tipWidth = 10, tipScaleRatio = 0.7) {
   y2 -= yd;
   line(x1, y1, x2, y2);
 };
-
 /**
  * creates a axes.
  * xAxis: <object> params for x axis.
@@ -113,14 +111,15 @@ ext.axes = function (config = {}) {
   var ctx = C.workingCanvas,
     // default configurations
     xAxisDefaults = {
-      length: [ctx.W, "number"],
+      length: [ctx.width, "number"],
       includeNumbers: [false],
       includeTick: [false],
       includeLeftTip: [true],
       includeRightTip: [true],
+      textDirection: [-0.3, -1]
     },
     yAxisDefaults = {
-      length: [ctx.H, "number"],
+      length: [ctx.height, "number"],
       rotation: [PI / 2, "number"],
       textRotation: [-PI / 2, "number"],
       includeNumbers: [false],
@@ -172,7 +171,6 @@ ext.axes = function (config = {}) {
     yAxis: yAxisLine, // y axis confiurations from numberLine
   };
 };
-
 /**
  *
  *
@@ -194,7 +192,6 @@ ext.arrowHead = function (x, y, width = 10, ang = 0, tipScaleRatio = 2) {
   if (ctx._doFill) ctx.fill();
   else ctx.stroke();
 };
-
 /**
  * draws a double edged arrow
  *
@@ -226,9 +223,9 @@ ext.doubleArrow = function (
 /**
  * Creates a numberLine with parameters in a object
  * (default values for each properties are given in square brackets)
- * point1 : <Array> [[-ctx.W / 2, 0]]
+ * point1 : <Array> [[-ctx.width / 2, 0]]
  *   starting point of line
- * point2 : <Array> [[ctx.W / 2, 0]]
+ * point2 : <Array> [[ctx.width / 2, 0]]
  *   ending point of line
  * range : <Array> [[-8, 8, 1]]
  *   range of numbers to draw ticks and numbers
@@ -274,7 +271,7 @@ ext.doubleArrow = function (
 ext.numberLine = function (config = {}) {
   var ctx = C.workingCanvas;
   defaultConfigs = {
-    length: [ctx.W, "number"],
+    length: [ctx.width, "number"],
     rotation: [0],
     center: [[0, 0]],
     range: [[-8, 8, 1], "array"],
@@ -292,7 +289,7 @@ ext.numberLine = function (config = {}) {
     excludeOriginTick: [false],
     longerTickMultiple: [1.5, "number"],
     tickHeight: [15, "number"],
-    textDirection: [[0, -0.8]],
+    textDirection: [[-0.3, -1]],
     textColor: [WHITE],
     textSize: [17, "number"],
     textRotation: [0],
@@ -422,7 +419,6 @@ ext.numberLine = function (config = {}) {
     tickList: list,
   };
 };
-
 /**
  * creates a numberPlane based on following parameters inside a Object
  * xAxis: <object> params for x axis.
@@ -444,8 +440,8 @@ ext.numberPlane = function (config = {}) {
   var ctx = C.workingCanvas,
     // default configurations
     xAxisDefaults = {
-      textDirection: [[-0.3, -1]],
-      length: [ctx.W, "number"],
+      textDirection: [[0, -1.1]],
+      length: [ctx.width, "number"],
       excludeOriginTick: [true],
       includeLeftTip: [false],
       includeRightTip: [false],
@@ -453,8 +449,8 @@ ext.numberPlane = function (config = {}) {
       includeTick: [true],
     },
     yAxisDefaults = {
-      textDirection: [[-0.1, 0.6]],
-      length: [ctx.H, "number"],
+      textDirection: [[0, 0.8]],
+      length: [ctx.height, "number"],
       textRotation: [-PI / 2, "number"],
       excludeOriginTick: [true],
       includeLeftTip: [false],

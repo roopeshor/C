@@ -63,7 +63,7 @@ C.functions.background = function () {
   ctx.save();
   this.rest();
   ctx.fillStyle = col;
-  ctx.fillRect(0, 0, ctx.W, ctx.H);
+  ctx.fillRect(0, 0, ctx.width, ctx.height);
   ctx.restore();
 };
 C.functions.clear = function (x, y, width, height) {

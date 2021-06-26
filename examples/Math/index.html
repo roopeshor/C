@@ -1,53 +1,91 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Colors</title>
-  <script defer src="../../src/constants.js"></script>
-  <script defer src="../../src/helpers.js"></script>
-  <script defer src="../../src/colors.js"></script>
-  <script defer src="../../src/main.js"></script>
-  <script defer src="../../src/drawing-functions.js"></script>
-  <script defer src="../../Extensions/Math/main.js"></script>
-  
-  <script src="https://cdn.jsdelivr.net/gh/Roopesh2/Colorful@master/src/core.js" defer></script>
-  <script src="https://cdn.jsdelivr.net/gh/Roopesh2/Colorful@master/src/JavaScript.js" defer></script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Roopesh2/Colorful@master/src/style.css" />
-  <script defer src="./index.js" ></script>
-  <style>
-    body, html {
-      margin-top: 0;
-      padding: 10px;
-      padding-top: 0;
-      font-family: sans-serif;
-      background-color: #232323;
-      color: white;
-    }
-  </style>
-</head>
-<body>
-  <div class="graph-example">
-    <h1>Graph</h1>
-    <div class="graph"></div>
-    <pre class="cf-JS">
-numberPlane({
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Colors</title>
+    <script defer src="../../src/constants.js"></script>
+    <script defer src="../../src/helpers.js"></script>
+    <script defer src="../../src/colors.js"></script>
+    <script defer src="../../src/main.js"></script>
+    <script defer src="../../src/drawing-functions.js"></script>
+    <script defer src="../../Extensions/Math/main.js"></script>
+
+    <script
+      src="https://cdn.jsdelivr.net/gh/Roopesh2/Colorful@master/src/core.js"
+      defer
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/gh/Roopesh2/Colorful@master/src/JavaScript.js"
+      defer
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/Roopesh2/Colorful@master/src/style.css"
+    />
+    <script defer src="./index.js"></script>
+    <style>
+      body,
+      html {
+        margin-top: 0;
+        padding: 10px;
+        padding-top: 0;
+        font-family: sans-serif;
+        background-color: #232323;
+        color: white;
+      }
+      h1 {
+        font-size: 30px;
+      }
+      section {
+        margin-bottom: 70px;
+      }
+    </style>
+  </head>
+  <body>
+    <section class="numberLine-example">
+      <h1>numberLine</h1>
+      <div class="numberLine"></div>
+      <pre class="cf-JS">
+numberLine({
+  range: [-3, 3, 1],
+  length: 400,
+  textSize: 15
+});</pre>
+    </section>
+    <section class="axes-example">
+      <h1>axes</h1>
+      <div class="axes"></div>
+      <pre class="cf-JS">
+axes({
   xAxis: {
-    range: [-1, 1, 0.25],
     length: 400,
-    textSize: 12
   },
   yAxis: {
-    range: [-1, 1, 0.25],
     length: 400,
-    textSize: 12
+  },
+});</pre>
+    </section>
+    <section class="numberPlane-example">
+      <h1>numberPlane</h1>
+      <div class="numberPlane"></div>
+      <pre class="cf-JS">
+numberPlane({
+  xAxis: {
+    range: [-4, 4, 1],
+    length: 400,
+    textSize: 15,
+  },
+  yAxis: {
+    range: [-4, 4, 1],
+    length: 400,
+    textSize: 15,
   },
   grid: {
-    draw: true, // draw grid
-    subgrids: 2 // number of sub-grids
-  }
-});
-    </pre>
-  </div>
-</body>
+    draw: true,
+    subgrids: 2,
+  },
+});</pre>
+    </section>
+  </body>
 </html>

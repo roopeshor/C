@@ -1,4 +1,4 @@
-var W = 780;
+var C = 780;
 C(
   function () {
     background(BLACK);

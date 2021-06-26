@@ -34,13 +34,13 @@ function assignDefaultConfigs(cfgs) {
 function C(fx, container = document.body, configs = {}) {
   // assign configs
   assignDefaultConfigs(configs);
-  var W = configs.W,
-    H = configs.H;
+  var W = configs.width,
+    H = configs.height;
 
   /* because both canvas.width and canvas.height are multipiled by dpr
      original width and height should be stored as other variables */
-  configs.W = typeof W == "number" && W == configs.width ? W : configs.width;
-  configs.H = typeof H == "number" && H == configs.height ? H : configs.height;
+  configs.width = typeof W == "number" && W == configs.width ? W : configs.width;
+  configs.height = typeof H == "number" && H == configs.height ? H : configs.height;
 
   // initialize canvas
   var canvas = makeCanvas(configs);
