@@ -81,10 +81,15 @@ ext.scale = function (x, y = x) {
 };
 ext.text = function (text, x, y, maxwidth) {
   var ctx = C.workingCanvas;
-  if (ctx.yAxisInveted) scale(1, -1);
-  if (ctx._doFill) ctx.fillText(text, x, -y, maxwidth);
-  else if (ctx._doStroke) ctx.strokeText(text, x, -y, maxwidth);
-  if (ctx.yAxisInveted) scale(1, -1);
+  if (ctx.yAxisInveted){
+    scale(1, -1);
+    if (ctx._doFill) ctx.fillText(text, x, -y, maxwidth);
+    else if (ctx._doStroke) ctx.strokeText(text, x, -y, maxwidth);
+    scale(1, -1);
+  } else {
+    if (ctx._doFill) ctx.fillText(text, x, y, maxwidth);
+    else if (ctx._doStroke) ctx.strokeText(text, x, y, maxwidth);
+  }
 };
 ext.arrow = function (x1, y1, x2, y2, tipWidth = 10, tipScaleRatio = 0.7) {
   var angle = atan2(y2 - y1, x2 - x1); // angle from plain
@@ -99,9 +104,9 @@ ext.arrow = function (x1, y1, x2, y2, tipWidth = 10, tipScaleRatio = 0.7) {
 /**
  * creates a axes.
  * xAxis: <object> params for x axis.
- *   This will be given to numberLine. see `numberLine` function for possible values
+ *   This will be given to numberLine. see {@link ext.numberLine} function for possible values
  * yAxis: <object> params for y axis.
- *   This will be given to numberLine. see `numberLine` function for possible values
+ *   This will be given to numberLine. see {@link ext.numberLine} function for possible values
  * center: <array> [[0, 0]]
  *   center of axes
  * @param {Object} config
@@ -223,46 +228,67 @@ ext.doubleArrow = function (
 /**
  * Creates a numberLine with parameters in a object
  * (default values for each properties are given in square brackets)
+ * 
  * point1 : <Array> [[-ctx.width / 2, 0]]
  *   starting point of line
+ * 
  * point2 : <Array> [[ctx.width / 2, 0]]
  *   ending point of line
+ * 
  * range : <Array> [[-8, 8, 1]]
  *   range of numbers to draw ticks and numbers
+ * 
  * numbersToExclude : <Array> [defaultValue=[]]
  *   list of numbers that shouldn't be displayed
+ * 
  * numbersToInclude : <Array> [defaultValue=[]]
  *   list of numbers to be displayed
+ * 
  * numbersWithElongatedTicks : <Array> [defaultValue=[]]
  *   list of numbers where tick line should be longer
+ * 
  * includeLeftTip : <boolean> [false]
  *   whether to add an arrow tip at left
+ * 
  * includeRightTip : <boolean> [false]
  *   whether to add an arrow tip at right
+ * 
  * tipWidth : <number> [20]
  *   width of arrow tip in px
+ * 
  * tipSizeRatio : <number> [1]
  *   height/width of tip
+ * 
  * color : <hex string> [GREY]
  *   color of axis and ticks
+ * 
  * lineWidth : <number> [3]
  *   width of lines in px
+ * 
  * includeTick : <boolean> [true]
  *   whether ticks should be added
+ * 
  * excludeOriginTick : <boolean> [false]
  *   whether exclude ticks at origin (0)
+ * 
  * longerTickMultiple : <number> [2]
  *   factor to increase height of ticks at elongated ticks
+ * 
  * tickHeight : <number> [15]
  *   height of ticks in px
+ * 
  * textDirection : <array> [0, -0.8]
  *   direction of text relative to nearby tick
+ * 
  * textColor : <hex string> [WHITE]
  *   color of text
+ * 
  * textSize : <number> [17]
  *   font size of text
+ * 
  * textRotation : <number> [0]
  *   amount to rotate text
+ * 
  * decimalPlaces : <number> [number of decimals in step]
  *   number of decimal places in text
  *
@@ -422,19 +448,27 @@ ext.numberLine = function (config = {}) {
 /**
  * creates a numberPlane based on following parameters inside a Object
  * xAxis: <object> params for x axis.
- *   This will be given to numberLine. see `numberLine` function for possible values
+ *   This will be given to numberLine. see {@link ext.numberLine} function for possible values
+
  * yAxis: <object> params for y axis.
- *   This will be given to numberLine. see `numberLine` function for possible values
+ *   This will be given to numberLine. see {@link ext.numberLine} function for possible values
+ * 
  * grid : <object> set of styles to draw grid & subgrids
+ * 
  * possible properties:
  *   lineWidth        : <number> stroke width of grid lines [1],
+ * 
  *   color            : <hex string> color of grid lines ["#58C4DDA0"],
+ * 
  *   subgrids         : <number> number of sub-grid division to draw [0],
+ * 
  *   subgridLineColor : <hex string> color of sub-grids ["#888888A0"],
+ * 
  *   subgridLineWidth : <number> stroke width of sub-grid [0.7],
  **
  * @param {Object} config
- * @returns graph configurations
+ * @returns {Object} configurations
+ * {@link ext.numberPlane}
  */
 ext.numberPlane = function (config = {}) {
   var ctx = C.workingCanvas,

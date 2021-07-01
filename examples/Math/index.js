@@ -1,4 +1,4 @@
-var W = 450, //getContentWidth(),
+var W = getContainerWidth(document.querySelector("section")),
   H = 450; //innerHeight;
 
 var functions = {

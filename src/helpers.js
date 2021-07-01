@@ -1,32 +1,55 @@
+var helpers = {};
+
 /**
- * return inner width of body tag
+ * return inner width of container tag
+ * @param {HTMLElement} [container=document.body]
  * @returns {Number}
  */
-function _getContentWidth() {
-  var cs = window.getComputedStyle(document.body);
-  return window.innerWidth - parseInt(cs.marginLeft) - parseInt(cs.marginRight);
-}
+ helpers.getContainerWidth = function (container=document.body) {
+  var cs = window.getComputedStyle(container);
+  return (
+    parseInt(cs.width) -
+    parseInt(cs.marginLeft) -
+    parseInt(cs.marginRight) -
+    parseInt(cs.paddingRight) -
+    parseInt(cs.paddingLeft)
+  );
+};
 
-function _getResizedCanvas(cvs, cfgs) {
-  var width = cfgs.width;
-  var height = cfgs.height;
-  var dpr = cfgs.dpr;
+/**
+ * set width and height attribute of canvas element to the given values in `configs`
+ * and scales CSS width and height to DPR
+ *
+ * values needed in `configs`:
+ *
+ *   width: <Number> width in pixels
+ *
+ *   height: <Number> height in pixels
+ *
+ *   dpr: <Number> dpr
+ * @param {HTMLCanvasElement} cvs
+ * @param {Object} configs
+ */
+helpers.getResizedCanvas = function (cvs, configs) {
+  var width = configs.width;
+  var height = configs.height;
+  var dpr = configs.dpr;
   cvs.style.width = width + "px";
   cvs.style.height = height + "px";
   cvs.width = dpr * width;
   cvs.height = dpr * height;
-}
-function _makeCanvas(cfgs) {
-  /**
-   * create canvas with given parameters
-   */
-  var cvs = document.createElement("canvas");
-  _getResizedCanvas(cvs, cfgs);
-  return cvs;
-}
+};
 
-defineProperties({
-  getContentWidth: _getContentWidth,
-  getResizedCanvas: _getResizedCanvas,
-  makeCanvas: _makeCanvas,
-});
+/**
+ * returns a canvas element with given params
+ *
+ * @param {Object} configs
+ * @returns {HTMLCanvasElement}
+ */
+helpers.makeCanvas = function (configs) {
+  var cvs = document.createElement("canvas");
+  this.getResizedCanvas(cvs, configs);
+  return cvs;
+};
+
+defineProperties(helpers);
