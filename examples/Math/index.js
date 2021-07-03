@@ -1,7 +1,7 @@
 var W = getContainerWidth(document.querySelector("section")),
   H = 450; //innerHeight;
 
-var functions = {
+var examples = {
   numberLine: {
     fx: function () {
       numberLine({
@@ -57,14 +57,14 @@ var functions = {
   },
 };
 
-for (var i = 0, _functions = Object.keys(functions); i < _functions.length; i++) {
-  var _function = functions[_functions[i]];
+for (var i = 0, _functions = Object.keys(examples); i < _functions.length; i++) {
+  var example = examples[_functions[i]];
   C(
     function () { // jshint ignore:line
       init_Canvas();
-      _function.fx();
+      example.fx();
     },
     "."+_functions[i],
-    Object.assign(_function.configs, {name: _functions[i]})
+    Object.assign(example.configs, {name: _functions[i]})
   );
 }

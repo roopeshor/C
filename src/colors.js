@@ -1,7 +1,8 @@
 var __definedColors__ = Object.keys(COLORLIST);
 
 // color randomizers
-function _randomColor() {
+var randomizers = {};
+randomizers.randomColor =  function () {
   var color = "#";
   for (var i = 0; i < 3; i++) {
     var randNum = randomInt(255).toString(16);
@@ -9,11 +10,11 @@ function _randomColor() {
     color += randNum;
   }
   return color;
-}
+};
 
-function _randomDefinedColor() {
+randomizers.randomDefinedColor =  function () {
   return COLORLIST[__definedColors__[randomInt(__definedColors__.length - 1)]];
-}
+};
 
 // color conversions
 function hue2RGB(p, q, t) {
@@ -25,6 +26,7 @@ function hue2RGB(p, q, t) {
   return p;
 }
 
+var colorConverters = {};
 /**
  * Converts an RGB color value to HSL. Conversion formula
  * adapted from http://en.wikipedia.org/wiki/HSL_color_space.
@@ -36,7 +38,7 @@ function hue2RGB(p, q, t) {
  * @param {number} blue The blue color value
  * @return {array} The HSL representation
  */
-function _RGBToHSL(red, green, blue) {
+colorConverters.RGBToHSL = function (red, green, blue) {
   var r = red / 255,
     g = green / 255,
     b = blue / 255;
@@ -66,7 +68,7 @@ function _RGBToHSL(red, green, blue) {
   }
 
   return [hue * 360, saturation, lightness];
-}
+};
 
 /**
  * Converts an HSL color value to RGB. Conversion formula
@@ -79,15 +81,14 @@ function _RGBToHSL(red, green, blue) {
  * @param {number} lightness The lightness
  * @return {array} The RGB representation
  */
-function _HSLToRGB(hue, saturation, lightness) {
+colorConverters.HSLToRGB = function (hue, saturation, lightness) {
   var r, g, b;
   hue /= 360;
   if (saturation == 0) {
     r = g = b = lightness; // achromatic
   } else {
     var q =
-      lightness < 0.5
-        ? lightness * (1 + saturation)
+      lightness < 0.5 ? lightness * (1 + saturation)
         : lightness + saturation - lightness * saturation;
     var p = 2 * lightness - q;
     r = hue2RGB(p, q, hue + 1 / 3);
@@ -96,7 +97,7 @@ function _HSLToRGB(hue, saturation, lightness) {
   }
 
   return [r * 255, g * 255, b * 255];
-}
+};
 
 /**
  * Converts an RGB color value to HSV. Conversion formula
@@ -109,7 +110,7 @@ function _HSLToRGB(hue, saturation, lightness) {
  * @param {number} blue The blue color value
  * @return {array} The HSV representation
  */
-function _RGBToHSV(red, green, blue) {
+colorConverters.RGBToHSV = function (red, green, blue) {
   var r = red / 255,
     g = green / 255,
     b = blue / 255;
@@ -140,7 +141,7 @@ function _RGBToHSV(red, green, blue) {
   }
 
   return [hue * 360, saturation, value];
-}
+};
 
 /**
  * Converts an HSV color value to RGB. Conversion formula
@@ -153,7 +154,7 @@ function _RGBToHSV(red, green, blue) {
  * @param {number} value The value
  * @return {array} The RGB representation
  */
-function _HSVToRGB(hue, saturation, value) {
+colorConverters.HSVToRGB = function (hue, saturation, value) {
   var r, g, b;
   var i = Math.floor(hue / 60);
   var f = hue / 60 - i;
@@ -195,16 +196,7 @@ function _HSVToRGB(hue, saturation, value) {
   }
 
   return [r * 255, g * 255, b * 255];
-}
+};
 
-defineProperties({
-  // randomizers
-  randomColor: _randomColor,
-  randomDefinedColor: _randomDefinedColor,
-
-  // color conversion algorithems
-  RGBToHSL: _RGBToHSL,
-  HSLToRGB: _HSLToRGB,
-  RGBToHSV: _RGBToHSV,
-  HSVToRGB: _HSVToRGB,
-});
+defineProperties(randomizers);
+defineProperties(colorConverters);
