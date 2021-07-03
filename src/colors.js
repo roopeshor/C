@@ -2,7 +2,7 @@ var __definedColors__ = Object.keys(COLORLIST);
 
 // color randomizers
 var randomizers = {};
-randomizers.randomColor =  function () {
+randomizers.randomColor = function () {
   var color = "#";
   for (var i = 0; i < 3; i++) {
     var randNum = randomInt(255).toString(16);
@@ -12,11 +12,12 @@ randomizers.randomColor =  function () {
   return color;
 };
 
-randomizers.randomDefinedColor =  function () {
+randomizers.randomDefinedColor = function () {
   return COLORLIST[__definedColors__[randomInt(__definedColors__.length - 1)]];
 };
 
-// color conversions
+var colorConverters = {};
+
 function hue2RGB(p, q, t) {
   if (t < 0) t += 1;
   if (t > 1) t -= 1;
@@ -26,7 +27,6 @@ function hue2RGB(p, q, t) {
   return p;
 }
 
-var colorConverters = {};
 /**
  * Converts an RGB color value to HSL. Conversion formula
  * adapted from http://en.wikipedia.org/wiki/HSL_color_space.
@@ -88,7 +88,8 @@ colorConverters.HSLToRGB = function (hue, saturation, lightness) {
     r = g = b = lightness; // achromatic
   } else {
     var q =
-      lightness < 0.5 ? lightness * (1 + saturation)
+      lightness < 0.5
+        ? lightness * (1 + saturation)
         : lightness + saturation - lightness * saturation;
     var p = 2 * lightness - q;
     r = hue2RGB(p, q, hue + 1 / 3);
