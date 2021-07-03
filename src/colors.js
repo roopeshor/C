@@ -31,7 +31,7 @@ function hue2RGB(p, q, t) {
  * Converts an RGB color value to HSL. Conversion formula
  * adapted from http://en.wikipedia.org/wiki/HSL_color_space.
  * Assumes values of red, green, and blue are between 0 & 255 and
- * returns hue, saturation, and lightness in range from 0 to 1
+ * returns hue in range 0 to 360, saturation and lightness in range 0 to 1
  *
  * @param {number} red The red color value
  * @param {number} green The green color value
@@ -67,13 +67,13 @@ function _RGBToHSL(red, green, blue) {
     hue /= 6;
   }
 
-  return [hue, saturation, lightness];
+  return [hue * 360, saturation, lightness];
 }
 
 /**
  * Converts an HSL color value to RGB. Conversion formula
  * adapted from http://en.wikipedia.org/wiki/HSL_color_space.
- * Assumes vales of hue, saturation, and lightness are between 0 & 1 and
+ * Assumes values of hue is between 0 and 360, saturation and lightness are between 0 & 1 and
  * returns red, green, and blue values between 0 & 255
  *
  * @param {number} hue The hue
@@ -83,7 +83,7 @@ function _RGBToHSL(red, green, blue) {
  */
 function _HSLToRGB(hue, saturation, lightness) {
   var r, g, b;
-
+  hue /= 360;
   if (saturation == 0) {
     r = g = b = lightness; // achromatic
   } else {
@@ -101,7 +101,7 @@ function _HSLToRGB(hue, saturation, lightness) {
  * Converts an RGB color value to HSV. Conversion formula
  * adapted from http://en.wikipedia.org/wiki/HSV_color_space.
  * Assumes values of red, green, and blue are between 0 & 255 and
- * returns hue, saturation, and value in range 0 to 1
+ * returns hue in range 0 to 360, saturation and value in range 0 to 1
  *
  * @param {number} red The red color value
  * @param {number} green The green color value
@@ -138,13 +138,13 @@ function _RGBToHSV(red, green, blue) {
     hue /= 6;
   }
 
-  return [hue, saturation, value];
+  return [hue * 360, saturation, value];
 }
 
 /**
  * Converts an HSV color value to RGB. Conversion formula
  * adapted from http://en.wikipedia.org/wiki/HSV_color_space.
- * Assumes values of hue, saturation, and value are between 0 & 1 and
+ * Assumes values of hue is between 0 to 360, saturation, and value are between 0 & 1 and
  * returns red, green, and blue in range 0 to 255
  *
  * @param {number} hue The hue
@@ -154,9 +154,8 @@ function _RGBToHSV(red, green, blue) {
  */
 function _HSVToRGB(hue, saturation, value) {
   var r, g, b;
-
-  var i = Math.floor(hue * 6);
-  var f = hue * 6 - i;
+  var i = Math.floor(hue / 60);
+  var f = hue / 60 - i;
   var p = value * (1 - saturation);
   var q = value * (1 - f * saturation);
   var t = value * (1 - (1 - f) * saturation);
