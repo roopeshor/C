@@ -1,8 +1,6 @@
+var __definedColors__ = Object.keys(COLORLIST);
 
-
-var __defined_colors__ = Object.keys(COLORLIST);
-
-
+// color randomizers
 function _randomColor() {
   var color = "#";
   for (var i = 0; i < 3; i++) {
@@ -15,11 +13,9 @@ function _randomColor() {
 
 function _randomDefinedColor() {
   return COLORLIST[
-    __defined_colors__[randomInt(__defined_colors__.length - 1)]
+    __definedColors__[randomInt(__definedColors__.length - 1)]
   ];
 }
-
-
 
 // color conversions
 function hue2RGB(p, q, t) {
