@@ -1,0 +1,7 @@
+when using files of src folder, import them in this order
+
+constants.js
+helpers.js
+colors.js
+main.js
+drawing-functions.js

@@ -1,10 +1,10 @@
 /**
  * defines new properties to a given Object
  *
- * @param {Object} obj source object
- * @param {boolean} [specific=true] whether to create a specific object
- * @param {Object} [toAssign=window] target object
- * @param {Function} [message] message given on redefining value
+ * @param {object} obj source object
+ * @param {object} [toAssign=window] target object
+ * @param {boolean} [specific=true] whether to define properties special
+ * @param {function} [message] message given on redefining value. Only works if `specific == true`
  */
 function defineProperties(obj, toAssign, specific, message) {
   toAssign = toAssign || window;
