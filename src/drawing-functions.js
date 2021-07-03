@@ -37,7 +37,7 @@ function readColor(colors) {
   return read;
 }
 
-// C.js drawing functions
+// C drawing functions
 var CFunctions = {};
 
 /**

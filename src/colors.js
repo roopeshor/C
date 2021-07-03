@@ -12,9 +12,7 @@ function _randomColor() {
 }
 
 function _randomDefinedColor() {
-  return COLORLIST[
-    __definedColors__[randomInt(__definedColors__.length - 1)]
-  ];
+  return COLORLIST[__definedColors__[randomInt(__definedColors__.length - 1)]];
 }
 
 // color conversions
@@ -87,7 +85,10 @@ function _HSLToRGB(hue, saturation, lightness) {
   if (saturation == 0) {
     r = g = b = lightness; // achromatic
   } else {
-    var q = lightness < 0.5 ? lightness * (1 + saturation) : lightness + saturation - lightness * saturation;
+    var q =
+      lightness < 0.5
+        ? lightness * (1 + saturation)
+        : lightness + saturation - lightness * saturation;
     var p = 2 * lightness - q;
     r = hue2RGB(p, q, hue + 1 / 3);
     g = hue2RGB(p, q, hue);
@@ -161,19 +162,42 @@ function _HSVToRGB(hue, saturation, value) {
   var t = value * (1 - (1 - f) * saturation);
 
   switch (i % 6) {
-    case 0: r = value; g = t; b = p; break;
-    case 1: r = q; g = value; b = p; break;
-    case 2: r = p; g = value; b = t; break;
-    case 3: r = p; g = q; b = value; break;
-    case 4: r = t; g = p; b = value; break;
-    case 5: r = value; g = p; b = q; break;
+    case 0:
+      r = value;
+      g = t;
+      b = p;
+      break;
+    case 1:
+      r = q;
+      g = value;
+      b = p;
+      break;
+    case 2:
+      r = p;
+      g = value;
+      b = t;
+      break;
+    case 3:
+      r = p;
+      g = q;
+      b = value;
+      break;
+    case 4:
+      r = t;
+      g = p;
+      b = value;
+      break;
+    case 5:
+      r = value;
+      g = p;
+      b = q;
+      break;
   }
 
   return [r * 255, g * 255, b * 255];
 }
 
 defineProperties({
-
   // randomizers
   randomColor: _randomColor,
   randomDefinedColor: _randomDefinedColor,
