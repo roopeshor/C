@@ -804,7 +804,6 @@ var color = linearGradient(
   }
 );
 ```
-{@link CFunctions.linearGradient}
  */
 CFunctions.linearGradient = function _linearGradient(p1, p2, colorStops) {
   var ctx = C.workingCanvas;

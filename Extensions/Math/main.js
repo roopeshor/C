@@ -468,7 +468,6 @@ ext.numberLine = function (config = {}) {
  **
  * @param {Object} config
  * @returns {Object} configurations
- * {@link ext.numberPlane}
  */
 ext.numberPlane = function (config = {}) {
   var ctx = C.workingCanvas,
