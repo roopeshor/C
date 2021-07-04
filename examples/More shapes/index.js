@@ -1,5 +1,5 @@
-const W = getContentWidth(),
-  H = innerHeight;
+const W = getContentWidth();
+const H = innerHeight;
 C(
   function () {
     background(0);
@@ -12,8 +12,8 @@ C(
     line(0, -H, 0, H);
     line(-W, 0, W, 0);
 
-    var radius = 10;
-    for (var i = 3; i < 7; i++) {
+    let radius = 10;
+    for (let i = 3; i < 7; i++) {
       radius += 50;
       stroke(TEAL_C);
       regularPolygonWithRadius(0, 0, i, radius);
@@ -25,6 +25,6 @@ C(
   {
     width: W,
     height: H,
-    name: "mycvs",
+    name: "mycvs"
   }
 );

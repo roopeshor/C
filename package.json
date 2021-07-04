@@ -1,0 +1,25 @@
+{
+  "name": "c",
+  "version": "1.0.0",
+  "description": "JavaScript library for drawing figures & diagrams and also animation. You could save the canvas as image.",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Roopesh2/C.git"
+  },
+  "author": "Roopesh",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Roopesh2/C/issues"
+  },
+  "homepage": "https://github.com/Roopesh2/C#readme",
+  "devDependencies": {
+    "eslint": "^7.30.0",
+    "eslint-config-standard": "^16.0.3",
+    "eslint-plugin-import": "^2.23.4",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^5.1.0"
+  }
+}

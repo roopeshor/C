@@ -1,24 +1,37 @@
-var __definedColors__ = Object.keys(COLORLIST);
+
+/*
+TODO decide whether to use global COLORLIST or color list in constants.js
+Because developer can edit COLORLIST array and can see effect on color randomizers
+*/
+const __definedColors__ = Object.keys(window.COLORLIST);
 
 // color randomizers
-var randomizers = {};
+const randomizers = {};
+
+/**
+ * returns a random hex color
+*/
 randomizers.randomColor = function () {
-  var color = "#";
-  for (var i = 0; i < 3; i++) {
-    var randNum = randomInt(255).toString(16);
-    randNum = randNum.length == 1 ? 0 + randNum : randNum;
+  let color = "#";
+  for (let i = 0; i < 3; i++) {
+    let randNum = window.randomInt(255).toString(16);
+    randNum = randNum.length === 1 ? 0 + randNum : randNum;
     color += randNum;
   }
   return color;
 };
 
+/**
+ * picks a random color from defined ones
+ *
+*/
 randomizers.randomDefinedColor = function () {
-  return COLORLIST[__definedColors__[randomInt(__definedColors__.length - 1)]];
+  return window.COLORLIST[__definedColors__[window.randomInt(__definedColors__.length - 1)]];
 };
 
-var colorConverters = {};
+const colorConverters = {};
 
-function hue2RGB(p, q, t) {
+function hue2RGB (p, q, t) {
   if (t < 0) t += 1;
   if (t > 1) t -= 1;
   if (t < 1 / 6) return p + (q - p) * 6 * t;
@@ -39,19 +52,19 @@ function hue2RGB(p, q, t) {
  * @return {array} The HSL representation
  */
 colorConverters.RGBToHSL = function (red, green, blue) {
-  var r = red / 255,
-    g = green / 255,
-    b = blue / 255;
-  var max = Math.max(r, g, b),
-    min = Math.min(r, g, b);
-  var hue,
-    saturation,
-    lightness = (max + min) / 2;
+  const r = red / 255;
+  const g = green / 255;
+  const b = blue / 255;
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  let hue;
+  let saturation;
+  const lightness = (max + min) / 2;
 
-  if (max == min) {
+  if (max === min) {
     hue = saturation = 0; // achromatic
   } else {
-    var d = max - min;
+    const d = max - min;
     saturation = lightness > 0.5 ? d / (2 - max - min) : d / (max + min);
     switch (max) {
       case r:
@@ -82,16 +95,16 @@ colorConverters.RGBToHSL = function (red, green, blue) {
  * @return {array} The RGB representation
  */
 colorConverters.HSLToRGB = function (hue, saturation, lightness) {
-  var r, g, b;
+  let r, g, b;
   hue /= 360;
-  if (saturation == 0) {
+  if (saturation === 0) {
     r = g = b = lightness; // achromatic
   } else {
-    var q =
+    const q =
       lightness < 0.5
         ? lightness * (1 + saturation)
         : lightness + saturation - lightness * saturation;
-    var p = 2 * lightness - q;
+    const p = 2 * lightness - q;
     r = hue2RGB(p, q, hue + 1 / 3);
     g = hue2RGB(p, q, hue);
     b = hue2RGB(p, q, hue - 1 / 3);
@@ -112,19 +125,17 @@ colorConverters.HSLToRGB = function (hue, saturation, lightness) {
  * @return {array} The HSV representation
  */
 colorConverters.RGBToHSV = function (red, green, blue) {
-  var r = red / 255,
-    g = green / 255,
-    b = blue / 255;
-  var max = Math.max(r, g, b),
-    min = Math.min(r, g, b);
-  var hue,
-    saturation,
-    value = max;
+  const r = red / 255;
+  const g = green / 255;
+  const b = blue / 255;
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  let hue;
+  const value = max;
+  const d = max - min;
+  const saturation = max === 0 ? 0 : d / max;
 
-  var d = max - min;
-  saturation = max == 0 ? 0 : d / max;
-
-  if (max == min) {
+  if (max === min) {
     hue = 0; // achromatic
   } else {
     switch (max) {
@@ -156,12 +167,12 @@ colorConverters.RGBToHSV = function (red, green, blue) {
  * @return {array} The RGB representation
  */
 colorConverters.HSVToRGB = function (hue, saturation, value) {
-  var r, g, b;
-  var i = Math.floor(hue / 60);
-  var f = hue / 60 - i;
-  var p = value * (1 - saturation);
-  var q = value * (1 - f * saturation);
-  var t = value * (1 - (1 - f) * saturation);
+  let r, g, b;
+  const i = Math.floor(hue / 60);
+  const f = hue / 60 - i;
+  const p = value * (1 - saturation);
+  const q = value * (1 - f * saturation);
+  const t = value * (1 - (1 - f) * saturation);
 
   switch (i % 6) {
     case 0:
@@ -199,5 +210,5 @@ colorConverters.HSVToRGB = function (hue, saturation, value) {
   return [r * 255, g * 255, b * 255];
 };
 
-defineProperties(randomizers);
-defineProperties(colorConverters);
+window._defineProperties(randomizers);
+window._defineProperties(colorConverters);

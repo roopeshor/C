@@ -1,27 +1,29 @@
+/*
+global
+*/
+
 // main file; defines C function
 const defaultConfig = {
   width: 200, // width of canvas multiplied by dpr
   height: 200, // height of canvas  multiplied by dpr
-  dpr: ceil(devicePixelRatio || 1), // device pixel ratio for clear drawings
-  W: 200, // actual width of canvas
-  H: 200, // actual height of canvas
+  dpr: Math.ceil(devicePixelRatio || 1), // device pixel ratio for clear drawings
   _doFill: true,
   _doStroke: true,
-  fillStyle: WHITE,
-  strokeStyle: BLACK,
+  fillStyle: "#ffffff",
+  strokeStyle: "#000000",
   fontSize: "20px",
   fontfamily: "sans-serif",
-  _ColorMode: "rgba",
+  _ColorMode: "rgba"
 };
 
-function assignDefaultConfigs(cfgs) {
+function assignDefaultConfigs (cfgs) {
   for (
-    var i = 0, properties = Object.keys(defaultConfig);
+    let i = 0, properties = Object.keys(defaultConfig);
     i < properties.length;
     i++
   ) {
-    var property = properties[i];
-    if (cfgs[property] == undefined) cfgs[property] = defaultConfig[property];
+    const property = properties[i];
+    if (cfgs[property] === undefined) cfgs[property] = defaultConfig[property];
   }
 }
 
@@ -31,27 +33,19 @@ function assignDefaultConfigs(cfgs) {
  * @param {HTMLElement} container container for the drawings [default:body element]
  * @param {object} [configs={}] configurations
  */
-function C(fx, container = document.body, configs = {}) {
+function C (fx, container = document.body, configs = {}) {
   // assign configs
   assignDefaultConfigs(configs);
-  var W = configs.width,
-    H = configs.height;
-
-  /* because both canvas.width and canvas.height are multipiled by dpr
-     original width and height should be stored as other variables */
-  configs.width = typeof W == "number" && W == configs.width ? W : configs.width;
-  configs.height = typeof H == "number" && H == configs.height ? H : configs.height;
 
   // initialize canvas
-  var canvas = makeCanvas(configs);
+  let canvas = window.makeCanvas(configs);
 
-  if (typeof container == "string")
-    container = document.querySelector(container);
-  var canvasName;
-  if (configs.name != undefined) {
+  if (typeof container === "string") { container = document.querySelector(container); }
+  let canvasName;
+  if (configs.name !== undefined) {
     canvasName = configs.name;
-    var cvs = document.getElementById(canvasName);
-    if (cvs != undefined) {
+    const cvs = document.getElementById(canvasName);
+    if (cvs !== undefined) {
       // if already exist
       canvas = cvs;
       prepareCanvas();
@@ -60,16 +54,16 @@ function C(fx, container = document.body, configs = {}) {
     }
   } else {
     // finds a name for canvas that already don't exist
-    while (document.getElementById("canvas-" + C.nameID) != undefined) {
+    while (document.getElementById("canvas-" + C.nameID) !== undefined) {
       C.nameID++;
     }
 
     canvasName = "canvas-" + C.nameID;
     configs.name = canvasName;
   }
-  function prepareCanvas() {
+  function prepareCanvas () {
     // add additional information to rendererContext
-    getResizedCanvas(canvas, configs);
+    window.getResizedCanvas(canvas, configs);
     canvas.context = Object.assign(canvas.getContext("2d"), configs);
     canvas.context.setTransform(configs.dpr, 0, 0, configs.dpr, 0, 0);
     C.workingCanvas = canvas.context;
@@ -96,6 +90,6 @@ C.workingCanvas = undefined; // index of current working canvas in `canvasList`
  * @param {Object} extObj
  */
 C.addExtension = function (extObj, editable) {
-  defineProperties(extObj, window, !editable);
-  defineProperties(extObj, C.extensions, !editable);
+  window._defineProperties(extObj, window, !editable);
+  window._defineProperties(extObj, C.extensions, !editable);
 };

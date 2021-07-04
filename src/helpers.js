@@ -1,12 +1,12 @@
-var helpers = {};
+const helpers = {};
 
 /**
  * return inner width of container tag
  * @param {HTMLElement} [container=document.body]
  * @returns {Number}
  */
- helpers.getContainerWidth = function (container=document.body) {
-  var cs = window.getComputedStyle(container);
+helpers.getContainerWidth = function (container = document.body) {
+  const cs = window.getComputedStyle(container);
   return (
     parseInt(cs.width) -
     parseInt(cs.marginLeft) -
@@ -31,9 +31,9 @@ var helpers = {};
  * @param {Object} configs
  */
 helpers.getResizedCanvas = function (cvs, configs) {
-  var width = configs.width;
-  var height = configs.height;
-  var dpr = configs.dpr;
+  const width = configs.width;
+  const height = configs.height;
+  const dpr = configs.dpr;
   cvs.style.width = width + "px";
   cvs.style.height = height + "px";
   cvs.width = dpr * width;
@@ -47,9 +47,9 @@ helpers.getResizedCanvas = function (cvs, configs) {
  * @returns {HTMLCanvasElement}
  */
 helpers.makeCanvas = function (configs) {
-  var cvs = document.createElement("canvas");
+  const cvs = document.createElement("canvas");
   this.getResizedCanvas(cvs, configs);
   return cvs;
 };
 
-defineProperties(helpers);
+window._defineProperties(helpers);

@@ -1,34 +1,38 @@
-function readColor(colors) {
-  var color1,
-    color2,
-    color3,
-    alpha = 255,
-    read = "";
-  if (typeof colors[0] == "number") {
-    if (colors.length == 1) {
+/*
+global C
+*/
+
+function readColor (colors) {
+  let color1;
+  let color2;
+  let color3;
+  let alpha = 255;
+  let read = "";
+  if (typeof colors[0] === "number") {
+    if (colors.length === 1) {
       color1 = colors[0];
       color2 = color1;
       color3 = color1;
-    } else if (colors.length == 2) {
+    } else if (colors.length === 2) {
       color1 = colors[0];
       color2 = colors[1];
       color3 = 0;
-    } else if (colors.length == 3) {
+    } else if (colors.length === 3) {
       color1 = colors[0];
       color2 = colors[1];
       color3 = colors[2];
-    } else if (colors.length == 4) {
+    } else if (colors.length === 4) {
       color1 = colors[0];
       color2 = colors[1];
       color3 = colors[2];
       alpha = colors[3];
     }
-    var mode = C.workingCanvas._ColorMode;
-    if (mode == "HSL") {
+    const mode = C.workingCanvas._ColorMode;
+    if (mode === "HSL") {
       read = `hsl(${color1}, ${color2}, ${color3})`;
-    } else if (mode == "rgb") {
+    } else if (mode === "rgb") {
       read = `rgb(${color1}, ${color2}, ${color3})`;
-    } else if (mode == "rgba") {
+    } else if (mode === "rgba") {
       read = `rgba(${color1}, ${color2}, ${color3}, ${alpha})`;
     }
   } else {
@@ -38,7 +42,7 @@ function readColor(colors) {
 }
 
 // C drawing functions
-var CFunctions = {};
+const CFunctions = {};
 
 /**
  * Draws a line
@@ -49,7 +53,7 @@ var CFunctions = {};
  * @param {number} y2 final y coord
  */
 CFunctions.line = function (x1, y1, x2, y2) {
-  var ctx = C.workingCanvas;
+  const ctx = C.workingCanvas;
   ctx.beginPath();
   ctx.moveTo(x1, y1);
   ctx.lineTo(x2, y2);
@@ -64,7 +68,7 @@ CFunctions.line = function (x1, y1, x2, y2) {
  * @param {number} y
  */
 CFunctions.moveTo = function (x, y) {
-  var ctx = C.workingCanvas;
+  const ctx = C.workingCanvas;
   if (!ctx._pathStart) ctx.beginPath();
   ctx.moveTo(x, y);
 };
@@ -88,8 +92,8 @@ CFunctions.lineTo = function (x, y) {
  * ⦿ a array of numbers ([0, 244, 34])
  */
 CFunctions.background = function () {
-  var col = readColor(arguments);
-  var ctx = C.workingCanvas;
+  const col = readColor(arguments);
+  const ctx = C.workingCanvas;
   ctx.backgroundColor = col;
   ctx.save();
   this.rest();
@@ -107,7 +111,7 @@ CFunctions.background = function () {
  * @param {number} height
  */
 CFunctions.clear = function (x, y, width, height) {
-  var ctx = C.workingCanvas;
+  const ctx = C.workingCanvas;
   x = x || 0;
   y = y || 0;
   width = width || ctx.width;
@@ -120,8 +124,8 @@ CFunctions.clear = function (x, y, width, height) {
  * css background stretching the entire canvas
  */
 CFunctions.permaBackground = function () {
-  var dat = this.getCanvasData();
-  var cvs = C.workingCanvas.canvas;
+  const dat = this.getCanvasData();
+  const cvs = C.workingCanvas.canvas;
   cvs.style.background = 'url("' + dat + '")';
   cvs.style.backgroundPosition = "center";
   cvs.style.backgroundSize = "cover";
@@ -141,7 +145,7 @@ CFunctions.permaBackground = function () {
  * @param {number} a6
  */
 CFunctions.setTransform = function (a1, a2, a3, a4, a5, a6) {
-  var ctx = C.workingCanvas;
+  const ctx = C.workingCanvas;
   ctx.setTransform(a1, a2, a3, a4, a5, a6);
   ctx.scale(ctx.dpr, ctx.dpr);
 };
@@ -269,8 +273,8 @@ CFunctions.getStroke = function () {
  * reset the applied transform to idendity matrix multiplied by dpr
  */
 CFunctions.rest = function () {
-  var ctx = C.workingCanvas;
-  var d = ctx.dpr;
+  const ctx = C.workingCanvas;
+  const d = ctx.dpr;
   ctx.setTransform(d, 0, 0, d, 0, 0);
 };
 
@@ -284,9 +288,9 @@ CFunctions.rest = function () {
  * ⦿ a array of numbers ([0, 244, 34])
  */
 CFunctions.stroke = function () {
-  var ctx = C.workingCanvas;
-  if (arguments.length != 0) {
-    var col = readColor(arguments);
+  const ctx = C.workingCanvas;
+  if (arguments.length !== 0) {
+    const col = readColor(arguments);
     ctx.strokeStyle = col;
     ctx._doStroke = true;
   } else {
@@ -304,9 +308,9 @@ CFunctions.stroke = function () {
  * ⦿ a array of numbers ([0, 244, 34])
  */
 CFunctions.fill = function () {
-  var ctx = C.workingCanvas;
-  if (arguments.length != 0) {
-    var col = readColor(arguments);
+  const ctx = C.workingCanvas;
+  if (arguments.length !== 0) {
+    const col = readColor(arguments);
     ctx.fillStyle = col;
     ctx._doFill = true;
   } else {
@@ -319,13 +323,13 @@ CFunctions.fill = function () {
  * @returns {Object}
  */
 CFunctions.getDrawConfigs = function () {
-  var ctx = C.workingCanvas;
+  const ctx = C.workingCanvas;
   return {
     stroke: ctx.strokeStyle,
     fill: ctx.fillStyle,
     strokeWidth: ctx.lineWidth,
     doStroke: ctx._doStroke,
-    doFill: ctx._doFill,
+    doFill: ctx._doFill
   };
 };
 
@@ -340,7 +344,7 @@ CFunctions.getDrawConfigs = function () {
  */
 CFunctions.arc = function (x, y, r, startingAngle, endingAngle) {
   startingAngle = startingAngle || 0;
-  var ctx = C.workingCanvas;
+  const ctx = C.workingCanvas;
   ctx.beginPath();
   ctx.arc(
     x,
@@ -363,7 +367,7 @@ CFunctions.arc = function (x, y, r, startingAngle, endingAngle) {
  * @param {number} [maxwidth=undefined] maximum width
  */
 CFunctions.text = function (text, x, y = x, maxwidth = undefined) {
-  var ctx = C.workingCanvas;
+  const ctx = C.workingCanvas;
   if (ctx._doFill) ctx.fillText(text, x, y, maxwidth);
   else if (ctx._doStroke) ctx.strokeText(text, x, y, maxwidth);
 };
@@ -377,7 +381,7 @@ CFunctions.text = function (text, x, y = x, maxwidth = undefined) {
  * @param {number} height height
  */
 CFunctions.rect = function (x, y, width, height) {
-  var ctx = C.workingCanvas;
+  const ctx = C.workingCanvas;
   ctx.beginPath();
   ctx.rect(x, y, width, height);
   if (ctx._doFill) ctx.fill();
@@ -392,7 +396,7 @@ CFunctions.rect = function (x, y, width, height) {
  * @param {number} r radius
  */
 CFunctions.circle = function (x, y, r) {
-  var ctx = C.workingCanvas;
+  const ctx = C.workingCanvas;
   ctx.beginPath();
   ctx.arc(x, y, r, 0, Math.PI * 2);
   if (ctx._doFill) ctx.fill();
@@ -412,13 +416,13 @@ CFunctions.circle = function (x, y, r) {
 ```
  */
 CFunctions.polygon = function () {
-  var args = arguments;
+  const args = arguments;
   if (args.length > 2) {
-    var ctx = C.workingCanvas,
-      start = args[0];
+    const ctx = C.workingCanvas;
+    const start = args[0];
     ctx.beginPath();
     ctx.moveTo(start[0], start[1]);
-    for (var i = 1; i < args.length; i++) {
+    for (let i = 1; i < args.length; i++) {
       ctx.lineTo(args[i][0], args[i][1]);
     }
     ctx.lineTo(start[0], start[1]);
@@ -450,7 +454,7 @@ CFunctions.ellipse = function (
   endAngle = Math.PI * 2,
   anticlockwise = false
 ) {
-  var ctx = C.workingCanvas;
+  const ctx = C.workingCanvas;
   ctx.beginPath();
   ctx.ellipse(
     x,
@@ -468,8 +472,8 @@ CFunctions.ellipse = function (
 };
 
 CFunctions.bezierCurve = function (x1, y1, x2, y2, x3, y3) {
-  var ctx = C.workingCanvas,
-    pathStarted = ctx._pathStart;
+  const ctx = C.workingCanvas;
+  const pathStarted = ctx._pathStart;
   if (!pathStarted) ctx.beginPath();
 
   ctx.bezierCurveTo(x1, y1, x2, y2, x3, y3);
@@ -487,13 +491,13 @@ CFunctions.bezierCurve = function (x1, y1, x2, y2, x3, y3) {
  * @param {number} dx
  */
 CFunctions.loop = function (fx, canvasName, dx) {
-  var ctx = C.workingCanvas;
+  let ctx = C.workingCanvas;
   if (!canvasName) {
     canvasName = ctx.name;
   } else {
     ctx = C.canvasList[canvasName];
   }
-  if (dx != undefined) {
+  if (dx !== undefined) {
     ctx.currentLoop = setInterval(function () {
       C.workingCanvas = ctx;
       fx();
@@ -501,7 +505,7 @@ CFunctions.loop = function (fx, canvasName, dx) {
   } else {
     a();
   }
-  function a() {
+  function a () {
     C.workingCanvas = ctx;
     ctx.currentLoop = window.requestAnimationFrame(a);
     fx();
@@ -512,7 +516,7 @@ CFunctions.loop = function (fx, canvasName, dx) {
  * stops current loop
  */
 CFunctions.noLoop = function () {
-  var ctx = C.workingCanvas;
+  const ctx = C.workingCanvas;
   clearInterval(ctx.currentLoop);
   window.cancelAnimationFrame(ctx.currentLoop);
 };
@@ -521,7 +525,7 @@ CFunctions.noLoop = function () {
  * starts a new Path
  */
 CFunctions.startPath = function () {
-  var ctx = C.workingCanvas;
+  const ctx = C.workingCanvas;
   ctx.beginPath();
   ctx._pathStart = true;
 };
@@ -530,7 +534,7 @@ CFunctions.startPath = function () {
  * ends current Path
  */
 CFunctions.endPath = function () {
-  var ctx = C.workingCanvas;
+  const ctx = C.workingCanvas;
   ctx.closePath();
   ctx._pathStart = false;
 };
@@ -540,7 +544,7 @@ CFunctions.endPath = function () {
  * @returns {string}
  */
 CFunctions.getFont = function () {
-  var ctx = C.workingCanvas;
+  const ctx = C.workingCanvas;
   return ctx.fontSize + " " + ctx.fontFamily;
 };
 
@@ -557,9 +561,9 @@ CFunctions.measureText = function (text) {
  * sets font size
  * @param {number|string} size
  */
-CFunctions.fontSize = function _fontSize(size) {
-  var ctx = C.workingCanvas;
-  size = typeof size == "number" ? size + "px" : size;
+CFunctions.fontSize = function _fontSize (size) {
+  const ctx = C.workingCanvas;
+  size = typeof size === "number" ? size + "px" : size;
   ctx.fontSize = size;
   ctx.font = this.getFont();
 };
@@ -568,8 +572,8 @@ CFunctions.fontSize = function _fontSize(size) {
  * sets font family
  * @param {string} family
  */
-CFunctions.fontFamily = function _fontFamily(family) {
-  var ctx = C.workingCanvas;
+CFunctions.fontFamily = function _fontFamily (family) {
+  const ctx = C.workingCanvas;
   ctx.fontFamily = family;
   ctx.font = this.getFont();
 };
@@ -580,7 +584,7 @@ CFunctions.fontFamily = function _fontFamily(family) {
  * @param {string} datURL
  * @returns {string}
  */
-CFunctions.getCanvasData = function _getCanvasData(datURL = "image/png") {
+CFunctions.getCanvasData = function _getCanvasData (datURL = "image/png") {
   return C.workingCanvas.canvas.toDataURL(datURL);
 };
 
@@ -590,12 +594,12 @@ CFunctions.getCanvasData = function _getCanvasData(datURL = "image/png") {
  * @param {string} [name="drawing"]
  * @param {string} [datURL="image/png"]
  */
-CFunctions.saveCanvas = function _saveCanvas(
+CFunctions.saveCanvas = function _saveCanvas (
   name = "drawing",
   datURL = "image/png"
 ) {
-  var link = this.getCanvasData().replace(datURL, "image/octet-stream");
-  var a = document.createElement("a");
+  const link = this.getCanvasData().replace(datURL, "image/octet-stream");
+  const a = document.createElement("a");
   a.download = name + ".png";
   a.href = link;
   a.click();
@@ -611,7 +615,7 @@ CFunctions.saveCanvas = function _saveCanvas(
  * @param {number} [size=1] diameter of point
  */
 CFunctions.point = function (x, y, size = 1) {
-  var ctx = C.workingCanvas;
+  const ctx = C.workingCanvas;
   ctx.arc(x, y, size / 2, 0, Math.PI * 2);
   ctx.fill();
 };
@@ -647,9 +651,9 @@ CFunctions.sector = function (
   endAngle,
   backgroundFill
 ) {
-  var ctx = C.workingCanvas;
+  const ctx = C.workingCanvas;
   ctx.moveTo(x, y);
-  var _fill = this.getFill();
+  const _fill = this.getFill();
   ctx.arc(x, y, outerRadius, startAngle, endAngle);
   this.fill(backgroundFill || C.workingCanvas.backgroundColor);
   ctx.arc(x, y, innerRadius, startAngle, endAngle);
@@ -668,8 +672,8 @@ CFunctions.sector = function (
  * @param {number} x4
  * @param {number} y4
  */
- CFunctions.quad = function (x1, y1, x2, y2, x3, y3, x4, y4) {
-  var ctx = C.workingCanvas;
+CFunctions.quad = function (x1, y1, x2, y2, x3, y3, x4, y4) {
+  const ctx = C.workingCanvas;
   ctx.beginPath();
   ctx.moveTo(x1, y1);
   ctx.lineTo(x2, y2);
@@ -685,15 +689,15 @@ CFunctions.sector = function (
 
 /**
  * draws triangle
- * @param {number} x1 
- * @param {number} y1 
- * @param {number} x2 
- * @param {number} y2 
- * @param {number} x3 
- * @param {number} y3 
+ * @param {number} x1
+ * @param {number} y1
+ * @param {number} x2
+ * @param {number} y2
+ * @param {number} x3
+ * @param {number} y3
  */
 CFunctions.triangle = function (x1, y1, x2, y2, x3, y3) {
-  var ctx = C.workingCanvas;
+  const ctx = C.workingCanvas;
   ctx.beginPath();
   ctx.moveTo(x1, y1);
   ctx.lineTo(x2, y2);
@@ -703,7 +707,6 @@ CFunctions.triangle = function (x1, y1, x2, y2, x3, y3) {
   if (ctx._doStroke) ctx.stroke();
   ctx.closePath();
 };
-
 
 /**
  * draws equilateral triangle
@@ -746,13 +749,13 @@ CFunctions.regularPolygonWithRadius = function (
   radius,
   rotation = 0
 ) {
-  var i = 0;
-  var e = (Math.PI * 2) / sides;
-  var ctx = C.workingCanvas;
+  let i = 0;
+  const e = (Math.PI * 2) / sides;
+  const ctx = C.workingCanvas;
   rotation += e / 2;
-  var initial = [
+  const initial = [
     Math.cos(rotation) * radius + x,
-    Math.sin(rotation) * radius + y,
+    Math.sin(rotation) * radius + y
   ];
   ctx.beginPath();
   ctx.moveTo(initial[0], initial[1]);
@@ -768,9 +771,9 @@ CFunctions.regularPolygonWithRadius = function (
   if (ctx._doStroke) ctx.stroke();
 };
 
-let dxList = [],
-  total = 0,
-  recent = window.performance.now();
+const dxList = [];
+let total = 0;
+let recent = window.performance.now();
 
 /**
  * returns FPS (Frames Per Second)
@@ -778,8 +781,8 @@ let dxList = [],
  * @returns {number}
  */
 CFunctions.getFPS = function (keepDat = 100) {
-  var now = window.performance.now(),
-    dx = now - recent;
+  const now = window.performance.now();
+  const dx = now - recent;
   dxList.push(dx);
   total += dx;
   recent = now;
@@ -805,19 +808,19 @@ var color = linearGradient(
 );
 ```
  */
-CFunctions.linearGradient = function _linearGradient(p1, p2, colorStops) {
-  var ctx = C.workingCanvas;
-  var gradient = ctx.createLinearGradient(p1[0], p1[1], p2[0], p2[1]);
+CFunctions.linearGradient = function _linearGradient (p1, p2, colorStops) {
+  const ctx = C.workingCanvas;
+  const gradient = ctx.createLinearGradient(p1[0], p1[1], p2[0], p2[1]);
   if (Array.isArray(colorStops)) {
-    let stops = {};
-    var step = 1 / colorStops.length;
-    for (var i = 0; i < colorStops.length; i++) {
+    const stops = {};
+    const step = 1 / colorStops.length;
+    for (let i = 0; i < colorStops.length; i++) {
       stops[step * i] = colorStops[i];
     }
     colorStops = stops;
   }
   for (let stops = Object.keys(colorStops), i = 0; i < stops.length; i++) {
-    var stop = stops[i];
+    const stop = stops[i];
     gradient.addColorStop(stop, colorStops[stop]);
   }
   return gradient;
@@ -825,4 +828,4 @@ CFunctions.linearGradient = function _linearGradient(p1, p2, colorStops) {
 
 C.functions = CFunctions;
 
-defineProperties(C.functions);
+window._defineProperties(C.functions);

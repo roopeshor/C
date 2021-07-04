@@ -1,10 +1,16 @@
 # C
 
-JavaScript library for drawing figures and diagrams in blog or articles
+JavaScript library for drawing figures & diagrams and also animation. You could save the canvas as image.
 
-## Get started
+## Installation
 
-Use C{@version}.min.js and link it to your html file.
+### Choose specific version
+
+see [releases](https://github.com/Roopesh2/C/releases) for files
+
+### Choose latest version
+
+Use C.latest.min.js or C.latest.js
 
 ### Start using
 
