@@ -212,3 +212,14 @@ colorConverters.HSVToRGB = function (hue, saturation, value) {
 
 window._defineProperties(randomizers);
 window._defineProperties(colorConverters);
+
+/*
+defined functions:
+
+randomColor
+randomDefinedColor
+RGBToHSL
+HSLToRGB
+RGBToHSV
+HSVToRGB
+*/

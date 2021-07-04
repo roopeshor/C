@@ -1,3 +1,4 @@
+// delcaring global variables for ESLint
 /*
 global C background fill stroke noStroke strokeWidth translate scale fontSize WHITE CENTERX CENTERY line numberLine GREY rotate measureText text BLUE_C axes
 */
@@ -9,7 +10,6 @@ const consts = {
     return C.workingCanvas.height / 2;
   }
 };
-
 function arange (start, end, step, rev = false) {
   const arr = [];
   if (rev) for (let i = end; i >= start; i -= step) arr.push(i);
