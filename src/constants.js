@@ -189,5 +189,5 @@ COLORLIST
 defined functions:
 
 _defineProperties
-abs,acos,asin,atan,atan2,cbrt,ceil,cos,cosh,exp,floor,log,log2,log10,max,min,pow,random,round,sgn,sin,sqrt,tan,tanh,dist,randomInt,sigmoid,limit
+abs, acos, asin, atan, atan2, cbrt, ceil, cos, cosh, exp, floor, log, log2, log10, max, min, pow, random, round, sgn, sin, sqrt, tan, tanh, dist, randomInt, sigmoid, limit
 */

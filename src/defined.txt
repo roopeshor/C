@@ -2,10 +2,18 @@ These are list of functions and variables defined by library
 
 E, LN2, LN10, PI, TAU, SQRT2, 
 BUTT, SQUARE, ROUND, MILTER
-DARK_BLUE, DARK_BROWN, LIGHT_BROWN, BLUE_A, BLUE_B, BLUE_C, BLUE_D, BLUE_E, TEAL_A, TEAL_B, TEAL_C, TEAL_D, TEAL_E, GREEN_A, GREEN_B, GREEN_C, GREEN_D, GREEN_E, YELLOW_A, YELLOW_B, YELLOW_C, YELLOW_D, YELLOW_E, GOLD_A, GOLD_B, GOLD_C, GOLD_D, GOLD_E, RED_A, RED_B, RED_C, RED_D, RED_E, MAROON_A, MAROON_B, MAROON_C, MAROON_D, MAROON_E, PURPLE_A, PURPLE_B, PURPLE_C, PURPLE_D, PURPLE_E, WHITE, BLACK, LIGHT_GRAY, LIGHT_GREY, GRAY, GREY, DARK_GREY, DARK_GRAY, DARKER_GREY, DARKER_GRAY, GREY_BROWN, PINK, LIGHT_PINK, GREEN_SCREEN, ORANGE, TRANSPARENT
+DARK_BLUE, DARK_BROWN, LIGHT_BROWN, BLUE_A, BLUE_B, BLUE_C, BLUE_D, BLUE_E, TEAL_A, TEAL_B, TEAL_C, TEAL_D, TEAL_E, GREEN_A, GREEN_B, GREEN_C,
+GREEN_D, GREEN_E, YELLOW_A, YELLOW_B, YELLOW_C, YELLOW_D, YELLOW_E, GOLD_A, GOLD_B, GOLD_C, GOLD_D, GOLD_E, RED_A, RED_B, RED_C, RED_D, RED_E,
+MAROON_A, MAROON_B, MAROON_C, MAROON_D, MAROON_E, PURPLE_A, PURPLE_B, PURPLE_C, PURPLE_D, PURPLE_E, WHITE, BLACK, LIGHT_GRAY, LIGHT_GREY, GRAY,
+GREY, DARK_GREY, DARK_GRAY, DARKER_GREY, DARKER_GRAY, GREY_BROWN, PINK, LIGHT_PINK, GREEN_SCREEN, ORANGE, TRANSPARENT
 COLORLIST
-_defineProperties, abs, acos, asin, atan, atan2, cbrt, ceil, cos, cosh, exp, floor, log, log2, log10, max, min, pow, random, round, sgn, sin, sqrt, tan, tanh, dist, randomInt, sigmoid, limit
 
-getContainerWidth, getResizedCanvas, makeCanvas
+_defineProperties, abs, acos, asin, atan, atan2, cbrt, ceil, cos, cosh, exp, floor, log, log2, log10, max, min, pow, random, round, sgn, sin,
+sqrt, tan, tanh, dist, randomInt, sigmoid, limit
 
 randomColor, randomDefinedColor, RGBToHSL, HSLToRGB, RGBToHSV, HSVToRGB
+
+line, moveTo, lineTo, background, clear, permaBackground, setTransform, transform, noFill, noStroke, translate, setImageSmoothing, strokeWidth
+scale, rotate, save, lineCap, lineJoin, restore, getFill, getStroke, rest, stroke, fill, getDrawConfigs, arc, text, rect, circle, polygon, ellipse
+bezierCurve, loop, noLoop, startPath, endPath, getFont, measureText, fontSize, fontFamily, getCanvasData, saveCanvas, point, square, sector, quad,
+triangle, equiTriangle, regularPolygon, regularPolygonWithRadius, getFPS, linearGradient

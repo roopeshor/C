@@ -38,7 +38,6 @@ function _C (fx, container = document.body, configs = {}) {
   assignDefaultConfigs(configs);
 
   // initialize canvas
-  // debugger;
   let canvas = window.C.makeCanvas(configs);
   if (typeof container === "string") { container = document.querySelector(container); }
   let canvasName;
@@ -116,7 +115,6 @@ _C.getResizedCanvas = function (cvs, configs) {
   const width = configs.width;
   const height = configs.height;
   const dpr = configs.dpr;
-  console.trace("getResized")
   cvs.style.width = width + "px";
   cvs.style.height = height + "px";
   cvs.width = dpr * width;

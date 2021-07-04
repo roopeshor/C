@@ -216,10 +216,5 @@ window._defineProperties(colorConverters);
 /*
 defined functions:
 
-randomColor
-randomDefinedColor
-RGBToHSL
-HSLToRGB
-RGBToHSV
-HSVToRGB
+randomColor, randomDefinedColor, RGBToHSL, HSLToRGB, RGBToHSV, HSVToRGB
 */
