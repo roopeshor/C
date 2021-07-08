@@ -1,17 +1,29 @@
 {
-    "env": {
-        "browser": true,
-        "es6": true
-    },
-    "extends": [
-        "standard"
+  "env": {
+    "browser": true,
+    "es2021": true
+  },
+  "extends": "eslint:recommended",
+  "parserOptions": {
+    "ecmaVersion": 12
+  },
+  "rules": {
+    "indent": [
+      "warning",
+      2
     ],
-    "parserOptions": {
-        "ecmaVersion": 6
-    },
-    "rules": {
-        "quotes":"off",
-        "semi":"off",
-        "no-unmodified-loop-condition":"off"
-    }
+    "linebreak-style": [
+      "warning",
+      "windows"
+    ],
+    "quotes": [
+      "warning",
+      "double"
+    ],
+    "semi": [
+      "error",
+      "always"
+    ],
+    "eqeqeq":"off"
+  }
 }

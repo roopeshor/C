@@ -41,7 +41,7 @@ function _C (fx, container = document.body, configs = {}) {
   let canvas = window.C.makeCanvas(configs);
   if (typeof container === "string") { container = document.querySelector(container); }
   let canvasName;
-  if (configs.name !== undefined) {
+  if (configs.name != undefined) {
     canvasName = configs.name;
     const cvs = document.getElementById(canvasName);
     if (cvs instanceof HTMLElement) {
@@ -53,7 +53,7 @@ function _C (fx, container = document.body, configs = {}) {
     }
   } else {
     // finds a name for canvas that already don't exist
-    while (document.getElementById("canvas-" + window.C.nameID) !== undefined) {
+    while (document.getElementById("canvas-" + window.C.nameID) != undefined) {
       window.C.nameID++;
     }
 

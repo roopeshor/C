@@ -497,7 +497,7 @@ CFunctions.loop = function (fx, canvasName, dx) {
   } else {
     ctx = C.canvasList[canvasName];
   }
-  if (dx !== undefined) {
+  if (!isNaN(dx)) {
     ctx.currentLoop = setInterval(function () {
       C.workingCanvas = ctx;
       fx();

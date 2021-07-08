@@ -179,7 +179,7 @@ function updateDC (id, reverse) {
   DC[id] = Number(v);
   computePoints();
   if (id === "tpf") {
-    if (window.AIS !== undefined) {
+    if (window.AIS != undefined) {
       clearInterval(window.AIS);
       window.AIS = setInterval(incShift, v);
     }
