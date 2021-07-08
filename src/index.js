@@ -1,26 +1,11 @@
-import {
-  _defineProperties,
-  MathConsts,
-  MathFunctions,
-  DrawingConstants,
-  _COLORLIST,
-} from "./constants.js";
-
+import { _defineProperties, MathConsts, MathFunctions, DrawingConstants, _COLORLIST } from "./constants.js";
 import { randomizers, colorConverters } from "./color.js";
 import { C } from "./main.js";
 import { CFunctions } from "./drawing-functions.js";
+import { more } from "./more-things.js";
 
-console.log(
-  _defineProperties,
-  MathConsts,
-  MathFunctions,
-  DrawingConstants,
-  _COLORLIST
-);
+console.log(_defineProperties, MathConsts, MathFunctions, DrawingConstants, _COLORLIST);
 console.log(randomizers, colorConverters);
 console.log(C);
 console.log(CFunctions);
-
-C(() => {
-  background(0);
-}, "body");
+console.log(more);

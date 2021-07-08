@@ -1,4 +1,11 @@
 import { C } from "./main.js";
+import { CFunctions as CF } from "./drawing-functions.js";
+
+import { _COLORLIST as CL } from "./constants.js";
+
+/*
+global CENTERX CENTERY
+*/
 
 const consts = {
   "CENTERX": function () {
@@ -64,15 +71,16 @@ const more = {};
  * initializes a canvas translated to center and y-axis inverted
  */
 more.initCenteredCanvas = function () {
-  background(0);
-  fill(WHITE);
-  stroke(WHITE);
-  strokeWidth(2);
-  noStroke();
-  translate(CENTERX, CENTERY);
-  scale(1, -1);
+  CF.background(0);
+  CF.fill(CL.WHITE);
+  CF.stroke(CL.WHITE);
+  CF.strokeWidth(2);
+  CF.noStroke();
+
+  CF.translate(CENTERX, CENTERY);
+  CF.scale(1, -1);
+  CF.fontSize(20);
   C.workingCanvas.yAxisInveted = true;
-  fontSize(20);
 };
 /**
  * clears a rectangular portion of canvas
@@ -98,25 +106,6 @@ more.scale = function (x, y = x) {
   C.workingCanvas.scale(x, y);
 };
 /**
- * draws a text
- * @param {string} text
- * @param {number} x
- * @param {number} y
- * @param {number} maxwidth
- */
-more.text = function (text, x, y, maxwidth) {
-  const ctx = C.workingCanvas;
-  if (ctx.yAxisInveted) {
-    scale(1, -1);
-    if (ctx._doFill) ctx.fillText(text, x, -y, maxwidth);
-    else if (ctx._doStroke) ctx.strokeText(text, x, -y, maxwidth);
-    scale(1, -1);
-  } else {
-    if (ctx._doFill) ctx.fillText(text, x, y, maxwidth);
-    else if (ctx._doStroke) ctx.strokeText(text, x, y, maxwidth);
-  }
-};
-/**
  * draws a arrow
  * @param {number} x1 starting x-coord
  * @param {number} y1 starting y-coord
@@ -127,13 +116,13 @@ more.text = function (text, x, y, maxwidth) {
  */
 more.arrow = function (x1, y1, x2, y2, tipWidth = 10, tipScaleRatio = 0.7) {
   const angle = Math.atan2(y2 - y1, x2 - x1); // angle from plain
-  this.arrowHead(x2, y2, tipWidth, angle, tipScaleRatio);
+  more.arrowHead(x2, y2, tipWidth, angle, tipScaleRatio);
   const r = Math.atan(tipScaleRatio / 2);
   const xd = Math.cos(angle) * tipWidth * Math.cos(r);
   const yd = Math.sin(angle) * tipWidth * Math.cos(r);
   x2 -= xd;
   y2 -= yd;
-  line(x1, y1, x2, y2);
+  CF.line(x1, y1, x2, y2);
 };
 /**
  * creates a axes.
@@ -186,23 +175,23 @@ more.axes = function (config = {}) {
   const yShift = yAxis.length / 2 + yMin;
 
   // translate to center
-  translate(center[0], center[1]);
+  CF.translate(center[0], center[1]);
 
   // draws axes
   // x-axis
-  translate(xShift, 0);
-  const xAxisLine = numberLine(xAxis); // draw x axis
+  CF.translate(xShift, 0);
+  const xAxisLine = more.numberLine(xAxis); // draw x axis
 
   // reverse the effect of shift for drawing y-axis
-  translate(-xShift, yShift);
+  CF.translate(-xShift, yShift);
 
   // y-axis
-  const yAxisLine = numberLine(yAxis); // draw y axis
+  const yAxisLine = more.numberLine(yAxis); // draw y axis
   // size of a unit cell
   const unit = [xAxisLine.unitLength, yAxisLine.unitLength];
 
   // reverse the effect of overall shift
-  translate(-center[0], -center[1] - yShift);
+  CF.translate(-center[0], -center[1] - yShift);
 
   return {
     "unit": unit, // major unit size
@@ -254,10 +243,10 @@ more.doubleArrow = function (
   const angle = Math.atan2(y2 - y1, x2 - x1);
   const xd = Math.cos(angle) * tipWidth * Math.cos(r);
   const yd = Math.sin(angle) * tipWidth * Math.cos(r);
-  this.arrowHead(x1, y1, tipWidth, Math.PI + angle, tipScaleRatio);
+  more.arrowHead(x1, y1, tipWidth, Math.PI + angle, tipScaleRatio);
   x1 += xd;
   y1 += yd;
-  this.arrow(x1, y1, x2, y2, tipWidth, tipScaleRatio);
+  more.arrow(x1, y1, x2, y2, tipWidth, tipScaleRatio);
 };
 /**
  * Creates a numberLine with parameters in a object
@@ -343,14 +332,14 @@ more.numberLine = function (config = {}) {
     "includeNumbers": [true],
     "tipWidth": [20, "number"],
     "tipSizeRatio": [1, "number"],
-    "color": [GREY],
+    "color": [CL.GREY],
     "lineWidth": [3, "number"],
     "includeTick": [true],
     "excludeOriginTick": [false],
     "longerTickMultiple": [1.5, "number"],
     "tickHeight": [15, "number"],
     "textDirection": [[-0.3, -1]],
-    "textColor": [WHITE],
+    "textColor": [CL.WHITE],
     "textSize": [17, "number"],
     "textRotation": [0],
   };
@@ -393,19 +382,19 @@ more.numberLine = function (config = {}) {
   const ds = lineLength / totalTicks;
 
   const list = getTickList();
-  translate(center[0], center[1]);
-  rotate(rotation);
-  translate(-lineLength / 2, 0);
+  CF.translate(center[0], center[1]);
+  CF.rotate(rotation);
+  CF.translate(-lineLength / 2, 0);
   if (config.includeTick) drawTicks();
   if (config.includeNumbers) drawNumbers();
-  translate(lineLength / 2, 0);
+  CF.translate(lineLength / 2, 0);
   drawAxis();
-  rotate(-rotation);
-  translate(-center[0], -center[1]);
+  CF.rotate(-rotation);
+  CF.translate(-center[0], -center[1]);
   function drawAxis() {
-    stroke(color);
-    strokeWidth(lineWidth);
-    fill(color);
+    CF.stroke(color);
+    CF.strokeWidth(lineWidth);
+    CF.fill(color);
     const r = Math.atan(tipSizeRatio / 2);
     let x1 = -lineLength / 2;
     let x2 = lineLength / 2;
@@ -417,12 +406,12 @@ more.numberLine = function (config = {}) {
       more.arrowHead(x2, 0, tipWidth, 0, tipSizeRatio);
       x2 -= tipWidth * Math.cos(r) * 1;
     }
-    line(x1, 0, x2, 0);
+    CF.line(x1, 0, x2, 0);
   }
 
   function drawTicks() {
-    stroke(color);
-    strokeWidth(lineWidth);
+    CF.stroke(color);
+    CF.strokeWidth(lineWidth);
     const from = includeLeftTip ? 1 : 0;
     const to = includeRightTip ? list.length - 1 : list.length;
     for (
@@ -436,14 +425,14 @@ more.numberLine = function (config = {}) {
       if (numbersWithElongatedTicks.indexOf(tick) > -1) {
         TH *= longerTickMultiple;
       }
-      line(ds * i, -TH / 2, ds * i, TH / 2);
+      CF.line(ds * i, -TH / 2, ds * i, TH / 2);
     }
   }
 
   function drawNumbers() {
     const numbers = numbersToInclude.length > 0 ? numbersToInclude : list;
-    fill(config.textColor);
-    fontSize(textSize);
+    CF.fill(config.textColor);
+    CF.fontSize(textSize);
     const yShift =
       (-textSize / 3) * Math.cos(textRotation) + textDirection[1] * textSize;
     const from = includeLeftTip ? 1 : 0;
@@ -456,16 +445,16 @@ more.numberLine = function (config = {}) {
     ) {
       const tick = numbers[i].toFixed(decimalPlaces);
       if (Number(tick) === 0 && excludeOriginTick) continue;
-      const width = measureText(tick).width;
+      const width = CF.measureText(tick).width;
       const xShift =
         (-width / 2) * Math.cos(textRotation) +
         textDirection[0] * textSize +
         (textSize / 2) * Math.sin(textRotation);
-      translate(ds * i + xShift, yShift - width * Math.sin(textRotation));
-      rotate(textRotation);
-      text(tick, 0, 0);
-      rotate(-textRotation);
-      translate(-(ds * i + xShift), -(yShift - width * Math.sin(textRotation)));
+      CF.translate(ds * i + xShift, yShift - width * Math.sin(textRotation));
+      CF.rotate(textRotation);
+      CF.text(tick, 0, 0);
+      CF.rotate(-textRotation);
+      CF.translate(-(ds * i + xShift), -(yShift - width * Math.sin(textRotation)));
     }
   }
 
@@ -527,9 +516,9 @@ more.numberPlane = function (config = {}) {
   };
   const gridDefaults = {
     "lineWidth": [1, "number"],
-    "color": [BLUE_C + "a0"],
+    "color": [CF.BLUE_C + "a0"],
     "subgrids": [1, "number"],
-    "subgridLineColor": [GREY + "50"],
+    "subgridLineColor": [CF.GREY + "50"],
     "subgridLineWidth": [0.7, "number"],
   };
   // configurations
@@ -560,13 +549,13 @@ more.numberPlane = function (config = {}) {
   const subgridUnit = [xDX / subgrids, yDX / subgrids];
 
   // translate to center
-  translate(center[0] + xShift, center[1]);
+  CF.translate(center[0] + xShift, center[1]);
 
   // draw grids
   drawGridLines();
 
   // draws axes
-  const axesLines = axes({
+  const axesLines = more.axes({
     "xAxis": xAxis,
     "yAxis": yAxis,
   });
@@ -574,11 +563,11 @@ more.numberPlane = function (config = {}) {
   const unit = axesLines.unit;
 
   // reverse the effect of overall shift
-  translate(-(center[0] + xShift), -center[1] - yShift);
+  CF.translate(-(center[0] + xShift), -center[1] - yShift);
 
   function drawGridLines() {
     // major grid lines
-    translate(xMin, 0);
+    CF.translate(xMin, 0);
     const subgridxDX = subgridUnit[0];
     const subgridyDX = subgridUnit[1];
 
@@ -598,9 +587,9 @@ more.numberPlane = function (config = {}) {
       for (let k = 1; k <= subgrids && i < xNums; k++) {
         drawMinor(k * subgridxDX, yMin, k * subgridxDX, yMax);
       }
-      translate(-i * xDX);
+      CF.translate(-i * xDX);
     }
-    translate(-xMin, yMin);
+    CF.translate(-xMin, yMin);
     // vertical grid lines
     for (let i = 0; i <= yNums; i++) {
       // draw major grid lines
@@ -617,20 +606,20 @@ more.numberPlane = function (config = {}) {
       for (let k = 1; k <= subgrids && i < yNums; k++) {
         drawMinor(xMin, k * subgridyDX, xMax, k * subgridyDX);
       }
-      translate(0, -i * yDX);
+      CF.translate(0, -i * yDX);
     }
-    translate(0, -yMin);
+    CF.translate(0, -yMin);
 
     function drawMajor(shiftX, shiftY, x1, y1, x2, y2) {
-      translate(shiftX, shiftY);
-      strokeWidth(grid.lineWidth);
-      stroke(grid.color);
-      line(x1, y1, x2, y2);
+      CF.translate(shiftX, shiftY);
+      CF.strokeWidth(grid.lineWidth);
+      CF.stroke(grid.color);
+      CF.line(x1, y1, x2, y2);
     }
     function drawMinor(x1, y1, x2, y2) {
-      strokeWidth(grid.subgridLineWidth);
-      stroke(grid.subgridLineColor);
-      line(x1, y1, x2, y2);
+      CF.strokeWidth(grid.subgridLineWidth);
+      CF.stroke(grid.subgridLineColor);
+      CF.line(x1, y1, x2, y2);
     }
   }
 
@@ -642,3 +631,5 @@ more.numberPlane = function (config = {}) {
   };
 };
 C.addExtension(more);
+
+export { more };
