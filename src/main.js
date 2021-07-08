@@ -1,7 +1,3 @@
-/*
-global
-*/
-
 // main file; defines C function
 const defaultConfig = {
   width: 200, // width of canvas multiplied by dpr
@@ -33,12 +29,12 @@ function assignDefaultConfigs (cfgs) {
  * @param {HTMLElement} container container for the drawings [default:body element]
  * @param {object} [configs={}] configurations
  */
-function _C (fx, container = document.body, configs = {}) {
+function C (fx, container = document.body, configs = {}) {
   // assign configs
   assignDefaultConfigs(configs);
 
   // initialize canvas
-  let canvas = window.C.makeCanvas(configs);
+  let canvas = C.makeCanvas(configs);
   if (typeof container === "string") { container = document.querySelector(container); }
   let canvasName;
   if (configs.name != undefined) {
@@ -53,19 +49,19 @@ function _C (fx, container = document.body, configs = {}) {
     }
   } else {
     // finds a name for canvas that already don't exist
-    while (document.getElementById("canvas-" + window.C.nameID) != undefined) {
-      window.C.nameID++;
+    while (document.getElementById("canvas-" + C.nameID) != undefined) {
+      C.nameID++;
     }
 
-    canvasName = "canvas-" + window.C.nameID;
+    canvasName = "canvas-" + C.nameID;
     configs.name = canvasName;
   }
   function prepareCanvas () {
     // add additional information to rendererContext
-    window.C.getResizedCanvas(canvas, configs);
+    C.getResizedCanvas(canvas, configs);
     canvas.context = Object.assign(canvas.getContext("2d"), configs);
     canvas.context.setTransform(configs.dpr, 0, 0, configs.dpr, 0, 0);
-    window.C.workingCanvas = canvas.context;
+    C.workingCanvas = canvas.context;
   }
   // set canvas's id and class to its name
   canvas.id = canvasName;
@@ -73,20 +69,20 @@ function _C (fx, container = document.body, configs = {}) {
   // add canvas to container
   container.appendChild(canvas);
   prepareCanvas();
-  window.C.canvasList[canvasName] = canvas.context;
+  C.canvasList[canvasName] = canvas.context;
   fx();
 }
 
-_C.canvasList = {};
-_C.nameID = 0;
-_C.workingCanvas = undefined; // index of current working canvas in `canvasList`
+C.canvasList = {};
+C.nameID = 0;
+C.workingCanvas = undefined; // index of current working canvas in `canvasList`
 
 /**
  * return inner width of container tag
  * @param {HTMLElement} [container=document.body]
  * @returns {Number}
  */
-_C.getContainerWidth = function (container = document.body) {
+C.getContainerWidth = function (container = document.body) {
   const cs = window.getComputedStyle(container);
   return (
     parseInt(cs.width) -
@@ -111,7 +107,7 @@ _C.getContainerWidth = function (container = document.body) {
  * @param {HTMLCanvasElement} cvs
  * @param {Object} configs
  */
-_C.getResizedCanvas = function (cvs, configs) {
+C.getResizedCanvas = function (cvs, configs) {
   const width = configs.width;
   const height = configs.height;
   const dpr = configs.dpr;
@@ -127,7 +123,7 @@ _C.getResizedCanvas = function (cvs, configs) {
  * @param {Object} configs
  * @returns {HTMLCanvasElement}
  */
-_C.makeCanvas = function (configs) {
+C.makeCanvas = function (configs) {
   const cvs = document.createElement("canvas");
   this.getResizedCanvas(cvs, configs);
   return cvs;
@@ -138,9 +134,12 @@ _C.makeCanvas = function (configs) {
  *
  * @param {Object} extObj
  */
-_C.addExtension = function (extObj, editable) {
-  window._defineProperties(extObj, window, !editable);
-  window._defineProperties(extObj, window.C.extensions, !editable);
+C.addExtension = function (extObj, editable) {
+  _defineProperties(extObj, window, !editable);
+  _defineProperties(extObj, C.extensions, !editable);
 };
 
-window.C = _C;
+// register to window
+window["C"] = C;
+
+export {C};

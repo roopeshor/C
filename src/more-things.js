@@ -1,13 +1,5 @@
-// delcaring global variables for ESLint
-/*
-global C background fill stroke noStroke strokeWidth translate scale fontSize WHITE CENTERX CENTERY line numberLine GREY rotate measureText text BLUE_C axes
-*/
-
-/* eslint-disable no-unused-vars */
-// delcaring global variables for ESLint
-/*
-global C background fill stroke noStroke strokeWidth translate scale fontSize WHITE CENTERX CENTERY line numberLine GREY rotate measureText text BLUE_C axes
-*/
+import { _defineProperties } from "./constants.js";
+import { C } from "./main.js";
 
 const consts = {
   CENTERX: function () {
@@ -15,7 +7,7 @@ const consts = {
   },
   CENTERY: function () {
     return C.workingCanvas.height / 2;
-  }
+  },
 };
 
 function _def_(name, getter) {
@@ -28,9 +20,9 @@ function _def_(name, getter) {
         configurable: true,
         enumerable: true,
         value: value,
-        writable: true
+        writable: true,
       });
-    }
+    },
   });
 }
 
@@ -85,10 +77,10 @@ more.initCenteredCanvas = function () {
 };
 /**
  * clears a rectangular portion of canvas
- * @param {number} [x=-width / 2] 
- * @param {number} [y=-height / 2] 
- * @param {number} [width=width * 2] 
- * @param {number} [height=height * 2] 
+ * @param {number} [x=-width / 2]
+ * @param {number} [y=-height / 2]
+ * @param {number} [width=width * 2]
+ * @param {number} [height=height * 2]
  */
 more.clear = function (x, y, width, height) {
   const ctx = C.workingCanvas;
@@ -100,18 +92,18 @@ more.clear = function (x, y, width, height) {
 };
 /**
  * scales canvas
- * @param {number} x 
- * @param {number} y 
+ * @param {number} x
+ * @param {number} y
  */
 more.scale = function (x, y = x) {
   C.workingCanvas.scale(x, y);
 };
 /**
  * draws a text
- * @param {string} text 
- * @param {number} x 
- * @param {number} y 
- * @param {number} maxwidth 
+ * @param {string} text
+ * @param {number} x
+ * @param {number} y
+ * @param {number} maxwidth
  */
 more.text = function (text, x, y, maxwidth) {
   const ctx = C.workingCanvas;
@@ -164,7 +156,7 @@ more.axes = function (config = {}) {
     includeTick: [false],
     includeLeftTip: [true],
     includeRightTip: [true],
-    textDirection: [-0.3, -1]
+    textDirection: [-0.3, -1],
   };
   const yAxisDefaults = {
     length: [ctx.height, "number"],
@@ -173,7 +165,7 @@ more.axes = function (config = {}) {
     includeNumbers: [false],
     includeTick: [false],
     includeLeftTip: [true],
-    includeRightTip: [true]
+    includeRightTip: [true],
   };
   // configurations
   const xAxis = applyDefault(xAxisDefaults, config.xAxis);
@@ -216,7 +208,7 @@ more.axes = function (config = {}) {
   return {
     unit: unit, // major unit size
     xAxis: xAxisLine, // x axis confiurations from numberLine
-    yAxis: yAxisLine // y axis confiurations from numberLine
+    yAxis: yAxisLine, // y axis confiurations from numberLine
   };
 };
 /**
@@ -361,7 +353,7 @@ more.numberLine = function (config = {}) {
     textDirection: [[-0.3, -1]],
     textColor: [WHITE],
     textSize: [17, "number"],
-    textRotation: [0]
+    textRotation: [0],
   };
   applyDefault(defaultConfigs, config);
   const lineLength = config.length;
@@ -485,7 +477,7 @@ more.numberLine = function (config = {}) {
   // unit interval
   return {
     unitLength: ds,
-    tickList: list
+    tickList: list,
   };
 };
 /**
@@ -522,7 +514,7 @@ more.numberPlane = function (config = {}) {
     includeLeftTip: [false],
     includeRightTip: [false],
     includeNumbers: [true],
-    includeTick: [true]
+    includeTick: [true],
   };
   const yAxisDefaults = {
     textDirection: [[0, 0.8]],
@@ -532,14 +524,14 @@ more.numberPlane = function (config = {}) {
     includeLeftTip: [false],
     includeRightTip: [false],
     includeNumbers: [true],
-    includeTick: [true]
+    includeTick: [true],
   };
   const gridDefaults = {
     lineWidth: [1, "number"],
     color: [BLUE_C + "a0"],
     subgrids: [1, "number"],
     subgridLineColor: [GREY + "50"],
-    subgridLineWidth: [0.7, "number"]
+    subgridLineWidth: [0.7, "number"],
   };
   // configurations
   const xAxis = applyDefault(xAxisDefaults, config.xAxis);
@@ -577,7 +569,7 @@ more.numberPlane = function (config = {}) {
   // draws axes
   const axesLines = axes({
     xAxis: xAxis,
-    yAxis: yAxis
+    yAxis: yAxis,
   });
   // size of a unit cell
   const unit = axesLines.unit;
@@ -647,7 +639,7 @@ more.numberPlane = function (config = {}) {
     unit: unit, // major unit size
     subgridUnit: subgridUnit, // subgrid unit size
     xAxis: axesLines.xAxis, // x axis confiurations from numberLine
-    yAxis: axesLines.yAxis // y axis confiurations from numberLine
+    yAxis: axesLines.yAxis, // y axis confiurations from numberLine
   };
 };
 C.addExtension(more);

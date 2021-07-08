@@ -1,6 +1,5 @@
-/*
-global C
-*/
+import { _defineProperties } from "./constants.js";
+import { C } from "./main.js";
 
 function readColor (colors) {
   let color1;
@@ -96,7 +95,7 @@ CFunctions.background = function () {
   const ctx = C.workingCanvas;
   ctx.backgroundColor = col;
   ctx.save();
-  this.rest();
+  C.functions.rest();
   ctx.fillStyle = col;
   ctx.fillRect(0, 0, ctx.width, ctx.height);
   ctx.restore();
@@ -827,5 +826,6 @@ CFunctions.linearGradient = function _linearGradient (p1, p2, colorStops) {
 };
 
 C.functions = CFunctions;
+_defineProperties(C.functions);
 
-window._defineProperties(C.functions);
+export {CFunctions}

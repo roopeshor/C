@@ -1,9 +1,10 @@
+import {
+  _COLORLIST,
+  _defineProperties,
+  MathFunctions
+} from "./constants.js";
 
-/*
-TODO decide whether to use global COLORLIST or color list in constants.js
-Because developer can edit COLORLIST array and can see effect on color randomizers
-*/
-const __definedColors__ = Object.keys(window.COLORLIST);
+const __definedColors__ = Object.keys(_COLORLIST);
 
 // color randomizers
 const randomizers = {};
@@ -14,7 +15,7 @@ const randomizers = {};
 randomizers.randomColor = function () {
   let color = "#";
   for (let i = 0; i < 3; i++) {
-    let randNum = window.randomInt(255).toString(16);
+    let randNum = MathFunctions.randomInt(255).toString(16);
     randNum = randNum.length === 1 ? 0 + randNum : randNum;
     color += randNum;
   }
@@ -26,7 +27,7 @@ randomizers.randomColor = function () {
  *
 */
 randomizers.randomDefinedColor = function () {
-  return window.COLORLIST[__definedColors__[window.randomInt(__definedColors__.length - 1)]];
+  return _COLORLIST[__definedColors__[MathFunctions.randomInt(__definedColors__.length - 1)]];
 };
 
 const colorConverters = {};
@@ -210,11 +211,7 @@ colorConverters.HSVToRGB = function (hue, saturation, value) {
   return [r * 255, g * 255, b * 255];
 };
 
-window._defineProperties(randomizers);
-window._defineProperties(colorConverters);
+_defineProperties(randomizers);
+_defineProperties(colorConverters);
 
-/*
-defined functions:
-
-randomColor, randomDefinedColor, RGBToHSL, HSLToRGB, RGBToHSV, HSVToRGB
-*/
+export {randomizers, colorConverters}
