@@ -1,26 +1,25 @@
-import { _defineProperties } from "./constants.js";
 import { C } from "./main.js";
 
 const consts = {
-  CENTERX: function () {
+  "CENTERX": function () {
     return C.workingCanvas.width / 2;
   },
-  CENTERY: function () {
+  "CENTERY": function () {
     return C.workingCanvas.height / 2;
   },
 };
 
 function _def_(name, getter) {
   Object.defineProperty(window, name, {
-    configurable: true,
-    enumerable: true,
-    get: getter,
-    set: function set(value) {
+    "configurable": true,
+    "enumerable": true,
+    "get": getter,
+    "set": function set(value) {
       Object.defineProperty(window, name, {
-        configurable: true,
-        enumerable: true,
+        "configurable": true,
+        "enumerable": true,
         value: value,
-        writable: true,
+        "writable": true,
       });
     },
   });
@@ -151,21 +150,21 @@ more.axes = function (config = {}) {
   const ctx = C.workingCanvas;
   // default configurations
   const xAxisDefaults = {
-    length: [ctx.width, "number"],
-    includeNumbers: [false],
-    includeTick: [false],
-    includeLeftTip: [true],
-    includeRightTip: [true],
-    textDirection: [-0.3, -1],
+    "length": [ctx.width, "number"],
+    "includeNumbers": [false],
+    "includeTick": [false],
+    "includeLeftTip": [true],
+    "includeRightTip": [true],
+    "textDirection": [-0.3, -1],
   };
   const yAxisDefaults = {
-    length: [ctx.height, "number"],
-    rotation: [Math.PI / 2, "number"],
-    textRotation: [-Math.PI / 2, "number"],
-    includeNumbers: [false],
-    includeTick: [false],
-    includeLeftTip: [true],
-    includeRightTip: [true],
+    "length": [ctx.height, "number"],
+    "rotation": [Math.PI / 2, "number"],
+    "textRotation": [-Math.PI / 2, "number"],
+    "includeNumbers": [false],
+    "includeTick": [false],
+    "includeLeftTip": [true],
+    "includeRightTip": [true],
   };
   // configurations
   const xAxis = applyDefault(xAxisDefaults, config.xAxis);
@@ -206,9 +205,9 @@ more.axes = function (config = {}) {
   translate(-center[0], -center[1] - yShift);
 
   return {
-    unit: unit, // major unit size
-    xAxis: xAxisLine, // x axis confiurations from numberLine
-    yAxis: yAxisLine, // y axis confiurations from numberLine
+    "unit": unit, // major unit size
+    "xAxis": xAxisLine, // x axis confiurations from numberLine
+    "yAxis": yAxisLine, // y axis confiurations from numberLine
   };
 };
 /**
@@ -332,28 +331,28 @@ more.doubleArrow = function (
 more.numberLine = function (config = {}) {
   const ctx = C.workingCanvas;
   const defaultConfigs = {
-    length: [ctx.width, "number"],
-    rotation: [0],
-    center: [[0, 0]],
-    range: [[-8, 8, 1], "array"],
-    numbersToExclude: [[]],
-    numbersToInclude: [[]],
-    numbersWithElongatedTicks: [[]],
-    includeLeftTip: [false],
-    includeRightTip: [false],
-    includeNumbers: [true],
-    tipWidth: [20, "number"],
-    tipSizeRatio: [1, "number"],
-    color: [GREY],
-    lineWidth: [3, "number"],
-    includeTick: [true],
-    excludeOriginTick: [false],
-    longerTickMultiple: [1.5, "number"],
-    tickHeight: [15, "number"],
-    textDirection: [[-0.3, -1]],
-    textColor: [WHITE],
-    textSize: [17, "number"],
-    textRotation: [0],
+    "length": [ctx.width, "number"],
+    "rotation": [0],
+    "center": [[0, 0]],
+    "range": [[-8, 8, 1], "array"],
+    "numbersToExclude": [[]],
+    "numbersToInclude": [[]],
+    "numbersWithElongatedTicks": [[]],
+    "includeLeftTip": [false],
+    "includeRightTip": [false],
+    "includeNumbers": [true],
+    "tipWidth": [20, "number"],
+    "tipSizeRatio": [1, "number"],
+    "color": [GREY],
+    "lineWidth": [3, "number"],
+    "includeTick": [true],
+    "excludeOriginTick": [false],
+    "longerTickMultiple": [1.5, "number"],
+    "tickHeight": [15, "number"],
+    "textDirection": [[-0.3, -1]],
+    "textColor": [WHITE],
+    "textSize": [17, "number"],
+    "textRotation": [0],
   };
   applyDefault(defaultConfigs, config);
   const lineLength = config.length;
@@ -476,8 +475,8 @@ more.numberLine = function (config = {}) {
 
   // unit interval
   return {
-    unitLength: ds,
-    tickList: list,
+    "unitLength": ds,
+    "tickList": list,
   };
 };
 /**
@@ -508,30 +507,30 @@ more.numberPlane = function (config = {}) {
   const ctx = C.workingCanvas;
   // default configurations
   const xAxisDefaults = {
-    textDirection: [[0, -1.1]],
-    length: [ctx.width, "number"],
-    excludeOriginTick: [true],
-    includeLeftTip: [false],
-    includeRightTip: [false],
-    includeNumbers: [true],
-    includeTick: [true],
+    "textDirection": [[0, -1.1]],
+    "length": [ctx.width, "number"],
+    "excludeOriginTick": [true],
+    "includeLeftTip": [false],
+    "includeRightTip": [false],
+    "includeNumbers": [true],
+    "includeTick": [true],
   };
   const yAxisDefaults = {
-    textDirection: [[0, 0.8]],
-    length: [ctx.height, "number"],
-    textRotation: [-Math.PI / 2, "number"],
-    excludeOriginTick: [true],
-    includeLeftTip: [false],
-    includeRightTip: [false],
-    includeNumbers: [true],
-    includeTick: [true],
+    "textDirection": [[0, 0.8]],
+    "length": [ctx.height, "number"],
+    "textRotation": [-Math.PI / 2, "number"],
+    "excludeOriginTick": [true],
+    "includeLeftTip": [false],
+    "includeRightTip": [false],
+    "includeNumbers": [true],
+    "includeTick": [true],
   };
   const gridDefaults = {
-    lineWidth: [1, "number"],
-    color: [BLUE_C + "a0"],
-    subgrids: [1, "number"],
-    subgridLineColor: [GREY + "50"],
-    subgridLineWidth: [0.7, "number"],
+    "lineWidth": [1, "number"],
+    "color": [BLUE_C + "a0"],
+    "subgrids": [1, "number"],
+    "subgridLineColor": [GREY + "50"],
+    "subgridLineWidth": [0.7, "number"],
   };
   // configurations
   const xAxis = applyDefault(xAxisDefaults, config.xAxis);
@@ -568,8 +567,8 @@ more.numberPlane = function (config = {}) {
 
   // draws axes
   const axesLines = axes({
-    xAxis: xAxis,
-    yAxis: yAxis,
+    "xAxis": xAxis,
+    "yAxis": yAxis,
   });
   // size of a unit cell
   const unit = axesLines.unit;
@@ -636,10 +635,10 @@ more.numberPlane = function (config = {}) {
   }
 
   return {
-    unit: unit, // major unit size
-    subgridUnit: subgridUnit, // subgrid unit size
-    xAxis: axesLines.xAxis, // x axis confiurations from numberLine
-    yAxis: axesLines.yAxis, // y axis confiurations from numberLine
+    "unit": unit, // major unit size
+    "subgridUnit": subgridUnit, // subgrid unit size
+    "xAxis": axesLines.xAxis, // x axis confiurations from numberLine
+    "yAxis": axesLines.yAxis, // y axis confiurations from numberLine
   };
 };
 C.addExtension(more);

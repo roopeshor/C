@@ -19,6 +19,7 @@ console.log(
 );
 console.log(randomizers, colorConverters);
 console.log(C);
+console.log(CFunctions);
 
 C(() => {
   background(0);

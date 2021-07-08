@@ -19,5 +19,7 @@
     "url": "https://github.com/Roopesh2/C/issues"
   },
   "homepage": "https://github.com/Roopesh2/C#readme",
-  "devDependencies": {}
+  "devDependencies": {
+    "eslint": "^7.30.0"
+  }
 }

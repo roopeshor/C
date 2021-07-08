@@ -1,7 +1,7 @@
 import { _defineProperties } from "./constants.js";
 import { C } from "./main.js";
 
-function readColor (colors) {
+function readColor(colors) {
   let color1;
   let color2;
   let color3;
@@ -125,7 +125,7 @@ CFunctions.clear = function (x, y, width, height) {
 CFunctions.permaBackground = function () {
   const dat = this.getCanvasData();
   const cvs = C.workingCanvas.canvas;
-  cvs.style.background = 'url("' + dat + '")';
+  cvs.style.background = "url(\"" + dat + "\")";
   cvs.style.backgroundPosition = "center";
   cvs.style.backgroundSize = "cover";
 };
@@ -328,7 +328,7 @@ CFunctions.getDrawConfigs = function () {
     fill: ctx.fillStyle,
     strokeWidth: ctx.lineWidth,
     doStroke: ctx._doStroke,
-    doFill: ctx._doFill
+    doFill: ctx._doFill,
   };
 };
 
@@ -504,7 +504,7 @@ CFunctions.loop = function (fx, canvasName, dx) {
   } else {
     a();
   }
-  function a () {
+  function a() {
     C.workingCanvas = ctx;
     ctx.currentLoop = window.requestAnimationFrame(a);
     fx();
@@ -560,7 +560,7 @@ CFunctions.measureText = function (text) {
  * sets font size
  * @param {number|string} size
  */
-CFunctions.fontSize = function _fontSize (size) {
+CFunctions.fontSize = function _fontSize(size) {
   const ctx = C.workingCanvas;
   size = typeof size === "number" ? size + "px" : size;
   ctx.fontSize = size;
@@ -571,7 +571,7 @@ CFunctions.fontSize = function _fontSize (size) {
  * sets font family
  * @param {string} family
  */
-CFunctions.fontFamily = function _fontFamily (family) {
+CFunctions.fontFamily = function _fontFamily(family) {
   const ctx = C.workingCanvas;
   ctx.fontFamily = family;
   ctx.font = this.getFont();
@@ -583,7 +583,7 @@ CFunctions.fontFamily = function _fontFamily (family) {
  * @param {string} datURL
  * @returns {string}
  */
-CFunctions.getCanvasData = function _getCanvasData (datURL = "image/png") {
+CFunctions.getCanvasData = function _getCanvasData(datURL = "image/png") {
   return C.workingCanvas.canvas.toDataURL(datURL);
 };
 
@@ -593,7 +593,7 @@ CFunctions.getCanvasData = function _getCanvasData (datURL = "image/png") {
  * @param {string} [name="drawing"]
  * @param {string} [datURL="image/png"]
  */
-CFunctions.saveCanvas = function _saveCanvas (
+CFunctions.saveCanvas = function _saveCanvas(
   name = "drawing",
   datURL = "image/png"
 ) {
@@ -754,7 +754,7 @@ CFunctions.regularPolygonWithRadius = function (
   rotation += e / 2;
   const initial = [
     Math.cos(rotation) * radius + x,
-    Math.sin(rotation) * radius + y
+    Math.sin(rotation) * radius + y,
   ];
   ctx.beginPath();
   ctx.moveTo(initial[0], initial[1]);
@@ -807,7 +807,7 @@ var color = linearGradient(
 );
 ```
  */
-CFunctions.linearGradient = function _linearGradient (p1, p2, colorStops) {
+CFunctions.linearGradient = function _linearGradient(p1, p2, colorStops) {
   const ctx = C.workingCanvas;
   const gradient = ctx.createLinearGradient(p1[0], p1[1], p2[0], p2[1]);
   if (Array.isArray(colorStops)) {
@@ -828,4 +828,4 @@ CFunctions.linearGradient = function _linearGradient (p1, p2, colorStops) {
 C.functions = CFunctions;
 _defineProperties(C.functions);
 
-export {CFunctions}
+export { CFunctions };

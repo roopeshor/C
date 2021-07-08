@@ -1,6 +1,2 @@
 node_modules
 .vscode
-
-# old source
-# new `src` folder contains files that use es6 modules
-_src

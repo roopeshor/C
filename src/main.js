@@ -1,15 +1,16 @@
+import { _defineProperties } from "./constants.js";
 // main file; defines C function
 const defaultConfig = {
-  width: 200, // width of canvas multiplied by dpr
-  height: 200, // height of canvas  multiplied by dpr
-  dpr: Math.ceil(devicePixelRatio || 1), // device pixel ratio for clear drawings
-  _doFill: true,
-  _doStroke: true,
-  fillStyle: "#ffffff",
-  strokeStyle: "#000000",
-  fontSize: "20px",
-  fontfamily: "sans-serif",
-  _ColorMode: "rgba"
+  "width": 200, // width of canvas multiplied by dpr
+  "height": 200, // height of canvas  multiplied by dpr
+  "dpr": Math.ceil(devicePixelRatio || 1), // device pixel ratio for clear drawings
+  "_doFill": true,
+  "_doStroke": true,
+  "fillStyle": "#ffffff",
+  "strokeStyle": "#000000",
+  "fontSize": "20px",
+  "fontfamily": "sans-serif",
+  "_ColorMode": "rgba"
 };
 
 function assignDefaultConfigs (cfgs) {
@@ -26,7 +27,7 @@ function assignDefaultConfigs (cfgs) {
 /**
  * Main Function
  * @param {function} fx codes to exeecute
- * @param {HTMLElement} container container for the drawings [default:body element]
+ * @param {HTMLElement} [container=document.body] container for the drawings
  * @param {object} [configs={}] configurations
  */
 function C (fx, container = document.body, configs = {}) {

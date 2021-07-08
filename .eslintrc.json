@@ -5,25 +5,14 @@
   },
   "extends": "eslint:recommended",
   "parserOptions": {
-    "ecmaVersion": 12
+    "ecmaVersion": 12,
+    "sourceType": "module"
   },
   "rules": {
-    "indent": [
-      "warning",
-      2
-    ],
-    "linebreak-style": [
-      "warning",
-      "windows"
-    ],
-    "quotes": [
-      "warning",
-      "double"
-    ],
-    "semi": [
-      "error",
-      "always"
-    ],
-    "eqeqeq":"off"
-  }
+    "indent": ["error", 2],
+    "linebreak-style": ["error", "windows"],
+    "quotes": ["error", "double"],
+    "semi": ["error", "always"],
+    "no-undef":"off"
+  }  
 }

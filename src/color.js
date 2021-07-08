@@ -32,7 +32,7 @@ randomizers.randomDefinedColor = function () {
 
 const colorConverters = {};
 
-function hue2RGB (p, q, t) {
+function hue2RGB(p, q, t) {
   if (t < 0) t += 1;
   if (t > 1) t -= 1;
   if (t < 1 / 6) return p + (q - p) * 6 * t;
@@ -68,15 +68,15 @@ colorConverters.RGBToHSL = function (red, green, blue) {
     const d = max - min;
     saturation = lightness > 0.5 ? d / (2 - max - min) : d / (max + min);
     switch (max) {
-      case r:
-        hue = (g - b) / d + (g < b ? 6 : 0);
-        break;
-      case g:
-        hue = (b - r) / d + 2;
-        break;
-      case b:
-        hue = (r - g) / d + 4;
-        break;
+    case "r":
+      hue = (g - b) / d + (g < b ? 6 : 0);
+      break;
+    case "g":
+      hue = (b - r) / d + 2;
+      break;
+    case "b":
+      hue = (r - g) / d + 4;
+      break;
     }
     hue /= 6;
   }
@@ -140,15 +140,15 @@ colorConverters.RGBToHSV = function (red, green, blue) {
     hue = 0; // achromatic
   } else {
     switch (max) {
-      case r:
-        hue = (g - b) / d + (g < b ? 6 : 0);
-        break;
-      case g:
-        hue = (b - r) / d + 2;
-        break;
-      case b:
-        hue = (r - g) / d + 4;
-        break;
+    case r:
+      hue = (g - b) / d + (g < b ? 6 : 0);
+      break;
+    case g:
+      hue = (b - r) / d + 2;
+      break;
+    case b:
+      hue = (r - g) / d + 4;
+      break;
     }
     hue /= 6;
   }
@@ -176,36 +176,36 @@ colorConverters.HSVToRGB = function (hue, saturation, value) {
   const t = value * (1 - (1 - f) * saturation);
 
   switch (i % 6) {
-    case 0:
-      r = value;
-      g = t;
-      b = p;
-      break;
-    case 1:
-      r = q;
-      g = value;
-      b = p;
-      break;
-    case 2:
-      r = p;
-      g = value;
-      b = t;
-      break;
-    case 3:
-      r = p;
-      g = q;
-      b = value;
-      break;
-    case 4:
-      r = t;
-      g = p;
-      b = value;
-      break;
-    case 5:
-      r = value;
-      g = p;
-      b = q;
-      break;
+  case 0:
+    r = value;
+    g = t;
+    b = p;
+    break;
+  case 1:
+    r = q;
+    g = value;
+    b = p;
+    break;
+  case 2:
+    r = p;
+    g = value;
+    b = t;
+    break;
+  case 3:
+    r = p;
+    g = q;
+    b = value;
+    break;
+  case 4:
+    r = t;
+    g = p;
+    b = value;
+    break;
+  case 5:
+    r = value;
+    g = p;
+    b = q;
+    break;
   }
 
   return [r * 255, g * 255, b * 255];
@@ -214,4 +214,4 @@ colorConverters.HSVToRGB = function (hue, saturation, value) {
 _defineProperties(randomizers);
 _defineProperties(colorConverters);
 
-export {randomizers, colorConverters}
+export { randomizers, colorConverters };

@@ -16,7 +16,7 @@ function _defineProperties(obj, toAssign, specific, message) {
       ? message
       : function (k) {
         console.warn(
-          'You changed value of "' + k + '" which C uses. Be careful'
+          "You changed value of \"" + k + "\" which C uses. Be careful"
         );
       };
   for (let i = 0, props = Object.keys(obj); i < props.length; i++) {
@@ -172,7 +172,7 @@ const _COLORLIST = {
 _defineProperties(MathConsts, window, false);
 _defineProperties(MathFunctions);
 _defineProperties(
-  Object.assign({ TRANSPARENT: "rgba(0,0,0,0)" }, _COLORLIST),
+  Object.assign({ "TRANSPARENT": "rgba(0,0,0,0)" }, _COLORLIST),
   window,
   false
 );
@@ -185,4 +185,4 @@ export {
   MathFunctions,
   DrawingConstants,
   _COLORLIST 
-}
+};
