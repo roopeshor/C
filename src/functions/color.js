@@ -62,13 +62,13 @@ function RGBToHSL(red, green, blue) {
     const d = max - min;
     saturation = lightness > 0.5 ? d / (2 - max - min) : d / (max + min);
     switch (max) {
-    case "r":
+    case r:
       hue = (g - b) / d + (g < b ? 6 : 0);
       break;
-    case "g":
+    case g:
       hue = (b - r) / d + 2;
       break;
-    case "b":
+    case b:
       hue = (r - g) / d + 4;
       break;
     }
@@ -214,4 +214,5 @@ export {
   RGBToHSV,
   HSVToRGB
 };
+
 
