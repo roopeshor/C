@@ -1,13 +1,13 @@
-import * as MathConsts from "./constants/math.js";
-import * as DrawingConstants from "./constants/drawing.js";
 import * as COLORLIST from "./constants/colors.js";
-import * as MathFunctions from "./functions/math.js";
+import * as DrawingConstants from "./constants/drawing.js";
+import * as MathConsts from "./constants/math.js";
+import { HSLToRGB, HSVToRGB, RGBToHSL, RGBToHSV } from "./functions/color.js";
 import { defineProperties } from "./functions/defineProperties.js";
-
-import { RGBToHSL, HSLToRGB, RGBToHSV, HSVToRGB } from "./functions/color.js";
-import { C } from "./main.js";
 import * as CFunctions from "./functions/drawing-functions.js";
+import * as MathFunctions from "./functions/math.js";
 import * as extras from "./functions/more-things.js";
+import { C } from "./main.js";
+
 
 // export to global scope
 defineProperties(MathConsts, window, false);

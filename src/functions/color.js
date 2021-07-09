@@ -208,9 +208,10 @@ function HSVToRGB(hue, saturation, value) {
 export {
   randomColor,
   randomDefinedColor,
-  
+
   RGBToHSL,
   HSLToRGB,
   RGBToHSV,
   HSVToRGB
 };
+

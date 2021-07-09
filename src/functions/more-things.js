@@ -1,24 +1,14 @@
+import {
+  BLUE_C, GREY, WHITE
+} from "../constants/colors.js";
 import { C } from "../main.js";
 import {
   background,
-  fill,
-  stroke,
-  strokeWidth,
-  noStroke,
-  translate,
-  scale,
-  fontSize,
-  line,
-  rotate,
-  measureText,
-  text
+  fill, fontSize,
+  line, measureText, noStroke, rotate, scale, stroke,
+  strokeWidth, text, translate
 } from "./drawing-functions.js";
 
-import {
-  WHITE,
-  GREY,
-  BLUE_C
-} from "../constants/colors.js";
 
 /*
 global CENTERX CENTERY
@@ -646,3 +636,4 @@ export {
   numberLine,
   numberPlane
 };
+
