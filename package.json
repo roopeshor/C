@@ -7,7 +7,8 @@
     "example": "examples"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "babel src -d build"
   },
   "repository": {
     "type": "git",
@@ -21,5 +22,8 @@
   "homepage": "https://github.com/Roopesh2/C#readme",
   "devDependencies": {
     "eslint": "^7.30.0"
+  },
+  "dependencies": {
+    "google-closure-compiler": "^20210601.0.0"
   }
 }

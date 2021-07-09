@@ -1,4 +1,3 @@
-import { C } from "./main.js";
 /**
  * defines new properties to a given Object
  *
@@ -7,7 +6,7 @@ import { C } from "./main.js";
  * @param {boolean} [specific=true] whether to define properties special
  * @param {function} [message] message given on redefining value. Only works if `specific === true`
  */
-function _defineProperties(obj, toAssign, specific, message) {
+function defineProperties(obj, toAssign, specific, message) {
   toAssign = toAssign || window;
   specific = (specific === undefined || specific === null) ? window : specific;
   toAssign = toAssign || window;
@@ -107,7 +106,7 @@ const DrawingConstants = {
   "ROUND": "round",
   "MILTER": "milter"
 };
-const _COLORLIST = {
+const COLORLIST = {
   // from Manim
   "DARK_BLUE": "#236B8E",
   "DARK_BROWN": "#8B4513",
@@ -169,20 +168,10 @@ const _COLORLIST = {
   "ORANGE": "#FF862F"
 };
 
-_defineProperties(MathConsts, window, false);
-_defineProperties(MathFunctions);
-_defineProperties(
-  Object.assign({ "TRANSPARENT": "rgba(0,0,0,0)" }, _COLORLIST),
-  window,
-  false
-);
-_defineProperties(DrawingConstants, window, false);
-_defineProperties(_defineProperties, C);
-
 export {
-  _defineProperties,
+  defineProperties,
   MathConsts,
   MathFunctions,
   DrawingConstants,
-  _COLORLIST 
+  COLORLIST
 };

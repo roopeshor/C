@@ -1,4 +1,4 @@
-import { _defineProperties } from "./constants.js";
+import { defineProperties } from "./constants.js";
 // main file; defines C function
 const defaultConfig = {
   "width": 200, // width of canvas multiplied by dpr
@@ -136,8 +136,8 @@ C.makeCanvas = function (configs) {
  * @param {Object} extObj
  */
 C.addExtension = function (extObj, editable) {
-  _defineProperties(extObj, window, !editable);
-  _defineProperties(extObj, C.extensions, !editable);
+  defineProperties(extObj, window, !editable);
+  defineProperties(extObj, C.extensions, !editable);
 };
 
 // register to window

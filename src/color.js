@@ -1,10 +1,9 @@
 import {
-  _COLORLIST,
-  _defineProperties,
+  COLORLIST,
   MathFunctions
 } from "./constants.js";
 
-const __definedColors__ = Object.keys(_COLORLIST);
+const __definedColors__ = Object.keys(COLORLIST);
 
 // color randomizers
 const randomizers = {};
@@ -27,7 +26,7 @@ randomizers.randomColor = function () {
  *
 */
 randomizers.randomDefinedColor = function () {
-  return _COLORLIST[__definedColors__[MathFunctions.randomInt(__definedColors__.length - 1)]];
+  return COLORLIST[__definedColors__[MathFunctions.randomInt(__definedColors__.length - 1)]];
 };
 
 const colorConverters = {};
@@ -210,8 +209,5 @@ colorConverters.HSVToRGB = function (hue, saturation, value) {
 
   return [r * 255, g * 255, b * 255];
 };
-
-_defineProperties(randomizers);
-_defineProperties(colorConverters);
 
 export { randomizers, colorConverters };

@@ -6,13 +6,15 @@
 The [Closure Compiler](https://developers.google.com/closure/compiler/) is a tool for making JavaScript download and run faster. It is a true compiler for JavaScript. Instead of compiling from a source language to machine code, it compiles from JavaScript to better JavaScript. It parses your JavaScript, analyzes it, removes dead code and rewrites and minimizes what's left. It also checks syntax, variable references, and types, and warns about common JavaScript pitfalls.
 
 ## Getting Started
- * [Download the latest version](https://dl.google.com/closure-compiler/compiler-latest.zip) ([Release details here](https://github.com/google/closure-compiler/wiki/Releases))
- * [Download a specific version](https://github.com/google/closure-compiler/wiki/Binary-Downloads). Also available via:
-   - [Maven](https://github.com/google/closure-compiler/wiki/Maven)
-   - [NPM](https://www.npmjs.com/package/google-closure-compiler) - includes java, native and javascript versions.
- * See the [Google Developers Site](https://developers.google.com/closure/compiler/docs/gettingstarted_app) for documentation including instructions for running the compiler from the command line.
+
+* [Download the latest version](https://dl.google.com/closure-compiler/compiler-latest.zip) ([Release details here](https://github.com/google/closure-compiler/wiki/Releases))
+* [Download a specific version](https://github.com/google/closure-compiler/wiki/Binary-Downloads). Also available via:
+  * [Maven](https://github.com/google/closure-compiler/wiki/Maven)
+  * [NPM](https://www.npmjs.com/package/google-closure-compiler) - includes java, native and javascript versions.
+* See the [Google Developers Site](https://developers.google.com/closure/compiler/docs/gettingstarted_app) for documentation including instructions for running the compiler from the command line.
 
 ## Options for Getting Help
+
 1. Post in the [Closure Compiler Discuss Group](https://groups.google.com/forum/#!forum/closure-compiler-discuss).
 2. Ask a question on [Stack Overflow](https://stackoverflow.com/questions/tagged/google-closure-compiler).
 3. Consult the [FAQ](https://github.com/google/closure-compiler/wiki/FAQ).
@@ -26,6 +28,7 @@ Note: The Closure Compiler requires [Java 8 or higher](https://www.java.com/).
 1. Download [Maven](https://maven.apache.org/download.cgi).
 
 2. Add sonatype snapshots repository to `~/.m2/settings.xml`:
+
    ```xml
    <profile>
      <id>allow-snapshots</id>
@@ -61,10 +64,12 @@ unit tests too).
 6. Disregard the warnings about maven-antrun-plugin and build errors.
 7. Configure the project to use the [Google Eclipse style guide](https://github.com/google/styleguide/blob/gh-pages/eclipse-java-google-style.xml)
 8. Edit `.classpath` in closure-compiler-parent. Delete the `<classpathentry ... kind="src" path="src" ... />` line, then add:
+
    ```xml
    <classpathentry excluding="com/google/debugging/sourcemap/super/**|com/google/javascript/jscomp/debugger/gwt/DebuggerGwtMain.java|com/google/javascript/jscomp/gwt/|com/google/javascript/jscomp/resources/super-gwt/**" kind="src" path="src"/>
    <classpathentry kind="src" path="target/generated-sources/annotations"/>
    ```
+
 9. Ensure the Eclipse project settings specify 1.8 compliance level in "Java Compiler".
 10. Build project in Eclipse (right click on the project `closure-compiler-parent` and select `Build Project`).
 11. See *Using Maven* above to build the JAR.
@@ -101,13 +106,11 @@ java -jar compiler.jar --help
 More detailed information about running the Closure Compiler is available in the
 [documentation](https://developers.google.com/closure/compiler/docs/gettingstarted_app).
 
-
 ### Run using Eclipse
 
 1. Open the class `src/com/google/javascript/jscomp/CommandLineRunner.java` or create your own extended version of the class.
 2. Run the class in Eclipse.
 3. See the instructions above on how to use the interactive mode - but beware of the [bug](https://stackoverflow.com/questions/4711098/passing-end-of-transmission-ctrl-d-character-in-eclipse-cdt-console) regarding passing "End of Transmission" in the Eclipse console.
-
 
 ## Compiling Multiple Scripts
 
@@ -139,22 +142,28 @@ contains functions for enforcing dependencies between scripts, and Closure Compi
 will re-order the inputs automatically.
 
 ## How to Contribute
+
 ### Reporting a bug
+
 1. First make sure that it is really a bug and not simply the way that Closure Compiler works (especially true for ADVANCED_OPTIMIZATIONS).
- * Check the [official documentation](https://developers.google.com/closure/compiler/)
- * Consult the [FAQ](https://github.com/google/closure-compiler/wiki/FAQ)
- * Search on [Stack Overflow](https://stackoverflow.com/questions/tagged/google-closure-compiler) and in the [Closure Compiler Discuss Group](https://groups.google.com/forum/#!forum/closure-compiler-discuss)
- * Look through the list of [compiler assumptions](https://github.com/google/closure-compiler/wiki/Compiler-Assumptions).
-2. If you still think you have found a bug, make sure someone hasn't already reported it. See the list of [known issues](https://github.com/google/closure-compiler/issues).
-3. If it hasn't been reported yet, post a new issue. Make sure to add enough detail so that the bug can be recreated. The smaller the reproduction code, the better.
+
+* Check the [official documentation](https://developers.google.com/closure/compiler/)
+* Consult the [FAQ](https://github.com/google/closure-compiler/wiki/FAQ)
+* Search on [Stack Overflow](https://stackoverflow.com/questions/tagged/google-closure-compiler) and in the [Closure Compiler Discuss Group](https://groups.google.com/forum/#!forum/closure-compiler-discuss)
+* Look through the list of [compiler assumptions](https://github.com/google/closure-compiler/wiki/Compiler-Assumptions).
+
+1. If you still think you have found a bug, make sure someone hasn't already reported it. See the list of [known issues](https://github.com/google/closure-compiler/issues).
+2. If it hasn't been reported yet, post a new issue. Make sure to add enough detail so that the bug can be recreated. The smaller the reproduction code, the better.
 
 ### Suggesting a Feature
+
 1. Consult the [FAQ](https://github.com/google/closure-compiler/wiki/FAQ) to make sure that the behaviour you would like isn't specifically excluded (such as string inlining).
 2. Make sure someone hasn't requested the same thing. See the list of [known issues](https://github.com/google/closure-compiler/issues).
 3. Read up on [what type of feature requests are accepted](https://github.com/google/closure-compiler/wiki/FAQ#how-do-i-submit-a-feature-request-for-a-new-type-of-optimization).
 4. Submit your request as an issue.
 
 ### Submitting patches
+
 1. All contributors must sign a contributor license agreement (CLA).
    A CLA basically says that you own the rights to any code you contribute,
    and that you give us permission to use that code in Closure Compiler.
@@ -180,7 +189,7 @@ Copyright 2009 The Closure Compiler Authors.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
-You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0.
+You may obtain a copy of the License at <http://www.apache.org/licenses/LICENSE-2.0>
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,

@@ -1,4 +1,3 @@
-import { _defineProperties } from "./constants.js";
 import { C } from "./main.js";
 
 function readColor(colors) {
@@ -365,10 +364,17 @@ CFunctions.arc = function (x, y, r, startingAngle, endingAngle) {
  * @param {number} [y=x] y-coord
  * @param {number} [maxwidth=undefined] maximum width
  */
-CFunctions.text = function (text, x, y = x, maxwidth = undefined) {
+CFunctions.text = function (text, x, y, maxwidth) {
   const ctx = C.workingCanvas;
-  if (ctx._doFill) ctx.fillText(text, x, y, maxwidth);
-  else if (ctx._doStroke) ctx.strokeText(text, x, y, maxwidth);
+  if (ctx.yAxisInveted) {
+    CFunctions.scale(1, -1);
+    if (ctx._doFill) ctx.fillText(text, x, -y, maxwidth);
+    else if (ctx._doStroke) ctx.strokeText(text, x, -y, maxwidth);
+    CFunctions.scale(1, -1);
+  } else {
+    if (ctx._doFill) ctx.fillText(text, x, y, maxwidth);
+    else if (ctx._doStroke) ctx.strokeText(text, x, y, maxwidth);
+  }
 };
 
 /**
@@ -826,6 +832,5 @@ CFunctions.linearGradient = function _linearGradient(p1, p2, colorStops) {
 };
 
 C.functions = CFunctions;
-_defineProperties(C.functions);
 
 export { CFunctions };

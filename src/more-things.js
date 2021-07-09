@@ -1,7 +1,7 @@
 import { C } from "./main.js";
 import { CFunctions as CF } from "./drawing-functions.js";
 
-import { _COLORLIST as CL } from "./constants.js";
+import { COLORLIST as CL } from "./constants.js";
 
 /*
 global CENTERX CENTERY
@@ -630,6 +630,5 @@ more.numberPlane = function (config = {}) {
     "yAxis": axesLines.yAxis, // y axis confiurations from numberLine
   };
 };
-C.addExtension(more);
 
 export { more };
