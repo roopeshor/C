@@ -9,7 +9,7 @@ import * as extras from "./functions/more-things.js";
 import { C } from "./main.js";
 
 
-// export to global scope
+// export to window scope
 defineProperties(MathConsts, window, false);
 defineProperties(MathFunctions);
 defineProperties(
@@ -29,7 +29,4 @@ defineProperties({
 });
 
 defineProperties(CFunctions);
-console.log(CFunctions);
-
 C.addExtension(extras);
-console.log(extras);

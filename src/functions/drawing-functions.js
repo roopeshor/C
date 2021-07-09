@@ -830,7 +830,8 @@ function linearGradient(p1, p2, colorStops) {
   return gradient;
 }
 
-export { line,
+export {
+  line,
   moveTo,
   lineTo,
   background,
