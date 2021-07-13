@@ -1,42 +1,42 @@
 import { C } from "../main.js";
 
 function readColor(colors) {
-  let color1;
-  let color2;
-  let color3;
-  let alpha = 255;
-  let read = "";
-  if (typeof colors[0] === "number") {
-    if (colors.length === 1) {
-      color1 = colors[0];
-      color2 = color1;
-      color3 = color1;
-    } else if (colors.length === 2) {
-      color1 = colors[0];
-      color2 = colors[1];
-      color3 = 0;
-    } else if (colors.length === 3) {
-      color1 = colors[0];
-      color2 = colors[1];
-      color3 = colors[2];
-    } else if (colors.length === 4) {
-      color1 = colors[0];
-      color2 = colors[1];
-      color3 = colors[2];
-      alpha = colors[3];
-    }
-    const mode = C.workingCanvas._ColorMode;
-    if (mode === "HSL") {
-      read = `hsl(${color1}, ${color2}, ${color3})`;
-    } else if (mode === "rgb") {
-      read = `rgb(${color1}, ${color2}, ${color3})`;
-    } else if (mode === "rgba") {
-      read = `rgba(${color1}, ${color2}, ${color3}, ${alpha})`;
-    }
-  } else {
-    read = colors[0];
-  }
-  return read;
+	let color1;
+	let color2;
+	let color3;
+	let alpha = 255;
+	let read = "";
+	if (typeof colors[0] === "number") {
+		if (colors.length === 1) {
+			color1 = colors[0];
+			color2 = color1;
+			color3 = color1;
+		} else if (colors.length === 2) {
+			color1 = colors[0];
+			color2 = colors[1];
+			color3 = 0;
+		} else if (colors.length === 3) {
+			color1 = colors[0];
+			color2 = colors[1];
+			color3 = colors[2];
+		} else if (colors.length === 4) {
+			color1 = colors[0];
+			color2 = colors[1];
+			color3 = colors[2];
+			alpha = colors[3];
+		}
+		const mode = C.workingCanvas.colorMode;
+		if (mode === "HSL") {
+			read = `hsl(${color1}, ${color2}, ${color3})`;
+		} else if (mode === "rgb") {
+			read = `rgb(${color1}, ${color2}, ${color3})`;
+		} else if (mode === "rgba") {
+			read = `rgba(${color1}, ${color2}, ${color3}, ${alpha})`;
+		}
+	} else {
+		read = colors[0];
+	}
+	return read;
 }
 
 // C drawing functions
@@ -50,12 +50,12 @@ function readColor(colors) {
  * @param {number} y2 final y coord
  */
 function line(x1, y1, x2, y2) {
-  const ctx = C.workingCanvas;
-  ctx.beginPath();
-  ctx.moveTo(x1, y1);
-  ctx.lineTo(x2, y2);
-  ctx.stroke();
-  ctx.closePath();
+	const ctx = C.workingCanvas;
+	ctx.beginPath();
+	ctx.moveTo(x1, y1);
+	ctx.lineTo(x2, y2);
+	ctx.stroke();
+	ctx.closePath();
 }
 
 /**
@@ -65,9 +65,9 @@ function line(x1, y1, x2, y2) {
  * @param {number} y
  */
 function moveTo(x, y) {
-  const ctx = C.workingCanvas;
-  if (!ctx._pathStart) ctx.beginPath();
-  ctx.moveTo(x, y);
+	const ctx = C.workingCanvas;
+	if (!ctx._pathStart) ctx.beginPath();
+	ctx.moveTo(x, y);
 }
 
 /**
@@ -77,7 +77,7 @@ function moveTo(x, y) {
  * @param {number} y
  */
 function lineTo(x, y) {
-  C.workingCanvas.lineTo(x, y);
+	C.workingCanvas.lineTo(x, y);
 }
 
 /**
@@ -89,14 +89,14 @@ function lineTo(x, y) {
  * ⦿ a array of numbers ([0, 244, 34])
  */
 function background() {
-  const col = readColor(arguments);
-  const ctx = C.workingCanvas;
-  ctx.backgroundColor = col;
-  ctx.save();
-  rest();
-  ctx.fillStyle = col;
-  ctx.fillRect(0, 0, ctx.width, ctx.height);
-  ctx.restore();
+	const col = readColor(arguments);
+	const ctx = C.workingCanvas;
+	ctx.backgroundColor = col;
+	ctx.save();
+	rest();
+	ctx.fillStyle = col;
+	ctx.fillRect(0, 0, ctx.width, ctx.height);
+	ctx.restore();
 }
 
 /**
@@ -108,12 +108,12 @@ function background() {
  * @param {number} height
  */
 function clear(x, y, width, height) {
-  const ctx = C.workingCanvas;
-  x = x || 0;
-  y = y || 0;
-  width = width || ctx.width;
-  height = height || ctx.height;
-  ctx.clearRect(x, y, width, height);
+	const ctx = C.workingCanvas;
+	x = x || 0;
+	y = y || 0;
+	width = width || ctx.width;
+	height = height || ctx.height;
+	ctx.clearRect(x, y, width, height);
 }
 
 /**
@@ -121,11 +121,11 @@ function clear(x, y, width, height) {
  * css background stretching the entire canvas
  */
 function permaBackground() {
-  const dat = this.getCanvasData();
-  const cvs = C.workingCanvas.canvas;
-  cvs.style.background = "url(\"" + dat + "\")";
-  cvs.style.backgroundPosition = "center";
-  cvs.style.backgroundSize = "cover";
+	const dat = this.getCanvasData();
+	const cvs = C.workingCanvas.canvas;
+	cvs.style.background = "url(\"" + dat + "\")";
+	cvs.style.backgroundPosition = "center";
+	cvs.style.backgroundSize = "cover";
 }
 
 /**
@@ -142,9 +142,9 @@ function permaBackground() {
  * @param {number} a6
  */
 function setTransform(a1, a2, a3, a4, a5, a6) {
-  const ctx = C.workingCanvas;
-  ctx.setTransform(a1, a2, a3, a4, a5, a6);
-  ctx.scale(ctx.dpr, ctx.dpr);
+	const ctx = C.workingCanvas;
+	ctx.setTransform(a1, a2, a3, a4, a5, a6);
+	ctx.scale(ctx.dpr, ctx.dpr);
 }
 
 /**
@@ -160,21 +160,21 @@ function setTransform(a1, a2, a3, a4, a5, a6) {
  * @param {number} a6
  */
 function transform(a1, a2, a3, a4, a5, a6) {
-  C.workingCanvas.transform(a1, a2, a3, a4, a5, a6);
+	C.workingCanvas.transform(a1, a2, a3, a4, a5, a6);
 }
 
 /**
  * Prevent filling inside further shapes
  */
 function noFill() {
-  C.workingCanvas._doFill = false;
+	C.workingCanvas.doFill = false;
 }
 
 /**
  * Prevent drawing strokes of further shapes
  */
 function noStroke() {
-  C.workingCanvas._doStroke = false;
+	C.workingCanvas.doStroke = false;
 }
 
 /**
@@ -184,11 +184,11 @@ function noStroke() {
  * @param {number} [y=0]
  */
 function translate(x, y = 0) {
-  C.workingCanvas.translate(x, y);
+	C.workingCanvas.translate(x, y);
 }
 
 function setImageSmoothing(bool) {
-  C.workingCanvas.imageSmoothingEnabled = !!bool;
+	C.workingCanvas.imageSmoothingEnabled = !!bool;
 }
 
 /**
@@ -197,7 +197,7 @@ function setImageSmoothing(bool) {
  * @param {number} w
  */
 function strokeWidth(w) {
-  C.workingCanvas.lineWidth = Number(w);
+	C.workingCanvas.lineWidth = Number(w);
 }
 
 /**
@@ -207,7 +207,7 @@ function strokeWidth(w) {
  * @param {number} [y=x]
  */
 function scale(x, y = x) {
-  C.workingCanvas.scale(x, y);
+	C.workingCanvas.scale(x, y);
 }
 
 /**
@@ -216,14 +216,14 @@ function scale(x, y = x) {
  * @param {number} angle angle in radians
  */
 function rotate(angle) {
-  C.workingCanvas.rotate(angle);
+	C.workingCanvas.rotate(angle);
 }
 
 /**
  * saves the current state of canvas
  */
 function save() {
-  C.workingCanvas.save();
+	C.workingCanvas.save();
 }
 
 /**
@@ -232,7 +232,7 @@ function save() {
  * @param {string} capType
  */
 function lineCap(capType) {
-  C.workingCanvas.lineCap = capType;
+	C.workingCanvas.lineCap = capType;
 }
 
 /**
@@ -240,14 +240,14 @@ function lineCap(capType) {
  * @param {string} joinType
  */
 function lineJoin(joinType) {
-  C.workingCanvas.lineJoin = joinType;
+	C.workingCanvas.lineJoin = joinType;
 }
 
 /**
  * restore the saved state of canvas
  */
 function restore() {
-  C.workingCanvas.restore();
+	C.workingCanvas.restore();
 }
 
 /**
@@ -255,7 +255,7 @@ function restore() {
  * @returns {string|CanvasGradient}
  */
 function getFill() {
-  return C.workingCanvas.fillStyle;
+	return C.workingCanvas.fillStyle;
 }
 
 /**
@@ -263,16 +263,16 @@ function getFill() {
  * @returns {string|CanvasGradient}
  */
 function getStroke() {
-  return C.workingCanvas.strokeStyle;
+	return C.workingCanvas.strokeStyle;
 }
 
 /**
  * reset the applied transform to idendity matrix multiplied by dpr
  */
 function rest() {
-  const ctx = C.workingCanvas;
-  const d = ctx.dpr;
-  ctx.setTransform(d, 0, 0, d, 0, 0);
+	const ctx = C.workingCanvas;
+	const d = ctx.dpr;
+	ctx.setTransform(d, 0, 0, d, 0, 0);
 }
 
 /**
@@ -285,14 +285,14 @@ function rest() {
  * ⦿ a array of numbers ([0, 244, 34])
  */
 function stroke() {
-  const ctx = C.workingCanvas;
-  if (arguments.length !== 0) {
-    const col = readColor(arguments);
-    ctx.strokeStyle = col;
-    ctx._doStroke = true;
-  } else {
-    ctx.stroke();
-  }
+	const ctx = C.workingCanvas;
+	if (arguments.length !== 0) {
+		const col = readColor(arguments);
+		ctx.strokeStyle = col;
+		ctx.doStroke = true;
+	} else {
+		ctx.stroke();
+	}
 }
 
 /**
@@ -305,14 +305,14 @@ function stroke() {
  * ⦿ a array of numbers ([0, 244, 34])
  */
 function fill() {
-  const ctx = C.workingCanvas;
-  if (arguments.length !== 0) {
-    const col = readColor(arguments);
-    ctx.fillStyle = col;
-    ctx._doFill = true;
-  } else {
-    ctx.fill();
-  }
+	const ctx = C.workingCanvas;
+	if (arguments.length !== 0) {
+		const col = readColor(arguments);
+		ctx.fillStyle = col;
+		ctx.doFill = true;
+	} else {
+		ctx.fill();
+	}
 }
 
 /**
@@ -320,14 +320,14 @@ function fill() {
  * @returns {Object}
  */
 function getDrawConfigs() {
-  const ctx = C.workingCanvas;
-  return {
-    stroke: ctx.strokeStyle,
-    fill: ctx.fillStyle,
-    strokeWidth: ctx.lineWidth,
-    doStroke: ctx._doStroke,
-    doFill: ctx._doFill,
-  };
+	const ctx = C.workingCanvas;
+	return {
+		stroke: ctx.strokeStyle,
+		fill: ctx.fillStyle,
+		strokeWidth: ctx.lineWidth,
+		doStroke: ctx.doStroke,
+		doFill: ctx.doFill,
+	};
 }
 
 /**
@@ -340,19 +340,19 @@ function getDrawConfigs() {
  * @param {number} [endingAngle=PI*2] ending angle
  */
 function arc(x, y, r, startingAngle, endingAngle) {
-  startingAngle = startingAngle || 0;
-  const ctx = C.workingCanvas;
-  ctx.beginPath();
-  ctx.arc(
-    x,
-    y,
-    r,
-    startingAngle || 0,
-    isNaN(endingAngle) ? Math.PI * 2 : endingAngle
-  );
-  if (ctx._doFill) ctx.fill();
-  if (ctx._doStroke) ctx.stroke();
-  ctx.closePath();
+	startingAngle = startingAngle || 0;
+	const ctx = C.workingCanvas;
+	ctx.beginPath();
+	ctx.arc(
+		x,
+		y,
+		r,
+		startingAngle || 0,
+		isNaN(endingAngle) ? Math.PI * 2 : endingAngle
+	);
+	if (ctx.doFill) ctx.fill();
+	if (ctx.doStroke) ctx.stroke();
+	ctx.closePath();
 }
 
 /**
@@ -364,16 +364,16 @@ function arc(x, y, r, startingAngle, endingAngle) {
  * @param {number} [maxwidth=undefined] maximum width
  */
 function text(text, x, y, maxwidth) {
-  const ctx = C.workingCanvas;
-  if (ctx.yAxisInveted) {
-    scale(-1);
-    if (ctx._doFill) ctx.fillText(text, x, -y, maxwidth);
-    else if (ctx._doStroke) ctx.strokeText(text, x, -y, maxwidth);
-    scale(-1);
-  } else {
-    if (ctx._doFill) ctx.fillText(text, x, y, maxwidth);
-    else if (ctx._doStroke) ctx.strokeText(text, x, y, maxwidth);
-  }
+	const ctx = C.workingCanvas;
+	if (ctx.yAxisInveted) {
+		scale(-1);
+		if (ctx.doFill) ctx.fillText(text, x, -y, maxwidth);
+		else if (ctx.doStroke) ctx.strokeText(text, x, -y, maxwidth);
+		scale(-1);
+	} else {
+		if (ctx.doFill) ctx.fillText(text, x, y, maxwidth);
+		else if (ctx.doStroke) ctx.strokeText(text, x, y, maxwidth);
+	}
 }
 
 /**
@@ -385,11 +385,11 @@ function text(text, x, y, maxwidth) {
  * @param {number} height height
  */
 function rect(x, y, width, height) {
-  const ctx = C.workingCanvas;
-  ctx.beginPath();
-  ctx.rect(x, y, width, height);
-  if (ctx._doFill) ctx.fill();
-  if (ctx._doStroke) ctx.stroke();
+	const ctx = C.workingCanvas;
+	ctx.beginPath();
+	ctx.rect(x, y, width, height);
+	if (ctx.doFill) ctx.fill();
+	if (ctx.doStroke) ctx.stroke();
 }
 
 /**
@@ -400,12 +400,12 @@ function rect(x, y, width, height) {
  * @param {number} r radius
  */
 function circle(x, y, r) {
-  const ctx = C.workingCanvas;
-  ctx.beginPath();
-  ctx.arc(x, y, r, 0, Math.PI * 2);
-  if (ctx._doFill) ctx.fill();
-  if (ctx._doStroke) ctx.stroke();
-  ctx.closePath();
+	const ctx = C.workingCanvas;
+	ctx.beginPath();
+	ctx.arc(x, y, r, 0, Math.PI * 2);
+	if (ctx.doFill) ctx.fill();
+	if (ctx.doStroke) ctx.stroke();
+	ctx.closePath();
 }
 
 /**
@@ -420,20 +420,20 @@ function circle(x, y, r) {
 ```
  */
 function polygon() {
-  const args = arguments;
-  if (args.length > 2) {
-    const ctx = C.workingCanvas;
-    const start = args[0];
-    ctx.beginPath();
-    ctx.moveTo(start[0], start[1]);
-    for (let i = 1; i < args.length; i++) {
-      ctx.lineTo(args[i][0], args[i][1]);
-    }
-    ctx.lineTo(start[0], start[1]);
-    if (ctx._doFill) ctx.fill();
-    if (ctx._doStroke) ctx.stroke();
-    ctx.closePath();
-  }
+	const args = arguments;
+	if (args.length > 2) {
+		const ctx = C.workingCanvas;
+		const start = args[0];
+		ctx.beginPath();
+		ctx.moveTo(start[0], start[1]);
+		for (let i = 1; i < args.length; i++) {
+			ctx.lineTo(args[i][0], args[i][1]);
+		}
+		ctx.lineTo(start[0], start[1]);
+		if (ctx.doFill) ctx.fill();
+		if (ctx.doStroke) ctx.stroke();
+		ctx.closePath();
+	}
 }
 
 /**
@@ -449,43 +449,43 @@ function polygon() {
  * @param {boolean} [anticlockwise=false]
  */
 function ellipse(
-  x,
-  y,
-  radius1,
-  radius2,
-  rotation = 0,
-  startAngle = 0,
-  endAngle = Math.PI * 2,
-  anticlockwise = false
+	x,
+	y,
+	radius1,
+	radius2,
+	rotation = 0,
+	startAngle = 0,
+	endAngle = Math.PI * 2,
+	anticlockwise = false
 ) {
-  const ctx = C.workingCanvas;
-  ctx.beginPath();
-  ctx.ellipse(
-    x,
-    y,
-    radius1,
-    radius2,
-    rotation,
-    startAngle,
-    endAngle,
-    anticlockwise
-  );
-  if (ctx._doFill) ctx.fill();
-  if (ctx._doStroke) ctx.stroke();
-  ctx.closePath();
+	const ctx = C.workingCanvas;
+	ctx.beginPath();
+	ctx.ellipse(
+		x,
+		y,
+		radius1,
+		radius2,
+		rotation,
+		startAngle,
+		endAngle,
+		anticlockwise
+	);
+	if (ctx.doFill) ctx.fill();
+	if (ctx.doStroke) ctx.stroke();
+	ctx.closePath();
 }
 
 function bezierCurve(x1, y1, x2, y2, x3, y3) {
-  const ctx = C.workingCanvas;
-  const pathStarted = ctx._pathStart;
-  if (!pathStarted) ctx.beginPath();
+	const ctx = C.workingCanvas;
+	const pathStarted = ctx._pathStart;
+	if (!pathStarted) ctx.beginPath();
 
-  ctx.bezierCurveTo(x1, y1, x2, y2, x3, y3);
+	ctx.bezierCurveTo(x1, y1, x2, y2, x3, y3);
 
-  if (pathStarted) return;
-  if (ctx._doFill) ctx.fill();
-  if (ctx._doStroke) ctx.stroke();
-  ctx.closePath();
+	if (pathStarted) return;
+	if (ctx.doFill) ctx.fill();
+	if (ctx.doStroke) ctx.stroke();
+	ctx.closePath();
 }
 
 /**
@@ -495,52 +495,52 @@ function bezierCurve(x1, y1, x2, y2, x3, y3) {
  * @param {number} dx
  */
 function loop(fx, canvasName, dx) {
-  let ctx = C.workingCanvas;
-  if (!canvasName) {
-    canvasName = ctx.name;
-  } else {
-    ctx = C.canvasList[canvasName];
-  }
-  if (!isNaN(dx)) {
-    ctx.currentLoop = setInterval(function () {
-      C.workingCanvas = ctx;
-      fx();
-    }, dx);
-  } else {
-    a();
-  }
-  function a() {
-    C.workingCanvas = ctx;
-    ctx.currentLoop = window.requestAnimationFrame(a);
-    fx();
-  }
+	let ctx = C.workingCanvas;
+	if (!canvasName) {
+		canvasName = ctx.name;
+	} else {
+		ctx = C.canvasList[canvasName];
+	}
+	if (!isNaN(dx)) {
+		ctx.currentLoop = setInterval(function () {
+			C.workingCanvas = ctx;
+			fx();
+		}, dx);
+	} else {
+		a();
+	}
+	function a() {
+		C.workingCanvas = ctx;
+		ctx.currentLoop = window.requestAnimationFrame(a);
+		fx();
+	}
 }
 
 /**
  * stops current loop
  */
 function noLoop() {
-  const ctx = C.workingCanvas;
-  clearInterval(ctx.currentLoop);
-  window.cancelAnimationFrame(ctx.currentLoop);
+	const ctx = C.workingCanvas;
+	clearInterval(ctx.currentLoop);
+	window.cancelAnimationFrame(ctx.currentLoop);
 }
 
 /**
  * starts a new Path
  */
 function startPath() {
-  const ctx = C.workingCanvas;
-  ctx.beginPath();
-  ctx._pathStart = true;
+	const ctx = C.workingCanvas;
+	ctx.beginPath();
+	ctx._pathStart = true;
 }
 
 /**
  * ends current Path
  */
 function endPath() {
-  const ctx = C.workingCanvas;
-  ctx.closePath();
-  ctx._pathStart = false;
+	const ctx = C.workingCanvas;
+	ctx.closePath();
+	ctx._pathStart = false;
 }
 
 /**
@@ -548,8 +548,8 @@ function endPath() {
  * @returns {string}
  */
 function getFont() {
-  const ctx = C.workingCanvas;
-  return ctx.fontSize + " " + ctx.fontFamily;
+	const ctx = C.workingCanvas;
+	return ctx.fontSize + " " + ctx.fontFamily;
 }
 
 /**
@@ -558,7 +558,7 @@ function getFont() {
  * @returns {TextMetrics}
  */
 function measureText(text) {
-  return C.workingCanvas.measureText(text);
+	return C.workingCanvas.measureText(text);
 }
 
 /**
@@ -566,10 +566,10 @@ function measureText(text) {
  * @param {number|string} size
  */
 function fontSize (size) {
-  const ctx = C.workingCanvas;
-  size = typeof size === "number" ? size + "px" : size;
-  ctx.fontSize = size;
-  ctx.font = this.getFont();
+	const ctx = C.workingCanvas;
+	size = typeof size === "number" ? size + "px" : size;
+	ctx.fontSize = size;
+	ctx.font = this.getFont();
 }
 
 /**
@@ -577,9 +577,9 @@ function fontSize (size) {
  * @param {string} family
  */
 function fontFamily (family) {
-  const ctx = C.workingCanvas;
-  ctx.fontFamily = family;
-  ctx.font = this.getFont();
+	const ctx = C.workingCanvas;
+	ctx.fontFamily = family;
+	ctx.font = this.getFont();
 }
 
 /**
@@ -589,7 +589,7 @@ function fontFamily (family) {
  * @returns {string}
  */
 function getCanvasData (datURL = "image/png") {
-  return C.workingCanvas.canvas.toDataURL(datURL);
+	return C.workingCanvas.canvas.toDataURL(datURL);
 }
 
 /**
@@ -599,14 +599,14 @@ function getCanvasData (datURL = "image/png") {
  * @param {string} [datURL="image/png"]
  */
 function saveCanvas (
-  name = "drawing",
-  datURL = "image/png"
+	name = "drawing",
+	datURL = "image/png"
 ) {
-  const link = this.getCanvasData().replace(datURL, "image/octet-stream");
-  const a = document.createElement("a");
-  a.download = name + ".png";
-  a.href = link;
-  a.click();
+	const link = this.getCanvasData().replace(datURL, "image/octet-stream");
+	const a = document.createElement("a");
+	a.download = name + ".png";
+	a.href = link;
+	a.click();
 }
 
 // more functions
@@ -619,9 +619,9 @@ function saveCanvas (
  * @param {number} [size=1] diameter of point
  */
 function point(x, y, size = 1) {
-  const ctx = C.workingCanvas;
-  ctx.arc(x, y, size / 2, 0, Math.PI * 2);
-  ctx.fill();
+	const ctx = C.workingCanvas;
+	ctx.arc(x, y, size / 2, 0, Math.PI * 2);
+	ctx.fill();
 }
 
 /**
@@ -632,7 +632,7 @@ function point(x, y, size = 1) {
  * @param {number} sideLength
  */
 function square(x, y, sideLength) {
-  this.rect(x, y, sideLength, sideLength);
+	this.rect(x, y, sideLength, sideLength);
 }
 
 /**
@@ -647,21 +647,21 @@ function square(x, y, sideLength) {
  * @param {string|CanvasGradient} [backgroundFill=C.workingCanvas.backgroundColor] Color of inner Circle
  */
 function sector(
-  x,
-  y,
-  innerRadius,
-  outerRadius,
-  startAngle,
-  endAngle,
-  backgroundFill
+	x,
+	y,
+	innerRadius,
+	outerRadius,
+	startAngle,
+	endAngle,
+	backgroundFill
 ) {
-  const ctx = C.workingCanvas;
-  ctx.moveTo(x, y);
-  const _fill = this.getFill();
-  ctx.arc(x, y, outerRadius, startAngle, endAngle);
-  this.fill(backgroundFill || C.workingCanvas.backgroundColor);
-  ctx.arc(x, y, innerRadius, startAngle, endAngle);
-  this.fill(_fill);
+	const ctx = C.workingCanvas;
+	ctx.moveTo(x, y);
+	const _fill = this.getFill();
+	ctx.arc(x, y, outerRadius, startAngle, endAngle);
+	this.fill(backgroundFill || C.workingCanvas.backgroundColor);
+	ctx.arc(x, y, innerRadius, startAngle, endAngle);
+	this.fill(_fill);
 }
 
 /**
@@ -677,18 +677,18 @@ function sector(
  * @param {number} y4
  */
 function quad(x1, y1, x2, y2, x3, y3, x4, y4) {
-  const ctx = C.workingCanvas;
-  ctx.beginPath();
-  ctx.moveTo(x1, y1);
-  ctx.lineTo(x2, y2);
-  ctx.lineTo(x3, y3);
-  ctx.lineTo(x4, y4);
-  ctx.lineTo(x1, y1);
+	const ctx = C.workingCanvas;
+	ctx.beginPath();
+	ctx.moveTo(x1, y1);
+	ctx.lineTo(x2, y2);
+	ctx.lineTo(x3, y3);
+	ctx.lineTo(x4, y4);
+	ctx.lineTo(x1, y1);
 
-  ctx.lineTo(x1, y1);
-  if (ctx._doFill) ctx.fill();
-  if (ctx._doStroke) ctx.stroke();
-  ctx.closePath();
+	ctx.lineTo(x1, y1);
+	if (ctx.doFill) ctx.fill();
+	if (ctx.doStroke) ctx.stroke();
+	ctx.closePath();
 }
 
 /**
@@ -701,15 +701,15 @@ function quad(x1, y1, x2, y2, x3, y3, x4, y4) {
  * @param {number} y3
  */
 function triangle(x1, y1, x2, y2, x3, y3) {
-  const ctx = C.workingCanvas;
-  ctx.beginPath();
-  ctx.moveTo(x1, y1);
-  ctx.lineTo(x2, y2);
-  ctx.lineTo(x3, y3);
-  ctx.lineTo(x1, y1);
-  if (ctx._doFill) ctx.fill();
-  if (ctx._doStroke) ctx.stroke();
-  ctx.closePath();
+	const ctx = C.workingCanvas;
+	ctx.beginPath();
+	ctx.moveTo(x1, y1);
+	ctx.lineTo(x2, y2);
+	ctx.lineTo(x3, y3);
+	ctx.lineTo(x1, y1);
+	if (ctx.doFill) ctx.fill();
+	if (ctx.doStroke) ctx.stroke();
+	ctx.closePath();
 }
 
 /**
@@ -721,7 +721,7 @@ function triangle(x1, y1, x2, y2, x3, y3) {
  * @param {number} [rotation=0]
  */
 function equiTriangle(x, y, sideLength, rotation = 0) {
-  this.regularPolygon(x, y, 3, sideLength, rotation);
+	this.regularPolygon(x, y, 3, sideLength, rotation);
 }
 
 /**
@@ -733,8 +733,8 @@ function equiTriangle(x, y, sideLength, rotation = 0) {
  * @param {number} [rotation=0] rotation
  */
 function regularPolygon(x, y, sides, sideLength, rotation = 0) {
-  sideLength = sideLength / (2 * Math.sin(Math.PI / sides)); // finds radius
-  this.regularPolygonWithRadius(x, y, sides, sideLength, rotation);
+	sideLength = sideLength / (2 * Math.sin(Math.PI / sides)); // finds radius
+	this.regularPolygonWithRadius(x, y, sides, sideLength, rotation);
 }
 
 /**
@@ -747,32 +747,32 @@ function regularPolygon(x, y, sides, sideLength, rotation = 0) {
  * @param {number} [rotation=0] rotation
  */
 function regularPolygonWithRadius(
-  x,
-  y,
-  sides,
-  radius,
-  rotation = 0
+	x,
+	y,
+	sides,
+	radius,
+	rotation = 0
 ) {
-  let i = 0;
-  const e = (Math.PI * 2) / sides;
-  const ctx = C.workingCanvas;
-  rotation += e / 2;
-  const initial = [
-    Math.cos(rotation) * radius + x,
-    Math.sin(rotation) * radius + y,
-  ];
-  ctx.beginPath();
-  ctx.moveTo(initial[0], initial[1]);
-  while (i++ < sides) {
-    ctx.lineTo(
-      Math.cos(i * e + rotation) * radius + x,
-      Math.sin(i * e + rotation) * radius + y
-    );
-  }
-  ctx.lineTo(initial[0], initial[1]);
-  ctx.closePath();
-  if (ctx._doFill) ctx.fill();
-  if (ctx._doStroke) ctx.stroke();
+	let i = 0;
+	const e = (Math.PI * 2) / sides;
+	const ctx = C.workingCanvas;
+	rotation += e / 2;
+	const initial = [
+		Math.cos(rotation) * radius + x,
+		Math.sin(rotation) * radius + y,
+	];
+	ctx.beginPath();
+	ctx.moveTo(initial[0], initial[1]);
+	while (i++ < sides) {
+		ctx.lineTo(
+			Math.cos(i * e + rotation) * radius + x,
+			Math.sin(i * e + rotation) * radius + y
+		);
+	}
+	ctx.lineTo(initial[0], initial[1]);
+	ctx.closePath();
+	if (ctx.doFill) ctx.fill();
+	if (ctx.doStroke) ctx.stroke();
 }
 
 const dxList = [];
@@ -785,13 +785,13 @@ let recent = window.performance.now();
  * @returns {number}
  */
 function getFPS(keepDat = 100) {
-  const now = window.performance.now();
-  const dx = now - recent;
-  dxList.push(dx);
-  total += dx;
-  recent = now;
-  if (dxList.length > keepDat) total -= dxList.shift();
-  return (dxList.length / total) * 1000;
+	const now = window.performance.now();
+	const dx = now - recent;
+	dxList.push(dx);
+	total += dx;
+	recent = now;
+	if (dxList.length > keepDat) total -= dxList.shift();
+	return (dxList.length / total) * 1000;
 }
 
 /**
@@ -813,74 +813,74 @@ var color = linearGradient(
 ```
  */
 function linearGradient(p1, p2, colorStops) {
-  const ctx = C.workingCanvas;
-  const gradient = ctx.createLinearGradient(p1[0], p1[1], p2[0], p2[1]);
-  if (Array.isArray(colorStops)) {
-    const stops = {};
-    const step = 1 / colorStops.length;
-    for (let i = 0; i < colorStops.length; i++) {
-      stops[step * i] = colorStops[i];
-    }
-    colorStops = stops;
-  }
-  for (let stops = Object.keys(colorStops), i = 0; i < stops.length; i++) {
-    const stop = stops[i];
-    gradient.addColorStop(stop, colorStops[stop]);
-  }
-  return gradient;
+	const ctx = C.workingCanvas;
+	const gradient = ctx.createLinearGradient(p1[0], p1[1], p2[0], p2[1]);
+	if (Array.isArray(colorStops)) {
+		const stops = {};
+		const step = 1 / colorStops.length;
+		for (let i = 0; i < colorStops.length; i++) {
+			stops[step * i] = colorStops[i];
+		}
+		colorStops = stops;
+	}
+	for (let stops = Object.keys(colorStops), i = 0; i < stops.length; i++) {
+		const stop = stops[i];
+		gradient.addColorStop(stop, colorStops[stop]);
+	}
+	return gradient;
 }
 
 export {
-  line,
-  moveTo,
-  lineTo,
-  background,
-  clear,
-  permaBackground,
-  setTransform,
-  transform,
-  noFill,
-  noStroke,
-  translate,
-  setImageSmoothing,
-  strokeWidth,
-  scale,
-  rotate,
-  save,
-  lineCap,
-  lineJoin,
-  restore,
-  getFill,
-  getStroke,
-  rest,
-  stroke,
-  fill,
-  getDrawConfigs,
-  arc,
-  text,
-  rect,
-  circle,
-  polygon,
-  ellipse,
-  bezierCurve,
-  loop,
-  noLoop,
-  startPath,
-  endPath,
-  getFont,
-  measureText,
-  fontSize,
-  fontFamily,
-  getCanvasData,
-  saveCanvas,
-  point,
-  square,
-  sector,
-  quad,
-  triangle,
-  equiTriangle,
-  regularPolygon,
-  regularPolygonWithRadius,
-  getFPS,
-  linearGradient
+	line,
+	moveTo,
+	lineTo,
+	background,
+	clear,
+	permaBackground,
+	setTransform,
+	transform,
+	noFill,
+	noStroke,
+	translate,
+	setImageSmoothing,
+	strokeWidth,
+	scale,
+	rotate,
+	save,
+	lineCap,
+	lineJoin,
+	restore,
+	getFill,
+	getStroke,
+	rest,
+	stroke,
+	fill,
+	getDrawConfigs,
+	arc,
+	text,
+	rect,
+	circle,
+	polygon,
+	ellipse,
+	bezierCurve,
+	loop,
+	noLoop,
+	startPath,
+	endPath,
+	getFont,
+	measureText,
+	fontSize,
+	fontFamily,
+	getCanvasData,
+	saveCanvas,
+	point,
+	square,
+	sector,
+	quad,
+	triangle,
+	equiTriangle,
+	regularPolygon,
+	regularPolygonWithRadius,
+	getFPS,
+	linearGradient
 };

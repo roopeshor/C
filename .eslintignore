@@ -7,3 +7,6 @@ examples/**
 # don't lint minified files and dist files
 dist/**
 *.min.js
+
+Gulpfile.js
+gruntfile.js

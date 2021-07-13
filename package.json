@@ -8,7 +8,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "babel src -d build"
+    "build": ""
   },
   "repository": {
     "type": "git",
@@ -21,9 +21,14 @@
   },
   "homepage": "https://github.com/Roopesh2/C#readme",
   "devDependencies": {
-    "eslint": "^7.30.0"
-  },
-  "dependencies": {
-    "google-closure-compiler": "^20210601.0.0"
+    "@babel/core": "^7.14.6",
+    "babelify": "^10.0.0",
+    "eslint": "^7.30.0",
+    "esmify": "^2.1.1",
+    "grunt-browserify": "^6.0.0",
+    "grunt-contrib-concat": "^1.0.1",
+    "grunt-contrib-copy": "^1.0.0",
+    "grunt-contrib-jshint": "^3.0.0",
+    "grunt-contrib-uglify": "^5.0.1"
   }
 }

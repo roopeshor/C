@@ -8,13 +8,13 @@ const __definedColors__ = Object.keys(COLORLIST);
  * returns a random hex color
 */
 function randomColor () {
-  let color = "#";
-  for (let i = 0; i < 3; i++) {
-    let randNum = randomInt(255).toString(16);
-    randNum = randNum.length === 1 ? 0 + randNum : randNum;
-    color += randNum;
-  }
-  return color;
+	let color = "#";
+	for (let i = 0; i < 3; i++) {
+		let randNum = randomInt(255).toString(16);
+		randNum = randNum.length === 1 ? 0 + randNum : randNum;
+		color += randNum;
+	}
+	return color;
 }
 
 /**
@@ -22,17 +22,17 @@ function randomColor () {
  *
 */
 function randomDefinedColor() {
-  return COLORLIST[__definedColors__[randomInt(__definedColors__.length - 1)]];
+	return COLORLIST[__definedColors__[randomInt(__definedColors__.length - 1)]];
 }
 
 // color converters
 function hue2RGB(p, q, t) {
-  if (t < 0) t += 1;
-  if (t > 1) t -= 1;
-  if (t < 1 / 6) return p + (q - p) * 6 * t;
-  if (t < 1 / 2) return q;
-  if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
-  return p;
+	if (t < 0) t += 1;
+	if (t > 1) t -= 1;
+	if (t < 1 / 6) return p + (q - p) * 6 * t;
+	if (t < 1 / 2) return q;
+	if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+	return p;
 }
 
 /**
@@ -47,35 +47,35 @@ function hue2RGB(p, q, t) {
  * @return {array} The HSL representation
  */
 function RGBToHSL(red, green, blue) {
-  const r = red / 255;
-  const g = green / 255;
-  const b = blue / 255;
-  const max = Math.max(r, g, b);
-  const min = Math.min(r, g, b);
-  let hue;
-  let saturation;
-  const lightness = (max + min) / 2;
+	const r = red / 255;
+	const g = green / 255;
+	const b = blue / 255;
+	const max = Math.max(r, g, b);
+	const min = Math.min(r, g, b);
+	let hue;
+	let saturation;
+	const lightness = (max + min) / 2;
 
-  if (max === min) {
-    hue = saturation = 0; // achromatic
-  } else {
-    const d = max - min;
-    saturation = lightness > 0.5 ? d / (2 - max - min) : d / (max + min);
-    switch (max) {
-    case r:
-      hue = (g - b) / d + (g < b ? 6 : 0);
-      break;
-    case g:
-      hue = (b - r) / d + 2;
-      break;
-    case b:
-      hue = (r - g) / d + 4;
-      break;
-    }
-    hue /= 6;
-  }
+	if (max === min) {
+		hue = saturation = 0; // achromatic
+	} else {
+		const d = max - min;
+		saturation = lightness > 0.5 ? d / (2 - max - min) : d / (max + min);
+		switch (max) {
+		case r:
+			hue = (g - b) / d + (g < b ? 6 : 0);
+			break;
+		case g:
+			hue = (b - r) / d + 2;
+			break;
+		case b:
+			hue = (r - g) / d + 4;
+			break;
+		}
+		hue /= 6;
+	}
 
-  return [hue * 360, saturation, lightness];
+	return [hue * 360, saturation, lightness];
 }
 
 /**
@@ -90,22 +90,20 @@ function RGBToHSL(red, green, blue) {
  * @return {array} The RGB representation
  */
 function HSLToRGB(hue, saturation, lightness) {
-  let r, g, b;
-  hue /= 360;
-  if (saturation === 0) {
-    r = g = b = lightness; // achromatic
-  } else {
-    const q =
-      lightness < 0.5
-        ? lightness * (1 + saturation)
-        : lightness + saturation - lightness * saturation;
-    const p = 2 * lightness - q;
-    r = hue2RGB(p, q, hue + 1 / 3);
-    g = hue2RGB(p, q, hue);
-    b = hue2RGB(p, q, hue - 1 / 3);
-  }
+	let r, g, b;
+	hue /= 360;
+	if (saturation === 0) {
+		r = g = b = lightness; // achromatic
+	} else {
+		const q =
+      lightness < 0.5 ? lightness * (1 + saturation) : lightness + saturation - lightness * saturation;
+		const p = 2 * lightness - q;
+		r = hue2RGB(p, q, hue + 1 / 3);
+		g = hue2RGB(p, q, hue);
+		b = hue2RGB(p, q, hue - 1 / 3);
+	}
 
-  return [r * 255, g * 255, b * 255];
+	return [r * 255, g * 255, b * 255];
 }
 
 /**
@@ -120,34 +118,34 @@ function HSLToRGB(hue, saturation, lightness) {
  * @return {array} The HSV representation
  */
 function RGBToHSV(red, green, blue) {
-  const r = red / 255;
-  const g = green / 255;
-  const b = blue / 255;
-  const max = Math.max(r, g, b);
-  const min = Math.min(r, g, b);
-  let hue;
-  const value = max;
-  const d = max - min;
-  const saturation = max === 0 ? 0 : d / max;
+	const r = red / 255;
+	const g = green / 255;
+	const b = blue / 255;
+	const max = Math.max(r, g, b);
+	const min = Math.min(r, g, b);
+	let hue;
+	const value = max;
+	const d = max - min;
+	const saturation = max === 0 ? 0 : d / max;
 
-  if (max === min) {
-    hue = 0; // achromatic
-  } else {
-    switch (max) {
-    case r:
-      hue = (g - b) / d + (g < b ? 6 : 0);
-      break;
-    case g:
-      hue = (b - r) / d + 2;
-      break;
-    case b:
-      hue = (r - g) / d + 4;
-      break;
-    }
-    hue /= 6;
-  }
+	if (max === min) {
+		hue = 0; // achromatic
+	} else {
+		switch (max) {
+		case r:
+			hue = (g - b) / d + (g < b ? 6 : 0);
+			break;
+		case g:
+			hue = (b - r) / d + 2;
+			break;
+		case b:
+			hue = (r - g) / d + 4;
+			break;
+		}
+		hue /= 6;
+	}
 
-  return [hue * 360, saturation, value];
+	return [hue * 360, saturation, value];
 }
 
 /**
@@ -162,57 +160,56 @@ function RGBToHSV(red, green, blue) {
  * @return {array} The RGB representation
  */
 function HSVToRGB(hue, saturation, value) {
-  let r, g, b;
-  const i = Math.floor(hue / 60);
-  const f = hue / 60 - i;
-  const p = value * (1 - saturation);
-  const q = value * (1 - f * saturation);
-  const t = value * (1 - (1 - f) * saturation);
+	let r, g, b;
+	const i = Math.floor(hue / 60);
+	const f = hue / 60 - i;
+	const p = value * (1 - saturation);
+	const q = value * (1 - f * saturation);
+	const t = value * (1 - (1 - f) * saturation);
 
-  switch (i % 6) {
-  case 0:
-    r = value;
-    g = t;
-    b = p;
-    break;
-  case 1:
-    r = q;
-    g = value;
-    b = p;
-    break;
-  case 2:
-    r = p;
-    g = value;
-    b = t;
-    break;
-  case 3:
-    r = p;
-    g = q;
-    b = value;
-    break;
-  case 4:
-    r = t;
-    g = p;
-    b = value;
-    break;
-  case 5:
-    r = value;
-    g = p;
-    b = q;
-    break;
-  }
+	switch (i % 6) {
+	case 0:
+		r = value;
+		g = t;
+		b = p;
+		break;
+	case 1:
+		r = q;
+		g = value;
+		b = p;
+		break;
+	case 2:
+		r = p;
+		g = value;
+		b = t;
+		break;
+	case 3:
+		r = p;
+		g = q;
+		b = value;
+		break;
+	case 4:
+		r = t;
+		g = p;
+		b = value;
+		break;
+	case 5:
+		r = value;
+		g = p;
+		b = q;
+		break;
+	}
 
-  return [r * 255, g * 255, b * 255];
+	return [r * 255, g * 255, b * 255];
 }
 
 export {
-  randomColor,
-  randomDefinedColor,
+	randomColor,
+	randomDefinedColor,
 
-  RGBToHSL,
-  HSLToRGB,
-  RGBToHSV,
-  HSVToRGB
+	RGBToHSL,
+	HSLToRGB,
+	RGBToHSV,
+	HSVToRGB
 };
-
 
