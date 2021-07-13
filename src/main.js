@@ -131,9 +131,10 @@ C.makeCanvas = function (configs) {
 };
 
 /**
- * add extension to window and C
+ * add extension to window and C extension list
  *
  * @param {Object} extObj
+ * @param {boolean} editable warn the edit of functions
  */
 C.addExtension = function (extObj, editable) {
 	defineProperties(extObj, window, !editable);

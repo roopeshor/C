@@ -1,39 +1,46 @@
-import {
-	BLUE_C, GREY, WHITE
-} from "../constants/colors.js";
+import { BLUE_C, GREY, WHITE } from "../constants/colors.js";
 import { C } from "../main.js";
 import {
 	background,
-	fill, fontSize,
-	line, measureText, noStroke, rotate, scale, stroke,
-	strokeWidth, text, translate
+	fill,
+	fontSize,
+	line,
+	measureText,
+	noStroke,
+	restore,
+	rotate,
+	save,
+	scale,
+	stroke,
+	strokeWidth,
+	text,
+	translate,
 } from "./drawing-functions.js";
-
 
 /*
 global CENTERX CENTERY
 */
 
 const consts = {
-	"CENTERX": function () {
+	CENTERX: function () {
 		return C.workingCanvas.width / 2;
 	},
-	"CENTERY": function () {
+	CENTERY: function () {
 		return C.workingCanvas.height / 2;
 	},
 };
 
 function _def_(name, getter) {
 	Object.defineProperty(window, name, {
-		"configurable": true,
-		"enumerable": true,
-		"get": getter,
-		"set": function set(value) {
+		configurable: true,
+		enumerable: true,
+		get: getter,
+		set: function set(value) {
 			Object.defineProperty(window, name, {
-				"configurable": true,
-				"enumerable": true,
+				configurable: true,
+				enumerable: true,
 				value: value,
-				"writable": true,
+				writable: true,
 			});
 		},
 	});
@@ -58,9 +65,9 @@ function applyDefault(_default, target = {}) {
 		const objType = _default[prop][1];
 		if (
 			(objType === "number" && isNaN(target[prop])) ||
-      (objType === "array" && !Array.isArray(target[prop])) ||
-      target[prop] === undefined ||
-      target[prop] === null
+			(objType === "array" && !Array.isArray(target[prop])) ||
+			target[prop] === undefined ||
+			target[prop] === null
 		) {
 			target[prop] = _default[prop][0];
 		}
@@ -71,7 +78,7 @@ function applyDefault(_default, target = {}) {
 /**
  * initializes a canvas translated to center and y-axis inverted
  */
-function initCenteredCanvas () {
+function initCenteredCanvas() {
 	background(0);
 	fill(WHITE);
 	stroke(WHITE);
@@ -90,7 +97,7 @@ function initCenteredCanvas () {
  * @param {number} [width=width * 2]
  * @param {number} [height=height * 2]
  */
-function clear (x, y, width, height) {
+function clear(x, y, width, height) {
 	const ctx = C.workingCanvas;
 	x = x || -ctx.width / 2;
 	y = y || -ctx.height / 2;
@@ -108,15 +115,17 @@ function clear (x, y, width, height) {
  * @param {number} tipWidth width of tip
  * @param {number} tipScaleRatio width:height
  */
-function arrow (x1, y1, x2, y2, tipWidth = 10, tipScaleRatio = 0.7) {
+function arrow(x1, y1, x2, y2, tipWidth = 10, tipScaleRatio = 0.7) {
 	const angle = Math.atan2(y2 - y1, x2 - x1); // angle from plain
 	arrowHead(x2, y2, tipWidth, angle, tipScaleRatio);
+	save();
 	const r = Math.atan(tipScaleRatio / 2);
 	const xd = Math.cos(angle) * tipWidth * Math.cos(r);
 	const yd = Math.sin(angle) * tipWidth * Math.cos(r);
 	x2 -= xd;
 	y2 -= yd;
 	line(x1, y1, x2, y2);
+	restore();
 }
 /**
  * creates a axes.
@@ -129,25 +138,25 @@ function arrow (x1, y1, x2, y2, tipWidth = 10, tipScaleRatio = 0.7) {
  * @param {Object} config
  * @returns axis configs
  */
-function axes (config = {}) {
+function axes(config = {}) {
 	const ctx = C.workingCanvas;
 	// default configurations
 	const xAxisDefaults = {
-		"length": [ctx.width, "number"],
-		"includeNumbers": [false],
-		"includeTick": [false],
-		"includeLeftTip": [true],
-		"includeRightTip": [true],
-		"textDirection": [-0.3, -1],
+		length: [ctx.width, "number"],
+		includeNumbers: [false],
+		includeTick: [false],
+		includeLeftTip: [true],
+		includeRightTip: [true],
+		textDirection: [-0.3, -1],
 	};
 	const yAxisDefaults = {
-		"length": [ctx.height, "number"],
-		"rotation": [Math.PI / 2, "number"],
-		"textRotation": [-Math.PI / 2, "number"],
-		"includeNumbers": [false],
-		"includeTick": [false],
-		"includeLeftTip": [true],
-		"includeRightTip": [true],
+		length: [ctx.height, "number"],
+		rotation: [Math.PI / 2, "number"],
+		textRotation: [-Math.PI / 2, "number"],
+		includeNumbers: [false],
+		includeTick: [false],
+		includeLeftTip: [true],
+		includeRightTip: [true],
 	};
 	// configurations
 	const xAxis = applyDefault(xAxisDefaults, config.xAxis);
@@ -168,6 +177,7 @@ function axes (config = {}) {
 	const xShift = xAxis.length / 2 + xMin;
 	const yShift = yAxis.length / 2 + yMin;
 
+	save();
 	// translate to center
 	translate(center[0], center[1]);
 
@@ -186,11 +196,11 @@ function axes (config = {}) {
 
 	// reverse the effect of overall shift
 	translate(-center[0], -center[1] - yShift);
-
+	restore();
 	return {
-		"unit": unit, // major unit size
-		"xAxis": xAxisLine, // x axis confiurations from numberLine
-		"yAxis": yAxisLine, // y axis confiurations from numberLine
+		unit: unit, // major unit size
+		xAxis: xAxisLine, // x axis confiurations from numberLine
+		yAxis: yAxisLine, // y axis confiurations from numberLine
 	};
 }
 /**
@@ -202,9 +212,10 @@ function axes (config = {}) {
  * @param {number} [ang=0] tilt of head
  * @param {number} [tipScaleRatio=2] height to width ratio
  */
-function arrowHead (x, y, width = 10, ang = 0, tipScaleRatio = 2) {
+function arrowHead(x, y, width = 10, ang = 0, tipScaleRatio = 2) {
 	const ctx = C.workingCanvas;
 	const r = Math.atan(tipScaleRatio / 2);
+	save();
 	ctx.beginPath();
 	ctx.moveTo(x, y);
 	ctx.lineTo(x - width * Math.cos(ang - r), y - width * Math.sin(ang - r));
@@ -213,6 +224,7 @@ function arrowHead (x, y, width = 10, ang = 0, tipScaleRatio = 2) {
 	ctx.lineTo(x, y);
 	if (ctx.doFill) ctx.fill();
 	else ctx.stroke();
+	restore();
 }
 /**
  * draws a double edged arrow
@@ -225,14 +237,7 @@ function arrowHead (x, y, width = 10, ang = 0, tipScaleRatio = 2) {
  * @param {*} [headSize2=headSize] size of second arrow's head
  * @param {*} [r=sqrt(3)] width / height
  */
-function doubleArrow (
-	x1,
-	y1,
-	x2,
-	y2,
-	tipWidth = 10,
-	tipScaleRatio = 0.6
-) {
+function doubleArrow(x1, y1, x2, y2, tipWidth = 10, tipScaleRatio = 0.6) {
 	const r = Math.atan(tipScaleRatio / 2);
 	const angle = Math.atan2(y2 - y1, x2 - x1);
 	const xd = Math.cos(angle) * tipWidth * Math.cos(r);
@@ -311,31 +316,31 @@ function doubleArrow (
  *
  * @returns unit length
  */
-function numberLine (config = {}) {
+function numberLine(config = {}) {
 	const ctx = C.workingCanvas;
 	const defaultConfigs = {
-		"length": [ctx.width, "number"],
-		"rotation": [0],
-		"center": [[0, 0]],
-		"range": [[-8, 8, 1], "array"],
-		"numbersToExclude": [[]],
-		"numbersToInclude": [[]],
-		"numbersWithElongatedTicks": [[]],
-		"includeLeftTip": [false],
-		"includeRightTip": [false],
-		"includeNumbers": [true],
-		"tipWidth": [20, "number"],
-		"tipSizeRatio": [1, "number"],
-		"color": [GREY],
-		"lineWidth": [3, "number"],
-		"includeTick": [true],
-		"excludeOriginTick": [false],
-		"longerTickMultiple": [1.5, "number"],
-		"tickHeight": [15, "number"],
-		"textDirection": [[-0.3, -1]],
-		"textColor": [WHITE],
-		"textSize": [17, "number"],
-		"textRotation": [0],
+		length: [ctx.width, "number"],
+		rotation: [0],
+		center: [[0, 0]],
+		range: [[-8, 8, 1], "array"],
+		numbersToExclude: [[]],
+		numbersToInclude: [[]],
+		numbersWithElongatedTicks: [[]],
+		includeLeftTip: [false],
+		includeRightTip: [false],
+		includeNumbers: [true],
+		tipWidth: [20, "number"],
+		tipSizeRatio: [1, "number"],
+		color: [GREY],
+		lineWidth: [3, "number"],
+		includeTick: [true],
+		excludeOriginTick: [false],
+		longerTickMultiple: [1.5, "number"],
+		tickHeight: [15, "number"],
+		textDirection: [[-0.3, -1]],
+		textColor: [WHITE],
+		textSize: [17, "number"],
+		textRotation: [0],
 	};
 	applyDefault(defaultConfigs, config);
 	const lineLength = config.length;
@@ -376,6 +381,7 @@ function numberLine (config = {}) {
 	const ds = lineLength / totalTicks;
 
 	const list = getTickList();
+	save();
 	translate(center[0], center[1]);
 	rotate(rotation);
 	translate(-lineLength / 2, 0);
@@ -428,7 +434,7 @@ function numberLine (config = {}) {
 		fill(config.textColor);
 		fontSize(textSize);
 		const yShift =
-      (-textSize / 3) * Math.cos(textRotation) + textDirection[1] * textSize;
+			(-textSize / 3) * Math.cos(textRotation) + textDirection[1] * textSize;
 		const from = includeLeftTip ? 1 : 0;
 		const to = includeRightTip ? numbers.length - 1 : numbers.length;
 
@@ -441,9 +447,9 @@ function numberLine (config = {}) {
 			if (Number(tick) === 0 && excludeOriginTick) continue;
 			const width = measureText(tick).width;
 			const xShift =
-        (-width / 2) * Math.cos(textRotation) +
-        textDirection[0] * textSize +
-        (textSize / 2) * Math.sin(textRotation);
+				(-width / 2) * Math.cos(textRotation) +
+				textDirection[0] * textSize +
+				(textSize / 2) * Math.sin(textRotation);
 			translate(ds * i + xShift, yShift - width * Math.sin(textRotation));
 			rotate(textRotation);
 			text(tick, 0, 0);
@@ -457,9 +463,10 @@ function numberLine (config = {}) {
 	}
 
 	// unit interval
+	restore();
 	return {
-		"unitLength": ds,
-		"tickList": list,
+		unitLength: ds,
+		tickList: list,
 	};
 }
 /**
@@ -486,34 +493,34 @@ function numberLine (config = {}) {
  * @param {Object} config
  * @returns {Object} configurations
  */
-function numberPlane (config = {}) {
+function numberPlane(config = {}) {
 	const ctx = C.workingCanvas;
 	// default configurations
 	const xAxisDefaults = {
-		"textDirection": [[0, -1.1]],
-		"length": [ctx.width, "number"],
-		"excludeOriginTick": [true],
-		"includeLeftTip": [false],
-		"includeRightTip": [false],
-		"includeNumbers": [true],
-		"includeTick": [true],
+		textDirection: [[0, -1.1]],
+		length: [ctx.width, "number"],
+		excludeOriginTick: [true],
+		includeLeftTip: [false],
+		includeRightTip: [false],
+		includeNumbers: [true],
+		includeTick: [true],
 	};
 	const yAxisDefaults = {
-		"textDirection": [[0, 0.8]],
-		"length": [ctx.height, "number"],
-		"textRotation": [-Math.PI / 2, "number"],
-		"excludeOriginTick": [true],
-		"includeLeftTip": [false],
-		"includeRightTip": [false],
-		"includeNumbers": [true],
-		"includeTick": [true],
+		textDirection: [[0, 0.8]],
+		length: [ctx.height, "number"],
+		textRotation: [-Math.PI / 2, "number"],
+		excludeOriginTick: [true],
+		includeLeftTip: [false],
+		includeRightTip: [false],
+		includeNumbers: [true],
+		includeTick: [true],
 	};
 	const gridDefaults = {
-		"lineWidth": [1, "number"],
-		"color": [BLUE_C + "a0"],
-		"subgrids": [1, "number"],
-		"subgridLineColor": [GREY + "50"],
-		"subgridLineWidth": [0.7, "number"],
+		lineWidth: [1, "number"],
+		color: [BLUE_C + "a0"],
+		subgrids: [1, "number"],
+		subgridLineColor: [GREY + "50"],
+		subgridLineWidth: [0.7, "number"],
 	};
 	// configurations
 	const xAxis = applyDefault(xAxisDefaults, config.xAxis);
@@ -542,6 +549,7 @@ function numberPlane (config = {}) {
 	// size of a subgrid unit cell
 	const subgridUnit = [xDX / subgrids, yDX / subgrids];
 
+	save();
 	// translate to center
 	translate(center[0] + xShift, center[1]);
 
@@ -550,8 +558,8 @@ function numberPlane (config = {}) {
 
 	// draws axes
 	const axesLines = axes({
-		"xAxis": xAxis,
-		"yAxis": yAxis,
+		xAxis: xAxis,
+		yAxis: yAxis,
 	});
 	// size of a unit cell
 	const unit = axesLines.unit;
@@ -617,11 +625,12 @@ function numberPlane (config = {}) {
 		}
 	}
 
+	restore();
 	return {
-		"unit": unit, // major unit size
-		"subgridUnit": subgridUnit, // subgrid unit size
-		"xAxis": axesLines.xAxis, // x axis confiurations from numberLine
-		"yAxis": axesLines.yAxis, // y axis confiurations from numberLine
+		unit: unit, // major unit size
+		subgridUnit: subgridUnit, // subgrid unit size
+		xAxis: axesLines.xAxis, // x axis confiurations from numberLine
+		yAxis: axesLines.yAxis, // y axis confiurations from numberLine
 	};
 }
 
@@ -634,6 +643,5 @@ export {
 	arrowHead,
 	doubleArrow,
 	numberLine,
-	numberPlane
+	numberPlane,
 };
-

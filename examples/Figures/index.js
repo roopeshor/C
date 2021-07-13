@@ -4,7 +4,8 @@ C (
   () => {
     initCenteredCanvas();
     axes();
-    text("")
+    console.log(getDrawConfigs())
+    text("ABC", 20, 20);
   },
   ".container",
   {

@@ -121,7 +121,7 @@ function clear(x, y, width, height) {
  * css background stretching the entire canvas
  */
 function permaBackground() {
-	const dat = this.getCanvasData();
+	const dat = getCanvasData();
 	const cvs = C.workingCanvas.canvas;
 	cvs.style.background = "url(\"" + dat + "\")";
 	cvs.style.backgroundPosition = "center";
@@ -363,17 +363,15 @@ function arc(x, y, r, startingAngle, endingAngle) {
  * @param {number} [y=x] y-coord
  * @param {number} [maxwidth=undefined] maximum width
  */
-function text(text, x, y, maxwidth) {
+function text(text, x=0, y=0, maxwidth=undefined) {
 	const ctx = C.workingCanvas;
 	if (ctx.yAxisInveted) {
-		scale(-1);
-		if (ctx.doFill) ctx.fillText(text, x, -y, maxwidth);
-		else if (ctx.doStroke) ctx.strokeText(text, x, -y, maxwidth);
-		scale(-1);
-	} else {
-		if (ctx.doFill) ctx.fillText(text, x, y, maxwidth);
-		else if (ctx.doStroke) ctx.strokeText(text, x, y, maxwidth);
+		scale(1, -1);
+		y *= -1;
 	}
+	if (ctx.doFill) ctx.fillText(text, x, y, maxwidth);
+	else if (ctx.doStroke) ctx.strokeText(text, x, y, maxwidth);
+	if (ctx.yAxisInveted) scale(1, -1);
 }
 
 /**
@@ -412,10 +410,10 @@ function circle(x, y, r) {
  * accepts points and draws polygon
  * @example ```js
  * polygon(
-    [0, 0], // first point
-    [100, 200], // second point
-    [130, 230], // third point
-    //...
+		[0, 0], // first point
+		[100, 200], // second point
+		[130, 230], // third point
+		//...
 )
 ```
  */
@@ -569,7 +567,7 @@ function fontSize (size) {
 	const ctx = C.workingCanvas;
 	size = typeof size === "number" ? size + "px" : size;
 	ctx.fontSize = size;
-	ctx.font = this.getFont();
+	ctx.font = getFont();
 }
 
 /**
@@ -579,7 +577,7 @@ function fontSize (size) {
 function fontFamily (family) {
 	const ctx = C.workingCanvas;
 	ctx.fontFamily = family;
-	ctx.font = this.getFont();
+	ctx.font = getFont();
 }
 
 /**
@@ -602,7 +600,7 @@ function saveCanvas (
 	name = "drawing",
 	datURL = "image/png"
 ) {
-	const link = this.getCanvasData().replace(datURL, "image/octet-stream");
+	const link = getCanvasData().replace(datURL, "image/octet-stream");
 	const a = document.createElement("a");
 	a.download = name + ".png";
 	a.href = link;
@@ -632,7 +630,7 @@ function point(x, y, size = 1) {
  * @param {number} sideLength
  */
 function square(x, y, sideLength) {
-	this.rect(x, y, sideLength, sideLength);
+	rect(x, y, sideLength, sideLength);
 }
 
 /**
@@ -657,11 +655,11 @@ function sector(
 ) {
 	const ctx = C.workingCanvas;
 	ctx.moveTo(x, y);
-	const _fill = this.getFill();
+	const _fill = getFill();
 	ctx.arc(x, y, outerRadius, startAngle, endAngle);
-	this.fill(backgroundFill || C.workingCanvas.backgroundColor);
+	fill(backgroundFill || C.workingCanvas.backgroundColor);
 	ctx.arc(x, y, innerRadius, startAngle, endAngle);
-	this.fill(_fill);
+	fill(_fill);
 }
 
 /**
@@ -721,7 +719,7 @@ function triangle(x1, y1, x2, y2, x3, y3) {
  * @param {number} [rotation=0]
  */
 function equiTriangle(x, y, sideLength, rotation = 0) {
-	this.regularPolygon(x, y, 3, sideLength, rotation);
+	regularPolygon(x, y, 3, sideLength, rotation);
 }
 
 /**
@@ -734,7 +732,7 @@ function equiTriangle(x, y, sideLength, rotation = 0) {
  */
 function regularPolygon(x, y, sides, sideLength, rotation = 0) {
 	sideLength = sideLength / (2 * Math.sin(Math.PI / sides)); // finds radius
-	this.regularPolygonWithRadius(x, y, sides, sideLength, rotation);
+	regularPolygonWithRadius(x, y, sides, sideLength, rotation);
 }
 
 /**
@@ -802,13 +800,13 @@ function getFPS(keepDat = 100) {
  * @param {Object|array} colorStops color stops
  ```js
 var color = linearGradient(
-  [0, 0],
-  [200, 0],
-  {
-      0: "green",
-      0.5: "cyan",
-      1: "yellow"
-  }
+	[0, 0],
+	[200, 0],
+	{
+			0: "green",
+			0.5: "cyan",
+			1: "yellow"
+	}
 );
 ```
  */
