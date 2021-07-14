@@ -79,16 +79,17 @@ function applyDefault(_default, target = {}) {
  * initializes a canvas translated to center and y-axis inverted
  */
 function initCenteredCanvas() {
+	const ctx = C.workingCanvas;
 	background(0);
 	fill(WHITE);
 	stroke(WHITE);
-	strokeWidth(2);
 	noStroke();
-
-	translate(CENTERX, CENTERY);
-	scale(1, -1);
 	fontSize(20);
-	C.workingCanvas.yAxisInveted = true;
+
+	ctx.translate(CENTERX, CENTERY);
+	ctx.scale(1, -1);
+	ctx.lineWidth = 2;
+	ctx.yAxisInveted = true;
 }
 /**
  * clears a rectangular portion of canvas

@@ -773,9 +773,9 @@ function regularPolygonWithRadius(
 	if (ctx.doStroke) ctx.stroke();
 }
 
-const dxList = [];
-let total = 0;
-let recent = window.performance.now();
+window.dxList = [];
+window.total = 0;
+window.recent = window.performance.now();
 
 /**
  * returns FPS (Frames Per Second)
@@ -784,12 +784,12 @@ let recent = window.performance.now();
  */
 function getFPS(keepDat = 100) {
 	const now = window.performance.now();
-	const dx = now - recent;
-	dxList.push(dx);
-	total += dx;
-	recent = now;
-	if (dxList.length > keepDat) total -= dxList.shift();
-	return (dxList.length / total) * 1000;
+	const dx = now - window.recent;
+	window.dxList.push(dx);
+	window.total += dx;
+	window.recent = now;
+	if (window.dxList.length > keepDat) window.total -= window.dxList.shift();
+	return (window.dxList.length / (window.total / 1000));
 }
 
 /**

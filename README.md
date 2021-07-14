@@ -10,9 +10,14 @@ see [releases](https://github.com/Roopesh2/C/releases) for files
 
 ### Choose latest version
 
-Use C.min.js or C.js
+Use [production](dist/c.min.js) or [developer](dist/c.js) version
 
-## Start using
+### Google closure compiled
+
+[c.gcc.js](dist/c.gcc.js) is a recompiled verion of library using [google-closure-compiler](https://www.npmjs.com/package/google-closure-compiler). This is even smaller file and it's structure is entirely different from other builds. But still provides the same functionality and performace
+
+
+## Using
 
  ```js
 C (

@@ -1306,9 +1306,9 @@ function regularPolygonWithRadius(x, y, sides, radius, rotation = 0) {
   if (ctx.doStroke) ctx.stroke();
 }
 
-const dxList = [];
-let total = 0;
-let recent = window.performance.now();
+window.dxList = [];
+window.total = 0;
+window.recent = window.performance.now();
 /**
  * returns FPS (Frames Per Second)
  * @param {number} keepDat number of recorded frames to remember
@@ -1317,12 +1317,12 @@ let recent = window.performance.now();
 
 function getFPS(keepDat = 100) {
   const now = window.performance.now();
-  const dx = now - recent;
-  dxList.push(dx);
-  total += dx;
-  recent = now;
-  if (dxList.length > keepDat) total -= dxList.shift();
-  return dxList.length / total * 1000;
+  const dx = now - window.recent;
+  window.dxList.push(dx);
+  window.total += dx;
+  window.recent = now;
+  if (window.dxList.length > keepDat) window.total -= window.dxList.shift();
+  return window.dxList.length / (window.total / 1000);
 }
 /**
  * creates a linear gradient
@@ -1538,15 +1538,16 @@ function applyDefault(_default, target = {}) {
 
 
 function initCenteredCanvas() {
+  const ctx = _main.C.workingCanvas;
   (0, _drawingFunctions.background)(0);
   (0, _drawingFunctions.fill)(_colors.WHITE);
   (0, _drawingFunctions.stroke)(_colors.WHITE);
-  (0, _drawingFunctions.strokeWidth)(2);
   (0, _drawingFunctions.noStroke)();
-  (0, _drawingFunctions.translate)(CENTERX, CENTERY);
-  (0, _drawingFunctions.scale)(1, -1);
   (0, _drawingFunctions.fontSize)(20);
-  _main.C.workingCanvas.yAxisInveted = true;
+  ctx.translate(CENTERX, CENTERY);
+  ctx.scale(1, -1);
+  ctx.lineWidth = 2;
+  ctx.yAxisInveted = true;
 }
 /**
  * clears a rectangular portion of canvas

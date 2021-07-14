@@ -8,7 +8,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "gcc": "npx google-closure-compiler --flagfile gcc.conf"
+    "gcc": "echo Running google-closure-compiler && npx google-closure-compiler --flagfile gcc.conf && echo File saved at dist/c.gcc.js"
   },
   "repository": {
     "type": "git",
