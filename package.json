@@ -21,8 +21,6 @@
   },
   "homepage": "https://github.com/Roopesh2/C#readme",
   "devDependencies": {
-    "@babel/core": "^7.14.6",
-    "babelify": "^10.0.0",
     "eslint": "^7.30.0",
     "esmify": "^2.1.1",
     "google-closure-compiler": "^20210601.0.0",
