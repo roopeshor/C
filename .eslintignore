@@ -8,5 +8,4 @@ examples/**
 dist/**
 *.min.js
 
-Gulpfile.js
 gruntfile.js

@@ -1,17 +1,16 @@
 module.exports = function (grunt) {
-	var latest = "<%= pkg.name %>",
-		name = "<%= pkg.name %>-v<%= pkg.version%>",
-		bannerContent =
-			"/*! <%= pkg.name %> v<%= pkg.version %> - " +
+	var name = "<%= pkg.name %>",
+		nameWithVersion = name + "-<%= pkg.version%>",
+		banner ="/*"+nameWithVersion+" - " +
 			"<%= grunt.template.today('yyyy-mm-dd') %> \n" +
-			" *  License: <%= pkg.license %> */\n",
-		devRelease = "dist/" + name + ".js",
-		minRelease = "dist/" + name + ".min.js",
-		sourceMapMin = "dist/" + name + ".min.js.map",
-		sourceMapUrl = name + ".min.js.map",
-		newDevRelease = "dist/" + latest + ".js",
-		newMinRelease = "dist/" + latest + ".min.js",
-		newSourceMapMin = "dist/" + latest + ".min.js.map";
+			"* License: <%= pkg.license %> */\n",
+		devRelease = "dist/" + nameWithVersion + ".js",
+		minRelease = "dist/" + nameWithVersion + ".min.js",
+		sourceMapMin = "dist/" + nameWithVersion + ".min.js.map",
+		sourceMapUrl = nameWithVersion + ".min.js.map",
+		latestDevRelease = "dist/" + name + ".js",
+		latestMinRelease = "dist/" + name + ".min.js",
+		latestSourceMapMin = "dist/" + name + ".min.js.map";
 
 	grunt.initConfig({
 		pkg: grunt.file.readJSON("package.json"),
@@ -26,7 +25,7 @@ module.exports = function (grunt) {
 		},
 		uglify: {
 			options: {
-				banner: bannerContent,
+				banner: banner,
 				sourceMapRoot: "../",
 				sourceMap: sourceMapMin,
 				sourceMappingURL: sourceMapUrl,
@@ -43,8 +42,25 @@ module.exports = function (grunt) {
 				esversion: 6,
 			},
 			target: {
-				src: ["src/**/*.js"],
+				src: ["src/**/**.js"],
 			},
+		},
+		copy: {
+			development: {
+				// copy non-minified release file
+				src: devRelease,
+				dest: latestDevRelease,
+			},
+			minified: {
+				// copy minified release file
+				src: minRelease,
+				dest: latestMinRelease,
+			},
+			sourceMap: {
+				// source map of minified release file
+				src: sourceMapMin,
+				dest: latestSourceMapMin,
+			}
 		},
 	});
 
@@ -54,5 +70,8 @@ module.exports = function (grunt) {
 	grunt.loadNpmTasks("grunt-contrib-uglify");
 	grunt.loadNpmTasks("grunt-browserify");
 
-	grunt.registerTask("default", ["jshint", "browserify", "uglify"]);
+	grunt.registerTask("default", ["jshint", "browserify", "uglify", "copy"]);
+
+	grunt.registerTask("lint", ["jshint"]);
+	grunt.registerTask("minify", ["browserify", "uglify"]);
 };
