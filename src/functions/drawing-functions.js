@@ -1,4 +1,8 @@
 import { C } from "../main.js";
+/**
+ * This is the core list of drawing functions. Includes all core functionality
+ * @module drawing-functions
+ */
 
 function readColor(colors) {
 	let color1;
@@ -39,15 +43,13 @@ function readColor(colors) {
 	return read;
 }
 
-// C drawing functions
-
 /**
  * Draws a line
  *
- * @param {number} x1 initial x coord
- * @param {number} y1 initial y coord
- * @param {number} x2 final x coord
- * @param {number} y2 final y coord
+ * @param {number} x1 start x coord
+ * @param {number} y1 start y coord
+ * @param {number} x2 end x coord
+ * @param {number} y2 end y coord
  */
 function line(x1, y1, x2, y2) {
 	const ctx = C.workingCanvas;
@@ -65,13 +67,11 @@ function line(x1, y1, x2, y2) {
  * @param {number} y
  */
 function moveTo(x, y) {
-	const ctx = C.workingCanvas;
-	if (!ctx._pathStart) ctx.beginPath();
-	ctx.moveTo(x, y);
+	C.workingCanvas.moveTo(x, y);
 }
 
 /**
- * draws a line to given coords
+ * adds a line to the current path
  *
  * @param {number} x
  * @param {number} y
@@ -84,14 +84,14 @@ function lineTo(x, y) {
  * Sets background to a given value
  *
  * Accepted values:
- * ⦿ a hex string (#fff, #acf2dc)
- * ⦿ a number (0 for rgb(0,0,0), 233 for rgb(233,233,233))
- * ⦿ a array of numbers ([0, 244, 34])
+ * * a hex string (#fff, #acf2dc)
+ * * a number (0 for rgb(0,0,0), 233 for rgb(233,233,233))
+ * * a array of numbers ([0, 244, 34])
  */
 function background() {
-	const col = readColor(arguments);
-	const ctx = C.workingCanvas;
-	ctx.backgroundColor = col;
+	const col = readColor(arguments),
+		ctx = C.workingCanvas;
+	ctx.background = col;
 	ctx.save();
 	rest();
 	ctx.fillStyle = col;
@@ -117,15 +117,28 @@ function clear(x, y, width, height) {
 }
 
 /**
+ * Clears the entire canvas
+ *
+ */
+function clearAll() {
+	const ctx = C.workingCanvas;
+	const d = ctx.dpr;
+	ctx.save();
+	ctx.setTransform(d, 0, 0, d, 0, 0);
+	ctx.clearRect(0, 0, ctx.width, ctx.height);
+	ctx.restore();
+}
+
+/**
  * Captures the current drawings in canvas and set it to
- * css background stretching the entire canvas
+ * css background
+ *
  */
 function permaBackground() {
-	const dat = getCanvasData();
-	const cvs = C.workingCanvas.canvas;
-	cvs.style.background = "url(\"" + dat + "\")";
-	cvs.style.backgroundPosition = "center";
-	cvs.style.backgroundSize = "cover";
+	const canvasStyle = C.workingCanvas.canvas.style;
+	canvasStyle.background = "url('" + getCanvasData() + "')";
+	canvasStyle.backgroundPosition = "center";
+	canvasStyle.backgroundSize = "cover";
 }
 
 /**
@@ -164,14 +177,14 @@ function transform(a1, a2, a3, a4, a5, a6) {
 }
 
 /**
- * Prevent filling inside further shapes
+ * Prevent filling inside shapes
  */
 function noFill() {
 	C.workingCanvas.doFill = false;
 }
 
 /**
- * Prevent drawing strokes of further shapes
+ * Prevent drawing strokes of shapes
  */
 function noStroke() {
 	C.workingCanvas.doStroke = false;
@@ -187,12 +200,17 @@ function translate(x, y = 0) {
 	C.workingCanvas.translate(x, y);
 }
 
+/**
+ * Sets whether to enable image smoothening
+ *
+ * @param {boolean} bool
+ */
 function setImageSmoothing(bool) {
 	C.workingCanvas.imageSmoothingEnabled = !!bool;
 }
 
 /**
- * sets the stroke width (width/weight of line) in px
+ * Sets the stroke width (line width/line thickness)
  *
  * @param {number} w
  */
@@ -201,7 +219,7 @@ function strokeWidth(w) {
 }
 
 /**
- * scales the canvas by a given amount
+ * Scales the canvas by a given amount
  *
  * @param {number} x
  * @param {number} [y=x]
@@ -216,19 +234,21 @@ function scale(x, y = x) {
  * @param {number} angle angle in radians
  */
 function rotate(angle) {
-	C.workingCanvas.rotate(angle);
+	const ctx = C.workingCanvas;
+	ctx.rotate(angle);
+	ctx.netRotation = ((ctx.netRotation + angle) % Math.PI) * 2;
 }
 
 /**
- * saves the current state of canvas
+ * Saves the current state of canvas
  */
 function save() {
 	C.workingCanvas.save();
 }
 
 /**
- * set the type of line end
- *
+ * Set the type of line end
+ * Options: BUTT, ROUND, SQUARE
  * @param {string} capType
  */
 function lineCap(capType) {
@@ -236,7 +256,8 @@ function lineCap(capType) {
 }
 
 /**
- * sets type of line joining
+ * Sets type of line joining
+ * Options: bevel, round, miter
  * @param {string} joinType
  */
 function lineJoin(joinType) {
@@ -244,14 +265,14 @@ function lineJoin(joinType) {
 }
 
 /**
- * restore the saved state of canvas
+ * Restore the saved state of canvas
  */
 function restore() {
 	C.workingCanvas.restore();
 }
 
 /**
- * returns fill color/gradient
+ * Returns fill color/gradient
  * @returns {string|CanvasGradient}
  */
 function getFill() {
@@ -259,7 +280,7 @@ function getFill() {
 }
 
 /**
- * returns stroke color/gradient
+ * Returns stroke color/gradient
  * @returns {string|CanvasGradient}
  */
 function getStroke() {
@@ -267,12 +288,11 @@ function getStroke() {
 }
 
 /**
- * reset the applied transform to idendity matrix multiplied by dpr
+ * Reset the applied transform to idendity matrix and scales canvas by dpr
  */
 function rest() {
 	const ctx = C.workingCanvas;
-	const d = ctx.dpr;
-	ctx.setTransform(d, 0, 0, d, 0, 0);
+	ctx.setTransform(ctx.dpr, 0, 0, ctx.dpr, 0, 0);
 }
 
 /**
@@ -280,15 +300,14 @@ function rest() {
  * else strokes the previous shape
  *
  * Accepted values:
- * ⦿ a hex string (#fff, #acf2dc)
- * ⦿ a number (0 for rgb(0,0,0), 233 for rgb(233,233,233))
- * ⦿ a array of numbers ([0, 244, 34])
+ * * hex string (#fff, #acf2dc)
+ * * number (0 for rgb(0,0,0), 233 for rgb(233,233,233))
+ * * array of numbers ([0, 244, 34]). This gets converted into css color by the colorMode property
  */
 function stroke() {
 	const ctx = C.workingCanvas;
-	if (arguments.length !== 0) {
-		const col = readColor(arguments);
-		ctx.strokeStyle = col;
+	if (arguments.length > 0) {
+		ctx.strokeStyle = readColor(arguments);
 		ctx.doStroke = true;
 	} else {
 		ctx.stroke();
@@ -300,15 +319,14 @@ function stroke() {
  * else fills the previous shape
  *
  * Accepted values:
- * ⦿ a hex string (#fff, #acf2dc)
- * ⦿ a number (0 for rgb(0,0,0), 233 for rgb(233,233,233))
- * ⦿ a array of numbers ([0, 244, 34])
+ * * a hex string (#fff, #acf2dc)
+ * * a number (0 for rgb(0,0,0), 233 for rgb(233,233,233))
+ * * a array of numbers ([0, 244, 34]). This gets converted into css color by the colorMode property
  */
 function fill() {
 	const ctx = C.workingCanvas;
 	if (arguments.length !== 0) {
-		const col = readColor(arguments);
-		ctx.fillStyle = col;
+		ctx.fillStyle = readColor(arguments);
 		ctx.doFill = true;
 	} else {
 		ctx.fill();
@@ -316,12 +334,13 @@ function fill() {
 }
 
 /**
- * returns fill&stroke color/gradient, line width, fill&stroke state
+ * Returns fill & stroke color/gradient, line width, fill & stroke state, and background
  * @returns {Object}
  */
 function getDrawConfigs() {
 	const ctx = C.workingCanvas;
 	return {
+		background: ctx.background,
 		stroke: ctx.strokeStyle,
 		fill: ctx.fillStyle,
 		strokeWidth: ctx.lineWidth,
@@ -331,51 +350,125 @@ function getDrawConfigs() {
 }
 
 /**
- * draw a arc
+ * Draw a arc
  *
- * @param {number} x x-coord
- * @param {number} y y-coord
+ * @param {number} x center x
+ * @param {number} y center y
  * @param {number} r radius
- * @param {number} [startingAngle=0] starting angle
- * @param {number} [endingAngle=PI*2] ending angle
+ * @param {number} [angle=PI/2] central angle (use negative values to rotate arc clockwise)
+ * @param {number} [startAngle=0] starting angle angle
  */
-function arc(x, y, r, startingAngle, endingAngle) {
-	startingAngle = startingAngle || 0;
+function arc(x, y, r, angle = Math.PI / 2, startAngle = 0) {
 	const ctx = C.workingCanvas;
-	ctx.beginPath();
-	ctx.arc(
-		x,
-		y,
-		r,
-		startingAngle || 0,
-		isNaN(endingAngle) ? Math.PI * 2 : endingAngle
-	);
-	if (ctx.doFill) ctx.fill();
-	if (ctx.doStroke) ctx.stroke();
-	ctx.closePath();
+	if (!ctx.pathStarted) ctx.beginPath();
+	ctx.arc(x, y, r, startAngle, startAngle + angle);
+	if (!ctx.pathStarted) {
+		if (ctx.doStroke) ctx.stroke();
+		ctx.closePath();
+	}
 }
 
 /**
- * draws a text
+ * Creates a circular arc using the given control points and radius.
+ * If a current path started it will add this to the end of path
+ *
+ * @param {number} x1
+ * @param {number} y1
+ * @param {number} x2
+ * @param {number} y2
+ * @param {number} radius
+ */
+function arcTo(x1, y1, x2, y2, radius) {
+	const ctx = C.workingCanvas;
+	if (ctx.pathStarted) {
+		ctx.arcTo(x1, y1, x2, y2, radius);
+	} else {
+		ctx.beginPath();
+		ctx.arcTo(x1, y1, x2, y2, radius);
+		if (ctx.doStroke) ctx.stroke();
+		if (ctx.doFill) ctx.fill();
+		ctx.closePath();
+	}
+}
+
+/**
+ * Draws a circular segment.
+ *
+ * @param {number} x center x
+ * @param {number} y center y
+ * @param {number} r radius
+ * @param {number} [angle=Math.PI / 2] central angle
+ * @param {number} [startAngle=0] starting angle
+ */
+function circularSegment(x, y, r, angle = Math.PI / 2, startAngle = 0) {
+	const ctx = C.workingCanvas;
+	if (!ctx.pathStarted) ctx.beginPath();
+	ctx.arc(x, y, r, startAngle, startAngle + angle);
+	if (!ctx.pathStarted) {
+		if (ctx.doFill) ctx.fill();
+		if (ctx.doStroke) ctx.stroke();
+		ctx.closePath();
+	}
+}
+
+/**
+ * Draws a filled & stroked text
+ *
+ * @param {string} text text to draw
+ * @param {number} [x=0] x-coord
+ * @param {number} [y=0] y-coord
+ * @param {number} [maxwidth=undefined] maximum width
+ */
+function text(text, x = 0, y = 0, maxwidth = undefined) {
+	const ctx = C.workingCanvas;
+	if (ctx.yAxisInveted) {
+		// if inverted reverse it and invert y component
+		scale(1, -1);
+		y *= -1;
+	}
+	if (ctx.doFill) ctx.fillText(text, x, y, maxwidth);
+	else if (ctx.doStroke) ctx.strokeText(text, x, y, maxwidth);
+	if (ctx.yAxisInveted) scale(1, -1); // reverse y-invertion
+}
+
+/**
+ * Draws a text without border
  *
  * @param {string} text text to draw
  * @param {number} x x-coord
  * @param {number} [y=x] y-coord
  * @param {number} [maxwidth=undefined] maximum width
  */
-function text(text, x=0, y=0, maxwidth=undefined) {
+function fillText(text, x = 0, y = 0, maxwidth = undefined) {
 	const ctx = C.workingCanvas;
 	if (ctx.yAxisInveted) {
 		scale(1, -1);
 		y *= -1;
 	}
-	if (ctx.doFill) ctx.fillText(text, x, y, maxwidth);
-	else if (ctx.doStroke) ctx.strokeText(text, x, y, maxwidth);
+	ctx.fillText(text, x, y, maxwidth);
 	if (ctx.yAxisInveted) scale(1, -1);
 }
 
 /**
- * draws a rectangle
+ * Draws a stroked text
+ *
+ * @param {string} text text to draw
+ * @param {number} x x-coord
+ * @param {number} [y=x] y-coord
+ * @param {number} [maxwidth=undefined] maximum width
+ */
+function strokeText(text, x = 0, y = 0, maxwidth = undefined) {
+	const ctx = C.workingCanvas;
+	if (ctx.yAxisInveted) {
+		scale(1, -1);
+		y *= -1;
+	}
+	ctx.strokeText(text, x, y, maxwidth);
+	if (ctx.yAxisInveted) scale(1, -1);
+}
+
+/**
+ * Draws a rectangle
  *
  * @param {number} x x-coord
  * @param {number} y y-coord
@@ -388,10 +481,11 @@ function rect(x, y, width, height) {
 	ctx.rect(x, y, width, height);
 	if (ctx.doFill) ctx.fill();
 	if (ctx.doStroke) ctx.stroke();
+	ctx.closePath();
 }
 
 /**
- * draws circle
+ * Draws circle
  *
  * @param {number} x x-coord
  * @param {number} y y-coord
@@ -435,7 +529,7 @@ function polygon() {
 }
 
 /**
- * draws ellipse
+ * Draws ellipse
  *
  * @param {number} x x-coord
  * @param {number} y y-coord
@@ -473,13 +567,21 @@ function ellipse(
 	ctx.closePath();
 }
 
+/**
+ * Draws a bezier curve
+ *
+ * @param {number} x1
+ * @param {number} y1
+ * @param {number} x2
+ * @param {number} y2
+ * @param {number} x3
+ * @param {number} y3
+ */
 function bezierCurve(x1, y1, x2, y2, x3, y3) {
 	const ctx = C.workingCanvas;
-	const pathStarted = ctx._pathStart;
+	const pathStarted = ctx.pathStarted;
 	if (!pathStarted) ctx.beginPath();
-
 	ctx.bezierCurveTo(x1, y1, x2, y2, x3, y3);
-
 	if (pathStarted) return;
 	if (ctx.doFill) ctx.fill();
 	if (ctx.doStroke) ctx.stroke();
@@ -487,18 +589,15 @@ function bezierCurve(x1, y1, x2, y2, x3, y3) {
 }
 
 /**
- * starts a new loop
+ * Starts a new loop
  * @param {function} fx
- * @param {string} canvasName
+ * @param {string} canvasName name of canvas. It must be unique if you're running multiple animation at once
  * @param {number} dx
  */
 function loop(fx, canvasName, dx) {
 	let ctx = C.workingCanvas;
-	if (!canvasName) {
-		canvasName = ctx.name;
-	} else {
-		ctx = C.canvasList[canvasName];
-	}
+	if (!canvasName) canvasName = ctx.name;
+	else ctx = C.canvasList[canvasName];
 	if (!isNaN(dx)) {
 		ctx.currentLoop = setInterval(function () {
 			C.workingCanvas = ctx;
@@ -508,50 +607,66 @@ function loop(fx, canvasName, dx) {
 		a();
 	}
 	function a() {
-		C.workingCanvas = ctx;
 		ctx.currentLoop = window.requestAnimationFrame(a);
 		fx();
 	}
 }
 
 /**
- * stops current loop
+ * Stops current loop
+ * @param {string} canvasName
  */
-function noLoop() {
-	const ctx = C.workingCanvas;
+function noLoop(canvasName) {
+	let ctx = C.workingCanvas;
+	if (!canvasName) canvasName = ctx.name;
+	else ctx = C.canvasList[canvasName];
 	clearInterval(ctx.currentLoop);
 	window.cancelAnimationFrame(ctx.currentLoop);
 }
 
 /**
- * starts a new Path
+ * Starts a new Path
  */
 function startPath() {
 	const ctx = C.workingCanvas;
 	ctx.beginPath();
-	ctx._pathStart = true;
+	ctx.pathStarted = true;
 }
 
 /**
- * ends current Path
+ * Ends current Path
  */
 function endPath() {
 	const ctx = C.workingCanvas;
 	ctx.closePath();
-	ctx._pathStart = false;
+	ctx.pathStarted = false;
 }
 
 /**
- * return current font
+ * Return current font
+ * @param {boolean} detailed wheather to return a detailed font property
  * @returns {string}
  */
-function getFont() {
+function getFont(detailed = false) {
 	const ctx = C.workingCanvas;
-	return ctx.fontSize + " " + ctx.fontFamily;
+	if (detailed) {
+		const {
+			fontStyle,
+			fontVariant,
+			fontWeight,
+			fontStretch,
+			fontSize,
+			lineHeight,
+			fontFamily,
+		} = ctx;
+		return `${fontStyle} ${fontVariant} ${fontWeight} ${fontStretch} ${fontSize}/${lineHeight} ${fontFamily}`;
+	} else {
+		return ctx.font;
+	}
 }
 
 /**
- * returns text metrics
+ * Returns text metrics
  * @param {string} text
  * @returns {TextMetrics}
  */
@@ -560,46 +675,100 @@ function measureText(text) {
 }
 
 /**
- * sets font size
+ * Sets font size
+ *
  * @param {number|string} size
  */
-function fontSize (size) {
+function fontSize(size) {
 	const ctx = C.workingCanvas;
 	size = typeof size === "number" ? size + "px" : size;
 	ctx.fontSize = size;
-	ctx.font = getFont();
+	ctx.font = getFont(true);
 }
 
 /**
- * sets font family
+ * Sets font family
+ *
  * @param {string} family
  */
-function fontFamily (family) {
+function fontFamily(family) {
 	const ctx = C.workingCanvas;
 	ctx.fontFamily = family;
-	ctx.font = getFont();
+	ctx.font = getFont(true);
 }
 
 /**
- * returns canvas image data
+ * Sets font style
+ *
+ * @param {string} style
+ */
+function fontStyle (style) {
+	const ctx = C.workingCanvas;
+	ctx.fontStyle = style;
+	ctx.font = getFont(true);
+}
+
+/**
+ * Sets font variant
+ *
+ * @param {string} variant
+ */
+function fontVariant (variant) {
+	const ctx = C.workingCanvas;
+	ctx.fontVariant = variant;
+	ctx.font = getFont(true);
+}
+
+/**
+ * Sets font weight
+ *
+ * @param {string} weight
+ */
+function fontWeight (weight) {
+	const ctx = C.workingCanvas;
+	ctx.fontWeight = weight;
+	ctx.font = getFont(true);
+}
+
+/**
+ * Sets font stretch
+ *
+ * @param {string} stretch
+ */
+function fontStretch (stretch) {
+	const ctx = C.workingCanvas;
+	ctx.fontStretch = stretch;
+	ctx.font = getFont(true);
+}
+
+/**
+ * Sets line height
+ *
+ * @param {string} height
+ */
+function lineHeight (height) {
+	const ctx = C.workingCanvas;
+	ctx.lineHeight = height;
+	ctx.font = getFont(true);
+}
+
+/**
+ * Returns canvas image data
  *
  * @param {string} datURL
  * @returns {string}
  */
-function getCanvasData (datURL = "image/png") {
+function getCanvasData(datURL = "image/png") {
 	return C.workingCanvas.canvas.toDataURL(datURL);
 }
 
 /**
- * save the canvas as image
+ * Save the canvas as image
  *
- * @param {string} [name="drawing"]
- * @param {string} [datURL="image/png"]
+ * @param {string} [name="drawing"] name of file
+ * @param {string} [datURL="image/png"] type of file
  */
-function saveCanvas (
-	name = "drawing",
-	datURL = "image/png"
-) {
+function saveCanvas(name = "drawing", datURL = "image/png") {
 	const link = getCanvasData().replace(datURL, "image/octet-stream");
 	const a = document.createElement("a");
 	a.download = name + ".png";
@@ -607,14 +776,22 @@ function saveCanvas (
 	a.click();
 }
 
-// more functions
+/**
+ * Sets the line dash
+ * see https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/setLineDash for more information
+ *
+ */
+function setLineDash() {
+	C.workingCanvas.setLineDash([...arguments]);
+}
+
 
 /**
- * draws a point with given size in pixels
+ * Draws a point with given size in pixels
  *
- * @param {number} x
- * @param {number} y
- * @param {number} [size=1] diameter of point
+ * @param {number} x center x
+ * @param {number} y center y
+ * @param {number} [size=1] diameter of point in px
  */
 function point(x, y, size = 1) {
 	const ctx = C.workingCanvas;
@@ -623,10 +800,10 @@ function point(x, y, size = 1) {
 }
 
 /**
- * draws square
+ * Draws square
  *
- * @param {number} x
- * @param {number} y
+ * @param {number} x x-coord
+ * @param {number} y x-coord
  * @param {number} sideLength
  */
 function square(x, y, sideLength) {
@@ -634,89 +811,71 @@ function square(x, y, sideLength) {
 }
 
 /**
- * draws a sector
- *
- * @param {number} x
- * @param {number} y
- * @param {number} innerRadius
- * @param {number} outerRadius
- * @param {number} startAngle
- * @param {number} endAngle
- * @param {string|CanvasGradient} [backgroundFill=C.workingCanvas.backgroundColor] Color of inner Circle
+ * Draws a sector
+ * @param {number} x center x
+ * @param {number} y center y
+ * @param {number} radius radius of sector
+ * @param {number} [angle=PI/2] central angle (use negative angle to move sector clockwise)
+ * @param {number} [startAngle=0] starting angle
  */
-function sector(
-	x,
-	y,
-	innerRadius,
-	outerRadius,
-	startAngle,
-	endAngle,
-	backgroundFill
-) {
+function sector(x, y, radius, angle = Math.PI / 2, startAngle = 0) {
 	const ctx = C.workingCanvas;
+	ctx.beginPath();
 	ctx.moveTo(x, y);
-	const _fill = getFill();
-	ctx.arc(x, y, outerRadius, startAngle, endAngle);
-	fill(backgroundFill || C.workingCanvas.backgroundColor);
-	ctx.arc(x, y, innerRadius, startAngle, endAngle);
-	fill(_fill);
+	ctx.arc(x, y, radius, startAngle, startAngle + angle);
+	ctx.lineTo(x, y);
+	if (ctx.doFill) ctx.fill();
+	if (ctx.doStroke) ctx.stroke();
+	ctx.closePath();
 }
 
 /**
- * draws quadrilateral
+ * Draws quadrilateral with four points as array of coordinate as [x, y]
  *
- * @param {number} x1
- * @param {number} y1
- * @param {number} x2
- * @param {number} y2
- * @param {number} x3
- * @param {number} y3
- * @param {number} x4
- * @param {number} y4
+ * @param {array} p1 1st point
+ * @param {array} p2 2nd point
+ * @param {array} p3 3rd point
+ * @param {array} p4 4th point
  */
-function quad(x1, y1, x2, y2, x3, y3, x4, y4) {
+function quad(p1, p2, p3, p4) {
 	const ctx = C.workingCanvas;
 	ctx.beginPath();
-	ctx.moveTo(x1, y1);
-	ctx.lineTo(x2, y2);
-	ctx.lineTo(x3, y3);
-	ctx.lineTo(x4, y4);
-	ctx.lineTo(x1, y1);
-
-	ctx.lineTo(x1, y1);
+	ctx.moveTo(p1[0], p1[1]);
+	ctx.lineTo(p2[0], p2[1]);
+	ctx.lineTo(p3[0], p3[1]);
+	ctx.lineTo(p4[0], p4[1]);
+	ctx.lineTo(p1[0], p1[1]);
 	if (ctx.doFill) ctx.fill();
 	if (ctx.doStroke) ctx.stroke();
 	ctx.closePath();
 }
 
 /**
- * draws triangle
- * @param {number} x1
- * @param {number} y1
- * @param {number} x2
- * @param {number} y2
- * @param {number} x3
- * @param {number} y3
+ * Draws triangle with three points as array of coordinate as [x, y]
+ *
+ * @param {array} p1
+ * @param {array} p2
+ * @param {array} p3
  */
-function triangle(x1, y1, x2, y2, x3, y3) {
+function triangle(p1, p2, p3) {
 	const ctx = C.workingCanvas;
 	ctx.beginPath();
-	ctx.moveTo(x1, y1);
-	ctx.lineTo(x2, y2);
-	ctx.lineTo(x3, y3);
-	ctx.lineTo(x1, y1);
+	ctx.moveTo(p1[0], p1[1]);
+	ctx.lineTo(p2[0], p2[1]);
+	ctx.lineTo(p3[0], p3[1]);
+	ctx.lineTo(p1[0], p1[1]);
 	if (ctx.doFill) ctx.fill();
 	if (ctx.doStroke) ctx.stroke();
 	ctx.closePath();
 }
 
 /**
- * draws equilateral triangle
+ * Draws equilateral triangle
  *
  * @param {number} x
  * @param {number} y
  * @param {number} sideLength length of side
- * @param {number} [rotation=0]
+ * @param {number} [rotation=0] amound to rotate the entire triangle
  */
 function equiTriangle(x, y, sideLength, rotation = 0) {
 	regularPolygon(x, y, 3, sideLength, rotation);
@@ -728,7 +887,7 @@ function equiTriangle(x, y, sideLength, rotation = 0) {
  * @param {number} y y position
  * @param {number} sides number of sides
  * @param {number} sideLength length of a side
- * @param {number} [rotation=0] rotation
+ * @param {number} [rotation=0] amound to rotate the entire polygon
  */
 function regularPolygon(x, y, sides, sideLength, rotation = 0) {
 	sideLength = sideLength / (2 * Math.sin(Math.PI / sides)); // finds radius
@@ -742,15 +901,9 @@ function regularPolygon(x, y, sides, sideLength, rotation = 0) {
  * @param {number} y y coord
  * @param {number} sides number of sides
  * @param {number} radius radius
- * @param {number} [rotation=0] rotation
+ * @param {number} [rotation=0] amound to rotate the entire polygon
  */
-function regularPolygonWithRadius(
-	x,
-	y,
-	sides,
-	radius,
-	rotation = 0
-) {
+function regularPolygonWithRadius(x, y, sides, radius, rotation = 0) {
 	let i = 0;
 	const e = (Math.PI * 2) / sides;
 	const ctx = C.workingCanvas;
@@ -778,8 +931,8 @@ window.total = 0;
 window.recent = window.performance.now();
 
 /**
- * returns FPS (Frames Per Second)
- * @param {number} keepDat number of recorded frames to remember
+ * Returns FPS (Frames Per Second)
+ * @param {number} keepDat number of recorded frames to keep in the memory
  * @returns {number}
  */
 function getFPS(keepDat = 100) {
@@ -789,30 +942,40 @@ function getFPS(keepDat = 100) {
 	window.total += dx;
 	window.recent = now;
 	if (window.dxList.length > keepDat) window.total -= window.dxList.shift();
-	return (window.dxList.length / (window.total / 1000));
+	return window.dxList.length / (window.total / 1000);
 }
 
 /**
  * creates a linear gradient
  *
- * @param {array} p1 initial point as [x, y]
- * @param {array} p2 final point as [x, y]
+ * @param {array} initialPoint initial point as [x, y]
+ * @param {array} finalPoint final point as [x, y]
  * @param {Object|array} colorStops color stops
+ @example
  ```js
 var color = linearGradient(
-	[0, 0],
-	[200, 0],
+	[0, 0], [200, 0],
 	{
 			0: "green",
 			0.5: "cyan",
 			1: "yellow"
 	}
 );
+```,
+```js
+var color = linearGradient(
+	[0, 0], [200, 0],
+	[
+		"green",
+		"cyan",
+		"yellow"
+	]
+);
 ```
  */
-function linearGradient(p1, p2, colorStops) {
+function linearGradient(initialPoint, finalPoint, colorStops) {
 	const ctx = C.workingCanvas;
-	const gradient = ctx.createLinearGradient(p1[0], p1[1], p2[0], p2[1]);
+	const gradient = ctx.createLinearGradient(initialPoint[0], initialPoint[1], finalPoint[0], finalPoint[1]);
 	if (Array.isArray(colorStops)) {
 		const stops = {};
 		const step = 1 / colorStops.length;
@@ -880,5 +1043,16 @@ export {
 	regularPolygon,
 	regularPolygonWithRadius,
 	getFPS,
-	linearGradient
+	linearGradient,
+	circularSegment,
+	arcTo,
+	fillText,
+	strokeText,
+	clearAll,
+	setLineDash,
+	fontStyle,
+	fontVariant,
+	fontWeight,
+	fontStretch,
+	lineHeight,
 };

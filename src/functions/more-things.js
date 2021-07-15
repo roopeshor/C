@@ -216,16 +216,16 @@ function axes(config = {}) {
 function arrowHead(x, y, width = 10, ang = 0, tipScaleRatio = 2) {
 	const ctx = C.workingCanvas;
 	const r = Math.atan(tipScaleRatio / 2);
-	save();
+	ctx.save();
 	ctx.beginPath();
 	ctx.moveTo(x, y);
 	ctx.lineTo(x - width * Math.cos(ang - r), y - width * Math.sin(ang - r));
 	ctx.lineTo(x - width * Math.cos(ang + r), y - width * Math.sin(ang + r));
-
 	ctx.lineTo(x, y);
 	if (ctx.doFill) ctx.fill();
 	else ctx.stroke();
-	restore();
+	ctx.closePath();
+	ctx.restore();
 }
 /**
  * draws a double edged arrow
@@ -238,15 +238,17 @@ function arrowHead(x, y, width = 10, ang = 0, tipScaleRatio = 2) {
  * @param {*} [headSize2=headSize] size of second arrow's head
  * @param {*} [r=sqrt(3)] width / height
  */
-function doubleArrow(x1, y1, x2, y2, tipWidth = 10, tipScaleRatio = 0.6) {
+function doubleArrow(x1, y1, x2, y2, tipWidth = 10, tipScaleRatio = 0.6, spacing=0) {
 	const r = Math.atan(tipScaleRatio / 2);
 	const angle = Math.atan2(y2 - y1, x2 - x1);
 	const xd = Math.cos(angle) * tipWidth * Math.cos(r);
 	const yd = Math.sin(angle) * tipWidth * Math.cos(r);
-	arrowHead(x1, y1, tipWidth, Math.PI + angle, tipScaleRatio);
+	const yDiff = Math.sin(angle) * spacing;
+	const xDiff = Math.cos(angle) * spacing;
+	arrowHead(x1+xDiff, y1+yDiff, tipWidth, Math.PI + angle, tipScaleRatio);
 	x1 += xd;
 	y1 += yd;
-	arrow(x1, y1, x2, y2, tipWidth, tipScaleRatio);
+	arrow(x1, y1, x2-xDiff, y2-yDiff, tipWidth, tipScaleRatio);
 }
 /**
  * Creates a numberLine with parameters in a object

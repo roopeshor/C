@@ -1,16 +1,29 @@
 import { defineProperties } from "./functions/defineProperties.js";
 // main file; defines C function
 const defaultConfig = {
-	"width": 200, // width of canvas multiplied by dpr
-	"height": 200, // height of canvas  multiplied by dpr
-	"dpr": Math.ceil(devicePixelRatio || 1), // device pixel ratio for clear drawings
-	"doFill": true,
-	"doStroke": true,
-	"fillStyle": "#ffffff",
-	"strokeStyle": "#000000",
-	"fontSize": "20px",
-	"fontfamily": "sans-serif",
-	"colorMode": "rgba"
+	width: 200, // width of canvas multiplied by dpr
+	height: 200, // height of canvas  multiplied by dpr
+
+	dpr: Math.ceil(devicePixelRatio || 1), // device pixel ratio for clear drawings
+
+	// states
+	doFill: true,
+	doStroke: true,
+	pathStarted: false,
+
+	// color stuff
+	fillStyle: "#ffffff",
+	strokeStyle: "#000000",
+	colorMode: "rgba",
+
+	// font properties
+	fontSize: "20px",
+	fontFamily: "sans-serif",
+	fontStyle: "normal",
+	fontVariant: "normal",
+	fontWeight: "normal",
+	fontStretch: "normal",
+	lineHeight: "1.2",
 };
 
 function assignDefaultConfigs (cfgs) {
@@ -59,7 +72,7 @@ function C (fx, container = document.body, configs = {}) {
 	}
 	function prepareCanvas () {
 		// add additional information to rendererContext
-		C.getResizedCanvas(canvas, configs);
+		C.resizeCanvas(canvas, configs);
 		canvas.context = Object.assign(canvas.getContext("2d"), configs);
 		canvas.context.setTransform(configs.dpr, 0, 0, configs.dpr, 0, 0);
 		C.workingCanvas = canvas.context;
@@ -75,7 +88,11 @@ function C (fx, container = document.body, configs = {}) {
 }
 
 C.canvasList = {};
+
+/** @type {Number} */
 C.nameID = 0;
+
+/** @type {CanvasRenderingContext2D} */
 C.workingCanvas = undefined; // index of current working canvas in `canvasList`
 
 /**
@@ -108,7 +125,7 @@ C.getContainerWidth = function (container = document.body) {
  * @param {HTMLCanvasElement} cvs
  * @param {Object} configs
  */
-C.getResizedCanvas = function (cvs, configs) {
+C.resizeCanvas = function (cvs, configs) {
 	const width = configs.width;
 	const height = configs.height;
 	const dpr = configs.dpr;
@@ -126,7 +143,7 @@ C.getResizedCanvas = function (cvs, configs) {
  */
 C.makeCanvas = function (configs) {
 	const cvs = document.createElement("canvas");
-	this.getResizedCanvas(cvs, configs);
+	this.resizeCanvas(cvs, configs);
 	return cvs;
 };
 
