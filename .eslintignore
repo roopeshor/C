@@ -2,7 +2,6 @@ node_modules/**
 
 # to avoid chaos
 examples/**
-**/docs/**
 
 # don't lint minified files and dist files
 dist/**

@@ -154,13 +154,20 @@ exports.BUTT = BUTT;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.SQRT2 = exports.TAU = exports.PI = exports.LN10 = exports.LN2 = exports.E = void 0;
+exports.RAD = exports.DEG = exports.SQRT2 = exports.TAU = exports.PI = exports.LN10 = exports.LN2 = exports.E = void 0;
 const E = 2.718281828459045,
       LN2 = 0.6931471805599453,
       LN10 = 2.302585092994046,
       PI = 3.141592653589793,
       TAU = 6.283185307179586,
-      SQRT2 = 1.4142135623730951;
+      SQRT2 = 1.4142135623730951,
+      // conversion factors
+DEG = Math.PI / 180,
+      // degree to radian
+RAD = 180 / Math.PI // radian to degree
+;
+exports.RAD = RAD;
+exports.DEG = DEG;
 exports.SQRT2 = SQRT2;
 exports.TAU = TAU;
 exports.PI = PI;
@@ -531,6 +538,7 @@ exports.fontVariant = fontVariant;
 exports.fontWeight = fontWeight;
 exports.fontStretch = fontStretch;
 exports.lineHeight = lineHeight;
+exports.getTransform = getTransform;
 
 var _main = require("../main.js");
 
@@ -599,7 +607,7 @@ function line(x1, y1, x2, y2) {
   ctx.closePath();
 }
 /**
- * Move to a given point
+ * Begins a new sub-path at the point specified by the given (x, y) coordinates.
  *
  * @param {number} x
  * @param {number} y
@@ -610,7 +618,7 @@ function moveTo(x, y) {
   _main.C.workingCanvas.moveTo(x, y);
 }
 /**
- * adds a line to the current path
+ * Adda a straight line to the current sub-path by connecting the sub-path's last point to the specified (x, y) coordinates.
  *
  * @param {number} x
  * @param {number} y
@@ -641,12 +649,13 @@ function background() {
   ctx.restore();
 }
 /**
- * Clears a rectangular portion of canvas
- *
- * @param {number} x starting x
- * @param {number} y starting y
- * @param {number} width
- * @param {number} height
+ * Erases the pixels in a rectangular area by setting them to transparent black
+ * see https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/clearRect
+ * for more information
+ * @param {number} x x-axis coordinate of the rectangle's starting point.
+ * @param {number} y y-axis coordinate of the rectangle's starting point.
+ * @param {number} width Rectangle's width. Positive values are to the right, and negative values to the left.
+ * @param {number} height Rectangle's height. positive values are down, and negative are up.
  */
 
 
@@ -659,7 +668,7 @@ function clear(x, y, width, height) {
   ctx.clearRect(x, y, width, height);
 }
 /**
- * Clears the entire canvas
+ * Erases entire canvas area by setting them to transparent black
  *
  */
 
@@ -689,38 +698,54 @@ function permaBackground() {
  * Resets the current transformation to the identity matrix,
  * and then invokes a transformation described by given arguments.
  * Lets you scale, rotate, translate (move), and skew the canvas.
+ * The transform matrix is described by:
+ * $$\left[\begin{array}{ccc} a & c & e \\ b & d & f \\ 0 & 0 & 1 \end{array}\right]$$
  * See MDN docs: https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/setTransform
  *
- * @param {number} a1
- * @param {number} a2
- * @param {number} a3
- * @param {number} a4
- * @param {number} a5
- * @param {number} a6
+ * @param {number|DOMMatrix} a Horizontal scaling. A value of 1 results in no scaling.
+ *  this can be a `DOMMatrix` which can get by {@link getTransform} function
+ * @param {number} b Vertical skewing
+ * @param {number} c Horizontal skewing
+ * @param {number} d Vertical scaling. A value of 1 results in no scaling
+ * @param {number} e Horizontal translation
+ * @param {number} f Vertical translation
  */
 
 
-function setTransform(a1, a2, a3, a4, a5, a6) {
+function setTransform(a, b, c, d, e, f) {
   const ctx = _main.C.workingCanvas;
-  ctx.setTransform(a1, a2, a3, a4, a5, a6);
+  if (a instanceof DOMMatrix) ctx.setTransform(a);else ctx.setTransform(a, b, c, d, e, f);
   ctx.scale(ctx.dpr, ctx.dpr);
+}
+/**
+ * Returns the current transform matrix
+ *
+ * @return {DOMMatrix}
+ */
+
+
+function getTransform() {
+  return _main.C.workingCanvas.getTransform();
 }
 /**
  * multiplies the current transformation with the matrix described by the arguments
  * of this method. This lets you scale, rotate, translate (move), and skew the context.
+ *
  * See MDN docs: https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/transform
  *
- * @param {number} a1
- * @param {number} a2
- * @param {number} a3
- * @param {number} a4
- * @param {number} a5
- * @param {number} a6
+ * @param {number|DOMMatrix} a Horizontal scaling. A value of 1 results in no scaling.
+ *  this can be a `DOMMatrix` which can get by {@link getTransform} function
+ * @param {number} b Vertical skewing
+ * @param {number} c Horizontal skewing
+ * @param {number} d Vertical scaling. A value of 1 results in no scaling
+ * @param {number} e Horizontal translation
+ * @param {number} f Vertical translation
  */
 
 
-function transform(a1, a2, a3, a4, a5, a6) {
-  _main.C.workingCanvas.transform(a1, a2, a3, a4, a5, a6);
+function transform(a, b, c, d, e, f) {
+  const ctx = _main.C.workingCanvas;
+  if (a instanceof DOMMatrix) ctx.transform(a);else ctx.transform(a, b, c, d, e, f);
 }
 /**
  * Prevent filling inside shapes
@@ -772,8 +797,10 @@ function strokeWidth(w) {
 /**
  * Scales the canvas by a given amount
  *
- * @param {number} x
- * @param {number} [y=x]
+ * @param {number} x Scaling factor in the horizontal direction. A negative value flips pixels across
+ *  the vertical axis. A value of 1 results in no horizontal scaling.
+ * @param {number} [y=x] Scaling factor in the vertical direction. A negative value flips pixels across
+ *  the horizontal axis. A value of 1 results in no vertical scaling.
  */
 
 
@@ -783,7 +810,7 @@ function scale(x, y = x) {
 /**
  * Rotates the canvas
  *
- * @param {number} angle angle in radians
+ * @param {number} angle The rotation angle, clockwise in radians. You can use degree * DEG to calculate a radian from a degree.
  */
 
 
@@ -1159,33 +1186,35 @@ function bezierCurve(x1, y1, x2, y2, x3, y3) {
 }
 /**
  * Starts a new loop
- * @param {function} fx
+ * @param {function} functionToRun function which contains code to run
  * @param {string} canvasName name of canvas. It must be unique if you're running multiple animation at once
- * @param {number} dx
+ * @param {number} timeDelay time delay between 2 frames. If given loop will execute with setInterval function.
+ *  If not provided the loop will be run with requestAnimationFrame (this keeps a consistant frame rate between 40 to 50 FPS).
  */
 
 
-function loop(fx, canvasName, dx) {
-  let ctx = _main.C.workingCanvas;
-  if (!canvasName) canvasName = ctx.name;else ctx = _main.C.canvasList[canvasName];
+function loop(functionToRun, canvasName, timeDelay) {
+  let ctx; // if canvasName isn't given it will assume the drawing context to be the current working canvas
 
-  if (!isNaN(dx)) {
+  if (!canvasName) ctx = _main.C.workingCanvas;else ctx = _main.C.canvasList[canvasName];
+
+  if (!isNaN(timeDelay)) {
     ctx.currentLoop = setInterval(function () {
       _main.C.workingCanvas = ctx;
-      fx();
-    }, dx);
+      functionToRun();
+    }, timeDelay);
   } else {
-    a();
+    run();
   }
 
-  function a() {
-    ctx.currentLoop = window.requestAnimationFrame(a);
-    fx();
+  function run() {
+    ctx.currentLoop = window.requestAnimationFrame(run);
+    functionToRun();
   }
 }
 /**
  * Stops current loop
- * @param {string} canvasName
+ * @param {string} canvasName name of the canvas given to {@link loop}
  */
 
 
@@ -1517,23 +1546,24 @@ function regularPolygonWithRadius(x, y, sides, radius, rotation = 0) {
   if (ctx.doStroke) ctx.stroke();
 }
 
-window.dxList = [];
-window.total = 0;
-window.recent = window.performance.now();
+var timeDelayList = [],
+    total = 0,
+    recent = window.performance.now();
 /**
- * Returns FPS (Frames Per Second)
- * @param {number} keepDat number of recorded frames to keep in the memory
+ * Returns FPS (Frames Per Second). Use this inside the loop
+ * @param {number} timeDelaysToRemember number of time delays between frames to recorded in the memory
  * @returns {number}
  */
 
-function getFPS(keepDat = 100) {
+function getFPS(timeDelaysToRemember = 100) {
   const now = window.performance.now();
-  const dx = now - window.recent;
-  window.dxList.push(dx);
-  window.total += dx;
-  window.recent = now;
-  if (window.dxList.length > keepDat) window.total -= window.dxList.shift();
-  return window.dxList.length / (window.total / 1000);
+  const timeDelay = now - recent; // time delays between frames
+
+  recent = now;
+  timeDelayList.push(timeDelay);
+  total += timeDelay;
+  if (timeDelayList.length > timeDelaysToRemember) total -= timeDelayList.shift();
+  return timeDelayList.length / (total / 1000);
 }
 /**
  * creates a linear gradient
@@ -2504,7 +2534,7 @@ C.workingCanvas = undefined; // index of current working canvas in `canvasList`
 
 C.getContainerWidth = function (container = document.body) {
   const cs = window.getComputedStyle(container);
-  return parseInt(cs.width) - parseInt(cs.marginLeft) - parseInt(cs.marginRight) - parseInt(cs.paddingRight) - parseInt(cs.paddingLeft);
+  return parseInt(cs.width) - parseInt(cs.paddingRight) - parseInt(cs.paddingLeft);
 };
 /**
  * set width and height attribute of canvas element to the given values in `configs`
@@ -2555,8 +2585,9 @@ C.makeCanvas = function (configs) {
 C.addExtension = function (extObj, editable) {
   (0, _defineProperties.defineProperties)(extObj, window, !editable);
   (0, _defineProperties.defineProperties)(extObj, C.extensions, !editable);
-}; // register to window
+};
 
+C.defineProperties = _defineProperties.defineProperties; // register to window
 
 window.C = C;
 

@@ -62,6 +62,14 @@ module.exports = function (grunt) {
 				dest: latestSourceMapMin,
 			}
 		},
+		jsdoc : {
+			dist : {
+				src: ['src/**/**.js'],
+				options: {
+					destination: 'doc'
+				}
+			}
+    },
 	});
 
 	grunt.loadNpmTasks("grunt-contrib-jshint");
@@ -69,9 +77,11 @@ module.exports = function (grunt) {
 	grunt.loadNpmTasks("grunt-contrib-copy");
 	grunt.loadNpmTasks("grunt-contrib-uglify");
 	grunt.loadNpmTasks("grunt-browserify");
+	grunt.loadNpmTasks('grunt-jsdoc');
 
 	grunt.registerTask("default", ["jshint", "browserify", "uglify", "copy"]);
 
 	grunt.registerTask("lint", ["jshint"]);
 	grunt.registerTask("minify", ["browserify", "uglify"]);
+	grunt.registerTask("doc", ["jsdoc"]);
 };

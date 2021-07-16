@@ -59,10 +59,6 @@ C (
 		restore();
 		fontSize(15);
 		fillText("circular sector", 95, -H/2+2)
-		loop(() => {
-			background(0);
-			text(getFPS().toFixed(3))
-		}, "c");
   },
   ".container",
   {

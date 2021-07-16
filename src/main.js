@@ -104,8 +104,6 @@ C.getContainerWidth = function (container = document.body) {
 	const cs = window.getComputedStyle(container);
 	return (
 		parseInt(cs.width) -
-    parseInt(cs.marginLeft) -
-    parseInt(cs.marginRight) -
     parseInt(cs.paddingRight) -
     parseInt(cs.paddingLeft)
 	);
@@ -157,7 +155,7 @@ C.addExtension = function (extObj, editable) {
 	defineProperties(extObj, window, !editable);
 	defineProperties(extObj, C.extensions, !editable);
 };
-
+C.defineProperties = defineProperties;
 // register to window
 window.C = C;
 
