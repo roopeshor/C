@@ -354,18 +354,38 @@ function fill() {
 }
 
 /**
- * Returns fill & stroke color/gradient, line width, fill & stroke state, and background
+ * Returns variables in workingCanvas
  * @returns {Object}
  */
-function getDrawConfigs() {
+function getContextVariables() {
 	const ctx = C.workingCanvas;
 	return {
 		background: ctx.background,
 		stroke: ctx.strokeStyle,
 		fill: ctx.fillStyle,
+
 		strokeWidth: ctx.lineWidth,
+
 		doStroke: ctx.doStroke,
 		doFill: ctx.doFill,
+
+		pathStarted: ctx.pathStarted,
+		netRotation: ctx.netRotation,
+		yAxisInveted: ctx.yAxisInveted,
+
+		fontStyle: ctx.fontStyle,
+		fontVariant: ctx.fontVariant,
+		fontWeight: ctx.fontWeight,
+		fontStretch: ctx.fontStretch,
+		fontSize: ctx.fontSize,
+		lineHeight: ctx.lineHeight,
+		fontFamily: ctx.fontFamily,
+		font: ctx.font,
+
+		currentLoop: ctx.currentLoop,
+
+		textAlign: ctx.textAlign,
+		textBaseline: ctx.textBaseline,
 	};
 }
 
@@ -1019,69 +1039,45 @@ function linearGradient(initialPoint, finalPoint, colorStops) {
 	return gradient;
 }
 
+/**
+ * Specifies the current text alignment used when drawing text.
+ * The alignment is relative to the x value of the fillText/strokeText/text method.
+ *
+ * @param {string} align alignment type.
+ * possible values:
+ *  * "left" : The text is left-aligned.
+ *  * "right" : The text is right-aligned.
+ *  * "center" : The text is centered.
+ *  * "start" : The text is aligned at the normal start of the line (left-aligned for left-to-right locales, right-aligned for right-to-left locales).
+ *  * "end": The text is aligned at the normal end of the line (right-aligned for left-to-right locales, left-aligned for right-to-left locales).
+ * NOTE: You can use constants LEFT, RIGHT, CENTER, START, and END for aligning
+ */
+function textAlign(align) {
+	C.workingCanvas.textAlign = align;
+}
+
+/**
+ * Specifies the current text baseline used when drawing text.
+ * The alignment is relative to the x value of the fillText/strokeText/text method.
+ *
+ * @param {string} baseline baseline type.
+ * possible values:
+ * * "top": The text baseline is the top of the em square.
+ * * "hanging": The text baseline is the hanging baseline. (Used by Tibetan and other Indic scripts.)
+ * * "middle": The text baseline is the middle of the em square.
+ * * "alphabetic": The text baseline is the normal alphabetic baseline. Default value.
+ * * "ideographic": The text baseline is the ideographic baseline; this is the bottom of the body of the characters, if the main body of characters protrudes beneath the alphabetic baseline. (Used by Chinese, Japanese, and Korean scripts.)
+ * * "bottom": The text baseline is the bottom of the bounding box. This differs from the ideographic baseline in that the ideographic baseline doesn't consider descenders.
+ * NOTE: You can use constants TOP, HANGING, MIDDLE, ALPHABETIC, IDEOGRAPHIC, BOTTOM for baseline
+ */
+function textBaseline(baseline) {
+	C.workingCanvas.textBaseline = baseline;
+}
+
 export {
-	line,
-	moveTo,
-	lineTo,
-	background,
-	clear,
-	permaBackground,
-	setTransform,
-	transform,
-	noFill,
-	noStroke,
-	translate,
-	setImageSmoothing,
-	strokeWidth,
-	scale,
-	rotate,
-	save,
-	lineCap,
-	lineJoin,
-	restore,
-	getFill,
-	getStroke,
-	rest,
-	stroke,
-	fill,
-	getDrawConfigs,
-	arc,
-	text,
-	rect,
-	circle,
-	polygon,
-	ellipse,
-	bezierCurve,
-	loop,
-	noLoop,
-	startPath,
-	endPath,
-	getFont,
-	measureText,
-	fontSize,
-	fontFamily,
-	getCanvasData,
-	saveCanvas,
-	point,
-	square,
-	sector,
-	quad,
-	triangle,
-	equiTriangle,
-	regularPolygon,
-	regularPolygonWithRadius,
-	getFPS,
-	linearGradient,
-	circularSegment,
-	arcTo,
-	fillText,
-	strokeText,
-	clearAll,
-	setLineDash,
-	fontStyle,
-	fontVariant,
-	fontWeight,
-	fontStretch,
+	line,	moveTo,	lineTo,	background,	clear,	permaBackground,	setTransform,	transform,	noFill,	noStroke,	translate,	setImageSmoothing,	strokeWidth,	scale,	rotate,	save,	lineCap,	lineJoin,	restore,	getFill,	getStroke,	rest,	stroke,	fill,	getContextVariables,	arc,	text,	rect,	circle,	polygon,	ellipse,	bezierCurve,	loop,	noLoop,	startPath,	endPath,	getFont,	measureText,	fontSize,	fontFamily,	getCanvasData,	saveCanvas,	point,	square,	sector,	quad,	triangle,	equiTriangle,	regularPolygon,	regularPolygonWithRadius,	getFPS,	linearGradient,	circularSegment,	arcTo,	fillText,	strokeText,	clearAll,	setLineDash,	fontStyle,	fontVariant,	fontWeight,	fontStretch,
 	lineHeight,
 	getTransform,
+	textAlign,
+	textBaseline,
 };

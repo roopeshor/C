@@ -1,22 +1,14 @@
 import { C } from "../../src/main.js";
-import { arc, background, circle, clear, fill, fontSize, getFPS, lineTo, loop, noFill, permaBackground, rest, restore, save, scale, sector, setLineDash, stroke, strokeWidth, text, translate } from "../../src/functions/drawing-functions.js";
-import { doubleArrow } from "../../src/functions/more-things.js"
+import { arc, background, circle, clear, fill, fontSize, getFPS, lineTo, loop, noFill, permaBackground, rest, restore, save, scale, sector, setLineDash, stroke, strokeWidth, text, textAlign, textBaseline, translate } from "../../src/functions/drawing-functions.js";
+import { axes, doubleArrow } from "../../src/functions/more-things.js"
 import { rotateAroundOrigin } from "../../src/functions/math.js";
 import { WHITE } from "../../src/constants/colors.js";
-const W = 400;
-const H = 400;
-
-function fact (x) {
-  if (x > 1) {
-    return x * fact(x - 1);
-  } else {
-    return 1;
-  }
-}
-
+import { CENTER, MIDDLE } from "../../src/constants/drawing.js";
+const W = 350;
+const H = 350;
 C (
   () => {
-		const radius = 150, padding=20, leftStart = -radius-padding;
+		const radius = 120, padding=20, leftStart = -radius-padding;
 		const pointOnCircle = rotateAroundOrigin(PI/6, radius);
     initCenteredCanvas();
 		stroke(WHITE);
@@ -30,7 +22,6 @@ C (
 		sector(0, 0, radius, PI*2/3, PI/6);
 		sector(0, 0, 20, PI*2/3, PI/6);
 		circle(0, 0, radius);
-
 
 		// chord
 		setLineDash(13.5, 13.5);
@@ -57,12 +48,32 @@ C (
 		translate(0, -18);
 		text("R", pointOnCircle[0] / 2, pointOnCircle[1] / 2)
 		restore();
+
 		fontSize(15);
-		fillText("circular sector", 95, -H/2+2)
+		textAlign(RIGHT);
+		fillText("circular sector", W/2, -H/2+2)
   },
-  ".container",
+  ".circular-sector",
   {
-    name: "c",
+    name: "cs",
+    width: W,
+    height: H,
+  }
+);
+
+C (
+  () => {
+		initCenteredCanvas();
+
+		axes();
+		text("A", 0, 0);
+		fontSize(15);
+		textAlign(RIGHT);
+		fillText("text", W/2-5, -H/2+5)
+  },
+  ".text",
+  {
+    // name: "cs",
     width: W,
     height: H,
   }
