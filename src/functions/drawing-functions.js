@@ -837,8 +837,10 @@ function setLineDash() {
  */
 function point(x, y, size = 1) {
 	const ctx = C.workingCanvas;
+	ctx.beginPath();
 	ctx.arc(x, y, size / 2, 0, Math.PI * 2);
 	ctx.fill();
+	ctx.closePath();
 }
 
 /**

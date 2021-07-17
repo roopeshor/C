@@ -1,6 +1,6 @@
 import { C } from "../../src/main.js";
 import { arc, background, circle, clear, fill, fontSize, getFPS, lineTo, loop, noFill, permaBackground, rest, restore, save, scale, sector, setLineDash, stroke, strokeWidth, text, textAlign, textBaseline, translate } from "../../src/functions/drawing-functions.js";
-import { axes, doubleArrow } from "../../src/functions/more-things.js"
+import { arcBrace, axes, doubleArrow } from "../../src/functions/more-things.js"
 import { rotateAroundOrigin } from "../../src/functions/math.js";
 import { WHITE } from "../../src/constants/colors.js";
 import { CENTER, MIDDLE } from "../../src/constants/drawing.js";
@@ -64,12 +64,9 @@ C (
 C (
   () => {
 		initCenteredCanvas();
-
-		axes();
-		text("A", 0, 0);
-		fontSize(15);
-		textAlign(RIGHT);
-		fillText("text", W/2-5, -H/2+5)
+		// const v = curlyBrace(0, 0, 100, 100);
+		var tip = arcBrace(0, 0, 100, PI/4, PI/6);
+		text("H", ...tip);
   },
   ".text",
   {

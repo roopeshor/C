@@ -60,4 +60,5 @@ export const DARK_BLUE = "#236B8E",
 	PINK = "#D147BD",
 	LIGHT_PINK = "#DC75CD",
 	GREEN_SCREEN = "#00FF00",
-	ORANGE = "#FF862F";
+	ORANGE = "#FF862F",
+	TRANSPARENT = "rgba(0,0,0,0)";

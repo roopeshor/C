@@ -12,11 +12,7 @@ import { C } from "./main.js";
 // export to window scope
 defineProperties(MathConsts, window, false);
 defineProperties(MathFunctions);
-defineProperties(
-	Object.assign({ "TRANSPARENT": "rgba(0,0,0,0)" }, COLORLIST),
-	window,
-	false
-);
+defineProperties(COLORLIST, window, false);
 defineProperties(DrawingConstants, window, false);
 defineProperties({"COLORLIST": COLORLIST}, window, false);
 defineProperties(defineProperties, C);
