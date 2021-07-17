@@ -824,7 +824,7 @@ function saveCanvas(name = "drawing", datURL = "image/png") {
  * see https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/setLineDash for more information
  *
  */
-function setLineDash() {
+function lineDash() {
 	C.workingCanvas.setLineDash([...arguments]);
 }
 
@@ -1076,10 +1076,76 @@ function textBaseline(baseline) {
 	C.workingCanvas.textBaseline = baseline;
 }
 
+function drawImage() {
+	C.workingCanvas.drawImage(...arguments);
+}
+
 export {
-	line,	moveTo,	lineTo,	background,	clear,	permaBackground,	setTransform,	transform,	noFill,	noStroke,	translate,	setImageSmoothing,	strokeWidth,	scale,	rotate,	save,	lineCap,	lineJoin,	restore,	getFill,	getStroke,	rest,	stroke,	fill,	getContextVariables,	arc,	text,	rect,	circle,	polygon,	ellipse,	bezierCurve,	loop,	noLoop,	startPath,	endPath,	getFont,	measureText,	fontSize,	fontFamily,	getCanvasData,	saveCanvas,	point,	square,	sector,	quad,	triangle,	equiTriangle,	regularPolygon,	regularPolygonWithRadius,	getFPS,	linearGradient,	circularSegment,	arcTo,	fillText,	strokeText,	clearAll,	setLineDash,	fontStyle,	fontVariant,	fontWeight,	fontStretch,
+	line,
+	moveTo,
+	lineTo,
+	background,
+	clear,
+	permaBackground,
+	setTransform,
+	transform,
+	noFill,
+	noStroke,
+	translate,
+	setImageSmoothing,
+	strokeWidth,
+	scale,
+	rotate,
+	save,
+	lineCap,
+	lineJoin,
+	restore,
+	getFill,
+	getStroke,
+	rest,
+	stroke,
+	fill,
+	getContextVariables,
+	arc,
+	text,
+	rect,
+	circle,
+	polygon,
+	ellipse,
+	bezierCurve,
+	loop,
+	noLoop,
+	startPath,
+	endPath,
+	getFont,
+	measureText,
+	fontSize,
+	fontFamily,
+	getCanvasData,
+	saveCanvas,
+	point,
+	square,
+	sector,
+	quad,
+	triangle,
+	equiTriangle,
+	regularPolygon,
+	regularPolygonWithRadius,
+	getFPS,
+	linearGradient,
+	circularSegment,
+	arcTo,
+	fillText,
+	strokeText,
+	clearAll,
+	lineDash,
+	fontStyle,
+	fontVariant,
+	fontWeight,
+	fontStretch,
 	lineHeight,
 	getTransform,
 	textAlign,
 	textBaseline,
+	drawImage,
 };
