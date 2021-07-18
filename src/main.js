@@ -1,4 +1,4 @@
-import { defineProperties } from "./functions/defineProperties.js";
+import { defineProperties } from "./defineProperties.js";
 // main file; defines C function
 const defaultConfig = {
 	width: 200, // width of canvas multiplied by dpr

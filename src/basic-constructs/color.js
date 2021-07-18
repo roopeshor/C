@@ -1,11 +1,19 @@
 import * as COLORLIST from "../constants/colors.js";
-import { randomInt } from "./math.js";
+import { C } from "../main.js";
+import { randomInt } from "../utils/math.js";
 
+
+/**
+ * This module contains functions for different color operations.
+ * @module color
+ */
 const __definedColors__ = Object.keys(COLORLIST);
 
 // color randomizers
 /**
  * returns a random hex color
+ *
+ * @global
 */
 function randomColor () {
 	let color = "#";
@@ -20,6 +28,7 @@ function randomColor () {
 /**
  * picks a random color from defined ones
  *
+ * @global
 */
 function randomDefinedColor() {
 	return COLORLIST[__definedColors__[randomInt(__definedColors__.length - 1)]];
@@ -41,6 +50,7 @@ function hue2RGB(p, q, t) {
  * Assumes values of red, green, and blue are between 0 & 255 and
  * returns hue in range 0 to 360, saturation and lightness in range 0 to 1
  *
+ * @global
  * @param {number} red The red color value
  * @param {number} green The green color value
  * @param {number} blue The blue color value
@@ -84,6 +94,7 @@ function RGBToHSL(red, green, blue) {
  * Assumes values of hue is between 0 and 360, saturation and lightness are between 0 & 1 and
  * returns red, green, and blue values between 0 & 255
  *
+ * @global
  * @param {number} hue The hue
  * @param {number} saturation The saturation
  * @param {number} lightness The lightness
@@ -112,6 +123,7 @@ function HSLToRGB(hue, saturation, lightness) {
  * Assumes values of red, green, and blue are between 0 & 255 and
  * returns hue in range 0 to 360, saturation and value in range 0 to 1
  *
+ * @global
  * @param {number} red The red color value
  * @param {number} green The green color value
  * @param {number} blue The blue color value
@@ -154,6 +166,7 @@ function RGBToHSV(red, green, blue) {
  * Assumes values of hue is between 0 to 360, saturation, and value are between 0 & 1 and
  * returns red, green, and blue in range 0 to 255
  *
+ * @global
  * @param {number} hue The hue
  * @param {number} saturation The saturation
  * @param {number} value The value
@@ -203,6 +216,57 @@ function HSVToRGB(hue, saturation, value) {
 	return [r * 255, g * 255, b * 255];
 }
 
+/**
+ * creates a linear gradient
+ *
+ * @global
+ * @param {array} initialPoint initial point as [x, y]
+ * @param {array} finalPoint final point as [x, y]
+ * @param {Object|array} colorStops color stops
+ @example
+ ```js
+var color = linearGradient(
+	[0, 0], [200, 0],
+	{
+			0: "green",
+			0.5: "cyan",
+			1: "yellow"
+	}
+);
+```,
+```js
+var color = linearGradient(
+	[0, 0], [200, 0],
+	[
+		"green",
+		"cyan",
+		"yellow"
+	]
+);
+```
+ */
+function linearGradient(initialPoint, finalPoint, colorStops) {
+	const ctx = C.workingCanvas;
+	const gradient = ctx.createLinearGradient(
+		initialPoint[0],
+		initialPoint[1],
+		finalPoint[0],
+		finalPoint[1]
+	);
+	if (Array.isArray(colorStops)) {
+		const stops = {};
+		const step = 1 / colorStops.length;
+		for (let i = 0; i < colorStops.length; i++) {
+			stops[step * i] = colorStops[i];
+		}
+		colorStops = stops;
+	}
+	for (let stops = Object.keys(colorStops), i = 0; i < stops.length; i++) {
+		const stop = stops[i];
+		gradient.addColorStop(stop, colorStops[stop]);
+	}
+	return gradient;
+}
 export {
 	randomColor,
 	randomDefinedColor,
@@ -210,6 +274,8 @@ export {
 	RGBToHSL,
 	HSLToRGB,
 	RGBToHSV,
-	HSVToRGB
+	HSVToRGB,
+
+	linearGradient
 };
 

@@ -39,7 +39,7 @@ module.exports = function (grunt) {
 			options: {
 				trailing: true,
 				eqeqeq: false,
-				esversion: 6,
+				esversion: 6
 			},
 			target: {
 				src: ["src/**/**.js"],
@@ -64,11 +64,11 @@ module.exports = function (grunt) {
 		},
 		jsdoc : {
 			dist : {
-				src: ['src/**/**.js'],
+				src: ['src/functions/drawing-functions.js'],
 				options: {
-					destination: 'doc'
-				}
-			}
+					destination: 'doc',
+				},
+			},
     },
 	});
 

@@ -1,124 +1,28 @@
-import { BLUE_C, GREY, WHITE, TRANSPARENT } from "../constants/colors.js";
-import { CENTER, MIDDLE, RIGHT } from "../constants/drawing.js";
+import { BLUE_C, GREY, WHITE } from "../constants/colors.js";
 import { C } from "../main.js";
 import {
-	background,
-	clear,
+	line,
+} from "../basic-constructs/linear.js";
+import {
+	text,
+} from "../basic-constructs/text.js";
+
+import {
 	fill,
 	fontSize,
-	line,
 	measureText,
-	noStroke,
 	restore,
 	rotate,
 	save,
-	scale,
 	stroke,
 	strokeWidth,
-	text,
 	translate,
-} from "./drawing-functions.js";
-import { atan2, cos, sin } from "./math.js";
-/*
-global CENTERX CENTERY
-*/
-
-const consts = {
-	CENTERX: function () {
-		return C.workingCanvas.width / 2;
-	},
-	CENTERY: function () {
-		return C.workingCanvas.height / 2;
-	},
-};
-
-function _def_(name, getter) {
-	Object.defineProperty(window, name, {
-		configurable: true,
-		enumerable: true,
-		get: getter,
-		set: function set(value) {
-			Object.defineProperty(window, name, {
-				configurable: true,
-				enumerable: true,
-				value: value,
-				writable: true,
-			});
-		},
-	});
-}
-
-for (let constNames = Object.keys(consts), i = 0; i < constNames.length; i++) {
-	const _const = constNames[i];
-	_def_(_const, consts[_const]);
-}
-
-/**/
-function arange(start, end, step, rev = false) {
-	const arr = [];
-	if (rev) for (let i = end; i >= start; i -= step) arr.push(i);
-	else for (let i = start; i <= end; i += step) arr.push(i);
-	return arr;
-}
-
-function applyDefault(_default, target = {}) {
-	for (let i = 0, keys = Object.keys(_default); i < keys.length; i++) {
-		const prop = keys[i];
-		const objType = _default[prop][1];
-		if (
-			(objType === "number" && isNaN(target[prop])) ||
-			(objType === "array" && !Array.isArray(target[prop])) ||
-			target[prop] === undefined ||
-			target[prop] === null
-		) {
-			target[prop] = _default[prop][0];
-		}
-	}
-	return target;
-}
-
-/**
- * initializes a canvas translated to center and y-axis inverted
- * @global
- */
-function initCenteredCanvas() {
-	const ctx = C.workingCanvas;
-	background(0);
-	fill(WHITE);
-	stroke(WHITE);
-	noStroke();
-	fontSize(20);
-
-	ctx.translate(CENTERX, CENTERY);
-	ctx.scale(1, -1);
-	ctx.lineWidth = 2;
-	ctx.yAxisInveted = true;
-}
-
-/**
- * draws a arrow
- *
- * @global
- * @param {number} x1 starting x-axis coord
- * @param {number} y1 starting y-axis coord
- * @param {number} x2 ending x-axis coord
- * @param {number} y2 ending y-axis coord
- * @param {number} tipWidth width of tip
- * @param {number} tipScaleRatio width:height
- */
-function arrow(x1, y1, x2, y2, tipWidth = 10, tipScaleRatio = 0.7) {
-	const angle = Math.atan2(y2 - y1, x2 - x1); // angle from plain
-	arrowTip(x2, y2, tipWidth, angle, tipScaleRatio);
-	save();
-	const r = Math.atan(tipScaleRatio / 2);
-	const xd = Math.cos(angle) * tipWidth * Math.cos(r);
-	const yd = Math.sin(angle) * tipWidth * Math.cos(r);
-	x2 -= xd;
-	y2 -= yd;
-	line(x1, y1, x2, y2);
-	restore();
-}
-
+} from "../basic-constructs/settings.js";
+import {
+	arange,
+	applyDefault,
+} from "./utils.js";
+import { arrowTip } from "./objects.js";
 /**
  * creates a axes.
  * xAxis: <object> configs for x axis.
@@ -170,18 +74,17 @@ function axes(config = {}) {
 	// variables to shift 0 ticks of axes to center
 	const xShift = xAxis.length / 2 + xMin;
 	const yShift = yAxis.length / 2 + yMin;
-
-	save();
+	ctx.save();
 	// translate to center
-	translate(center[0], center[1]);
+	ctx.translate(center[0], center[1]);
 
 	// draws axes
 	// x-axis
-	translate(xShift, 0);
+	ctx.translate(xShift, 0);
 	const xAxisLine = numberLine(xAxis); // draw x axis
 
 	// reverse the effect of shift for drawing y-axis
-	translate(-xShift, yShift);
+	ctx.translate(-xShift, yShift);
 
 	// y-axis
 	const yAxisLine = numberLine(yAxis); // draw y axis
@@ -189,71 +92,13 @@ function axes(config = {}) {
 	const unit = [xAxisLine.unitLength, yAxisLine.unitLength];
 
 	// reverse the effect of overall shift
-	translate(-center[0], -center[1] - yShift);
-	restore();
+	ctx.translate(-center[0], -center[1] - yShift);
+	ctx.restore();
 	return {
 		unit: unit, // major unit size
 		xAxis: xAxisLine, // x axis confiurations from numberLine
 		yAxis: yAxisLine, // y axis confiurations from numberLine
 	};
-}
-
-/**
- * Draws a arrow head
- *
- * @global
- * @param {number} x x position
- * @param {number} y y position
- * @param {number} [width=10] width of head
- * @param {number} [ang=0] tilt of head
- * @param {number} [tipScaleRatio=2] height to width ratio
- */
-function arrowTip(x, y, width = 15, ang = 0, tipScaleRatio = 1) {
-	const ctx = C.workingCanvas;
-	const r = Math.atan(tipScaleRatio / 2);
-	ctx.save();
-	ctx.beginPath();
-	ctx.moveTo(x, y);
-	ctx.lineTo(x - width * Math.cos(ang - r), y - width * Math.sin(ang - r));
-	ctx.lineTo(x - width * Math.cos(ang + r), y - width * Math.sin(ang + r));
-	ctx.lineTo(x, y);
-	if (ctx.doFill) ctx.fill();
-	else ctx.stroke();
-	ctx.closePath();
-	ctx.restore();
-}
-
-/**
- * Draws a double tipped arrow
- *
- * @global
- * @param {number} x1
- * @param {number} y1
- * @param {number} x2
- * @param {number} y2
- * @param {number} [tipWidth=10]
- * @param {number} [tipScaleRatio=0.6]
- * @param {number} [spacing=0]
- */
-function doubleArrow(
-	x1,
-	y1,
-	x2,
-	y2,
-	tipWidth = 15,
-	tipScaleRatio = 1,
-	spacing = 0
-) {
-	const r = Math.atan(tipScaleRatio / 2);
-	const angle = Math.atan2(y2 - y1, x2 - x1);
-	const xd = Math.cos(angle) * tipWidth * Math.cos(r);
-	const yd = Math.sin(angle) * tipWidth * Math.cos(r);
-	const yDiff = Math.sin(angle) * spacing;
-	const xDiff = Math.cos(angle) * spacing;
-	arrowTip(x1 + xDiff, y1 + yDiff, tipWidth, Math.PI + angle, tipScaleRatio);
-	x1 += xd;
-	y1 += yd;
-	arrow(x1, y1, x2 - xDiff, y2 - yDiff, tipWidth, tipScaleRatio);
 }
 
 /**
@@ -647,278 +492,8 @@ function numberPlane(config = {}) {
 	};
 }
 
-/**
- * Draws a double tipped arrow with text in the middle
- *
- * @global
- * @param {object} configs parameters.
- * Possible values:
- * * {string} text* : text
- * * {array} p1* : first point
- * * {array} p2* : second point
- * * {number} [tipWidth=10] : tip width
- * * {number} [tipScaleRatio=0.6] : tipScaleRatio
- * * {number} [spacing=0] : spacing
- * NOTE: '*' indicate mandatory properties
- */
-function measurement(configs) {
-	const defaults = {
-		background: [TRANSPARENT],
-		tipWidth: [15, "number"],
-		tipScaleRatio: [1, "number"],
-		innerPadding: [3, "number"],
-		outerPadding: [0, "number"],
-		textRotation: [0, "number"],
-	};
-	configs = applyDefault(defaults, configs);
-	const txt = configs.text,
-		p1 = configs.p1,
-		p2 = configs.p2,
-		background = configs.background,
-		tipWidth = configs.tipWidth,
-		tipScaleRatio = configs.tipScaleRatio,
-		innerPadding = configs.innerPadding,
-		textRotation = configs.textRotation,
-		outerPadding = configs.outerPadding;
-	// draw arrow
-	doubleArrow(
-		p1[0],
-		p1[1],
-		p2[0],
-		p2[1],
-		tipWidth,
-		tipScaleRatio,
-		outerPadding
-	);
-	const metrics = measureText(txt);
-
-	// height of text from stackoverflow: https://stackoverflow.com/a/45789011
-	const height = metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent;
-	const width = metrics.width;
-	const ctx = C.workingCanvas;
-	const pAverage = [(p1[0] + p2[0]) / 2, (p1[1] + p2[1]) / 2];
-	ctx.save();
-	ctx.translate(pAverage[0], pAverage[1]);
-	ctx.textAlign = CENTER;
-	ctx.textBaseline = MIDDLE;
-	ctx.rotate(atan2(p2[1] - p1[1], p2[0] - p1[0]));
-	ctx.rotate(textRotation);
-	const recentFillColor = ctx.fillStyle;
-	if (background == TRANSPARENT) {
-		ctx.fillStyle = ctx.background || WHITE;
-	} else {
-		ctx.fillStyle = background;
-	}
-	ctx.fillRect(
-		-width / 2 - innerPadding,
-		-height / 2,
-		width + innerPadding * 2,
-		height
-	);
-	ctx.fillStyle = recentFillColor;
-	text(txt, 0, 0);
-	ctx.restore();
-}
-
-/**
- * Draws a curly brace
- * Code adapted from http://bl.ocks.org/alexhornbake/6005176
- *
- * @global
- * @param {number} x1 x-axis coord of starting point
- * @param {number} y1 y-axis coord of starting point
- * @param {number} x2 x-axis coord of ending point
- * @param {number} y2 y-axis coord of ending point
- * @param {number} [size=30] outward size of brace
- * @param {number} [curviness=0.6] curviness of brace. '0' doesn't make flat brace
- * @param {number} [taleLength=0.8] length of tale proportional to size \ length
- */
-function curlyBrace(
-	x1,
-	y1,
-	x2,
-	y2,
-	size = 20,
-	curviness = 0.6,
-	taleLength = 0.8
-) {
-	//Calculate unit vector
-	var dx = x1 - x2;
-	var dy = y1 - y2;
-	var len = Math.sqrt(dx * dx + dy * dy);
-	dx /= len;
-	dy /= len;
-
-	//Calculate Control Points of path,
-	const cp1x = x1 + curviness * size * dy;
-	const cp1y = y1 - curviness * size * dx;
-	const cp2x = x1 - 0.25 * len * dx + (1 - curviness) * size * dy;
-	const cp2y = y1 - 0.25 * len * dy - (1 - curviness) * size * dx;
-
-	const middleTipX = x1 - 0.5 * len * dx + size * dy * taleLength;
-	const middleTipY = y1 - 0.5 * len * dy - size * dx * taleLength;
-
-	const cp3x = x2 + curviness * size * dy;
-	const cp3y = y2 - curviness * size * dx;
-	const cp4x = x1 - 0.75 * len * dx + (1 - curviness) * size * dy;
-	const cp4y = y1 - 0.75 * len * dy - (1 - curviness) * size * dx;
-
-	const path =
-		`M ${x1} ${y1} ` +
-		`Q ${cp1x} ${cp1y} ${cp2x} ${cp2y} ` +
-		`T ${middleTipX} ${middleTipY} ` +
-		`M ${x2} ${y2} ` +
-		`Q ${cp3x} ${cp3y} ${cp4x} ${cp4y} ` +
-		`T ${middleTipX} ${middleTipY}`;
-	C.workingCanvas.stroke(new Path2D(path));
-	return [middleTipX, middleTipY];
-}
-
-/**
- * Draws a brace that wraps a circle. Returns the coordinate of middle tip extended by a certain amound.
- *
- * @global
- * @param {number} x x-axis coord
- * @param {number} y y-axis coord
- * @param {number} [radius=100] radius of circle
- * @param {number} [startAngle=0] starting angle
- * @param {number} [angle=Math.PI / 2] central angle
- * @param {number} [smallerLineLength=10] length of small tips at the ends of brace
- * @param {number} [tipLineLength=smallerLineLength] length of middle tip
- * @param {number} [extender=5] how much the coordinate of middle tip should be extended.
- * @return {array} array of two numbers that are the coordinate of middle tip extended by a certain value.
- */
-function arcBrace(
-	x,
-	y,
-	radius = 100,
-	angle = Math.PI / 2,
-	startAngle = 0,
-	smallerLineLength = 10,
-	tipLineLength = smallerLineLength,
-	extender = 10
-) {
-	const ctx = C.workingCanvas,
-		smallerRadius = radius - smallerLineLength,
-		largerRadius = radius + tipLineLength;
-
-	ctx.save();
-	ctx.translate(x, y);
-	ctx.rotate(startAngle);
-	ctx.beginPath();
-	ctx.moveTo(radius, 0);
-
-	// first smaller line
-	ctx.lineTo(smallerRadius, 0);
-
-	// The arc
-	ctx.arc(0, 0, radius, 0, angle);
-
-	// second smaller line
-	ctx.lineTo(smallerRadius * cos(angle), smallerRadius * sin(angle));
-
-	// tip line
-	ctx.moveTo(radius * cos(angle / 2), radius * sin(angle / 2));
-	ctx.lineTo(largerRadius * cos(angle / 2), largerRadius * sin(angle / 2));
-
-	ctx.stroke();
-	ctx.closePath();
-	ctx.restore();
-
-	return [
-		(largerRadius + extender) * cos(angle / 2 + startAngle) + x,
-		(largerRadius + extender) * sin(angle / 2 + startAngle) + y,
-	];
-}
-
-/**
- * Renders the input tex into a HTMLImageElement
- *
- * @param {string} input
- * @return {HTMLImageElement}
- */
-function getImgageFromTex(input) {
-	if (
-		typeof window.MathJax == "object" &&
-		typeof window.MathJax.tex2svg == "function"
-	) {
-		const ctx = C.workingCanvas;
-		// eslint-disable-next-line no-undef
-		const svgOutput = MathJax.tex2svg(input).getElementsByTagName("svg")[0];
-		const g = svgOutput.getElementsByTagName("g")[0];
-		svgOutput.style.verticalAlign = "1ex";
-		g.setAttribute("stroke", ctx.strokeStyle);
-		g.setAttribute("fill", ctx.fillStyle);
-		let outerHTML = svgOutput.outerHTML,
-			blob = new Blob([outerHTML], { type: "image/svg+xml;charset=utf-8" });
-		let URL = window.URL || window.webkitURL || window;
-		let blobURL = URL.createObjectURL(blob);
-		let image = new Image();
-		image.src = blobURL;
-		return image;
-	} else {
-		console.error("MathJax is not found. Please include");
-	}
-}
-
-/**
- * Draws tex inputs
- *
- * @param {string} input
- * @param {number} [x=0]
- * @param {number} [y=0]
- * @return {HTMLImageElement} image representation of tex
- */
-function tex(input, x = 0, y = 0) {
-	const image = getImgageFromTex(input);
-	const ctx = C.workingCanvas;
-	const text_align = ctx.textAlign,
-		text_baseline = ctx.textBaseline;
-	image.onload = function () {
-		ctx.save();
-		const { width, height } = image;
-		// translating the image according to text-align and text-baseline
-		switch (text_align) {
-			case CENTER:
-				ctx.translate(-width / 2, 0);
-				break;
-			case RIGHT:
-				ctx.translate(-width, 0);
-				break;
-			default:
-				break;
-		}
-		switch (text_baseline) {
-			case "middle":
-				ctx.translate(0, height / 2);
-				break;
-			case "bottom":
-				ctx.translate(0, height);
-				break;
-			default:
-				break;
-		}
-		// invert axis first
-		ctx.scale(1, -1);
-		ctx.drawImage(image, x, -y);
-		ctx.restore();
-	};
-	return image;
-}
-
 export {
-	initCenteredCanvas,
-	clear,
-	scale,
-	arrow,
 	axes,
-	arrowTip,
-	doubleArrow,
-	measurement,
 	numberLine,
 	numberPlane,
-	curlyBrace,
-	arcBrace,
-	tex,
-	getImgageFromTex,
 };

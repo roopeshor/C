@@ -1,0 +1,23 @@
+{
+	"plugins": ["plugins/markdown"],
+	"recurseDepth": 10,
+	"source": {
+		"includePattern": ".+\\.js(doc|x)?$",
+		"incude": ["./src/functions/drawing-functions.js"],
+		"excludePattern": "(^|\\/|\\\\)_"
+	},
+	"sourceType": "module",
+	"tags": {
+		"allowUnknownTags": true,
+		"dictionaries": ["jsdoc","closure"]
+	},
+	"templates": {
+		"cleverLinks": false,
+		"monospaceLinks": false
+	},
+	"opts": {
+		"encoding": "utf8",
+		"destination": "./doc/",
+		"recurse": true
+	}
+}
