@@ -46,6 +46,7 @@ function readColor(colors) {
 /**
  * Draws a line
  *
+ * @global
  * @param {number} x1 start x coord
  * @param {number} y1 start y coord
  * @param {number} x2 end x coord
@@ -63,6 +64,7 @@ function line(x1, y1, x2, y2) {
 /**
  * Begins a new sub-path at the point specified by the given (x, y) coordinates.
  *
+ * @global
  * @param {number} x
  * @param {number} y
  */
@@ -73,6 +75,7 @@ function moveTo(x, y) {
 /**
  * Adda a straight line to the current sub-path by connecting the sub-path's last point to the specified (x, y) coordinates.
  *
+ * @global
  * @param {number} x
  * @param {number} y
  */
@@ -87,6 +90,7 @@ function lineTo(x, y) {
  * * a hex string (#fff, #acf2dc)
  * * a number (0 for rgb(0,0,0), 233 for rgb(233,233,233))
  * * a array of numbers ([0, 244, 34])
+ * @global
  */
 function background() {
 	const col = readColor(arguments),
@@ -101,8 +105,10 @@ function background() {
 
 /**
  * Erases the pixels in a rectangular area by setting them to transparent black
- * see https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/clearRect
+ * see <https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/clearRect>
  * for more information
+ *
+ * @global
  * @param {number} x x-axis coordinate of the rectangle's starting point.
  * @param {number} y y-axis coordinate of the rectangle's starting point.
  * @param {number} width Rectangle's width. Positive values are to the right, and negative values to the left.
@@ -120,6 +126,7 @@ function clear(x, y, width, height) {
 /**
  * Erases entire canvas area by setting them to transparent black
  *
+ * @global
  */
 function clearAll() {
 	const ctx = C.workingCanvas;
@@ -134,6 +141,7 @@ function clearAll() {
  * Captures the current drawings in canvas and set it to
  * css background
  *
+ * @global
  */
 function permaBackground() {
 	const canvasStyle = C.workingCanvas.canvas.style;
@@ -148,8 +156,9 @@ function permaBackground() {
  * Lets you scale, rotate, translate (move), and skew the canvas.
  * The transform matrix is described by:
  * $$\left[\begin{array}{ccc} a & c & e \\ b & d & f \\ 0 & 0 & 1 \end{array}\right]$$
- * See MDN docs: https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/setTransform
+ * See MDN docs: <https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/setTransform>
  *
+ * @global
  * @param {number|DOMMatrix} a Horizontal scaling. A value of 1 results in no scaling.
  *  this can be a `DOMMatrix` which can get by {@link getTransform} function
  * @param {number} b Vertical skewing
@@ -168,6 +177,7 @@ function setTransform(a, b, c, d, e, f) {
 /**
  * Returns the current transform matrix
  *
+ * @global
  * @return {DOMMatrix}
  */
 function getTransform() {
@@ -178,8 +188,9 @@ function getTransform() {
  * multiplies the current transformation with the matrix described by the arguments
  * of this method. This lets you scale, rotate, translate (move), and skew the context.
  *
- * See MDN docs: https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/transform
+ * See MDN docs: <https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/transform>
  *
+ * @global
  * @param {number|DOMMatrix} a Horizontal scaling. A value of 1 results in no scaling.
  *  this can be a `DOMMatrix` which can get by {@link getTransform} function
  * @param {number} b Vertical skewing
@@ -196,6 +207,8 @@ function transform(a, b, c, d, e, f) {
 
 /**
  * Prevent filling inside shapes
+ *
+ * @global
  */
 function noFill() {
 	C.workingCanvas.doFill = false;
@@ -203,6 +216,8 @@ function noFill() {
 
 /**
  * Prevent drawing strokes of shapes
+ *
+ * @global
  */
 function noStroke() {
 	C.workingCanvas.doStroke = false;
@@ -211,8 +226,9 @@ function noStroke() {
 /**
  * Translates (moves) canvas to a position
  *
- * @param {number} x
- * @param {number} [y=0]
+ * @global
+ * @param {number} x amound to translate along x-axis
+ * @param {number} [y=0] amound to translate along y-axis
  */
 function translate(x, y = 0) {
 	C.workingCanvas.translate(x, y);
@@ -221,6 +237,7 @@ function translate(x, y = 0) {
 /**
  * Sets whether to enable image smoothening
  *
+ * @global
  * @param {boolean} bool
  */
 function setImageSmoothing(bool) {
@@ -230,6 +247,7 @@ function setImageSmoothing(bool) {
 /**
  * Sets the stroke width (line width/line thickness)
  *
+ * @global
  * @param {number} w
  */
 function strokeWidth(w) {
@@ -239,6 +257,7 @@ function strokeWidth(w) {
 /**
  * Scales the canvas by a given amount
  *
+ * @global
  * @param {number} x Scaling factor in the horizontal direction. A negative value flips pixels across
  *  the vertical axis. A value of 1 results in no horizontal scaling.
  * @param {number} [y=x] Scaling factor in the vertical direction. A negative value flips pixels across
@@ -251,6 +270,7 @@ function scale(x, y = x) {
 /**
  * Rotates the canvas
  *
+ * @global
  * @param {number} angle The rotation angle, clockwise in radians. You can use degree * DEG to calculate a radian from a degree.
  */
 function rotate(angle) {
@@ -261,6 +281,8 @@ function rotate(angle) {
 
 /**
  * Saves the current state of canvas
+
+ * @global
  */
 function save() {
 	C.workingCanvas.save();
@@ -269,6 +291,8 @@ function save() {
 /**
  * Set the type of line end
  * Options: BUTT, ROUND, SQUARE
+ *
+ * @global
  * @param {string} capType
  */
 function lineCap(capType) {
@@ -277,7 +301,9 @@ function lineCap(capType) {
 
 /**
  * Sets type of line joining
- * Options: bevel, round, miter
+ * Options: BEVEL, ROUND, MITER
+ *
+ * @global
  * @param {string} joinType
  */
 function lineJoin(joinType) {
@@ -286,6 +312,8 @@ function lineJoin(joinType) {
 
 /**
  * Restore the saved state of canvas
+ *
+ * @global
  */
 function restore() {
 	C.workingCanvas.restore();
@@ -293,6 +321,8 @@ function restore() {
 
 /**
  * Returns fill color/gradient
+ *
+ * @global
  * @returns {string|CanvasGradient}
  */
 function getFill() {
@@ -301,6 +331,8 @@ function getFill() {
 
 /**
  * Returns stroke color/gradient
+ *
+ * @global
  * @returns {string|CanvasGradient}
  */
 function getStroke() {
@@ -309,6 +341,8 @@ function getStroke() {
 
 /**
  * Reset the applied transform to idendity matrix and scales canvas by dpr
+ *
+ * @global
  */
 function rest() {
 	const ctx = C.workingCanvas;
@@ -323,6 +357,8 @@ function rest() {
  * * hex string (#fff, #acf2dc)
  * * number (0 for rgb(0,0,0), 233 for rgb(233,233,233))
  * * array of numbers ([0, 244, 34]). This gets converted into css color by the colorMode property
+ *
+ * @global
  */
 function stroke() {
 	const ctx = C.workingCanvas;
@@ -342,6 +378,8 @@ function stroke() {
  * * a hex string (#fff, #acf2dc)
  * * a number (0 for rgb(0,0,0), 233 for rgb(233,233,233))
  * * a array of numbers ([0, 244, 34]). This gets converted into css color by the colorMode property
+ *
+ * @global
  */
 function fill() {
 	const ctx = C.workingCanvas;
@@ -355,6 +393,8 @@ function fill() {
 
 /**
  * Returns variables in workingCanvas
+ *
+ * @global
  * @returns {Object}
  */
 function getContextVariables() {
@@ -390,13 +430,15 @@ function getContextVariables() {
 }
 
 /**
- * Draw a arc
+ * Adds a circular arc to the current sub-path if {@link startPath} was called.
+ * If not it will draw a new arc.
  *
- * @param {number} x center x
- * @param {number} y center y
- * @param {number} r radius
+ * @global
+ * @param {number} x The x-axis coordinate of the arc's center.
+ * @param {number} y The y-axis coordinate of the arc's center.
+ * @param {number} r arc's radius (must be positive)
  * @param {number} [angle=PI/2] central angle (use negative values to rotate arc clockwise)
- * @param {number} [startAngle=0] starting angle angle
+ * @param {number} [startAngle=0] The angle at which the arc starts in radians, measured from the positive x-axis.
  */
 function arc(x, y, r, angle = Math.PI / 2, startAngle = 0) {
 	const ctx = C.workingCanvas;
@@ -412,11 +454,12 @@ function arc(x, y, r, angle = Math.PI / 2, startAngle = 0) {
  * Creates a circular arc using the given control points and radius.
  * If a current path started it will add this to the end of path
  *
- * @param {number} x1
- * @param {number} y1
- * @param {number} x2
- * @param {number} y2
- * @param {number} radius
+ * @global
+ * @param {number} x1 x-axis coord of first point
+ * @param {number} y1 y-axis coord of first point
+ * @param {number} x2 x-axis coord of second point
+ * @param {number} y2 y-axis coord of second point
+ * @param {number} radius radius of arc
  */
 function arcTo(x1, y1, x2, y2, radius) {
 	const ctx = C.workingCanvas;
@@ -434,11 +477,12 @@ function arcTo(x1, y1, x2, y2, radius) {
 /**
  * Draws a circular segment.
  *
- * @param {number} x center x
- * @param {number} y center y
- * @param {number} r radius
+ * @global
+ * @param {number} x x-axis coordinate of center of circular sector
+ * @param {number} y y-axis coordinate of center of circular sector
+ * @param {number} r radius of the circular sector
  * @param {number} [angle=Math.PI / 2] central angle
- * @param {number} [startAngle=0] starting angle
+ * @param {number} [startAngle=0] The angle at which the arc starts in radians, measured from the positive x-axis.
  */
 function circularSegment(x, y, r, angle = Math.PI / 2, startAngle = 0) {
 	const ctx = C.workingCanvas;
@@ -454,6 +498,7 @@ function circularSegment(x, y, r, angle = Math.PI / 2, startAngle = 0) {
 /**
  * Draws a filled & stroked text
  *
+ * @global
  * @param {string} text text to draw
  * @param {number} [x=0] x-coord
  * @param {number} [y=0] y-coord
@@ -474,6 +519,7 @@ function text(text, x = 0, y = 0, maxwidth = undefined) {
 /**
  * Draws a text without border
  *
+ * @global
  * @param {string} text text to draw
  * @param {number} x x-coord
  * @param {number} [y=x] y-coord
@@ -492,6 +538,7 @@ function fillText(text, x = 0, y = 0, maxwidth = undefined) {
 /**
  * Draws a stroked text
  *
+ * @global
  * @param {string} text text to draw
  * @param {number} x x-coord
  * @param {number} [y=x] y-coord
@@ -510,6 +557,7 @@ function strokeText(text, x = 0, y = 0, maxwidth = undefined) {
 /**
  * Draws a rectangle
  *
+ * @global
  * @param {number} x x-coord
  * @param {number} y y-coord
  * @param {number} width widht
@@ -527,6 +575,7 @@ function rect(x, y, width, height) {
 /**
  * Draws circle
  *
+ * @global
  * @param {number} x x-coord
  * @param {number} y y-coord
  * @param {number} r radius
@@ -541,15 +590,17 @@ function circle(x, y, r) {
 }
 
 /**
- * accepts points and draws polygon
- * @example ```js
+ * Draws polygon with given points
+ * @global
+ * @example
+ * ```
  * polygon(
-		[0, 0], // first point
-		[100, 200], // second point
-		[130, 230], // third point
-		//...
-)
-```
+ * 	[0, 0], // first point
+ * 	[100, 200], // second point
+ * 	[130, 230], // third point
+ * 	//...
+ * )
+ * ```
  */
 function polygon() {
 	const args = arguments;
@@ -569,16 +620,17 @@ function polygon() {
 }
 
 /**
- * Draws ellipse
+ * Adds an elliptical arc to the current sub-path if {@link startPath} was called.
+ * If not it will draw a new ellipse.
  *
- * @param {number} x x-coord
- * @param {number} y y-coord
- * @param {number} radius1 radius1
- * @param {number} radius2 radius2
- * @param {number} [rotation=0] rotation from plane
- * @param {number} [startAngle=0] starting angle
- * @param {number} [endAngle=Math.PI * 2] ending angle
- * @param {boolean} [anticlockwise=false]
+ * @global
+ * @param {number} x x-axis coordinate of ellipse's center
+ * @param {number} y y-axis coordinate of ellipse's center
+ * @param {number} radius1 ellipse's major-axis radius. Must be non-negative.
+ * @param {number} radius2 ellipse's minor-axis radius. Must be non-negative.
+ * @param {number} [rotation=0] The rotation of the ellipse, expressed in radians.
+ * @param {number} [startAngle=0] The angle at which the ellipse starts, measured clockwise from the positive x-axis and expressed in radians.
+ * @param {number} [angle=Math.PI * 2] central angle of ellipse. Use negative values to rotate it anticlockwise
  */
 function ellipse(
 	x,
@@ -587,41 +639,35 @@ function ellipse(
 	radius2,
 	rotation = 0,
 	startAngle = 0,
-	endAngle = Math.PI * 2,
-	anticlockwise = false
+	angle = Math.PI * 2
 ) {
 	const ctx = C.workingCanvas;
-	ctx.beginPath();
-	ctx.ellipse(
-		x,
-		y,
-		radius1,
-		radius2,
-		rotation,
-		startAngle,
-		endAngle,
-		anticlockwise
-	);
-	if (ctx.doFill) ctx.fill();
-	if (ctx.doStroke) ctx.stroke();
-	ctx.closePath();
+	if (!ctx.pathStarted) ctx.beginPath();
+	ctx.ellipse(x, y, radius1, radius2, rotation, startAngle, startAngle + angle);
+	if (!ctx.pathStarted) {
+		if (ctx.doFill) ctx.fill();
+		if (ctx.doStroke) ctx.stroke();
+		ctx.closePath();
+	}
 }
 
 /**
- * Draws a bezier curve
+ * Adds a bézie curve to current sub-path if {@link startPath} was called.
+ * If not it will draw a new bézie curve.
  *
- * @param {number} x1
- * @param {number} y1
- * @param {number} x2
- * @param {number} y2
- * @param {number} x3
- * @param {number} y3
+ * @global
+ * @param {number} cpx1 x-axis coord of first control point
+ * @param {number} cpy1 y-axis coord of first control point
+ * @param {number} cpx2 x-axis coord of second control point
+ * @param {number} cpy2 y-axis coord of second control point
+ * @param {number} x3 x-axis coord of the end point
+ * @param {number} y3 y-axis coord of the end point
  */
-function bezierCurve(x1, y1, x2, y2, x3, y3) {
+function bezierCurve(cpx1, cpy1, cpx2, cpy2, x3, y3) {
 	const ctx = C.workingCanvas;
 	const pathStarted = ctx.pathStarted;
 	if (!pathStarted) ctx.beginPath();
-	ctx.bezierCurveTo(x1, y1, x2, y2, x3, y3);
+	ctx.bezierCurveTo(cpx1, cpy1, cpx2, cpy2, x3, y3);
 	if (pathStarted) return;
 	if (ctx.doFill) ctx.fill();
 	if (ctx.doStroke) ctx.stroke();
@@ -630,6 +676,8 @@ function bezierCurve(x1, y1, x2, y2, x3, y3) {
 
 /**
  * Starts a new loop
+ *
+ * @global
  * @param {function} functionToRun function which contains code to run
  * @param {string} canvasName name of canvas. It must be unique if you're running multiple animation at once
  * @param {number} timeDelay time delay between 2 frames. If given loop will execute with setInterval function.
@@ -657,6 +705,8 @@ function loop(functionToRun, canvasName, timeDelay) {
 
 /**
  * Stops current loop
+ *
+ * @global
  * @param {string} canvasName name of the canvas given to {@link loop}
  */
 function noLoop(canvasName) {
@@ -669,6 +719,8 @@ function noLoop(canvasName) {
 
 /**
  * Starts a new Path
+ *
+ * @global
  */
 function startPath() {
 	const ctx = C.workingCanvas;
@@ -678,6 +730,8 @@ function startPath() {
 
 /**
  * Ends current Path
+ *
+ * @global
  */
 function endPath() {
 	const ctx = C.workingCanvas;
@@ -687,6 +741,8 @@ function endPath() {
 
 /**
  * Return current font
+ *
+ * @global
  * @param {boolean} detailed wheather to return a detailed font property
  * @returns {string}
  */
@@ -710,6 +766,8 @@ function getFont(detailed = false) {
 
 /**
  * Returns text metrics
+ *
+ * @global
  * @param {string} text
  * @returns {TextMetrics}
  */
@@ -720,6 +778,7 @@ function measureText(text) {
 /**
  * Sets font size
  *
+ * @global
  * @param {number|string} size
  */
 function fontSize(size) {
@@ -732,6 +791,7 @@ function fontSize(size) {
 /**
  * Sets font family
  *
+ * @global
  * @param {string} family
  */
 function fontFamily(family) {
@@ -743,6 +803,7 @@ function fontFamily(family) {
 /**
  * Sets font style
  *
+ * @global
  * @param {string} style
  */
 function fontStyle(style) {
@@ -754,6 +815,7 @@ function fontStyle(style) {
 /**
  * Sets font variant
  *
+ * @global
  * @param {string} variant
  */
 function fontVariant(variant) {
@@ -765,6 +827,7 @@ function fontVariant(variant) {
 /**
  * Sets font weight
  *
+ * @global
  * @param {string} weight
  */
 function fontWeight(weight) {
@@ -776,6 +839,7 @@ function fontWeight(weight) {
 /**
  * Sets font stretch
  *
+ * @global
  * @param {string} stretch
  */
 function fontStretch(stretch) {
@@ -787,6 +851,7 @@ function fontStretch(stretch) {
 /**
  * Sets line height
  *
+ * @global
  * @param {string} height
  */
 function lineHeight(height) {
@@ -798,6 +863,7 @@ function lineHeight(height) {
 /**
  * Returns canvas image data
  *
+ * @global
  * @param {string} datURL
  * @returns {string}
  */
@@ -808,6 +874,7 @@ function getCanvasData(datURL = "image/png") {
 /**
  * Save the canvas as image
  *
+ * @global
  * @param {string} [name="drawing"] name of file
  * @param {string} [datURL="image/png"] type of file
  */
@@ -821,8 +888,9 @@ function saveCanvas(name = "drawing", datURL = "image/png") {
 
 /**
  * Sets the line dash
- * see https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/setLineDash for more information
+ * see <https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/setLineDash> for more information
  *
+ * @global
  */
 function lineDash() {
 	C.workingCanvas.setLineDash([...arguments]);
@@ -831,6 +899,7 @@ function lineDash() {
 /**
  * Draws a point with given size in pixels
  *
+ * @global
  * @param {number} x center x
  * @param {number} y center y
  * @param {number} [size=1] diameter of point in px
@@ -846,6 +915,7 @@ function point(x, y, size = 1) {
 /**
  * Draws square
  *
+ * @global
  * @param {number} x x-coord
  * @param {number} y x-coord
  * @param {number} sideLength
@@ -856,11 +926,13 @@ function square(x, y, sideLength) {
 
 /**
  * Draws a sector
+ *
+ * @global
  * @param {number} x center x
  * @param {number} y center y
  * @param {number} radius radius of sector
  * @param {number} [angle=PI/2] central angle (use negative angle to move sector clockwise)
- * @param {number} [startAngle=0] starting angle
+ * @param {number} [startAngle=0] The angle at which the arc starts in radians, measured from the positive x-axis.
  */
 function sector(x, y, radius, angle = Math.PI / 2, startAngle = 0) {
 	const ctx = C.workingCanvas;
@@ -876,6 +948,7 @@ function sector(x, y, radius, angle = Math.PI / 2, startAngle = 0) {
 /**
  * Draws quadrilateral with four points as array of coordinate as [x, y]
  *
+ * @global
  * @param {array} p1 1st point
  * @param {array} p2 2nd point
  * @param {array} p3 3rd point
@@ -897,9 +970,10 @@ function quad(p1, p2, p3, p4) {
 /**
  * Draws triangle with three points as array of coordinate as [x, y]
  *
- * @param {array} p1
- * @param {array} p2
- * @param {array} p3
+ * @global
+ * @param {array} p1 first point
+ * @param {array} p2 second point
+ * @param {array} p3 third point
  */
 function triangle(p1, p2, p3) {
 	const ctx = C.workingCanvas;
@@ -916,6 +990,7 @@ function triangle(p1, p2, p3) {
 /**
  * Draws equilateral triangle
  *
+ * @global
  * @param {number} x
  * @param {number} y
  * @param {number} sideLength length of side
@@ -927,6 +1002,8 @@ function equiTriangle(x, y, sideLength, rotation = 0) {
 
 /**
  * Draws a regular polygon with centre position number of sides length of a side and rotation
+ *
+ * @global
  * @param {number} x x position
  * @param {number} y y position
  * @param {number} sides number of sides
@@ -940,7 +1017,8 @@ function regularPolygon(x, y, sides, sideLength, rotation = 0) {
 
 /**
  * Draws a regular polygon that is inside a circle
-
+ *
+ * @global
  * @param {number} x x coord
  * @param {number} y y coord
  * @param {number} sides number of sides
@@ -976,6 +1054,8 @@ var timeDelayList = [],
 
 /**
  * Returns FPS (Frames Per Second). Use this inside the loop
+ *
+ * @global
  * @param {number} timeDelaysToRemember number of time delays between frames to recorded in the memory
  * @returns {number}
  */
@@ -993,6 +1073,7 @@ function getFPS(timeDelaysToRemember = 100) {
 /**
  * creates a linear gradient
  *
+ * @global
  * @param {array} initialPoint initial point as [x, y]
  * @param {array} finalPoint final point as [x, y]
  * @param {Object|array} colorStops color stops
@@ -1045,6 +1126,7 @@ function linearGradient(initialPoint, finalPoint, colorStops) {
  * Specifies the current text alignment used when drawing text.
  * The alignment is relative to the x value of the fillText/strokeText/text method.
  *
+ * @global
  * @param {string} align alignment type.
  * possible values:
  *  * "left" : The text is left-aligned.
@@ -1062,6 +1144,7 @@ function textAlign(align) {
  * Specifies the current text baseline used when drawing text.
  * The alignment is relative to the x value of the fillText/strokeText/text method.
  *
+ * @global
  * @param {string} baseline baseline type.
  * possible values:
  * * "top": The text baseline is the top of the em square.
@@ -1076,8 +1159,86 @@ function textBaseline(baseline) {
 	C.workingCanvas.textBaseline = baseline;
 }
 
+/**
+ * Draws a given image in canvas.
+ * See more about the parameters : <https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/drawImage>
+ *
+ * @global
+ */
 function drawImage() {
 	C.workingCanvas.drawImage(...arguments);
+}
+
+/**
+ * Draws smooth curve passing through given points using quadratic curve.
+ * Slightly adapted from <https://stackoverflow.com/a/40978275>
+ *
+ * @global
+ * @param {array} points array of points as [x, y]
+ */
+function smoothCurveThroughPoints(points) {
+	const ctx = C.workingCanvas;
+	if (!ctx.pathStarted) {
+		ctx.beginPath();
+		ctx.moveTo(points[0][0], points[0][1]);
+	}
+	for (var i = 0; i < points.length - 1; i++) {
+		var x_mid = (points[i][0] + points[i + 1][0]) / 2;
+		var y_mid = (points[i][1] + points[i + 1][1]) / 2;
+		var cp_x1 = (x_mid + points[i][0]) / 2;
+		var cp_x2 = (x_mid + points[i + 1][0]) / 2;
+		ctx.quadraticCurveTo(cp_x1, points[i][1], x_mid, y_mid);
+		ctx.quadraticCurveTo(
+			cp_x2,
+			points[i + 1][1],
+			points[i + 1][0],
+			points[i + 1][1]
+		);
+	}
+	if (!ctx.pathStarted) {
+		if (ctx.doFill) ctx.fill();
+		if (ctx.doStroke) ctx.stroke();
+		ctx.closePath();
+	}
+}
+
+/**
+ * Draws smooth curve passing through given points and tension using bezier curve.
+ * Taken from <https://stackoverflow.com/a/49371349>
+ *
+ * @global
+ * @param {array} points array of points as [x, y]
+ * @param {number} tension tension of the curve
+ */
+function bezierCurveThroughPoints(points, tension = 1) {
+	const ctx = C.workingCanvas;
+	if (!ctx.pathStarted) {
+		ctx.beginPath();
+		ctx.moveTo(points[0][0], points[0][1]);
+	}
+	for (var i = 0; i < points.length - 1; i++) {
+		var recentPoint = i > 0 ? points[i - 1] : points[0];
+		var currentPoint = points[i];
+		var nextPoint = points[i + 1];
+		var secondNextPoint = i != points.length - 2 ? points[i + 2] : nextPoint;
+
+		var cp1x =
+			currentPoint[0] + ((nextPoint[0] - recentPoint[0]) / 6) * tension;
+		var cp1y =
+			currentPoint[1] + ((nextPoint[1] - recentPoint[1]) / 6) * tension;
+		var cp2x =
+			nextPoint[0] - ((secondNextPoint[0] - currentPoint[0]) / 6) * tension;
+		var cp2y =
+			nextPoint[1] - ((secondNextPoint[1] - currentPoint[1]) / 6) * tension;
+
+		ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, nextPoint[0], nextPoint[1]);
+	}
+
+	if (!ctx.pathStarted) {
+		if (ctx.doFill) ctx.fill();
+		if (ctx.doStroke) ctx.stroke();
+		ctx.closePath();
+	}
 }
 
 export {
@@ -1148,4 +1309,6 @@ export {
 	textAlign,
 	textBaseline,
 	drawImage,
+	smoothCurveThroughPoints,
+	bezierCurveThroughPoints,
 };

@@ -23,8 +23,6 @@ import { atan2, cos, sin } from "./math.js";
 global CENTERX CENTERY
 */
 
-const HAS_MATHJAX_TEX_TO_SVG = typeof window.MathJax == "object" && typeof window.MathJax.tex2svg == "function";
-
 const consts = {
 	CENTERX: function () {
 		return C.workingCanvas.width / 2;
@@ -839,8 +837,11 @@ function arcBrace(
  * @param {string} input
  * @return {HTMLImageElement}
  */
-function getImgageFromTex (input) {
-	if (HAS_MATHJAX_TEX_TO_SVG) {
+function getImgageFromTex(input) {
+	if (
+		typeof window.MathJax == "object" &&
+		typeof window.MathJax.tex2svg == "function"
+	) {
 		const ctx = C.workingCanvas;
 		// eslint-disable-next-line no-undef
 		const svgOutput = MathJax.tex2svg(input).getElementsByTagName("svg")[0];
@@ -849,7 +850,7 @@ function getImgageFromTex (input) {
 		g.setAttribute("stroke", ctx.strokeStyle);
 		g.setAttribute("fill", ctx.fillStyle);
 		let outerHTML = svgOutput.outerHTML,
-			blob = new Blob([outerHTML],{type:"image/svg+xml;charset=utf-8"});
+			blob = new Blob([outerHTML], { type: "image/svg+xml;charset=utf-8" });
 		let URL = window.URL || window.webkitURL || window;
 		let blobURL = URL.createObjectURL(blob);
 		let image = new Image();
@@ -868,33 +869,34 @@ function getImgageFromTex (input) {
  * @param {number} [y=0]
  * @return {HTMLImageElement} image representation of tex
  */
-function tex(input, x= 0, y=0){
+function tex(input, x = 0, y = 0) {
 	const image = getImgageFromTex(input);
 	const ctx = C.workingCanvas;
-	const text_align = ctx.textAlign, text_baseline = ctx.textBaseline;
+	const text_align = ctx.textAlign,
+		text_baseline = ctx.textBaseline;
 	image.onload = function () {
 		ctx.save();
-		const {width, height} = image;
+		const { width, height } = image;
 		// translating the image according to text-align and text-baseline
 		switch (text_align) {
-		case CENTER:
-			ctx.translate(-width/2, 0);
-			break;
-		case RIGHT:
-			ctx.translate(-width, 0);
-			break;
-		default:
-			break;
+			case CENTER:
+				ctx.translate(-width / 2, 0);
+				break;
+			case RIGHT:
+				ctx.translate(-width, 0);
+				break;
+			default:
+				break;
 		}
 		switch (text_baseline) {
-		case "middle":
-			ctx.translate(0, height/2);
-			break;
-		case "bottom":
-			ctx.translate(0, height);
-			break;
-		default:
-			break;
+			case "middle":
+				ctx.translate(0, height / 2);
+				break;
+			case "bottom":
+				ctx.translate(0, height);
+				break;
+			default:
+				break;
 		}
 		// invert axis first
 		ctx.scale(1, -1);
@@ -917,7 +919,6 @@ export {
 	numberPlane,
 	curlyBrace,
 	arcBrace,
-	HAS_MATHJAX_TEX_TO_SVG,
 	tex,
 	getImgageFromTex,
 };
