@@ -14,10 +14,10 @@ import * as Text from "./basic-constructs/text.js";
 
 import * as MathFunctions from "./utils/math.js";
 
-import * as Tex from "./advanced/tex.js";
-import * as CoordinateSystems from "./advanced/coordinate-systems.js";
-import * as Braces from "./advanced/braces.js";
-import * as extras from "./advanced/objects.js";
+import * as Tex from "./basic-constructs/tex.js";
+import * as CoordinateSystems from "./basic-constructs/coordinate-systems.js";
+import * as Braces from "./basic-constructs/braces.js";
+import * as extras from "./basic-constructs/arrows.js";
 
 
 defineProperties(COLORLIST, window, false);

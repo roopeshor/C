@@ -1,48 +1,10 @@
 import { C } from "../main.js";
+import { readColor } from "./color.js";
 
 /**
  * This module contains functions to manipulate the canvas.
  * @module settings
 */
-
-function readColor(colors) {
-	let color1;
-	let color2;
-	let color3;
-	let alpha = 255;
-	let read = "";
-	if (typeof colors[0] === "number") {
-		if (colors.length === 1) {
-			color1 = colors[0];
-			color2 = color1;
-			color3 = color1;
-		} else if (colors.length === 2) {
-			color1 = colors[0];
-			color2 = colors[1];
-			color3 = 0;
-		} else if (colors.length === 3) {
-			color1 = colors[0];
-			color2 = colors[1];
-			color3 = colors[2];
-		} else if (colors.length === 4) {
-			color1 = colors[0];
-			color2 = colors[1];
-			color3 = colors[2];
-			alpha = colors[3];
-		}
-		const mode = C.workingCanvas.colorMode;
-		if (mode === "HSL") {
-			read = `hsl(${color1}, ${color2}, ${color3})`;
-		} else if (mode === "rgb") {
-			read = `rgb(${color1}, ${color2}, ${color3})`;
-		} else if (mode === "rgba") {
-			read = `rgba(${color1}, ${color2}, ${color3}, ${alpha})`;
-		}
-	} else {
-		read = colors[0];
-	}
-	return read;
-}
 
 /**
  * Begins a new shape at the point specified by the given (x, y) coordinates.
@@ -66,7 +28,6 @@ function lineTo(x, y) {
 	C.workingCanvas.lineTo(x, y);
 }
 
-
 /**
  * Sets background to a given value
  *
@@ -89,8 +50,7 @@ function background() {
 
 /**
  * Erases the pixels in a rectangular area by setting them to transparent black
- * see <https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/clearRect>
- * for more information
+ * See {@link https://developer.mozilla.org/en-US/docs/Web/CSS/font-stretch} for more info
  *
  * @global
  * @param {number} x x-axis coordinate of the rectangle's starting point.
@@ -138,9 +98,7 @@ function permaBackground() {
  * Resets the current transformation to the identity matrix,
  * and then invokes a transformation described by given arguments.
  * Lets you scale, rotate, translate (move), and skew the canvas.
- * The transform matrix is described by:
- * $$\left[\begin{array}{ccc} a & c & e \\ b & d & f \\ 0 & 0 & 1 \end{array}\right]$$
- * See MDN docs: <https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/setTransform>
+ * See {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/transform} for more info
  *
  * @global
  * @param {number|DOMMatrix} a Horizontal scaling. A value of 1 results in no scaling.
@@ -172,7 +130,7 @@ function getTransform() {
  * multiplies the current transformation with the matrix described by the arguments
  * of this method. This lets you scale, rotate, translate (move), and skew the context.
  *
- * See MDN docs: <https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/transform>
+ * See {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/transform} for more info
  *
  * @global
  * @param {number|DOMMatrix} a Horizontal scaling. A value of 1 results in no scaling.
@@ -532,9 +490,20 @@ function measureText(text) {
 
 /**
  * Sets font size
- *
+ * See {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/font} for more info.
  * @global
  * @param {number|string} size
+ * possible values:
+ * * XX_SMALL
+ * * X_SMALL
+ * * SMALL
+ * * MEDIUM
+ * * LARGE
+ * * X_LARGE
+ * * XX_LARGE
+ * * XXX_LARGE
+ * * LARGER
+ * * SMALLER
  */
 function fontSize(size) {
 	const ctx = C.workingCanvas;
@@ -560,6 +529,10 @@ function fontFamily(family) {
  *
  * @global
  * @param {string} style
+ * possible values:
+ * * NORMAL
+ * * ITALIC
+ * * OBLIQUE [<angle>]
  */
 function fontStyle(style) {
 	const ctx = C.workingCanvas;
@@ -569,6 +542,7 @@ function fontStyle(style) {
 
 /**
  * Sets font variant
+ * See {@link https://developer.mozilla.org/en-US/docs/Web/CSS/font-variant} for more info.
  *
  * @global
  * @param {string} variant
@@ -581,7 +555,7 @@ function fontVariant(variant) {
 
 /**
  * Sets font weight
- *
+ * See {@link https://developer.mozilla.org/en-US/docs/Web/CSS/font-weight} for more info.
  * @global
  * @param {string} weight
  */
@@ -593,9 +567,21 @@ function fontWeight(weight) {
 
 /**
  * Sets font stretch
+ * See {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/font} for more info.
  *
- * @global
+ *  @global
  * @param {string} stretch
+ * possible values:
+ * * ULTRA_CONDENSED
+ * * EXTRA_CONDENSED
+ * * CONDENSED
+ * * SEMI_CONDENSED
+ * * NORMAL
+ * * SEMI_EXPANDED
+ * * EXPANDED
+ * * EXTRA_EXPANDED
+ * * ULTRA_EXPANDED
+ * * <percentage>
  */
 function fontStretch(stretch) {
 	const ctx = C.workingCanvas;
@@ -605,6 +591,7 @@ function fontStretch(stretch) {
 
 /**
  * Sets line height
+ * See {@link https://developer.mozilla.org/en-US/docs/Web/CSS/line-height} for more info.
  *
  * @global
  * @param {string} height
@@ -643,7 +630,7 @@ function saveCanvas(name = "drawing", datURL = "image/png") {
 
 /**
  * Sets the line dash
- * see <https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/setLineDash> for more information
+ * see {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/setLineDash} for more info
  *
  * @global
  */
@@ -686,6 +673,30 @@ function textAlign(align) {
  */
 function textBaseline(baseline) {
 	C.workingCanvas.textBaseline = baseline;
+}
+
+/**
+ * Sets the text alignment to centered in x and y axes.
+ *
+ */
+function centerdText () {
+	textAlign("center");
+	textBaseline("middle");
+}
+
+/**
+ * initializes a canvas translated to center and y-axis inverted
+ * @global
+ */
+function initCenteredCanvas() {
+	const ctx = C.workingCanvas;
+	ctx.translate(ctx.width/2, ctx.height/2);
+}
+
+function invertYAxis () {
+	const ctx = C.workingCanvas;
+	ctx.scale(1, -1);
+	ctx.yAxisInveted = true;
 }
 
 export {
@@ -733,4 +744,7 @@ export {
 	getTransform,
 	textAlign,
 	textBaseline,
+	centerdText,
+	initCenteredCanvas,
+	invertYAxis
 };

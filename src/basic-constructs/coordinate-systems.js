@@ -2,10 +2,10 @@ import { BLUE_C, GREY, WHITE } from "../constants/colors.js";
 import { C } from "../main.js";
 import {
 	line,
-} from "../basic-constructs/linear.js";
+} from "./linear.js";
 import {
 	text,
-} from "../basic-constructs/text.js";
+} from "./text.js";
 
 import {
 	fill,
@@ -17,12 +17,12 @@ import {
 	stroke,
 	strokeWidth,
 	translate,
-} from "../basic-constructs/settings.js";
+} from "./settings.js";
 import {
 	arange,
 	applyDefault,
-} from "./utils.js";
-import { arrowTip } from "./objects.js";
+} from "../utils/utils.js";
+import { arrowTip } from "./arrows.js";
 /**
  * creates a axes.
  * xAxis: <object> configs for x axis.

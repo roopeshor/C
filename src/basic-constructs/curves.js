@@ -1,9 +1,10 @@
 import { C } from "../main.js";
+import { lineIntersection } from "../utils/math.js";
 
 /**
  * This module contains functions to draw curved shapes.
  * @module curves
-*/
+ */
 
 /**
  * Adds a circular arc to the current shape if {@link startShape} was called.
@@ -48,6 +49,24 @@ function arcTo(x1, y1, x2, y2, radius) {
 		if (ctx.doFill) ctx.fill();
 		ctx.closePath();
 	}
+}
+
+/**
+ * Draws a point with given size in pixels
+ *
+ * @global
+ * @param {number} x center x
+ * @param {number} y center y
+ * @param {number} [size=10] diameter of point in px
+ * @param {boolean} [doStroke=false] whether to stroke or not
+ */
+function point(x, y, size = 10, doStroke=false) {
+	const ctx = C.workingCanvas;
+	ctx.beginPath();
+	ctx.arc(x, y, size / 2, 0, Math.PI * 2);
+	ctx.fill();
+	if (doStroke) ctx.stroke();
+	ctx.closePath();
 }
 
 /**
@@ -166,13 +185,13 @@ function sector(x, y, radius, angle = Math.PI / 2, startAngle = 0) {
 
 /**
  * Draws smooth curve passing through given points and tension using bezier curve.
- * Taken from <https://stackoverflow.com/a/49371349>
+ * Taken from {@link https://stackoverflow.com/a/49371349}
  *
  * @global
  * @param {array} points array of points as [x, y]
  * @param {number} tension tension of the curve
  */
-function smoothCurveThroughPoints(points, tension=1) {
+function smoothCurveThroughPoints(points, tension = 1) {
 	const ctx = C.workingCanvas;
 	if (!ctx.pathStarted) {
 		ctx.beginPath();
@@ -221,8 +240,9 @@ function smoothCurveThroughPoints(points, tension=1) {
  * * 6th argument is y coordinate of the ending point
  * @global
  */
-function quadraticCurve(){
-	const ctx = C.workingCanvas, args = arguments;
+function quadraticCurve() {
+	const ctx = C.workingCanvas,
+		args = arguments;
 	if (args.length == 4) {
 		ctx.quadraticCurveTo(args[0], args[1], args[2], args[3]);
 	} else if (args.length == 6) {
@@ -235,14 +255,106 @@ function quadraticCurve(){
 	}
 }
 
+/**
+ * Draws a annulus (circle with hole in it).
+ *
+ * @param {number} x x-axis coord of center of the annulus.
+ * @param {number} y y-axis coord of center of the annulus.
+ * @param {number} innerRadius radius of the inner circle
+ * @param {number} outerRadius radius of the outer circle
+ */
+function annulus(x, y, innerRadius, outerRadius) {
+	const ctx = C.workingCanvas;
+	ctx.beginPath();
+	ctx.arc(x, y, innerRadius, 0, 2 * Math.PI, false);
+	ctx.moveTo(outerRadius, 0);
+	ctx.arc(x, y, outerRadius, 0, 2 * Math.PI, true);
+	ctx.closePath();
+	if (ctx.doFill) ctx.fill();
+	if (ctx.doStroke) ctx.stroke();
+}
+
+/**
+ * Draws a annulus sector.
+ *
+ * @param {number} x x-axis coord of center of the annulus sector.
+ * @param {number} y y-axis coord of center of the annulus sector.
+ * @param {number} innerRadius radius of the inner circle
+ * @param {number} outerRadius radius of the outer circle
+ * @param {number} angle central angle of the annulus sector
+ * @param {number} startAngle The angle at which the sector starts in radians, measured from the positive x-axis.
+ */
+function annulusSector(x, y, innerRadius, outerRadius, angle, startAngle) {
+	const ctx = C.workingCanvas;
+	ctx.beginPath();
+	ctx.arc(x, y, innerRadius, startAngle, startAngle + angle, false);
+	ctx.arc(x, y, outerRadius, startAngle + angle, startAngle, true);
+	ctx.closePath();
+	if (ctx.doFill) ctx.fill();
+	if (ctx.doStroke) ctx.stroke();
+}
+
+/**
+ * Angle between two lines.
+ *
+ * @global
+ * @param {array} p1 start point of first line array of point as [x, y]
+ * @param {array} p2 end point of first line array of point as [x, y]
+ * @param {array} p3 start point of second line array of point as [x, y]
+ * @param {array} p4 end point of second line array of point as [x, y]
+ * @param {number} radius radius of angle
+ * @param {boolean} otherAngle whether to draw the other angle
+ * @param {number} extender extender of output point
+ * @returns {array} coordinate of point in the middle of angle as array of point as [x, y]
+ */
+function angle(p1, p2, p3, p4, radius = 20, otherAngle = false, extender = 10) {
+	const [x, y] = lineIntersection(p1, p2, p3, p4);
+	if (!(isNaN(x) || isNaN(y))) {
+		var angleFromPlane, angle;
+		if (otherAngle) {
+			angleFromPlane = Math.atan2(p2[1] - y, p2[0] - x);
+			angle = Math.atan2(p4[1] - p2[1], p4[0] - p2[0]);
+		} else {
+			angleFromPlane = Math.atan2(p4[1] - y, p4[0] - x);
+			angle = Math.atan2(p2[1] - p4[1], p2[0] - p4[0]);
+		}
+
+		const ctx = C.workingCanvas;
+		if (ctx.doFill) {
+			ctx.beginPath();
+			ctx.moveTo(x, y);
+			ctx.arc(x, y, radius, angleFromPlane, angle + angleFromPlane);
+			ctx.fill();
+			ctx.closePath();
+		}
+		if (ctx.doStroke) {
+			ctx.beginPath();
+			ctx.arc(x, y, radius, angleFromPlane, angle + angleFromPlane);
+			ctx.stroke();
+			ctx.closePath();
+		}
+		return [
+			x + (radius + extender) * Math.cos(angleFromPlane + angle / 2),
+			y + (radius + extender) * Math.sin(angleFromPlane + angle / 2),
+		];
+	} else {
+		// TODO: should it be an error?
+		console.error("No intersection point");
+	}
+}
+
 export {
 	arc,
 	circle,
 	ellipse,
 	bezier,
+	point,
 	sector,
 	circularSegment,
 	arcTo,
 	smoothCurveThroughPoints,
 	quadraticCurve,
+	annulus,
+	annulusSector,
+	angle,
 };

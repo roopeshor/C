@@ -18,7 +18,7 @@ const defaultConfig = {
 
 	// font properties
 	fontSize: "20px",
-	fontFamily: "cmu serif, serif",
+	fontFamily: "serif",
 	fontStyle: "normal",
 	fontVariant: "normal",
 	fontWeight: "normal",

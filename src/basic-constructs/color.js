@@ -9,6 +9,51 @@ import { randomInt } from "../utils/math.js";
  */
 const __definedColors__ = Object.keys(COLORLIST);
 
+/**
+ * Reads the argument and finds color
+ *
+ * @param {string} colors
+ * @return {string}
+ */
+function readColor(colors) {
+	let color1;
+	let color2;
+	let color3;
+	let alpha = 255;
+	let read = "";
+	if (typeof colors[0] === "number") {
+		if (colors.length === 1) {
+			color1 = colors[0];
+			color2 = color1;
+			color3 = color1;
+		} else if (colors.length === 2) {
+			color1 = colors[0];
+			color2 = colors[1];
+			color3 = 0;
+		} else if (colors.length === 3) {
+			color1 = colors[0];
+			color2 = colors[1];
+			color3 = colors[2];
+		} else if (colors.length === 4) {
+			color1 = colors[0];
+			color2 = colors[1];
+			color3 = colors[2];
+			alpha = colors[3];
+		}
+		const mode = C.workingCanvas.colorMode;
+		if (mode === "HSL") {
+			read = `hsl(${color1}, ${color2}, ${color3})`;
+		} else if (mode === "rgb") {
+			read = `rgb(${color1}, ${color2}, ${color3})`;
+		} else if (mode === "rgba") {
+			read = `rgba(${color1}, ${color2}, ${color3}, ${alpha})`;
+		}
+	} else {
+		read = colors[0];
+	}
+	return read;
+}
+
 // color randomizers
 /**
  * returns a random hex color
@@ -276,6 +321,7 @@ export {
 	RGBToHSV,
 	HSVToRGB,
 
-	linearGradient
+	linearGradient,
+	readColor
 };
 

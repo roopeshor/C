@@ -71,22 +71,6 @@ function polygon() {
 }
 
 /**
- * Draws a point with given size in pixels
- *
- * @global
- * @param {number} x center x
- * @param {number} y center y
- * @param {number} [size=1] diameter of point in px
- */
-function point(x, y, size = 1) {
-	const ctx = C.workingCanvas;
-	ctx.beginPath();
-	ctx.arc(x, y, size / 2, 0, Math.PI * 2);
-	ctx.fill();
-	ctx.closePath();
-}
-
-/**
  * Draws square
  *
  * @global
@@ -164,8 +148,8 @@ function equiTriangle(x, y, sideLength, rotation = 0) {
  * @param {number} [rotation=0] amound to rotate the entire polygon
  */
 function regularPolygon(x, y, sides, sideLength, rotation = 0) {
-	sideLength = sideLength / (2 * Math.sin(Math.PI / sides)); // finds radius
-	regularPolygonWithRadius(x, y, sides, sideLength, rotation);
+	const radius = sideLength / (2 * Math.sin(Math.PI / sides)); // finds ex-radius
+	regularPolygonWithRadius(x, y, sides, radius, rotation);
 }
 
 /**
@@ -201,15 +185,45 @@ function regularPolygonWithRadius(x, y, sides, radius, rotation = 0) {
 	if (ctx.doStroke) ctx.stroke();
 }
 
+/**
+ * Draws a polygon with ratio of central angles
+ *
+ * @global
+ * @param {number} x x coord of centre of polygon
+ * @param {number} y y coord of centre of polygon
+ * @param {number} radius radius of ex-circle of polygon
+ * @param {array} ratios array of ratios of central angles. Must have atleast 3 elements.
+ * @param {number} [rotation=0] amound to rotate the entire polygon.
+ */
+function polygonWithRatioOfCentralAngles(x, y, radius, ratios, rotation = 0) {
+	if (!Array.isArray(ratios)) console.error("ratio provided is not array");
+	const sumOfRatio = ratios.reduce((a, b) => a + b, 0);
+	const baseAngle = (Math.PI * 2) / sumOfRatio;
+	const ctx = C.workingCanvas;
+	ctx.save();
+	ctx.translate(x, y);
+	ctx.rotate(rotation);
+	ctx.beginPath();
+	ctx.moveTo(radius, 0);
+	for (let i = 0; i < ratios.length; i++) {
+		ctx.rotate(baseAngle * ratios[i]);
+		ctx.lineTo(radius, 0);
+	}
+	if (ctx.doStroke) ctx.stroke();
+	if (ctx.doFill) ctx.fill();
+	ctx.closePath();
+	ctx.restore();
+}
+
 export {
 	line,
 	rect,
 	polygon,
-	point,
 	square,
 	quad,
 	triangle,
 	equiTriangle,
 	regularPolygon,
 	regularPolygonWithRadius,
+	polygonWithRatioOfCentralAngles,
 };
