@@ -10,11 +10,18 @@ const defaultConfig = {
 	doFill: true,
 	doStroke: true,
 	pathStarted: false,
+	yAxisInveted: false,
 
+	netRotation: 0,
+	currentLoop : null,
+	textAlign : "start",
+	textBaseline : "alphabetic",
 	// color stuff
 	fillStyle: "#ffffff",
+	background: "#ffffff",
 	strokeStyle: "#000000",
 	colorMode: "rgba",
+	lineWidth: 1,
 
 	// font properties
 	fontSize: "20px",
@@ -24,6 +31,7 @@ const defaultConfig = {
 	fontWeight: "normal",
 	fontStretch: "normal",
 	lineHeight: "1.2",
+	font: "20px serif"
 };
 
 function assignDefaultConfigs (cfgs) {
@@ -76,6 +84,7 @@ function C (fx, container = document.body, configs = {}) {
 		canvas.context = Object.assign(canvas.getContext("2d"), configs);
 		canvas.context.setTransform(configs.dpr, 0, 0, configs.dpr, 0, 0);
 		C.workingCanvas = canvas.context;
+		C.workingCanvas.savedStates = defaultConfig;
 	}
 	// set canvas's id and class to its name
 	canvas.id = canvasName;
@@ -95,6 +104,7 @@ C.nameID = 0;
 /** @type {CanvasRenderingContext2D} */
 C.workingCanvas = undefined; // index of current working canvas in `canvasList`
 
+C.defaultConfig = defaultConfig;
 /**
  * return inner width of container tag
  * @param {HTMLElement} [container=document.body]

@@ -254,7 +254,7 @@ function curvedArrowBetweenPoints (
 	ctx.beginPath();
 
 	// draw arc
-	// ctx.arcTo()
+
 	ctx.stroke();
 	ctx.closePath();
 

@@ -1,5 +1,6 @@
 import { C } from "../main.js";
-import { lineIntersection } from "../utils/math.js";
+import { circleIntersection, lineIntersection } from "../utils/math.js";
+import { doFillAndStroke } from "../utils/utils.js";
 
 /**
  * This module contains functions to draw curved shapes.
@@ -21,34 +22,7 @@ function arc(x, y, r, angle = Math.PI / 2, startAngle = 0) {
 	const ctx = C.workingCanvas;
 	if (!ctx.pathStarted) ctx.beginPath();
 	ctx.arc(x, y, r, startAngle, startAngle + angle);
-	if (!ctx.pathStarted) {
-		if (ctx.doStroke) ctx.stroke();
-		ctx.closePath();
-	}
-}
-
-/**
- * Creates a circular arc using the given control points and radius.
- * If a current path started it will add this to the end of path
- *
- * @global
- * @param {number} x1 x-axis coord of first point
- * @param {number} y1 y-axis coord of first point
- * @param {number} x2 x-axis coord of second point
- * @param {number} y2 y-axis coord of second point
- * @param {number} radius radius of arc
- */
-function arcTo(x1, y1, x2, y2, radius) {
-	const ctx = C.workingCanvas;
-	if (ctx.pathStarted) {
-		ctx.arcTo(x1, y1, x2, y2, radius);
-	} else {
-		ctx.beginPath();
-		ctx.arcTo(x1, y1, x2, y2, radius);
-		if (ctx.doStroke) ctx.stroke();
-		if (ctx.doFill) ctx.fill();
-		ctx.closePath();
-	}
+	if (!ctx.pathStarted) doFillAndStroke(ctx);
 }
 
 /**
@@ -60,7 +34,7 @@ function arcTo(x1, y1, x2, y2, radius) {
  * @param {number} [size=10] diameter of point in px
  * @param {boolean} [doStroke=false] whether to stroke or not
  */
-function point(x, y, size = 10, doStroke=false) {
+function point(x, y, size = 10, doStroke = false) {
 	const ctx = C.workingCanvas;
 	ctx.beginPath();
 	ctx.arc(x, y, size / 2, 0, Math.PI * 2);
@@ -83,11 +57,7 @@ function circularSegment(x, y, r, angle = Math.PI / 2, startAngle = 0) {
 	const ctx = C.workingCanvas;
 	if (!ctx.pathStarted) ctx.beginPath();
 	ctx.arc(x, y, r, startAngle, startAngle + angle);
-	if (!ctx.pathStarted) {
-		if (ctx.doFill) ctx.fill();
-		if (ctx.doStroke) ctx.stroke();
-		ctx.closePath();
-	}
+	if (!ctx.pathStarted) doFillAndStroke(ctx);
 }
 
 /**
@@ -102,9 +72,7 @@ function circle(x, y, r) {
 	const ctx = C.workingCanvas;
 	ctx.beginPath();
 	ctx.arc(x, y, r, 0, Math.PI * 2);
-	if (ctx.doFill) ctx.fill();
-	if (ctx.doStroke) ctx.stroke();
-	ctx.closePath();
+	doFillAndStroke(ctx);
 }
 
 /**
@@ -132,11 +100,7 @@ function ellipse(
 	const ctx = C.workingCanvas;
 	if (!ctx.pathStarted) ctx.beginPath();
 	ctx.ellipse(x, y, radius1, radius2, rotation, startAngle, startAngle + angle);
-	if (!ctx.pathStarted) {
-		if (ctx.doFill) ctx.fill();
-		if (ctx.doStroke) ctx.stroke();
-		ctx.closePath();
-	}
+	if (!ctx.pathStarted) doFillAndStroke(ctx);
 }
 
 /**
@@ -156,10 +120,7 @@ function bezier(cpx1, cpy1, cpx2, cpy2, x3, y3) {
 	const pathStarted = ctx.pathStarted;
 	if (!pathStarted) ctx.beginPath();
 	ctx.bezierCurveTo(cpx1, cpy1, cpx2, cpy2, x3, y3);
-	if (pathStarted) return;
-	if (ctx.doFill) ctx.fill();
-	if (ctx.doStroke) ctx.stroke();
-	ctx.closePath();
+	if (!ctx.pathStarted) doFillAndStroke(ctx);
 }
 
 /**
@@ -178,25 +139,18 @@ function sector(x, y, radius, angle = Math.PI / 2, startAngle = 0) {
 	ctx.moveTo(x, y);
 	ctx.arc(x, y, radius, startAngle, startAngle + angle);
 	ctx.lineTo(x, y);
-	if (ctx.doFill) ctx.fill();
-	if (ctx.doStroke) ctx.stroke();
-	ctx.closePath();
+	doFillAndStroke(ctx);
 }
 
 /**
- * Draws smooth curve passing through given points and tension using bezier curve.
+ * Adds a smooth curve passing through given points and tension using bézie curve to the current shape.
  * Taken from {@link https://stackoverflow.com/a/49371349}
  *
  * @global
  * @param {array} points array of points as [x, y]
  * @param {number} tension tension of the curve
  */
-function smoothCurveThroughPoints(points, tension = 1) {
-	const ctx = C.workingCanvas;
-	if (!ctx.pathStarted) {
-		ctx.beginPath();
-		ctx.moveTo(points[0][0], points[0][1]);
-	}
+function smoothCurveThroughPointsTo(points, tension = 1) {
 	for (var i = 0; i < points.length - 1; i++) {
 		var recentPoint = i > 0 ? points[i - 1] : points[0];
 		var currentPoint = points[i];
@@ -212,14 +166,31 @@ function smoothCurveThroughPoints(points, tension = 1) {
 		var cp2y =
 			nextPoint[1] - ((secondNextPoint[1] - currentPoint[1]) / 6) * tension;
 
-		ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, nextPoint[0], nextPoint[1]);
+		C.workingCanvas.bezierCurveTo(
+			cp1x,
+			cp1y,
+			cp2x,
+			cp2y,
+			nextPoint[0],
+			nextPoint[1]
+		);
 	}
+}
 
-	if (!ctx.pathStarted) {
-		if (ctx.doFill) ctx.fill();
-		if (ctx.doStroke) ctx.stroke();
-		ctx.closePath();
-	}
+/**
+ * Draws smooth curve passing through given points and tension using bézie curve.
+ *
+ * @global
+ * @param {array} points array of points as [x, y]
+ * @param {number} tension tension of the curve
+ */
+function smoothCurveThroughPoints(points, tension = 1) {
+	const ctx = C.workingCanvas;
+	ctx.beginPath();
+	ctx.moveTo(points[0][0], points[0][1]);
+
+	smoothCurveThroughPointsTo(points, tension);
+	doFillAndStroke(ctx);
 }
 
 /**
@@ -249,9 +220,7 @@ function quadraticCurve() {
 		ctx.beginPath();
 		ctx.moveTo(args[0], args[1]);
 		ctx.quadraticCurveTo(args[2], args[3], args[4], args[5]);
-		if (ctx.doFill) ctx.fill();
-		if (ctx.doStroke) ctx.stroke();
-		ctx.closePath();
+		doFillAndStroke(ctx);
 	}
 }
 
@@ -269,9 +238,7 @@ function annulus(x, y, innerRadius, outerRadius) {
 	ctx.arc(x, y, innerRadius, 0, 2 * Math.PI, false);
 	ctx.moveTo(outerRadius, 0);
 	ctx.arc(x, y, outerRadius, 0, 2 * Math.PI, true);
-	ctx.closePath();
-	if (ctx.doFill) ctx.fill();
-	if (ctx.doStroke) ctx.stroke();
+	doFillAndStroke(ctx);
 }
 
 /**
@@ -289,13 +256,11 @@ function annulusSector(x, y, innerRadius, outerRadius, angle, startAngle) {
 	ctx.beginPath();
 	ctx.arc(x, y, innerRadius, startAngle, startAngle + angle, false);
 	ctx.arc(x, y, outerRadius, startAngle + angle, startAngle, true);
-	ctx.closePath();
-	if (ctx.doFill) ctx.fill();
-	if (ctx.doStroke) ctx.stroke();
+	doFillAndStroke(ctx);
 }
 
 /**
- * Angle between two lines.
+ * Angle between two lines. And returns the coordinate of middle of angle
  *
  * @global
  * @param {array} p1 start point of first line array of point as [x, y]
@@ -338,9 +303,53 @@ function angle(p1, p2, p3, p4, radius = 20, otherAngle = false, extender = 10) {
 			y + (radius + extender) * Math.sin(angleFromPlane + angle / 2),
 		];
 	} else {
-		// TODO: should it be an error?
+		// TODO: should it be `throw Error()`?
 		console.error("No intersection point");
 	}
+}
+
+/**
+ * Creates a circular arc using the given control points and radius.
+ * If a current path started it will add this to the end of path.
+ * Returns the center of arc.
+ *
+ * @global
+ * @param {number} x1 x-coord of first point
+ * @param {number} y1 y-coord of first point
+ * @param {number} x2 x-coord of second point
+ * @param {number} y2 y-coord of second point
+ * @param {number} radius radius of arc
+ * @param {boolean} otherArc specifies whether to use other arc of the circle.
+ * @returns {array} returns the coordinate of center of the arc as [x, y]
+ */
+function arcBetweenPoints(x1, y1, x2, y2, radius, otherArc = false) {
+	if (x1 == x2 && y1 == y2)
+		// TODO: should it be `throw Error()`?
+		console.error(
+			"Can't draw a arc between points. Given points are exactly same"
+		);
+	var center = circleIntersection([x1, y1], radius, [x2, y2], radius)[0];
+	const ctx = C.workingCanvas;
+	const angleFromXAxis = Math.atan2(y1 - center[1], x1 - center[0]);
+	const centralAngle =
+		Math.atan2(y2 - center[1], x2 - center[0]) - angleFromXAxis;
+	if (!ctx.pathStarted) {
+		ctx.save();
+		ctx.beginPath();
+	}
+	ctx.arc(
+		center[0],
+		center[1],
+		radius,
+		angleFromXAxis,
+		centralAngle + angleFromXAxis,
+		!otherArc
+	);
+	if (!ctx.pathStarted) {
+		doFillAndStroke(ctx);
+		ctx.restore();
+	}
+	return center;
 }
 
 export {
@@ -351,10 +360,11 @@ export {
 	point,
 	sector,
 	circularSegment,
-	arcTo,
+	smoothCurveThroughPointsTo,
 	smoothCurveThroughPoints,
 	quadraticCurve,
 	annulus,
 	annulusSector,
 	angle,
+	arcBetweenPoints,
 };

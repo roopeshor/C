@@ -227,6 +227,7 @@ function rotate(angle) {
  * @global
  */
 function save() {
+	C.savedStates = getContextStates();
 	C.workingCanvas.save();
 }
 
@@ -258,6 +259,7 @@ function lineJoin(joinType) {
  * @global
  */
 function restore() {
+	Object.assign(C.workingCanvas, C.savedStates);
 	C.workingCanvas.restore();
 }
 
@@ -339,21 +341,23 @@ function fill() {
  * @global
  * @returns {Object}
  */
-function getContextVariables() {
+function getContextStates() {
 	const ctx = C.workingCanvas;
 	return {
 		background: ctx.background,
-		stroke: ctx.strokeStyle,
-		fill: ctx.fillStyle,
+		colorMode: ctx.colorMode,
+		strokeStyle: ctx.strokeStyle,
+		fillStyle: ctx.fillStyle,
 
-		strokeWidth: ctx.lineWidth,
+		lineWidth: ctx.lineWidth,
 
 		doStroke: ctx.doStroke,
 		doFill: ctx.doFill,
-
 		pathStarted: ctx.pathStarted,
-		netRotation: ctx.netRotation,
 		yAxisInveted: ctx.yAxisInveted,
+
+		netRotation: ctx.netRotation,
+		currentLoop: ctx.currentLoop,
 
 		fontStyle: ctx.fontStyle,
 		fontVariant: ctx.fontVariant,
@@ -363,8 +367,6 @@ function getContextVariables() {
 		lineHeight: ctx.lineHeight,
 		fontFamily: ctx.fontFamily,
 		font: ctx.font,
-
-		currentLoop: ctx.currentLoop,
 
 		textAlign: ctx.textAlign,
 		textBaseline: ctx.textBaseline,
@@ -723,7 +725,7 @@ export {
 	rest,
 	stroke,
 	fill,
-	getContextVariables,
+	getContextStates,
 	loop,
 	noLoop,
 	startShape,

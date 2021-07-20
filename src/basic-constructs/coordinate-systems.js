@@ -1,16 +1,11 @@
 import { BLUE_C, GREY, WHITE } from "../constants/colors.js";
 import { C } from "../main.js";
-import {
-	line,
-} from "./linear.js";
-import {
-	text,
-} from "./text.js";
+import { line } from "./linear.js";
+import { fillText } from "./text.js";
 
 import {
 	fill,
 	fontSize,
-	measureText,
 	restore,
 	rotate,
 	save,
@@ -18,10 +13,7 @@ import {
 	strokeWidth,
 	translate,
 } from "./settings.js";
-import {
-	arange,
-	applyDefault,
-} from "../utils/utils.js";
+import { arange, applyDefault } from "../utils/utils.js";
 import { arrowTip } from "./arrows.js";
 /**
  * creates a axes.
@@ -45,7 +37,7 @@ function axes(config = {}) {
 		includeTick: [false],
 		includeLeftTip: [true],
 		includeRightTip: [true],
-		textDirection: [-0.3, -1],
+		textDirection: [[-0.3, -1]],
 	};
 	const yAxisDefaults = {
 		length: [ctx.height, "number"],
@@ -219,7 +211,6 @@ function numberLine(config = {}) {
 	const textRotation = config.textRotation;
 	let decimalPlaces = config.decimalPlaces;
 	let range = config.range;
-
 	if (Array.isArray(range) && range.length === 2) {
 		range = [range[0], range[1], 1];
 	}
@@ -245,21 +236,19 @@ function numberLine(config = {}) {
 	if (config.includeNumbers) drawNumbers();
 	translate(lineLength / 2, 0);
 	drawAxis();
-	rotate(-rotation);
-	translate(-center[0], -center[1]);
 	function drawAxis() {
 		stroke(color);
-		strokeWidth(lineWidth);
+		ctx.lineWidth = lineWidth;
 		fill(color);
 		const r = Math.atan(tipSizeRatio / 2);
 		let x1 = -lineLength / 2;
 		let x2 = lineLength / 2;
 		if (includeLeftTip) {
-			arrowTip(x1, 0, tipWidth, Math.PI, tipSizeRatio);
+			arrowTip(x1, 0, tipWidth, 0, tipSizeRatio);
 			x1 += tipWidth * Math.cos(r);
 		}
 		if (includeRightTip) {
-			arrowTip(x2, 0, tipWidth, 0, tipSizeRatio);
+			arrowTip(x2, 0, tipWidth, Math.PI, tipSizeRatio);
 			x2 -= tipWidth * Math.cos(r) * 1;
 		}
 		line(x1, 0, x2, 0);
@@ -267,7 +256,7 @@ function numberLine(config = {}) {
 
 	function drawTicks() {
 		stroke(color);
-		strokeWidth(lineWidth);
+		ctx.lineWidth = lineWidth;
 		const from = includeLeftTip ? 1 : 0;
 		const to = includeRightTip ? list.length - 1 : list.length;
 		for (
@@ -301,14 +290,14 @@ function numberLine(config = {}) {
 		) {
 			const tick = numbers[i].toFixed(decimalPlaces);
 			if (Number(tick) === 0 && excludeOriginTick) continue;
-			const width = measureText(tick).width;
+			const width = ctx.measureText(tick).width;
 			const xShift =
 				(-width / 2) * Math.cos(textRotation) +
 				textDirection[0] * textSize +
 				(textSize / 2) * Math.sin(textRotation);
 			translate(ds * i + xShift, yShift - width * Math.sin(textRotation));
 			rotate(textRotation);
-			text(tick, 0, 0);
+			fillText(tick, 0, 0);
 			rotate(-textRotation);
 			translate(-(ds * i + xShift), -(yShift - width * Math.sin(textRotation)));
 		}
@@ -323,6 +312,7 @@ function numberLine(config = {}) {
 	return {
 		unitLength: ds,
 		tickList: list,
+		translation: center,
 	};
 }
 
@@ -355,7 +345,7 @@ function numberPlane(config = {}) {
 	const ctx = C.workingCanvas;
 	// default configurations
 	const xAxisDefaults = {
-		textDirection: [[0, -1.1]],
+		textDirection: [[-0.2, 1.3]],
 		length: [ctx.width, "number"],
 		excludeOriginTick: [true],
 		includeLeftTip: [false],
@@ -364,7 +354,7 @@ function numberPlane(config = {}) {
 		includeTick: [true],
 	};
 	const yAxisDefaults = {
-		textDirection: [[0, 0.8]],
+		textDirection: [[1.1, 0.6]],
 		length: [ctx.height, "number"],
 		textRotation: [-Math.PI / 2, "number"],
 		excludeOriginTick: [true],
@@ -492,8 +482,4 @@ function numberPlane(config = {}) {
 	};
 }
 
-export {
-	axes,
-	numberLine,
-	numberPlane,
-};
+export { axes, numberLine, numberPlane };

@@ -21,7 +21,19 @@ function applyDefault(_default, target = {}) {
 	return target;
 }
 
+/**
+ * fills and strokes inside the current shape if to and closes the shape.
+ *
+ * @param {CanvasRenderingContext2D} ctx
+ */
+function doFillAndStroke (ctx) {
+	if (ctx.doFill) ctx.fill();
+	if (ctx.doStroke) ctx.stroke();
+	ctx.closePath();
+}
+
 export {
 	arange,
 	applyDefault,
+	doFillAndStroke
 };
