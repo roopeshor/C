@@ -29,7 +29,6 @@ function applyDefault(_default, target = {}) {
 function doFillAndStroke (ctx) {
 	if (ctx.doFill) ctx.fill();
 	if (ctx.doStroke) ctx.stroke();
-	ctx.closePath();
 }
 
 export {

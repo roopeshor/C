@@ -1,15 +1,61 @@
-import { WHITE, TRANSPARENT } from "../constants/colors.js";
-import { CENTER, MIDDLE } from "../constants/drawing.js";
+import { TRANSPARENT } from "../constants/colors.js";
+import { BEVEL, CENTER, MIDDLE } from "../constants/drawing.js";
 import { C } from "../main.js";
-import { line } from "./linear.js";
-import { text } from "./text.js";
 
-import {
-	measureText,
-	restore,
-	save,
-} from "./settings.js";
-import { applyDefault } from "../utils/utils.js";
+import { endShape, restore, save, startShape } from "./settings.js";
+import { applyDefault, doFillAndStroke } from "../utils/utils.js";
+import { circleIntersection } from "../utils/math.js";
+
+const DEFAULT_TIP_WIDTH = 15;
+
+/**
+ * Draws a arrow tip
+ *
+ * @global
+ * @param {number} x1 x position of start point
+ * @param {number} y1 y position of start point
+ * @param {number} x2 x position of end point
+ * @param {number} y2 y position of end point
+ * @param {number} width width of tip
+ * @param {number} height height of tip
+ */
+function arrowTip(x1, y1, x2, y2, width, height) {
+	var ctx = C.workingCanvas;
+	var thickness = ctx.lineWidth;
+	var distance = Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2);
+	if (isNaN(width)) width = distance;
+	height = height || width / 1.3;
+	var w = width - distance;
+	var r = Math.sqrt(w ** 2 + (height / 2) ** 2);
+	var t = Math.atan(height / (w * 2));
+	if (distance > width) t = t + Math.PI;
+	var angleFromXAxis = Math.atan2(y2 - y1, x2 - x1);
+	var A = [
+		x1 - Math.cos(t + angleFromXAxis) * r,
+		y1 - Math.sin(t + angleFromXAxis) * r,
+	];
+	var B = [
+		x1 - Math.cos(-t + angleFromXAxis) * r,
+		y1 - Math.sin(-t + angleFromXAxis) * r,
+	];
+	if (ctx.doStroke && ctx.lineJoin != BEVEL) {
+		// correcting tip
+		x2 -= Math.cos(angleFromXAxis) * thickness;
+		y2 -= Math.sin(angleFromXAxis) * thickness;
+	}
+	ctx.save();
+	if (!ctx.pathStarted) ctx.beginPath();
+	ctx.moveTo(x1, y1);
+	ctx.lineTo(A[0], A[1]);
+	ctx.lineTo(x2, y2);
+	ctx.lineTo(B[0], B[1]);
+	ctx.lineTo(x1, y1);
+	if (!ctx.pathStarted) {
+		doFillAndStroke(ctx);
+		ctx.closePath();
+	}
+	ctx.restore();
+}
 
 /**
  * draws a arrow
@@ -20,53 +66,42 @@ import { applyDefault } from "../utils/utils.js";
  * @param {number} x2 ending x-axis coord
  * @param {number} y2 ending y-axis coord
  * @param {number} tipWidth width of tip
- * @param {number} tipScaleRatio width:height
- */
-function arrow(x1, y1, x2, y2, tipWidth = 10, tipScaleRatio = 0.7) {
-	const angle = Math.atan2(y2 - y1, x2 - x1); // angle from plain
-	arrowTip(x2, y2, tipWidth, angle, tipScaleRatio);
-	save();
-	const r = Math.atan(tipScaleRatio / 2);
-	const xd = Math.cos(angle) * tipWidth * Math.cos(r);
-	const yd = Math.sin(angle) * tipWidth * Math.cos(r);
-	x2 -= xd;
-	y2 -= yd;
-	line(x1, y1, x2, y2);
-	restore();
-}
-
-/**
- * Draws a arrow head
+ * @param {number} tipHeight height of tip
+ * @param {number} [arrowCurving = 0] worping of arrow
+ * @param {number} [spacing = 0] padding from end to tip
  *
- * @global
- * @param {number} x x position
- * @param {number} y y position
- * @param {number} [width=10] width of head
- * @param {number} [angle=0] tilt of head
- * @param {number} [tipScaleRatio=2] height to width ratio
  */
-function arrowTip(x, y, width = 15, angle = 0, tipScaleRatio = 1) {
-	const ctx = C.workingCanvas;
-	const middleAngle = Math.atan(tipScaleRatio / 2);
-	ctx.save();
-	ctx.beginPath();
-	ctx.translate(x, y);
-	ctx.rotate(angle);
-	ctx.moveTo(0, 0);
-	ctx.lineTo(
-		0 + width * Math.cos(middleAngle),
-		0 + width * Math.sin(middleAngle)
-	);
+function arrow(
+	x1,
+	y1,
+	x2,
+	y2,
+	tipWidth = DEFAULT_TIP_WIDTH,
+	tipHeight = tipWidth / 1.3,
+	arrowCurving = 0,
+	spacing = 0
+) {
+	const angle = Math.atan2(y2 - y1, x2 - x1); // angle from plain
+	const yDiff = Math.sin(angle) * spacing;
+	const xDiff = Math.cos(angle) * spacing;
 
-	ctx.lineTo(
-		0 + width * Math.cos(-middleAngle),
-		0 + width * Math.sin(-middleAngle)
-	);
-	ctx.lineTo(0, 0);
-	if (ctx.doFill) ctx.fill();
-	if (ctx.doStroke) ctx.stroke();
-	ctx.closePath();
-	ctx.restore();
+	// decrease the length of tip by `spacing`
+	x2 -= xDiff;
+	y2 -= yDiff;
+
+	const xTipSpacing = Math.cos(angle) * (tipWidth - arrowCurving);
+	const yTipSpacing = Math.sin(angle) * (tipWidth - arrowCurving);
+	const ctx = C.workingCanvas;
+	const pathStarted = ctx.pathStarted;
+	if (!pathStarted) startShape();
+	ctx.moveTo(x1, y1);
+	ctx.lineTo(x2 - xTipSpacing, y2 - yTipSpacing);
+	ctx.stroke();
+	arrowTip(x2 - xTipSpacing, y2 - yTipSpacing, x2, y2, tipWidth, tipHeight);
+	if (!pathStarted) {
+		doFillAndStroke(ctx);
+		endShape();
+	}
 }
 
 /**
@@ -78,7 +113,8 @@ function arrowTip(x, y, width = 15, angle = 0, tipScaleRatio = 1) {
  * @param {number} x2
  * @param {number} y2
  * @param {number} [tipWidth=10]
- * @param {number} [tipScaleRatio=0.6]
+ * @param {number} [tipHeight=0.6]
+ * @param {number} [arrowCurving = 0]
  * @param {number} [spacing=0]
  */
 function doubleArrow(
@@ -86,20 +122,27 @@ function doubleArrow(
 	y1,
 	x2,
 	y2,
-	tipWidth = 15,
-	tipScaleRatio = 1,
+	tipWidth = DEFAULT_TIP_WIDTH,
+	tipHeight = tipWidth / 1.3,
+	arrowCurving = 0,
 	spacing = 0
 ) {
-	const r = Math.atan(tipScaleRatio / 2);
 	const angle = Math.atan2(y2 - y1, x2 - x1);
-	const xd = Math.cos(angle) * tipWidth * Math.cos(r);
-	const yd = Math.sin(angle) * tipWidth * Math.cos(r);
-	const yDiff = Math.sin(angle) * spacing;
-	const xDiff = Math.cos(angle) * spacing;
-	arrowTip(x1 + xDiff, y1 + yDiff, tipWidth, Math.PI + angle, tipScaleRatio);
-	x1 += xd;
-	y1 += yd;
-	arrow(x1, y1, x2 - xDiff, y2 - yDiff, tipWidth, tipScaleRatio);
+
+	const xPadding = Math.cos(angle) * (tipWidth - arrowCurving);
+	const yPadding = Math.sin(angle) * (tipWidth - arrowCurving);
+
+	const ySpacing = Math.sin(angle) * spacing;
+	const xSpacing = Math.cos(angle) * spacing;
+	startShape();
+
+	x1 += xPadding + xSpacing;
+	y1 += yPadding + ySpacing;
+
+	arrow(x1, y1, x2, y2, tipWidth, tipHeight, arrowCurving, spacing);
+	arrowTip(x1, y1, x1 - xPadding, y1 - yPadding, tipWidth, tipHeight);
+	doFillAndStroke(C.workingCanvas);
+	endShape();
 }
 
 /**
@@ -114,80 +157,79 @@ function doubleArrow(
  * * {number} [tipWidth=10] : tip width
  * * {number} [tipScaleRatio=0.6] : tipScaleRatio
  * * {number} [spacing=0] : spacing
+ * * {string|number} [background] : background of text
+ * * {number} [innerPadding] : padding of text
+ * * {number} [outerPadding] : tip spacing
+ * * {number} [textRotation] : rotatioin of text
+ * * {number} [arrowCurving] : worping of arrow
+ *
  * NOTE: '*' indicate mandatory properties
  */
 function measurement(configs) {
+	const ctx = C.workingCanvas;
 	const defaults = {
 		background: [TRANSPARENT],
-		tipWidth: [15, "number"],
-		tipScaleRatio: [1, "number"],
+		tipWidth: [DEFAULT_TIP_WIDTH, "number"],
+		tipHeight: [DEFAULT_TIP_WIDTH / 1.3, "number"],
 		innerPadding: [3, "number"],
 		outerPadding: [0, "number"],
 		textRotation: [0, "number"],
+		arrowCurving: [0, "number"],
 	};
 	configs = applyDefault(defaults, configs);
-	const txt = configs.text,
-		p1 = configs.p1,
-		p2 = configs.p2,
-		background = configs.background,
-		tipWidth = configs.tipWidth,
-		tipScaleRatio = configs.tipScaleRatio,
-		innerPadding = configs.innerPadding,
-		textRotation = configs.textRotation,
-		outerPadding = configs.outerPadding;
-	// draw arrow
-	doubleArrow(
+	const { p1, p2 } = configs;
+	const angleFromXAxis = Math.atan2(p2[1] - p1[1], p2[0] - p1[0]);
+	const { width } = ctx.measureText(configs.text);
+	const innerPadding = [
+		Math.cos(angleFromXAxis) * (configs.innerPadding + width / 2),
+		Math.sin(angleFromXAxis) * (configs.innerPadding + width / 2),
+	];
+	const center = [(p1[0] + p2[0]) / 2, (p1[1] + p2[1]) / 2];
+
+	// draw arrows
+	arrow(
+		center[0] - innerPadding[0],
+		center[1] - innerPadding[1],
 		p1[0],
 		p1[1],
+		configs.tipWidth,
+		configs.tipHeight,
+		configs.arrowCurving,
+		configs.outerPadding
+	);
+	arrow(
+		center[0] + innerPadding[0],
+		center[1] + innerPadding[1],
 		p2[0],
 		p2[1],
-		tipWidth,
-		tipScaleRatio,
-		outerPadding
+		configs.tipWidth,
+		configs.tipHeight,
+		configs.arrowCurving,
+		configs.outerPadding
 	);
-	const metrics = measureText(txt);
 
-	// height of text from stackoverflow: https://stackoverflow.com/a/45789011
-	const height = metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent;
-	const width = metrics.width;
-	const ctx = C.workingCanvas;
-	const pAverage = [(p1[0] + p2[0]) / 2, (p1[1] + p2[1]) / 2];
-	ctx.save();
-	ctx.translate(pAverage[0], pAverage[1]);
+	save();
+	ctx.translate(center[0], center[1]);
 	ctx.textAlign = CENTER;
 	ctx.textBaseline = MIDDLE;
-	ctx.rotate(Math.atan2(p2[1] - p1[1], p2[0] - p1[0]));
-	ctx.rotate(textRotation);
-	const recentFillColor = ctx.fillStyle;
-	if (background == TRANSPARENT) {
-		ctx.fillStyle = ctx.background || WHITE;
-	} else {
-		ctx.fillStyle = background;
-	}
-	ctx.fillRect(
-		-width / 2 - innerPadding,
-		-height / 2,
-		width + innerPadding * 2,
-		height
-	);
-	ctx.fillStyle = recentFillColor;
-	text(txt, 0, 0);
-	ctx.restore();
+	ctx.rotate(Math.atan2(p2[1] - p1[1], p2[0] - p1[0]) + configs.textRotation);
+	ctx.fillText(configs.text, 0, 0);
+	restore();
 }
 
 /**
  * Draws a curved arrow that wrap around a circle.
  *
- * @global
  * @param {number} x x position of circle
  * @param {number} y y position of circle
  * @param {number} radius radius of circle
- * @param {number} [angle=Math.PI/2] central angle of arrow
- * @param {number} [startAngle=0] start angle of arrow
- * @param {number} [angularOffset=0.1] angular offset of arrow from sectoral boundaries. Expressed in radians.
- * @param {number} [tipWidth=15] width of arrow head
- * @param {number} [tipScaleRatio=0.7] height to width ratio of head
- * @param {number} [tipTilt=0] tilt of arrow head in radian
+ * @param {number} [angle=Math.PI / 2] central angle of arc
+ * @param {number} [startAngle=0] starting angle
+ * @param {number} [tipWidth=DEFAULT_TIP_WIDTH] width of tip
+ * @param {number} [tipHeight=tipWidth / 1.3] height of tip
+ * @param {number} [arrowCurving=0] arrow curving constant
+ * @param {number} [tipOffset=10] offset (padding) of tip from it's defined end
+ * @param {boolean} [reverse=false] whether to reverse the direction of arrow
  */
 function curvedArrow(
 	x,
@@ -195,78 +237,168 @@ function curvedArrow(
 	radius,
 	angle = Math.PI / 2,
 	startAngle = 0,
-	angularOffset = 0.1,
-	tipWidth = 15,
-	tipScaleRatio = 1,
-	tipTilt = 0
+	tipWidth = DEFAULT_TIP_WIDTH,
+	tipHeight = tipWidth / 1.3,
+	arrowCurving = 0,
+	tipOffset = 10,
+	reverse = false
 ) {
 	const ctx = C.workingCanvas;
-
-	startAngle += angularOffset;
-	angle -= angularOffset * 2;
+	tipOffset /= radius;
 
 	const angularDiameterOfTip = tipWidth / radius;
-	const _tipTilt = angle - Math.PI / 2 - angularDiameterOfTip / 2 + tipTilt;
-
 	ctx.save();
-	ctx.translate(x, y);
-	ctx.rotate(startAngle);
+	arrowCurving /= radius;
+	var padding = angularDiameterOfTip - arrowCurving;
+
 	ctx.beginPath();
+	if (reverse) {
+		padding += tipOffset;
+		ctx.arc(x, y, radius, padding + startAngle, angle + startAngle);
+		ctx.stroke();
+		ctx.closePath();
+		arrowTip(
+			x + radius * Math.cos(startAngle + padding),
+			y + radius * Math.sin(startAngle + padding),
+			x + radius * Math.cos(startAngle + tipOffset),
+			y + radius * Math.sin(startAngle + tipOffset),
+			tipWidth,
+			tipHeight
+		);
+	} else {
+		angle -= tipOffset;
+		ctx.arc(x, y, radius, startAngle, angle - padding + startAngle);
+		ctx.stroke();
+		ctx.closePath();
+		arrowTip(
+			x + radius * Math.cos(startAngle + angle - padding),
+			y + radius * Math.sin(startAngle + angle - padding),
+			x + radius * Math.cos(startAngle + angle),
+			y + radius * Math.sin(startAngle + angle),
+			tipWidth,
+			tipHeight
+		);
+	}
+	ctx.restore();
+}
 
-	// draw arc
-	ctx.arc(
-		0,
-		0,
+/**
+ * Draws a curved arrow with two tips.
+ *
+ * @param {number} x x position of circle
+ * @param {number} y y position of circle
+ * @param {number} radius radius of circle
+ * @param {number} [angle=Math.PI / 2] central angle of arrow in radians
+ * @param {number} [startAngle=0] start angle of arrow in radians
+ * @param {number} [tipWidth=DEFAULT_TIP_WIDTH] width of arrow tip
+ * @param {number} [tipHeight=tipWidth / 1.3] height of arrow tip
+ * @param {number} [arrowCurving=0] curving of arrow
+ * @param {number} [tipOffset=0] angular offset of arrow from radial boundaries in radians.
+ */
+function curvedDoubleArrow(
+	x,
+	y,
+	radius,
+	angle = Math.PI / 2,
+	startAngle = 0,
+	tipWidth = DEFAULT_TIP_WIDTH,
+	tipHeight = tipWidth / 1.3,
+	arrowCurving = 0,
+	tipOffset = 0
+) {
+	const ctx = C.workingCanvas;
+	ctx.save();
+	const angularDiameterOfTip = tipWidth / radius;
+	const tangent = [
+		-Math.cos(startAngle + angularDiameterOfTip / 2 + Math.PI / 2),
+		-Math.sin(startAngle + angularDiameterOfTip / 2 + Math.PI / 2),
+	];
+	angle -= angularDiameterOfTip;
+	startAngle += angularDiameterOfTip + tipOffset * 2;
+	curvedArrow(
+		x,
+		y,
 		radius,
-		0,
-		angle - angularDiameterOfTip + 0.01, // 0.01 to fit arc in the border of the arrow tip.
-		false
-	);
-	ctx.stroke();
-	ctx.closePath();
-
-	// arrowTip
-	arrowTip(
-		radius * Math.cos(angle),
-		radius * Math.sin(angle),
+		angle + arrowCurving / radius,
+		startAngle - arrowCurving / radius,
 		tipWidth,
-		_tipTilt,
-		tipScaleRatio
+		tipHeight,
+		arrowCurving,
+		tipOffset
+	);
+
+	arrowTip(
+		Math.cos(startAngle - arrowCurving / radius) * radius,
+		Math.sin(startAngle - arrowCurving / radius) * radius,
+		Math.cos(startAngle) * radius + tipWidth * tangent[0],
+		Math.sin(startAngle) * radius + tipWidth * tangent[1],
+		tipWidth,
+		tipHeight
 	);
 	ctx.restore();
 }
 
-function curvedArrowBetweenPoints (
+/**
+ * Draws a curved arrow between two points that wraps around a circle with a definite radius.
+ *
+ * @global
+ * @param {array} p1 start point
+ * @param {array} p2 end point
+ * @param {number} radius radius of circle
+ * @param {number} [tipWidth=DEFAULT_TIP_WIDTH] width of tip
+ * @param {number} [tipHeight=tipWidth / 1.3] height of tip
+ * @param {number} [arrowCurving=0] arrow curving const.
+ * @param {number} [tipOffset=0] offset (padding) of tip from it's defined end.
+ * @param {boolean} [otherArc=false] whether to use other arc
+ * @param {boolean} [reverse=false] whether to reverse the direction of arrow.
+ * @return {array}
+ */
+function curvedArrowBetweenPoints(
 	p1,
 	p2,
 	radius,
-	angularOffset = 0.1,
-	tipWidth = 15,
-	tipScaleRatio = 1,
-	tipTilt = 0
+	tipWidth = DEFAULT_TIP_WIDTH,
+	tipHeight = tipWidth / 1.3,
+	arrowCurving = 0,
+	tipOffset = 0,
+	otherArc = false,
+	reverse = false
 ) {
 	const ctx = C.workingCanvas;
-	const angularDiameterOfTip = tipWidth / radius;
-	const _tipTilt = - angularDiameterOfTip / 2 + tipTilt;
-
+	const pathStarted = ctx.pathStarted;
 	ctx.save();
-	ctx.rotate(angularOffset);
-	ctx.beginPath();
-
-	// draw arc
-
-	ctx.stroke();
-	ctx.closePath();
-
-	// arrowTip
-	arrowTip(
-		p1[0],
-		p1[1],
+	ctx.rotate(tipOffset);
+	if (!pathStarted) ctx.beginPath();
+	const center = circleIntersection(p1, radius, p2, radius)[0];
+	p1[0] -= center[0];
+	p1[1] -= center[1];
+	p2[0] -= center[0];
+	p2[1] -= center[1];
+	const p1Angle = Math.atan2(p1[1], p1[0]);
+	const p2Angle = Math.atan2(p2[1], p2[0]);
+	var angleBetweenPoints, startAngle;
+	if (otherArc) {
+		startAngle = p1Angle;
+		angleBetweenPoints = p2Angle - p1Angle;
+	} else {
+		startAngle = p2Angle;
+		angleBetweenPoints = p1Angle - p2Angle;
+	}
+	curvedArrow(
+		center[0],
+		center[1],
+		radius,
+		angleBetweenPoints,
+		startAngle,
 		tipWidth,
-		_tipTilt,
-		tipScaleRatio
+		tipHeight,
+		arrowCurving,
+		tipOffset,
+		reverse
 	);
+	if (!pathStarted) ctx.closePath();
 	ctx.restore();
+	return center;
 }
 export {
 	arrow,
@@ -274,5 +406,6 @@ export {
 	doubleArrow,
 	measurement,
 	curvedArrow,
-	curvedArrowBetweenPoints
+	curvedDoubleArrow,
+	curvedArrowBetweenPoints,
 };

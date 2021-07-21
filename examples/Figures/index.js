@@ -1,15 +1,41 @@
-import { axes, numberPlane } from "../../src/basic-constructs/coordinate-systems.js";
+import {
+	arrow,
+	arrowTip,
+	curvedArrow,
+	curvedArrowBetweenPoints,
+	curvedDoubleArrow,
+	doubleArrow,
+	measurement,
+} from "../../src/basic-constructs/arrows.js";
+import { linearGradient } from "../../src/basic-constructs/color.js";
+import {
+	axes,
+	numberPlane,
+} from "../../src/basic-constructs/coordinate-systems.js";
 import {
 	arcBetweenPoints,
 	circle,
 	point,
 } from "../../src/basic-constructs/curves.js";
+import { line } from "../../src/basic-constructs/linear.js";
 import {
 	background,
+	centerdText,
+	fill,
 	invertYAxis,
+	lineTo,
+	noFill,
+	noStroke,
 	scale,
+	startShape,
+	stroke,
+	strokeWidth,
+	textBaseline,
+	transform,
+	translate,
 } from "../../src/basic-constructs/settings.js";
-import { circleIntersection } from "../../src/utils/math.js";
+import { DARK_BLUE, DARK_BROWN, GREY_BROWN, LIGHT_BROWN, PURPLE_C, RED_E, TEAL_C, YELLOW_C } from "../../src/constants/colors.js";
+import { circleIntersection, cos } from "../../src/utils/math.js";
 
 const W = 350;
 const H = 350;
@@ -124,11 +150,48 @@ const H = 350;
 C(
 	() => {
 		initCenteredCanvas();
+		// scale(1, -1)
 		background(0);
 		stroke(GREEN_C);
+		var ang = PI/1,
+			r = 100,
+			a = PI / 3;
+		stroke(
+			linearGradient(
+				[-150, -150], [150, 150],
+				[
+					DARK_BLUE,
+					DARK_BROWN,
+					RED_C,
+					YELLOW_C,
+					TEAL_C,
+					PURPLE_C
+				]
+			)
+		);
+
 		noFill();
-		const ang = PI * 1.1;
-		curvedArrow(0,0, 110, ang);
+		circle(0, 0, r + 100 / 2);
+		// noStroke();
+		// line(-100, 0, 100, 0);
+		const v = curvedArrowBetweenPoints(
+			[r * cos(ang + a), r * sin(ang + a)],
+			[r * cos(ang), r * sin(ang)],
+			r,
+		);
+		// point(...v, 5);
+		// arrow(0, 0, 100 * cos(ang), 100 * sin(ang), 15, 1, 10);
+		// strokeWidth(3);
+		// noStroke();
+		// doubleArrow(-100, -10, 10, 50);
+		// doubleArrow(
+		// 	-350/2, 0,
+		// 	350/2, 0,15, 15, 3)
+
+		strokeWidth(0.5);
+		line(0, 0, (r+10) * cos(ang), (r+10) * sin(ang));
+		line(0, 0, (r+10) * cos(ang + a), (r+10) * sin(ang + a));
+		//
 	},
 	".text",
 	{

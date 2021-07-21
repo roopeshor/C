@@ -1,6 +1,8 @@
 # C
 
-JavaScript library for drawing figures & diagrams and also animation. You could save the canvas as image.
+> A p5.js like library that brings some of the powers of Manim in to the web.
+
+This library can be used for drawing figures & diagrams and also animation. You could later save the canvas as image.
 
 ## Installation
 
