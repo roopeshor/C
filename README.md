@@ -45,20 +45,38 @@ But you acn apply styles to this.
 Configuration object which contains all about canvas and can be used to manipulate canvas
 contains:
 
-* ```width``` width of canvas. Default: width of screen (default= 200).
-* ```height``` height of canvas (default= 200).
-* ```dpr``` device pixel ratio. This can be a custom scalar (default= ⌈dpr of device⌉).
-* ```doFill``` set whether to fill inside the shape (default= true).
-* ```doStroke``` set whether to stroke shape (default= true).
-* ```fillStyle```  set fill style. This can be a gradient or any valid css color (default= WHITE).
-* ```strokeStyle``` set stroke style. This can be a gradient or any valid css color (default= BLACK).
-* ```fontSize``` font size of text going to draw (default= "20px").
-* ```fontfamily``` font family of text going to draw (default= "sans-serif").
-* ```colorMode``` color system being used (default= "rgba").
+* `width`: Width of canvas in pixels. (default=`200`)
+* `height`: Width of canvas in pixels. (default=`200`)
+* `dpr`: device pixel ratio of canvas (default=`window.devicePixelRatio`).
+* `doFill`: Whether to fill (default=`true`)
+* `doStroke`: Whether to stroke (default=`true`)
+* `pathStarted`: Whether a shape has begun to draw (default=`false`)
+* `yAxisInveted`: Whether y axis of canvas was inverted (default=`false`)
+
+* `textAlign` : textv align property of canvas (default=`"start"`)
+* `textBaseline` : textv baseline property of canvas (default=`"alphabetic"`)
+
+* `fillStyle`: color to fill (default=`"#ffffff"`)
+* `strokeStyle`: color to stroke (default=`"#000000"`)
+* `colorMode`: mode of color (default=`"rgba"`)
+* `lineWidth`: width of line (default=`1`)
+
+* `fontSize`: font size (default=`"20px"`)
+* `fontFamily`: font family (default=`"serif"`)
+* `fontStyle`: font style (default=`"normal"`)
+* `fontVariant`: font variant (default=`"normal"`)
+* `fontWeight`: font weight (default=`"normal"`)
+* `fontStretch`: font stretch (default=`"normal"`)
+* `lineHeight`: line height (default=`"1.2"`)
+* `font`: explict font of canvas (default=`"20px serif"`)
 
 ## Inside drawFunction (Documentation)
 
 Documentation are comming soon.
+
+## Bundling
+
+Because the entire `c.js` file is relatively large, it can delay the loading of site. You can make a bundled file that only include your drawing functions and c functions that are used to draw things. Use google-closure-compiler. Use [gcc-custom.conf](./gcc-custom.conf) as a template compile the files. Edit it and save it. Run `npx google-closure-compiler --flagfile <your-custom-gcc-conf>.conf` and include the output as delayed script.
 
 ## Extensions
 
