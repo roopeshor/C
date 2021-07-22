@@ -47,6 +47,8 @@ function assignDefaultConfigs (cfgs) {
 
 /**
  * Main Function
+ *
+ * @global
  * @param {function} fx codes to exeecute
  * @param {HTMLElement} [container=document.body] container for the drawings
  * @param {object} [configs={}] configurations
@@ -96,17 +98,31 @@ function C (fx, container = document.body, configs = {}) {
 	fx();
 }
 
+/**
+ * @global
+ * @type {Object}
+*/
 C.canvasList = {};
 
-/** @type {Number} */
+/**
+ * @global
+ * @type {Number}
+ */
 C.nameID = 0;
 
-/** @type {CanvasRenderingContext2D} */
+/**
+ * @global
+ * @type {CanvasRenderingContext2D}
+ */
 C.workingCanvas = undefined; // index of current working canvas in `canvasList`
 
+/**
+ * @global
+ */
 C.defaultConfig = defaultConfig;
 /**
  * return inner width of container tag
+ * @global
  * @param {HTMLElement} [container=document.body]
  * @returns {Number}
  */
@@ -130,6 +146,7 @@ C.getContainerWidth = function (container = document.body) {
  *   height: <Number> height in pixels
  *
  *   dpr: <Number> dpr
+ * @global
  * @param {HTMLCanvasElement} cvs
  * @param {Object} configs
  */
@@ -146,6 +163,7 @@ C.resizeCanvas = function (cvs, configs) {
 /**
  * returns a canvas element with given params
  *
+ * @global
  * @param {Object} configs
  * @returns {HTMLCanvasElement}
  */
@@ -158,6 +176,7 @@ C.makeCanvas = function (configs) {
 /**
  * add extension to window and C extension list
  *
+ * @global
  * @param {Object} extObj
  * @param {boolean} editable warn the edit of functions
  */
@@ -165,6 +184,10 @@ C.addExtension = function (extObj, editable) {
 	defineProperties(extObj, window, !editable);
 	defineProperties(extObj, C.extensions, !editable);
 };
+
+/**
+ * @global
+*/
 C.defineProperties = defineProperties;
 // register to window
 window.C = C;

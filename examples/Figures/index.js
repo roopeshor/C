@@ -1,43 +1,43 @@
-import {
-	arrow,
-	arrowTip,
-	curvedArrow,
-	curvedArrowBetweenPoints,
-	curvedDoubleArrow,
-	curvedDoubleArrowBetweenPoints,
-	doubleArrow,
-	measurement,
-} from "../../src/basic-constructs/arrows.js";
-import { linearGradient } from "../../src/basic-constructs/color.js";
-import {
-	axes,
-	numberPlane,
-} from "../../src/basic-constructs/coordinate-systems.js";
-import {
-	arcBetweenPoints,
-	circle,
-	point,
-} from "../../src/basic-constructs/curves.js";
-import { line } from "../../src/basic-constructs/linear.js";
-import {
-	background,
-	centerdText,
-	fill,
-	invertYAxis,
-	lineTo,
-	noFill,
-	noStroke,
-	rotate,
-	scale,
-	startShape,
-	stroke,
-	strokeWidth,
-	textBaseline,
-	transform,
-	translate,
-} from "../../src/basic-constructs/settings.js";
-import { DARK_BLUE, DARK_BROWN, GREY_BROWN, LIGHT_BROWN, PURPLE_C, RED_E, TEAL_C, YELLOW_C } from "../../src/constants/colors.js";
-import { circleIntersection, cos } from "../../src/utils/math.js";
+// import {
+// 	arrow,
+// 	arrowTip,
+// 	curvedArrow,
+// 	curvedArrowBetweenPoints,
+// 	curvedDoubleArrow,
+// 	curvedDoubleArrowBetweenPoints,
+// 	doubleArrow,
+// 	measurement,
+// } from "../../src/basic-constructs/arrows.js";
+// import { linearGradient } from "../../src/basic-constructs/color.js";
+// import {
+// 	axes,
+// 	numberPlane,
+// } from "../../src/basic-constructs/coordinate-systems.js";
+// import {
+// 	arcBetweenPoints,
+// 	circle,
+// 	point,
+// } from "../../src/basic-constructs/curves.js";
+// import { line } from "../../src/basic-constructs/linear.js";
+// import {
+// 	background,
+// 	centerdText,
+// 	fill,
+// 	invertYAxis,
+// 	lineTo,
+// 	noFill,
+// 	noStroke,
+// 	rotate,
+// 	scale,
+// 	startShape,
+// 	stroke,
+// 	strokeWidth,
+// 	textBaseline,
+// 	transform,
+// 	translate,
+// } from "../../src/basic-constructs/settings.js";
+// import { DARK_BLUE, DARK_BROWN, GREY_BROWN, LIGHT_BROWN, PURPLE_C, RED_E, TEAL_C, YELLOW_C } from "../../src/constants/colors.js";
+// import { circleIntersection, cos } from "../../src/utils/math.js";
 
 const W = 350;
 const H = 350;
@@ -176,12 +176,18 @@ C(
 		// fill(color);
 		// line(-100, 0, 100, 0);
 		var off = 0.0;
-		const v = curvedDoubleArrowBetweenPoints(
-			[r * cos(ang + a), r * sin(ang + a)],
-			[r * cos(ang), r * sin(ang)],
-			r, 15, 10, 5, off
+		const v = measurement({
+			p1: [r * cos(ang + a), r * sin(ang + a)],
+			p2: [r * cos(ang), r * sin(ang)],
+			text: "A",
+			tipWidth: 15,
+			tipHeight: 10,
+			arrowCurving: 5,
+			spacing: 0
+		}
 		);
-		point(...v, 5);
+		// console.log(v);
+		// point(...v, 5);
 		// arrow(0, 0, 100 * cos(ang), 100 * sin(ang), 15, 1, 10);
 		// strokeWidth(3);
 		// noStroke();

@@ -39,7 +39,7 @@ module.exports = function (grunt) {
 			options: {
 				trailing: true,
 				eqeqeq: false,
-				esversion: 6
+				esversion: 7
 			},
 			target: {
 				src: ["src/**/**.js"],
