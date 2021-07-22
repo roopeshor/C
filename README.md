@@ -82,7 +82,7 @@ Because the entire `c.js` file is relatively large, it can delay the loading of 
 
 ### Creating an extension
 
-Wrap your all functions in a object and pass it to ```C.addExtension``` function, like this:
+Wrap your all functions in a object and pass it to `C.addExtension` function, like this:
 
 ```js
  C.addExtension({
@@ -103,7 +103,7 @@ const ext = {
 C.addExtension(ext)
  ```
 Once extension is registered it is accessible via
-```window```, ```C.extensions``` or by calling name of function/constant
+`window`, `C.extensions` or by calling name of function/constant directly
 ### Using extensions
 
 Call function/variable direcly from anywhere in the declared scope.

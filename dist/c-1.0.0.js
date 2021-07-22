@@ -29,7 +29,6 @@ const DEFAULT_TIP_WIDTH = 15;
 /**
  * Draws a arrow tip
  *
- * @global
  * @param {number} x1 x position of start point
  * @param {number} y1 y position of start point
  * @param {number} x2 x position of end point
@@ -76,7 +75,6 @@ function arrowTip(x1, y1, x2, y2, width, height) {
 /**
  * draws a arrow
  *
- * @global
  * @param {number} x1 starting x-axis coord
  * @param {number} y1 starting y-axis coord
  * @param {number} x2 ending x-axis coord
@@ -115,7 +113,6 @@ function arrow(x1, y1, x2, y2, tipWidth = DEFAULT_TIP_WIDTH, tipHeight = tipWidt
 /**
  * Draws a double tipped arrow
  *
- * @global
  * @param {number} x1
  * @param {number} y1
  * @param {number} x2
@@ -144,7 +141,6 @@ function doubleArrow(x1, y1, x2, y2, tipWidth = DEFAULT_TIP_WIDTH, tipHeight = t
 /**
  * Draws a double tipped arrow with text in the middle
  *
- * @global
  * @param {object} configs parameters.
  * Possible values:
  * * {string} text* : text
@@ -265,7 +261,6 @@ function curvedDoubleArrow(x, y, radius, angle = Math.PI / 2, startAngle = 0, ti
 /**
  * Draws a curved arrow between two points that wraps around a circle with a definite radius.
  *
- * @global
  * @param {array} p1 start point
  * @param {array} p2 end point
  * @param {number} radius radius of circle
@@ -309,7 +304,6 @@ function curvedArrowBetweenPoints(p1, p2, radius, tipWidth = DEFAULT_TIP_WIDTH, 
 /**
  * Draws a double tipped curved arrow between two points that wraps around a circle with a definite radius.
  *
- * @global
  * @param {array} p1 start point
  * @param {array} p2 end point
  * @param {number} radius radius of circle
@@ -367,7 +361,6 @@ var _main = require("../main.js");
  * Draws a curly brace
  * Code adapted from http://bl.ocks.org/alexhornbake/6005176
  *
- * @global
  * @param {number} x1 x-axis coord of starting point
  * @param {number} y1 y-axis coord of starting point
  * @param {number} x2 x-axis coord of ending point
@@ -403,7 +396,6 @@ function curlyBrace(x1, y1, x2, y2, size = 20, curviness = 0.6, taleLength = 0.8
 /**
  * Draws a brace that wraps a circle. Returns the coordinate of middle tip extended by a certain amound.
  *
- * @global
  * @param {number} x x-axis coord
  * @param {number} y y-axis coord
  * @param {number} [radius=100] radius of circle
@@ -524,7 +516,6 @@ function readColor(colors) {
 /**
  * returns a random hex color
  *
- * @global
 */
 
 
@@ -542,7 +533,6 @@ function randomColor() {
 /**
  * picks a random color from defined ones
  *
- * @global
 */
 
 
@@ -565,7 +555,6 @@ function hue2RGB(p, q, t) {
  * Assumes values of red, green, and blue are between 0 & 255 and
  * returns hue in range 0 to 360, saturation and lightness in range 0 to 1
  *
- * @global
  * @param {number} red The red color value
  * @param {number} green The green color value
  * @param {number} blue The blue color value
@@ -614,7 +603,6 @@ function RGBToHSL(red, green, blue) {
  * Assumes values of hue is between 0 and 360, saturation and lightness are between 0 & 1 and
  * returns red, green, and blue values between 0 & 255
  *
- * @global
  * @param {number} hue The hue
  * @param {number} saturation The saturation
  * @param {number} lightness The lightness
@@ -644,7 +632,6 @@ function HSLToRGB(hue, saturation, lightness) {
  * Assumes values of red, green, and blue are between 0 & 255 and
  * returns hue in range 0 to 360, saturation and value in range 0 to 1
  *
- * @global
  * @param {number} red The red color value
  * @param {number} green The green color value
  * @param {number} blue The blue color value
@@ -691,7 +678,6 @@ function RGBToHSV(red, green, blue) {
  * Assumes values of hue is between 0 to 360, saturation, and value are between 0 & 1 and
  * returns red, green, and blue in range 0 to 255
  *
- * @global
  * @param {number} hue The hue
  * @param {number} saturation The saturation
  * @param {number} value The value
@@ -750,7 +736,6 @@ function HSVToRGB(hue, saturation, value) {
 /**
  * creates a linear gradient
  *
- * @global
  * @param {array} initialPoint initial point as [x, y]
  * @param {array} finalPoint final point as [x, y]
  * @param {Object|array} colorStops color stops
@@ -834,7 +819,6 @@ var _arrows = require("./arrows.js");
  * center: <array> [[0, 0]]
  *   center of axes
  *
- * @global
  * @param {Object} config
  * @returns axis configs
  */
@@ -970,7 +954,6 @@ function axes(config = {}) {
  * decimalPlaces : <number> [number of decimals in step]
  *   number of decimal places in text
  *
- * @global
  * @param {object} config
  * @returns unit length
  */
@@ -1143,7 +1126,6 @@ function numberLine(config = {}) {
  *
  *   subgridLineWidth : <number> stroke width of sub-grid [0.7],
  *
- * @global
  * @param {Object} config
  * @returns {Object} configurations
  */
@@ -1318,7 +1300,6 @@ var _utils = require("../utils/utils.js");
  * Adds a circular arc to the current shape if {@link startShape} was called.
  * If not it will draw a new arc.
  *
- * @global
  * @param {number} x The x-axis coordinate of the arc's center.
  * @param {number} y The y-axis coordinate of the arc's center.
  * @param {number} r arc's radius (must be positive)
@@ -1334,7 +1315,6 @@ function arc(x, y, r, angle = Math.PI / 2, startAngle = 0) {
 /**
  * Draws a point with given size in pixels
  *
- * @global
  * @param {number} x center x
  * @param {number} y center y
  * @param {number} [size=10] diameter of point in px
@@ -1353,7 +1333,6 @@ function point(x, y, size = 10, doStroke = false) {
 /**
  * Draws a circular segment.
  *
- * @global
  * @param {number} x x-axis coordinate of center of circular sector
  * @param {number} y y-axis coordinate of center of circular sector
  * @param {number} r radius of the circular sector
@@ -1371,7 +1350,6 @@ function circularSegment(x, y, r, angle = Math.PI / 2, startAngle = 0) {
 /**
  * Draws circle
  *
- * @global
  * @param {number} x x-coord
  * @param {number} y y-coord
  * @param {number} r radius
@@ -1388,7 +1366,6 @@ function circle(x, y, r) {
  * Adds an elliptical arc to the current shape if {@link startShape} was called.
  * If not it will draw a new ellipse.
  *
- * @global
  * @param {number} x x-axis coordinate of ellipse's center
  * @param {number} y y-axis coordinate of ellipse's center
  * @param {number} radius1 ellipse's major-axis radius. Must be non-negative.
@@ -1409,7 +1386,6 @@ function ellipse(x, y, radius1, radius2, rotation = 0, startAngle = 0, angle = M
  * Adds a bézie curve to current shape if {@link startShape} was called.
  * If not it will draw a new bézie curve.
  *
- * @global
  * @param {number} cpx1 x-axis coord of first control point
  * @param {number} cpy1 y-axis coord of first control point
  * @param {number} cpx2 x-axis coord of second control point
@@ -1429,7 +1405,6 @@ function bezier(cpx1, cpy1, cpx2, cpy2, x3, y3) {
 /**
  * Draws a sector
  *
- * @global
  * @param {number} x center x
  * @param {number} y center y
  * @param {number} radius radius of sector
@@ -1450,7 +1425,6 @@ function sector(x, y, radius, angle = Math.PI / 2, startAngle = 0) {
  * Adds a smooth curve passing through given points and tension using bézie curve to the current shape.
  * Taken from {@link https://stackoverflow.com/a/49371349}
  *
- * @global
  * @param {array} points array of points as [x, y]
  * @param {number} tension tension of the curve
  */
@@ -1473,7 +1447,6 @@ function smoothCurveThroughPointsTo(points, tension = 1) {
 /**
  * Draws smooth curve passing through given points and tension using bézie curve.
  *
- * @global
  * @param {array} points array of points as [x, y]
  * @param {number} tension tension of the curve
  */
@@ -1502,7 +1475,6 @@ function smoothCurveThroughPoints(points, tension = 1) {
  * * 4th argument is y coordinate of the control point
  * * 5th argument is x coordinate of the ending point
  * * 6th argument is y coordinate of the ending point
- * @global
  */
 
 
@@ -1559,7 +1531,6 @@ function annulusSector(x, y, innerRadius, outerRadius, angle, startAngle) {
 /**
  * Angle between two lines. And returns the coordinate of middle of angle
  *
- * @global
  * @param {array} p1 start point of first line array of point as [x, y]
  * @param {array} p2 end point of first line array of point as [x, y]
  * @param {array} p3 start point of second line array of point as [x, y]
@@ -1613,7 +1584,6 @@ function angle(p1, p2, p3, p4, radius = 20, otherAngle = false, extender = 10) {
  * If a current path started it will add this to the end of path.
  * Returns the center of arc.
  *
- * @global
  * @param {number} x1 x-coord of first point
  * @param {number} y1 y-coord of first point
  * @param {number} x2 x-coord of second point
@@ -1669,7 +1639,6 @@ var _color = require("./color.js");
  * Draws a given image in canvas.
  * See more about the parameters : {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/drawImage}
  *
- * @global
  */
 function drawImage() {
   _main.C.workingCanvas.drawImage(...arguments);
@@ -1677,7 +1646,6 @@ function drawImage() {
 /**
  * Draws a pixel
  *
- * @global
  * @param {number} x x-coordinate of pixel
  * @param {number} y y-coordinate of pixel
  * @param {string} color color of pixel
@@ -1717,7 +1685,6 @@ var _main = require("../main.js");
 /**
  * Draws a line
  *
- * @global
  * @param {number} x1 start x coord
  * @param {number} y1 start y coord
  * @param {number} x2 end x coord
@@ -1734,7 +1701,6 @@ function line(x1, y1, x2, y2) {
 /**
  * Draws a rectangle
  *
- * @global
  * @param {number} x x-coord
  * @param {number} y y-coord
  * @param {number} width widht
@@ -1752,7 +1718,6 @@ function rect(x, y, width, height) {
 }
 /**
  * Draws polygon with given points
- * @global
  * @example
  * ```
  * polygon(
@@ -1787,7 +1752,6 @@ function polygon() {
 /**
  * Draws square
  *
- * @global
  * @param {number} x x-coord
  * @param {number} y x-coord
  * @param {number} sideLength
@@ -1800,7 +1764,6 @@ function square(x, y, sideLength) {
 /**
  * Draws quadrilateral with four points as array of coordinate as [x, y]
  *
- * @global
  * @param {array} p1 1st point
  * @param {array} p2 2nd point
  * @param {array} p3 3rd point
@@ -1823,7 +1786,6 @@ function quad(p1, p2, p3, p4) {
 /**
  * Draws triangle with three points as array of coordinate as [x, y]
  *
- * @global
  * @param {array} p1 first point
  * @param {array} p2 second point
  * @param {array} p3 third point
@@ -1844,7 +1806,6 @@ function triangle(p1, p2, p3) {
 /**
  * Draws equilateral triangle
  *
- * @global
  * @param {number} x
  * @param {number} y
  * @param {number} sideLength length of side
@@ -1858,7 +1819,6 @@ function equiTriangle(x, y, sideLength, rotation = 0) {
 /**
  * Draws a regular polygon with centre position number of sides length of a side and rotation
  *
- * @global
  * @param {number} x x position
  * @param {number} y y position
  * @param {number} sides number of sides
@@ -1875,7 +1835,6 @@ function regularPolygon(x, y, sides, sideLength, rotation = 0) {
 /**
  * Draws a regular polygon that is inside a circle
  *
- * @global
  * @param {number} x x coord
  * @param {number} y y coord
  * @param {number} sides number of sides
@@ -1905,7 +1864,6 @@ function regularPolygonWithRadius(x, y, sides, radius, rotation = 0) {
 /**
  * Draws a polygon with ratio of central angles
  *
- * @global
  * @param {number} x x coord of centre of polygon
  * @param {number} y y coord of centre of polygon
  * @param {number} radius radius of ex-circle of polygon
@@ -2002,7 +1960,6 @@ var _color = require("./color.js");
 /**
  * Begins a new shape at the point specified by the given (x, y) coordinates.
  *
- * @global
  * @param {number} x
  * @param {number} y
  */
@@ -2012,7 +1969,6 @@ function moveTo(x, y) {
 /**
  * Adda a straight line to the current shape by connecting the shape's last point to the specified (x, y) coordinates.
  *
- * @global
  * @param {number} x
  * @param {number} y
  */
@@ -2028,7 +1984,6 @@ function lineTo(x, y) {
  * * a hex string (#fff, #acf2dc)
  * * a number (0 for rgb(0,0,0), 233 for rgb(233,233,233))
  * * a array of numbers ([0, 244, 34])
- * @global
  */
 
 
@@ -2046,7 +2001,6 @@ function background() {
  * Erases the pixels in a rectangular area by setting them to transparent black
  * See {@link https://developer.mozilla.org/en-US/docs/Web/CSS/font-stretch} for more info
  *
- * @global
  * @param {number} x x-axis coordinate of the rectangle's starting point.
  * @param {number} y y-axis coordinate of the rectangle's starting point.
  * @param {number} width Rectangle's width. Positive values are to the right, and negative values to the left.
@@ -2065,7 +2019,6 @@ function clear(x, y, width, height) {
 /**
  * Erases entire canvas area by setting them to transparent black
  *
- * @global
  */
 
 
@@ -2081,7 +2034,6 @@ function clearAll() {
  * Captures the current drawings in canvas and set it to
  * css background
  *
- * @global
  */
 
 
@@ -2097,7 +2049,6 @@ function permaBackground() {
  * Lets you scale, rotate, translate (move), and skew the canvas.
  * See {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/transform} for more info
  *
- * @global
  * @param {number|DOMMatrix} a Horizontal scaling. A value of 1 results in no scaling.
  *  this can be a `DOMMatrix` which can get by {@link getTransform} function
  * @param {number} b Vertical skewing
@@ -2116,7 +2067,6 @@ function setTransform(a, b, c, d, e, f) {
 /**
  * Returns the current transform matrix
  *
- * @global
  * @return {DOMMatrix}
  */
 
@@ -2130,7 +2080,6 @@ function getTransform() {
  *
  * See {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/transform} for more info
  *
- * @global
  * @param {number|DOMMatrix} a Horizontal scaling. A value of 1 results in no scaling.
  *  this can be a `DOMMatrix` which can get by {@link getTransform} function
  * @param {number} b Vertical skewing
@@ -2148,7 +2097,6 @@ function transform(a, b, c, d, e, f) {
 /**
  * Prevent filling inside shapes
  *
- * @global
  */
 
 
@@ -2158,7 +2106,6 @@ function noFill() {
 /**
  * Prevent drawing strokes of shapes
  *
- * @global
  */
 
 
@@ -2168,7 +2115,6 @@ function noStroke() {
 /**
  * Translates (moves) canvas to a position
  *
- * @global
  * @param {number} x amound to translate along x-axis
  * @param {number} [y=0] amound to translate along y-axis
  */
@@ -2180,7 +2126,6 @@ function translate(x, y = 0) {
 /**
  * Sets whether to enable image smoothening
  *
- * @global
  * @param {boolean} bool
  */
 
@@ -2191,7 +2136,6 @@ function setImageSmoothing(bool) {
 /**
  * Sets the stroke width (line width/line thickness)
  *
- * @global
  * @param {number} w
  */
 
@@ -2202,7 +2146,6 @@ function strokeWidth(w) {
 /**
  * Scales the canvas by a given amount
  *
- * @global
  * @param {number} x Scaling factor in the horizontal direction. A negative value flips pixels across
  *  the vertical axis. A value of 1 results in no horizontal scaling.
  * @param {number} [y=x] Scaling factor in the vertical direction. A negative value flips pixels across
@@ -2216,7 +2159,6 @@ function scale(x, y = x) {
 /**
  * Rotates the canvas
  *
- * @global
  * @param {number} angle The rotation angle, clockwise in radians. You can use degree * DEG to calculate a radian from a degree.
  */
 
@@ -2229,7 +2171,6 @@ function rotate(angle) {
 /**
  * Saves the current state of canvas
 
- * @global
  */
 
 
@@ -2242,7 +2183,6 @@ function save() {
  * Set the type of line end
  * Options: BUTT, ROUND, SQUARE
  *
- * @global
  * @param {string} capType
  */
 
@@ -2254,7 +2194,6 @@ function lineCap(capType) {
  * Sets type of line joining
  * Options: BEVEL, ROUND, MITER
  *
- * @global
  * @param {string} joinType
  */
 
@@ -2265,7 +2204,6 @@ function lineJoin(joinType) {
 /**
  * Restore the saved state of canvas
  *
- * @global
  */
 
 
@@ -2277,7 +2215,6 @@ function restore() {
 /**
  * Returns fill color/gradient
  *
- * @global
  * @returns {string|CanvasGradient}
  */
 
@@ -2288,7 +2225,6 @@ function getFill() {
 /**
  * Returns stroke color/gradient
  *
- * @global
  * @returns {string|CanvasGradient}
  */
 
@@ -2299,7 +2235,6 @@ function getStroke() {
 /**
  * Reset the applied transform to idendity matrix and scales canvas by dpr
  *
- * @global
  */
 
 
@@ -2316,7 +2251,6 @@ function rest() {
  * * number (0 for rgb(0,0,0), 233 for rgb(233,233,233))
  * * array of numbers ([0, 244, 34]). This gets converted into css color by the colorMode property
  *
- * @global
  */
 
 
@@ -2339,7 +2273,6 @@ function stroke() {
  * * a number (0 for rgb(0,0,0), 233 for rgb(233,233,233))
  * * a array of numbers ([0, 244, 34]). This gets converted into css color by the colorMode property
  *
- * @global
  */
 
 
@@ -2356,7 +2289,6 @@ function fill() {
 /**
  * Returns variables in workingCanvas
  *
- * @global
  * @returns {Object}
  */
 
@@ -2390,7 +2322,6 @@ function getContextStates() {
 /**
  * Starts a new loop
  *
- * @global
  * @param {function} functionToRun function which contains code to run
  * @param {string} canvasName name of canvas. It must be unique if you're running multiple animation at once
  * @param {number} timeDelay time delay between 2 frames. If given loop will execute with setInterval function.
@@ -2436,7 +2367,6 @@ function loop(functionToRun, canvasName, timeDelay, timeDelaysToRemember = 100) 
 /**
  * Stops current loop
  *
- * @global
  * @param {string} canvasName name of the canvas given to {@link loop}
  */
 
@@ -2450,7 +2380,6 @@ function noLoop(canvasName) {
 /**
  * Starts a new Path
  *
- * @global
  */
 
 
@@ -2462,7 +2391,6 @@ function startShape() {
 /**
  * Ends current Path
  *
- * @global
  */
 
 
@@ -2474,7 +2402,6 @@ function endShape() {
 /**
  * Return current font
  *
- * @global
  * @param {boolean} detailed wheather to return a detailed font property
  * @returns {string}
  */
@@ -2501,7 +2428,6 @@ function getFont(detailed = false) {
 /**
  * Returns text metrics
  *
- * @global
  * @param {string} text
  * @returns {TextMetrics}
  */
@@ -2513,7 +2439,6 @@ function measureText(text) {
 /**
  * Sets font size
  * See {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/font} for more info.
- * @global
  * @param {number|string} size
  * possible values:
  * * XX_SMALL
@@ -2538,7 +2463,6 @@ function fontSize(size) {
 /**
  * Sets font family
  *
- * @global
  * @param {string} family
  */
 
@@ -2551,7 +2475,6 @@ function fontFamily(family) {
 /**
  * Sets font style
  *
- * @global
  * @param {string} style
  * possible values:
  * * NORMAL
@@ -2569,7 +2492,6 @@ function fontStyle(style) {
  * Sets font variant
  * See {@link https://developer.mozilla.org/en-US/docs/Web/CSS/font-variant} for more info.
  *
- * @global
  * @param {string} variant
  */
 
@@ -2582,7 +2504,6 @@ function fontVariant(variant) {
 /**
  * Sets font weight
  * See {@link https://developer.mozilla.org/en-US/docs/Web/CSS/font-weight} for more info.
- * @global
  * @param {string} weight
  */
 
@@ -2621,7 +2542,6 @@ function fontStretch(stretch) {
  * Sets line height
  * See {@link https://developer.mozilla.org/en-US/docs/Web/CSS/line-height} for more info.
  *
- * @global
  * @param {string} height
  */
 
@@ -2634,7 +2554,6 @@ function lineHeight(height) {
 /**
  * Returns canvas image data
  *
- * @global
  * @param {string} datURL
  * @returns {string}
  */
@@ -2646,7 +2565,6 @@ function getCanvasData(datURL = "image/png") {
 /**
  * Save the canvas as image
  *
- * @global
  * @param {string} [name="drawing"] name of file
  * @param {string} [datURL="image/png"] type of file
  */
@@ -2663,7 +2581,6 @@ function saveCanvas(name = "drawing", datURL = "image/png") {
  * Sets the line dash
  * see {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/setLineDash} for more info
  *
- * @global
  */
 
 
@@ -2674,7 +2591,6 @@ function lineDash() {
  * Specifies the current text alignment used when drawing text.
  * The alignment is relative to the x value of the fillText/strokeText/text method.
  *
- * @global
  * @param {string} align alignment type.
  * possible values:
  *  * "left" : The text is left-aligned.
@@ -2693,7 +2609,6 @@ function textAlign(align) {
  * Specifies the current text baseline used when drawing text.
  * The alignment is relative to the x value of the fillText/strokeText/text method.
  *
- * @global
  * @param {string} baseline baseline type.
  * possible values:
  * * "top": The text baseline is the top of the em square.
@@ -2721,7 +2636,6 @@ function centerdText() {
 }
 /**
  * initializes a canvas translated to center and y-axis inverted
- * @global
  */
 
 
@@ -2857,7 +2771,6 @@ var _settings = require("./settings.js");
 /**
  * Draws a filled & stroked text
  *
- * @global
  * @param {string} text text to draw
  * @param {number} [x=0] x-coord
  * @param {number} [y=0] y-coord
@@ -2878,7 +2791,6 @@ function text(text, x = 0, y = 0, maxwidth = undefined) {
 /**
  * Draws a text without border
  *
- * @global
  * @param {string} text text to draw
  * @param {number} x x-coord
  * @param {number} [y=x] y-coord
@@ -2900,7 +2812,6 @@ function fillText(text, x = 0, y = 0, maxwidth = undefined) {
 /**
  * Draws a stroked text
  *
- * @global
  * @param {string} text text to draw
  * @param {number} x x-coord
  * @param {number} [y=x] y-coord
@@ -3516,7 +3427,6 @@ const {
 /**
  * return distance between two points
  *
- * @global
  * @param {array} p1
  * @param {array} p2
  * @return {number} distance between p1 and p2
@@ -3553,7 +3463,6 @@ function dist(p1, p2) {
 /**
  * Returns a random integer between given range.
  *
- * @global
  * @param {number} [max=10] maximum range
  * @param {number} [min=0] minimum range
  * @return {number}
@@ -3566,7 +3475,6 @@ function randomInt(max = 10, min = 0) {
 /**
  * Returns a point rotated around a point by certain angle, exetened by a certain length
  *
- * @global
  * @param {number|array} x center x or center as array of coords [x, y]
  * @param {number} y center y
  * @param {number} angle angle of rotation
@@ -3586,7 +3494,6 @@ function rotateAroundPoint(x, y, angle, len = 10) {
 /**
  * Returns a point rotated around origin by certain angle, exetened by a certain length
  *
- * @global
  * @param {number} angle angle of rotation
  * @param {number} len length to extend the point
  * @returns {array} array of two points
@@ -3599,7 +3506,6 @@ function rotateAroundOrigin(angle, len = 10) {
 /**
  * Returns the point of intersection of two lines.
  *
- * @global
  * @param {array} p1 start point of first line as [x, y]
  * @param {array} p2 end point of first line as [x, y]
  * @param {array} p3 start point of second line as [x, y]

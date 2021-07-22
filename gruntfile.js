@@ -64,7 +64,7 @@ module.exports = function (grunt) {
 		},
 		jsdoc : {
 			dist : {
-				src: ['src/functions/drawing-functions.js'],
+				src: ['src/**/**.js'],
 				options: {
 					destination: 'doc',
 				},

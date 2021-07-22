@@ -10,7 +10,6 @@ import { readColor } from "./color.js";
  * Draws a given image in canvas.
  * See more about the parameters : {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/drawImage}
  *
- * @global
  */
 function drawImage() {
 	C.workingCanvas.drawImage(...arguments);
@@ -19,7 +18,6 @@ function drawImage() {
 /**
  * Draws a pixel
  *
- * @global
  * @param {number} x x-coordinate of pixel
  * @param {number} y y-coordinate of pixel
  * @param {string} color color of pixel

@@ -9,7 +9,6 @@ import { scale } from "./settings.js";
 /**
  * Draws a filled & stroked text
  *
- * @global
  * @param {string} text text to draw
  * @param {number} [x=0] x-coord
  * @param {number} [y=0] y-coord
@@ -30,7 +29,6 @@ function text(text, x = 0, y = 0, maxwidth = undefined) {
 /**
  * Draws a text without border
  *
- * @global
  * @param {string} text text to draw
  * @param {number} x x-coord
  * @param {number} [y=x] y-coord
@@ -49,7 +47,6 @@ function fillText(text, x = 0, y = 0, maxwidth = undefined) {
 /**
  * Draws a stroked text
  *
- * @global
  * @param {string} text text to draw
  * @param {number} x x-coord
  * @param {number} [y=x] y-coord
