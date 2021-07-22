@@ -240,16 +240,15 @@ function curvedArrow(
 	tipWidth = DEFAULT_TIP_WIDTH,
 	tipHeight = tipWidth / 1.3,
 	arrowCurving = 0,
-	tipOffset = 10,
+	tipOffset = 0,
 	reverse = false
 ) {
 	const ctx = C.workingCanvas;
-	tipOffset /= radius;
 
-	const angularDiameterOfTip = tipWidth / radius;
+	const tipAngularDiameter = tipWidth / radius;
 	ctx.save();
 	arrowCurving /= radius;
-	var padding = angularDiameterOfTip - arrowCurving;
+	var padding = tipAngularDiameter - arrowCurving;
 
 	ctx.beginPath();
 	if (reverse) {
@@ -308,13 +307,13 @@ function curvedDoubleArrow(
 ) {
 	const ctx = C.workingCanvas;
 	ctx.save();
-	const angularDiameterOfTip = tipWidth / radius;
+	const tipAngularDiameter = tipWidth / radius;
 	const tangent = [
-		-Math.cos(startAngle + angularDiameterOfTip / 2 + Math.PI / 2),
-		-Math.sin(startAngle + angularDiameterOfTip / 2 + Math.PI / 2),
+		-Math.cos(startAngle + tipAngularDiameter / 2 + Math.PI / 2),
+		-Math.sin(startAngle + tipAngularDiameter / 2 + Math.PI / 2),
 	];
-	angle -= angularDiameterOfTip;
-	startAngle += angularDiameterOfTip + tipOffset * 2;
+	angle -= tipAngularDiameter;
+	startAngle += tipAngularDiameter + tipOffset * 2;
 	curvedArrow(
 		x,
 		y,
@@ -347,11 +346,11 @@ function curvedDoubleArrow(
  * @param {number} radius radius of circle
  * @param {number} [tipWidth=DEFAULT_TIP_WIDTH] width of tip
  * @param {number} [tipHeight=tipWidth / 1.3] height of tip
- * @param {number} [arrowCurving=0] arrow curving const.
- * @param {number} [tipOffset=0] offset (padding) of tip from it's defined end.
+ * @param {number} [arrowCurving=0] arrow curving const. Expressed in pixels
+ * @param {number} [tipOffset=0] offset (padding) of tip from it's defined end. Expressed in radians
  * @param {boolean} [otherArc=false] whether to use other arc
  * @param {boolean} [reverse=false] whether to reverse the direction of arrow.
- * @return {array}
+ * @return {array} coordiante of the center of arc as [x, y]
  */
 function curvedArrowBetweenPoints(
 	p1,
@@ -367,7 +366,6 @@ function curvedArrowBetweenPoints(
 	const ctx = C.workingCanvas;
 	const pathStarted = ctx.pathStarted;
 	ctx.save();
-	ctx.rotate(tipOffset);
 	if (!pathStarted) ctx.beginPath();
 	const center = circleIntersection(p1, radius, p2, radius)[0];
 	p1[0] -= center[0];
@@ -400,6 +398,75 @@ function curvedArrowBetweenPoints(
 	ctx.restore();
 	return center;
 }
+
+/**
+ * Draws a double tipped curved arrow between two points that wraps around a circle with a definite radius.
+ *
+ * @global
+ * @param {array} p1 start point
+ * @param {array} p2 end point
+ * @param {number} radius radius of circle
+ * @param {number} [tipWidth=DEFAULT_TIP_WIDTH] width of tip
+ * @param {number} [tipHeight=tipWidth / 1.3] height of tip
+ * @param {number} [arrowCurving=0] arrow curving const. Expressed in pixels
+ * @param {number} [tipOffset=0] offset (padding) of tip from it's defined. Expressed in radians
+ * @param {boolean} [otherArc=false] whether to use other arc
+ * @return {array} coordiante of the center of arc as [x, y]
+ */
+function curvedDoubleArrowBetweenPoints(
+	p1,
+	p2,
+	radius,
+	tipWidth = DEFAULT_TIP_WIDTH,
+	tipHeight = tipWidth / 1.3,
+	arrowCurving = 0,
+	tipOffset = 0,
+	otherArc = false
+) {
+	const ctx = C.workingCanvas;
+	ctx.save();
+	const center = circleIntersection(p1, radius, p2, radius)[0];
+	p1[0] -= center[0];
+	p1[1] -= center[1];
+	p2[0] -= center[0];
+	p2[1] -= center[1];
+	const tipAngularDiameter = tipWidth / radius;
+	const p1Angle = Math.atan2(p1[1], p1[0]);
+	const p2Angle = Math.atan2(p2[1], p2[0]) + tipAngularDiameter;
+	var angleBetweenPoints, startAngle;
+	if (otherArc) {
+		startAngle = p1Angle;
+		angleBetweenPoints = p2Angle - p1Angle;
+	} else {
+		startAngle = p2Angle;
+		angleBetweenPoints = p1Angle - p2Angle;
+	}
+	arrowCurving /= radius;
+	curvedArrow(
+		center[0],
+		center[1],
+		radius,
+		angleBetweenPoints + arrowCurving - tipOffset,
+		startAngle - arrowCurving + tipOffset,
+		tipWidth,
+		tipHeight,
+		arrowCurving * radius,
+		tipOffset
+	);
+	var padding = tipAngularDiameter - arrowCurving + tipOffset;
+	startAngle -= tipAngularDiameter;
+	arrowTip(
+		center[0] + radius * Math.cos(startAngle + padding),
+		center[1] + radius * Math.sin(startAngle + padding),
+		center[0] + radius * Math.cos(startAngle + tipOffset),
+		center[1] + radius * Math.sin(startAngle + tipOffset),
+		tipWidth,
+		tipHeight
+	);
+	ctx.restore();
+	return center;
+}
+
 export {
 	arrow,
 	arrowTip,
@@ -408,4 +475,5 @@ export {
 	curvedArrow,
 	curvedDoubleArrow,
 	curvedArrowBetweenPoints,
+	curvedDoubleArrowBetweenPoints,
 };

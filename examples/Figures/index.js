@@ -4,6 +4,7 @@ import {
 	curvedArrow,
 	curvedArrowBetweenPoints,
 	curvedDoubleArrow,
+	curvedDoubleArrowBetweenPoints,
 	doubleArrow,
 	measurement,
 } from "../../src/basic-constructs/arrows.js";
@@ -26,6 +27,7 @@ import {
 	lineTo,
 	noFill,
 	noStroke,
+	rotate,
 	scale,
 	startShape,
 	stroke,
@@ -153,11 +155,10 @@ C(
 		// scale(1, -1)
 		background(0);
 		stroke(GREEN_C);
-		var ang = PI/1,
+		var ang = PI/2,
 			r = 100,
-			a = PI / 3;
-		stroke(
-			linearGradient(
+			a = PI / 1.5;
+		const color = linearGradient(
 				[-150, -150], [150, 150],
 				[
 					DARK_BLUE,
@@ -167,19 +168,20 @@ C(
 					TEAL_C,
 					PURPLE_C
 				]
-			)
-		);
-
+			);
+		stroke(color);
+		fill(color);
 		noFill();
 		circle(0, 0, r + 100 / 2);
-		// noStroke();
+		// fill(color);
 		// line(-100, 0, 100, 0);
-		const v = curvedArrowBetweenPoints(
+		var off = 0.0;
+		const v = curvedDoubleArrowBetweenPoints(
 			[r * cos(ang + a), r * sin(ang + a)],
 			[r * cos(ang), r * sin(ang)],
-			r,
+			r, 15, 10, 5, off
 		);
-		// point(...v, 5);
+		point(...v, 5);
 		// arrow(0, 0, 100 * cos(ang), 100 * sin(ang), 15, 1, 10);
 		// strokeWidth(3);
 		// noStroke();
@@ -187,10 +189,13 @@ C(
 		// doubleArrow(
 		// 	-350/2, 0,
 		// 	350/2, 0,15, 15, 3)
-
-		strokeWidth(0.5);
 		line(0, 0, (r+10) * cos(ang), (r+10) * sin(ang));
 		line(0, 0, (r+10) * cos(ang + a), (r+10) * sin(ang + a));
+
+		line(0, 0, (r+10) * cos(ang + a/2), (r+10) * sin(ang + a/2));
+
+		line(0, 0, (r+10) * cos(ang + off), (r+10) * sin(ang - off));
+		line(0, 0, (r+10) * cos(ang - off + a), (r+10) * sin(ang + off - a));
 		//
 	},
 	".text",
