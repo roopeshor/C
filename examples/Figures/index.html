@@ -7,20 +7,31 @@
 	<script>
 
 	</script>
-	<!-- <script defer src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-	<script defer id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script> -->
+	<!-- <script defer src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script> -->
+	<!-- <script defer id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script> -->
   <!-- <script defer src="../../dist/c-1.0.0.js"></script> -->
   <!-- <script defer src="../../dist/c.min.js"></script> -->
+  <script defer src="../../src/index.js" type="module"></script>
   <script defer src="./index.js" type="module"></script>
   <style>
     body, html {
       margin: 0;
-      padding: 0;
+      padding: 5px;
     }
+		canvas {
+			margin: 0;
+			padding: 0;
+		}
   </style>
 </head>
 <body>
+	<h3>Parametric Function</h3>
+  <div class="parametric-function"></div>
+	<h3>Diagram of circular sector</h3>
   <div class="circular-sector"></div>
+	<h3>Intersection of lines</h3>
+  <div class="line-line-intersection"></div>
+	<h3>Diameter measure of circle</h3>
   <div class="text"></div>
 </body>
 </html>

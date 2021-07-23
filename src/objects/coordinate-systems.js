@@ -1,6 +1,6 @@
 import { BLUE_C, GREY, WHITE } from "../constants/colors.js";
 import { C } from "../main.js";
-import { line } from "./linear.js";
+import { line } from "./geometry.js";
 import { fillText } from "./text.js";
 
 import {

@@ -328,7 +328,7 @@ function getContextStates() {
 		doStroke: ctx.doStroke,
 		doFill: ctx.doFill,
 		pathStarted: ctx.pathStarted,
-		yAxisInveted: ctx.yAxisInveted,
+		yAxisInverted: ctx.yAxisInverted,
 
 		netRotation: ctx.netRotation,
 		currentLoop: ctx.currentLoop,
@@ -651,10 +651,22 @@ function initCenteredCanvas() {
 	ctx.translate(ctx.width/2, ctx.height/2);
 }
 
+/**
+ * Inverts y-axis
+ */
 function invertYAxis () {
 	const ctx = C.workingCanvas;
 	ctx.scale(1, -1);
-	ctx.yAxisInveted = true;
+	ctx.yAxisInverted = true;
+}
+
+/**
+ * Init a blackboard like canvas. Centerd to middle, with black background and y axis inverted
+ */
+function initBlackboardCanvas () {
+	initCenteredCanvas();
+	background(0);
+	invertYAxis();
 }
 
 export {
@@ -704,5 +716,6 @@ export {
 	textBaseline,
 	centerdText,
 	initCenteredCanvas,
-	invertYAxis
+	invertYAxis,
+	initBlackboardCanvas
 };

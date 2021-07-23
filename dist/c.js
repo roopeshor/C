@@ -2372,7 +2372,7 @@ function getContextStates() {
     doStroke: ctx.doStroke,
     doFill: ctx.doFill,
     pathStarted: ctx.pathStarted,
-    yAxisInveted: ctx.yAxisInveted,
+    yAxisInverted: ctx.yAxisInverted,
     netRotation: ctx.netRotation,
     currentLoop: ctx.currentLoop,
     fontStyle: ctx.fontStyle,
@@ -2733,7 +2733,7 @@ function initCenteredCanvas() {
 function invertYAxis() {
   const ctx = _main.C.workingCanvas;
   ctx.scale(1, -1);
-  ctx.yAxisInveted = true;
+  ctx.yAxisInverted = true;
 }
 
 },{"../main.js":16,"./color.js":3}],9:[function(require,module,exports){
@@ -2866,14 +2866,14 @@ var _settings = require("./settings.js");
 function text(text, x = 0, y = 0, maxwidth = undefined) {
   const ctx = _main.C.workingCanvas;
 
-  if (ctx.yAxisInveted) {
+  if (ctx.yAxisInverted) {
     // if inverted reverse it and invert y component
     (0, _settings.scale)(1, -1);
     y *= -1;
   }
 
   if (ctx.doFill) ctx.fillText(text, x, y, maxwidth);else if (ctx.doStroke) ctx.strokeText(text, x, y, maxwidth);
-  if (ctx.yAxisInveted) (0, _settings.scale)(1, -1); // reverse y-invertion
+  if (ctx.yAxisInverted) (0, _settings.scale)(1, -1); // reverse y-invertion
 }
 /**
  * Draws a text without border
@@ -2889,13 +2889,13 @@ function text(text, x = 0, y = 0, maxwidth = undefined) {
 function fillText(text, x = 0, y = 0, maxwidth = undefined) {
   const ctx = _main.C.workingCanvas;
 
-  if (ctx.yAxisInveted) {
+  if (ctx.yAxisInverted) {
     (0, _settings.scale)(1, -1);
     y *= -1;
   }
 
   ctx.fillText(text, x, y, maxwidth);
-  if (ctx.yAxisInveted) (0, _settings.scale)(1, -1);
+  if (ctx.yAxisInverted) (0, _settings.scale)(1, -1);
 }
 /**
  * Draws a stroked text
@@ -2911,13 +2911,13 @@ function fillText(text, x = 0, y = 0, maxwidth = undefined) {
 function strokeText(text, x = 0, y = 0, maxwidth = undefined) {
   const ctx = _main.C.workingCanvas;
 
-  if (ctx.yAxisInveted) {
+  if (ctx.yAxisInverted) {
     (0, _settings.scale)(1, -1);
     y *= -1;
   }
 
   ctx.strokeText(text, x, y, maxwidth);
-  if (ctx.yAxisInveted) (0, _settings.scale)(1, -1);
+  if (ctx.yAxisInverted) (0, _settings.scale)(1, -1);
 }
 
 },{"../main.js":16,"./settings.js":8}],11:[function(require,module,exports){
@@ -3307,7 +3307,7 @@ const defaultConfig = {
   doFill: true,
   doStroke: true,
   pathStarted: false,
-  yAxisInveted: false,
+  yAxisInverted: false,
   netRotation: 0,
   currentLoop: null,
   textAlign: "start",

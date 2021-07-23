@@ -7,7 +7,7 @@ import { C } from "../main.js";
  * @param {string} input
  * @return {HTMLImageElement}
  */
-function getImgageFromTex(input) {
+function getImageFromTex(input) {
 	if (
 		typeof window.MathJax == "object" &&
 		typeof window.MathJax.tex2svg == "function"
@@ -27,7 +27,7 @@ function getImgageFromTex(input) {
 		image.src = blobURL;
 		return image;
 	} else {
-		console.error("MathJax is not found. Please include");
+		console.error("MathJax is not found. Please include it.");
 	}
 }
 
@@ -40,7 +40,7 @@ function getImgageFromTex(input) {
  * @return {HTMLImageElement} image representation of tex
  */
 function tex(input, x = 0, y = 0) {
-	const image = getImgageFromTex(input);
+	const image = getImageFromTex(input);
 	const ctx = C.workingCanvas;
 	const text_align = ctx.textAlign,
 		text_baseline = ctx.textBaseline;
@@ -69,8 +69,11 @@ function tex(input, x = 0, y = 0) {
 				break;
 		}
 		// invert axis first
-		ctx.scale(1, -1);
-		ctx.drawImage(image, x, -y);
+		if (ctx.yAxisInverted) {
+			ctx.scale(1, -1);
+			y *= -1;
+		}
+		ctx.drawImage(image, x, y);
 		ctx.restore();
 	};
 	return image;
@@ -78,5 +81,5 @@ function tex(input, x = 0, y = 0) {
 
 export {
 	tex,
-	getImgageFromTex
+	getImageFromTex
 };

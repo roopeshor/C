@@ -51,7 +51,7 @@ contains:
 * `doFill`: Whether to fill (default=`true`)
 * `doStroke`: Whether to stroke (default=`true`)
 * `pathStarted`: Whether a shape has begun to draw (default=`false`)
-* `yAxisInveted`: Whether y axis of canvas was inverted (default=`false`)
+* `yAxisInverted`: Whether y axis of canvas was inverted (default=`false`)
 
 * `textAlign` : textv align property of canvas (default=`"start"`)
 * `textBaseline` : textv baseline property of canvas (default=`"alphabetic"`)

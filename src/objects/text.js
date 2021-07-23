@@ -16,14 +16,14 @@ import { scale } from "./settings.js";
  */
 function text(text, x = 0, y = 0, maxwidth = undefined) {
 	const ctx = C.workingCanvas;
-	if (ctx.yAxisInveted) {
+	if (ctx.yAxisInverted) {
 		// if inverted reverse it and invert y component
 		scale(1, -1);
 		y *= -1;
 	}
 	if (ctx.doFill) ctx.fillText(text, x, y, maxwidth);
 	else if (ctx.doStroke) ctx.strokeText(text, x, y, maxwidth);
-	if (ctx.yAxisInveted) scale(1, -1); // reverse y-invertion
+	if (ctx.yAxisInverted) scale(1, -1); // reverse y-invertion
 }
 
 /**
@@ -36,12 +36,12 @@ function text(text, x = 0, y = 0, maxwidth = undefined) {
  */
 function fillText(text, x = 0, y = 0, maxwidth = undefined) {
 	const ctx = C.workingCanvas;
-	if (ctx.yAxisInveted) {
+	if (ctx.yAxisInverted) {
 		scale(1, -1);
 		y *= -1;
 	}
 	ctx.fillText(text, x, y, maxwidth);
-	if (ctx.yAxisInveted) scale(1, -1);
+	if (ctx.yAxisInverted) scale(1, -1);
 }
 
 /**
@@ -54,12 +54,12 @@ function fillText(text, x = 0, y = 0, maxwidth = undefined) {
  */
 function strokeText(text, x = 0, y = 0, maxwidth = undefined) {
 	const ctx = C.workingCanvas;
-	if (ctx.yAxisInveted) {
+	if (ctx.yAxisInverted) {
 		scale(1, -1);
 		y *= -1;
 	}
 	ctx.strokeText(text, x, y, maxwidth);
-	if (ctx.yAxisInveted) scale(1, -1);
+	if (ctx.yAxisInverted) scale(1, -1);
 }
 
 export {

@@ -5,6 +5,7 @@ import { C } from "../main.js";
 import { endShape, restore, save, startShape } from "./settings.js";
 import { applyDefault, doFillAndStroke } from "../utils/utils.js";
 import { circleIntersection } from "../utils/math.js";
+import { fillText } from "./text.js";
 
 const DEFAULT_TIP_WIDTH = 15;
 
@@ -209,7 +210,7 @@ function measurement(configs) {
 	ctx.textAlign = CENTER;
 	ctx.textBaseline = MIDDLE;
 	ctx.rotate(Math.atan2(p2[1] - p1[1], p2[0] - p1[0]) + configs.textRotation);
-	ctx.fillText(configs.text, 0, 0);
+	fillText(configs.text, 0, 0);
 	restore();
 }
 

@@ -1,4 +1,4 @@
-import { defineProperties } from "./defineProperties.js";
+import { defineProperties } from "./utils/utils.js";
 // main file; defines C function
 const defaultConfig = {
 	width: 200, // width of canvas multiplied by dpr
@@ -10,7 +10,7 @@ const defaultConfig = {
 	doFill: true,
 	doStroke: true,
 	pathStarted: false,
-	yAxisInveted: false,
+	yAxisInverted: false,
 
 	netRotation: 0,
 	currentLoop : null,

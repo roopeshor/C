@@ -1,11 +1,9 @@
+/**
+ * Functions for drawing various shapes
+ */
 import { C } from "../main.js";
 import { circleIntersection, lineIntersection } from "../utils/math.js";
 import { doFillAndStroke } from "../utils/utils.js";
-
-/**
- * This module contains functions to draw curved shapes.
- * @module curves
- */
 
 /**
  * Adds a circular arc to the current shape if {@link startShape} was called.
@@ -142,12 +140,12 @@ function sector(x, y, radius, angle = Math.PI / 2, startAngle = 0) {
  * @param {array} points array of points as [x, y]
  * @param {number} tension tension of the curve
  */
-function smoothCurveThroughPointsTo(points, tension = 1) {
+function smoothCurveThroughPointsTo(points, tension = 1, loop = true) {
 	for (var i = 0; i < points.length - 1; i++) {
-		var recentPoint = i > 0 ? points[i - 1] : points[0];
+		var recentPoint = i > 0 ? points[i - 1] : loop ? points[points.length-2] : points[0];
 		var currentPoint = points[i];
 		var nextPoint = points[i + 1];
-		var secondNextPoint = i != points.length - 2 ? points[i + 2] : nextPoint;
+		var secondNextPoint = i != points.length - 2 ? points[i + 2] : loop ? points[1] : nextPoint;
 
 		var cp1x =
 			currentPoint[0] + ((nextPoint[0] - recentPoint[0]) / 6) * tension;
@@ -258,40 +256,66 @@ function annulusSector(x, y, innerRadius, outerRadius, angle, startAngle) {
  * @param {array} p3 start point of second line array of point as [x, y]
  * @param {array} p4 end point of second line array of point as [x, y]
  * @param {number} radius radius of angle
- * @param {boolean} otherAngle whether to draw the other angle
  * @param {number} extender extender of output point
+ * @param {boolean} otherAngle whether to draw the other angle
+ * @param {number} angleDir there can be four angle in a line intersection. Choose a number from 1 to 4.
  * @returns {array} coordinate of point in the middle of angle as array of point as [x, y]
  */
-function angle(p1, p2, p3, p4, radius = 20, otherAngle = false, extender = 10) {
+function angle(
+	p1,
+	p2,
+	p3,
+	p4,
+	radius = 20,
+	extender = 10,
+	otherAngle = false,
+	angleDir = 1
+) {
 	const [x, y] = lineIntersection(p1, p2, p3, p4);
 	if (!(isNaN(x) || isNaN(y))) {
-		var angleFromPlane, angle;
+		var ang,
+			startAngle,
+			a1 = Math.atan2(p1[1] - y, p1[0] - x),
+			a2 = Math.atan2(p2[1] - y, p2[0] - x),
+			a3 = Math.atan2(p3[1] - y, p3[0] - x),
+			a4 = Math.atan2(p4[1] - y, p4[0] - x);
+
+		var angleDirs = {
+				1: [a2, a4],
+				2: [a4, a1],
+				3: [a1, a3],
+				4: [a3, a2],
+			},
+			dir = angleDirs[angleDir];
 		if (otherAngle) {
-			angleFromPlane = Math.atan2(p2[1] - y, p2[0] - x);
-			angle = Math.atan2(p4[1] - p2[1], p4[0] - p2[0]);
+			startAngle = dir[1];
+			ang = dir[0] - dir[1];
 		} else {
-			angleFromPlane = Math.atan2(p4[1] - y, p4[0] - x);
-			angle = Math.atan2(p2[1] - p4[1], p2[0] - p4[0]);
+			startAngle = dir[0];
+			ang = dir[1] - dir[0];
 		}
 
 		const ctx = C.workingCanvas;
 		if (ctx.doFill) {
 			ctx.beginPath();
 			ctx.moveTo(x, y);
-			ctx.arc(x, y, radius, angleFromPlane, angle + angleFromPlane);
+			ctx.arc(x, y, radius, startAngle, ang + startAngle);
 			ctx.fill();
 			ctx.closePath();
 		}
 		if (ctx.doStroke) {
 			ctx.beginPath();
-			ctx.arc(x, y, radius, angleFromPlane, angle + angleFromPlane);
+			ctx.arc(x, y, radius, startAngle, ang + startAngle);
 			ctx.stroke();
 			ctx.closePath();
 		}
-		return [
-			x + (radius + extender) * Math.cos(angleFromPlane + angle / 2),
-			y + (radius + extender) * Math.sin(angleFromPlane + angle / 2),
-		];
+		return {
+			center: [
+				x + (radius + extender) * Math.cos(startAngle + ang / 2),
+				y + (radius + extender) * Math.sin(startAngle + ang / 2),
+			],
+			ang: ang,
+		};
 	} else {
 		// TODO: should it be `throw Error()`?
 		console.error("No intersection point");
@@ -341,6 +365,207 @@ function arcBetweenPoints(x1, y1, x2, y2, radius, otherArc = false) {
 	return center;
 }
 
+/**
+ * Draws a line
+ *
+ * @param {number} x1 start x coord
+ * @param {number} y1 start y coord
+ * @param {number} x2 end x coord
+ * @param {number} y2 end y coord
+ */
+function line(x1, y1, x2, y2) {
+	const ctx = C.workingCanvas;
+	ctx.beginPath();
+	ctx.moveTo(x1, y1);
+	ctx.lineTo(x2, y2);
+	ctx.stroke();
+	ctx.closePath();
+}
+
+/**
+ * Draws a rectangle
+ *
+ * @param {number} x x-coord
+ * @param {number} y y-coord
+ * @param {number} width widht
+ * @param {number} height height
+ */
+function rect(x, y, width, height) {
+	const ctx = C.workingCanvas;
+	ctx.beginPath();
+	ctx.rect(x, y, width, height);
+	if (ctx.doFill) ctx.fill();
+	if (ctx.doStroke) ctx.stroke();
+	ctx.closePath();
+}
+
+/**
+ * Draws polygon with given points
+ * @example
+ * ```
+ * polygon(
+ * 	[0, 0], // first point
+ * 	[100, 200], // second point
+ * 	[130, 230], // third point
+ * 	//...
+ * )
+ * ```
+ */
+function polygon() {
+	const args = arguments;
+	if (args.length > 2) {
+		const ctx = C.workingCanvas;
+		const start = args[0];
+		ctx.beginPath();
+		ctx.moveTo(start[0], start[1]);
+		for (let i = 1; i < args.length; i++) {
+			ctx.lineTo(args[i][0], args[i][1]);
+		}
+		ctx.lineTo(start[0], start[1]);
+		if (ctx.doFill) ctx.fill();
+		if (ctx.doStroke) ctx.stroke();
+		ctx.closePath();
+	}
+}
+
+/**
+ * Draws square
+ *
+ * @param {number} x x-coord
+ * @param {number} y x-coord
+ * @param {number} sideLength
+ */
+function square(x, y, sideLength) {
+	rect(x, y, sideLength, sideLength);
+}
+
+/**
+ * Draws quadrilateral with four points as array of coordinate as [x, y]
+ *
+ * @param {array} p1 1st point
+ * @param {array} p2 2nd point
+ * @param {array} p3 3rd point
+ * @param {array} p4 4th point
+ */
+function quad(p1, p2, p3, p4) {
+	const ctx = C.workingCanvas;
+	ctx.beginPath();
+	ctx.moveTo(p1[0], p1[1]);
+	ctx.lineTo(p2[0], p2[1]);
+	ctx.lineTo(p3[0], p3[1]);
+	ctx.lineTo(p4[0], p4[1]);
+	ctx.lineTo(p1[0], p1[1]);
+	if (ctx.doFill) ctx.fill();
+	if (ctx.doStroke) ctx.stroke();
+	ctx.closePath();
+}
+
+/**
+ * Draws triangle with three points as array of coordinate as [x, y]
+ *
+ * @param {array} p1 first point
+ * @param {array} p2 second point
+ * @param {array} p3 third point
+ */
+function triangle(p1, p2, p3) {
+	const ctx = C.workingCanvas;
+	ctx.beginPath();
+	ctx.moveTo(p1[0], p1[1]);
+	ctx.lineTo(p2[0], p2[1]);
+	ctx.lineTo(p3[0], p3[1]);
+	ctx.lineTo(p1[0], p1[1]);
+	if (ctx.doFill) ctx.fill();
+	if (ctx.doStroke) ctx.stroke();
+	ctx.closePath();
+}
+
+/**
+ * Draws equilateral triangle
+ *
+ * @param {number} x
+ * @param {number} y
+ * @param {number} sideLength length of side
+ * @param {number} [rotation=0] amound to rotate the entire triangle
+ */
+function equiTriangle(x, y, sideLength, rotation = 0) {
+	regularPolygon(x, y, 3, sideLength, rotation);
+}
+
+/**
+ * Draws a regular polygon with centre position number of sides length of a side and rotation
+ *
+ * @param {number} x x position
+ * @param {number} y y position
+ * @param {number} sides number of sides
+ * @param {number} sideLength length of a side
+ * @param {number} [rotation=0] amound to rotate the entire polygon
+ */
+function regularPolygon(x, y, sides, sideLength, rotation = 0) {
+	const radius = sideLength / (2 * Math.sin(Math.PI / sides)); // finds ex-radius
+	regularPolygonWithRadius(x, y, sides, radius, rotation);
+}
+
+/**
+ * Draws a regular polygon that is inside a circle
+ *
+ * @param {number} x x coord
+ * @param {number} y y coord
+ * @param {number} sides number of sides
+ * @param {number} radius radius
+ * @param {number} [rotation=0] amound to rotate the entire polygon
+ */
+function regularPolygonWithRadius(x, y, sides, radius, rotation = 0) {
+	let i = 0;
+	const e = (Math.PI * 2) / sides;
+	const ctx = C.workingCanvas;
+	rotation += e / 2;
+	const initial = [
+		Math.cos(rotation) * radius + x,
+		Math.sin(rotation) * radius + y,
+	];
+	ctx.beginPath();
+	ctx.moveTo(initial[0], initial[1]);
+	while (i++ < sides) {
+		ctx.lineTo(
+			Math.cos(i * e + rotation) * radius + x,
+			Math.sin(i * e + rotation) * radius + y
+		);
+	}
+	ctx.lineTo(initial[0], initial[1]);
+	ctx.closePath();
+	if (ctx.doFill) ctx.fill();
+	if (ctx.doStroke) ctx.stroke();
+}
+
+/**
+ * Draws a polygon with ratio of central angles
+ *
+ * @param {number} x x coord of centre of polygon
+ * @param {number} y y coord of centre of polygon
+ * @param {number} radius radius of ex-circle of polygon
+ * @param {array} ratios array of ratios of central angles. Must have atleast 3 elements.
+ * @param {number} [rotation=0] amound to rotate the entire polygon.
+ */
+function polygonWithRatioOfCentralAngles(x, y, radius, ratios, rotation = 0) {
+	if (!Array.isArray(ratios)) console.error("ratio provided is not array");
+	const sumOfRatio = ratios.reduce((a, b) => a + b, 0);
+	const baseAngle = (Math.PI * 2) / sumOfRatio;
+	const ctx = C.workingCanvas;
+	ctx.save();
+	ctx.translate(x, y);
+	ctx.rotate(rotation);
+	ctx.beginPath();
+	ctx.moveTo(radius, 0);
+	for (let i = 0; i < ratios.length; i++) {
+		ctx.rotate(baseAngle * ratios[i]);
+		ctx.lineTo(radius, 0);
+	}
+	if (ctx.doStroke) ctx.stroke();
+	if (ctx.doFill) ctx.fill();
+	ctx.closePath();
+	ctx.restore();
+}
+
 export {
 	arc,
 	circle,
@@ -356,4 +581,14 @@ export {
 	annulusSector,
 	angle,
 	arcBetweenPoints,
+	line,
+	rect,
+	polygon,
+	square,
+	quad,
+	triangle,
+	equiTriangle,
+	regularPolygon,
+	regularPolygonWithRadius,
+	polygonWithRatioOfCentralAngles,
 };
