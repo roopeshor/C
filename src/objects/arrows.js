@@ -165,13 +165,13 @@ function doubleArrow(
 function measurement(configs) {
 	const ctx = C.workingCanvas;
 	const defaults = {
-		background: [TRANSPARENT],
-		tipWidth: [DEFAULT_TIP_WIDTH, "number"],
-		tipHeight: [DEFAULT_TIP_WIDTH / 1.3, "number"],
-		innerPadding: [3, "number"],
-		outerPadding: [0, "number"],
-		textRotation: [0, "number"],
-		arrowCurving: [0, "number"],
+		background: TRANSPARENT,
+		tipWidth: DEFAULT_TIP_WIDTH,
+		tipHeight: DEFAULT_TIP_WIDTH / 1.3,
+		innerPadding: 3,
+		outerPadding: 0,
+		textRotation: 0,
+		arrowCurving: 0,
 	};
 	configs = applyDefault(defaults, configs);
 	const { p1, p2 } = configs;

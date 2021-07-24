@@ -35,16 +35,16 @@ import { loop, noLoop } from "./settings.js";
  */
 function parametricFunction(config) {
 	const defaultConfigs = {
-		tension: [1, "number"],
+		tension: 1,
 
-		unitValue: [[1, 1], "array"],
-		unitLength: [[1, 1], "array"], // length of each unit in pixels
-		range: [[0, 10, 0.1], "array"],
-		discontinuities: [[], "array"],
+		unitValue: [1, 1],
+		unitLength: [1, 1], // length of each unit in pixels
+		range: [0, 10, 0.1],
+		discontinuities: [],
 
-		smoothen: [true, "boolean"],
-		closed: [false, "boolean"],
-		draw: [true, "boolean"],
+		smoothen: true,
+		closed: false,
+		draw: true,
 	};
 	config = applyDefault(defaultConfigs, config);
 	var {

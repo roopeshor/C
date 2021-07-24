@@ -1,3 +1,15 @@
+Object.getType = function (obj) {
+	return Object.prototype.toString.call(obj).replace(/(\[object|\s|])/g, "");
+};
+Object.clone =
+	Object.clone ||
+	function (toClone) {
+		var newObj = {};
+		for (var i = 0, keys = Object.keys(toClone); i < keys.length; i++)
+			newObj[keys[i]] = toClone[keys[i]];
+		return newObj;
+	};
+
 /**
  * defines new properties to a given Object
  *
@@ -63,21 +75,15 @@ function arange(start, end, step, rev = false) {
  * @return {object} applied object
  */
 function applyDefault(_default, target = {}, deepApply = true) {
+	target = Object.clone(target);
 	for (let i = 0, keys = Object.keys(_default); i < keys.length; i++) {
-		const prop = keys[i];
-		const objType = _default[prop][1];
-		if (objType == "object" && deepApply) {
-			target[prop] = applyDefault(_default[prop][0], target[prop]);
+		const prop = keys[i], defaultProp = _default[prop], targetProp = target[prop];
+		const defaultType = Object.getType(defaultProp);
+		const targetType = Object.getType(targetProp);
+		if (defaultType == "Object" && deepApply) {
+			target[prop] = applyDefault(defaultProp, targetProp, deepApply);
 		}
-		if (
-			(objType === "number" && isNaN(target[prop])) ||
-			(objType === "array" && !Array.isArray(target[prop])) ||
-			(objType === "boolean" && typeof target[prop] != "boolean") ||
-			target[prop] === undefined ||
-			target[prop] === null
-		) {
-			target[prop] = _default[prop][0];
-		}
+		if (targetType !== defaultType)	target[prop] = _default[prop];
 	}
 	return target;
 }
@@ -110,6 +116,6 @@ export {
 };
 
 // dev tools
-export function log () {
+export function log() {
 	console.log(...arguments);
 }

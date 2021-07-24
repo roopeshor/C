@@ -1,6 +1,6 @@
-import { defineProperties } from "./utils/utils.js";
-// main file; defines C function
-const defaultConfig = {
+import { applyDefault, defineProperties } from "./utils/utils.js";
+
+const defaultConfigs = {
 	width: 200, // width of canvas multiplied by dpr
 	height: 200, // height of canvas  multiplied by dpr
 
@@ -13,9 +13,9 @@ const defaultConfig = {
 	yAxisInverted: false,
 
 	netRotation: 0,
-	currentLoop : null,
-	textAlign : "start",
-	textBaseline : "alphabetic",
+	currentLoop: null,
+	textAlign: "start",
+	textBaseline: "alphabetic",
 	// color stuff
 	fillStyle: "#ffffff",
 	background: "#ffffff",
@@ -31,34 +31,25 @@ const defaultConfig = {
 	fontWeight: "normal",
 	fontStretch: "normal",
 	lineHeight: "1.2",
-	font: "20px serif"
+	font: "20px serif",
 };
-
-function assignDefaultConfigs (cfgs) {
-	for (
-		let i = 0, properties = Object.keys(defaultConfig);
-		i < properties.length;
-		i++
-	) {
-		const property = properties[i];
-		if (cfgs[property] === undefined) cfgs[property] = defaultConfig[property];
-	}
-}
 
 /**
  * Main Function
  *
  * @param {function} fx codes to exeecute
  * @param {HTMLElement} [container=document.body] container for the drawings
- * @param {object} [configs={}] configurations
+ * @param {object} [cfgs={}] configurations
  */
-function C (fx, container = document.body, configs = {}) {
+function C(fx, container = document.body, cfgs = {}) {
 	// assign configs
-	assignDefaultConfigs(configs);
+	const configs = applyDefault(defaultConfigs,cfgs);
 
 	// initialize canvas
 	let canvas = C.makeCanvas(configs);
-	if (typeof container === "string") { container = document.querySelector(container); }
+	if (typeof container === "string") {
+		container = document.querySelector(container);
+	}
 	var parentName = container.id || container.classList.item(0);
 	let canvasName;
 	if (configs.name != undefined) {
@@ -73,20 +64,20 @@ function C (fx, container = document.body, configs = {}) {
 		}
 	} else {
 		// finds a name for canvas that already don't exist
-		while (document.getElementById(parentName+"-" + C.nameID) != undefined) {
+		while (document.getElementById(parentName + "-" + C.nameID) != undefined) {
 			C.nameID++;
 		}
 
-		canvasName = parentName+"-" + C.nameID;
+		canvasName = parentName + "-" + C.nameID;
 		configs.name = canvasName;
 	}
-	function prepareCanvas () {
+	function prepareCanvas() {
 		// add additional information to rendererContext
 		C.resizeCanvas(canvas, configs);
 		canvas.context = Object.assign(canvas.getContext("2d"), configs);
 		canvas.context.setTransform(configs.dpr, 0, 0, configs.dpr, 0, 0);
 		C.workingCanvas = canvas.context;
-		C.workingCanvas.savedStates = defaultConfig;
+		C.workingCanvas.savedStates = defaultConfigs;
 	}
 	// set canvas's id and class to its name
 	canvas.id = canvasName;
@@ -101,25 +92,25 @@ function C (fx, container = document.body, configs = {}) {
 /**
  * List of available canvases
  * @type {Object}
-*/
+ */
 C.canvasList = {};
 
 /**
- * number of canvases
+ * Number of canvases
  * @type {Number}
  */
 C.nameID = 0;
 
 /**
- * current working canvas
+ * Current working canvas
  * @type {CanvasRenderingContext2D}
  */
-C.workingCanvas = undefined; // index of current working canvas in `canvasList`
+C.workingCanvas = undefined; // index of current working canvas in `C.canvasList`
 
 /**
- * default configurations
+ * Default configurations
  */
-C.defaultConfig = defaultConfig;
+C.defaultConfigs = defaultConfigs;
 /**
  * return inner width of container tag
  * @param {HTMLElement} [container=document.body]
@@ -128,31 +119,26 @@ C.defaultConfig = defaultConfig;
 C.getContainerWidth = function (container = document.body) {
 	const cs = window.getComputedStyle(container);
 	return (
-		parseInt(cs.width) -
-    parseInt(cs.paddingRight) -
-    parseInt(cs.paddingLeft)
+		parseInt(cs.width) - parseInt(cs.paddingRight) - parseInt(cs.paddingLeft)
 	);
 };
 
 /**
- * set width and height attribute of canvas element to the given values in `configs`
+ * Set width and height attribute of canvas element to the given values in `configs`
  * and scales CSS width and height to DPR
  *
- * values needed in `configs`:
- *
- *   width: <Number> width in pixels
- *
- *   height: <Number> height in pixels
- *
- *   dpr: <Number> dpr
- * @global
  * @param {HTMLCanvasElement} cvs
  * @param {Object} configs
+ * values needed in `configs`:
+ *
+ * dpr    <Number>: Device pixel ratio
+ * width  <Number>: Width in pixels
+ * height <Number>: Height in pixels
  */
 C.resizeCanvas = function (cvs, configs) {
 	const width = configs.width;
 	const height = configs.height;
-	const dpr = configs.dpr;
+	const dpr = configs.dpr || window.devicePixelRatio;
 	cvs.style.width = width + "px";
 	cvs.style.height = height + "px";
 	cvs.width = dpr * width;
@@ -160,7 +146,7 @@ C.resizeCanvas = function (cvs, configs) {
 };
 
 /**
- * returns a canvas element with given params
+ * Returns a canvas element with given params
  *
  * @param {Object} configs
  * @returns {HTMLCanvasElement}
@@ -172,7 +158,7 @@ C.makeCanvas = function (configs) {
 };
 
 /**
- * add extension to window and C extension list
+ * Add extension to window and C extension list
  *
  * @param {Object} extObj
  * @param {boolean} editable warn the edit of functions
@@ -183,9 +169,9 @@ C.addExtension = function (extObj, editable) {
 };
 
 /**
-*/
+ */
 C.defineProperties = defineProperties;
 // register to window
 window.C = C;
 
-export {C};
+export { C };

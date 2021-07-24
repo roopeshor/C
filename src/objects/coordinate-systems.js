@@ -52,35 +52,26 @@ function axes(config = {}) {
 	const ctx = C.workingCanvas;
 	// default configurations
 	const defaultConfigs = {
-		xAxis: [
-			{
-				length: [ctx.width, "number"],
-				textDirection: [[-0.3, -1], "array"],
-
-				includeTick: [true, "boolean"],
-				includeLeftTip: [true, "boolean"],
-				includeRightTip: [true, "boolean"],
-				excludeOriginTick: [true, "boolean"],
-				includeNumbers: [false, "boolean"],
-			},
-			"object",
-		],
-		yAxis: [
-			{
-				length: [ctx.height, "number"],
-				rotation: [Math.PI / 2, "number"],
-				textRotation: [-Math.PI / 2, "number"],
-
-				textDirection: [[-0.3, 0.5], "array"],
-
-				includeTick: [true, "boolean"],
-				includeLeftTip: [true, "boolean"],
-				includeRightTip: [true, "boolean"],
-				excludeOriginTick: [true, "boolean"],
-				includeNumbers: [false, "boolean"],
-			},
-			"object",
-		],
+		xAxis: {
+			length: ctx.width,
+			textDirection: [-0.3, -1],
+			includeTick: true,
+			includeLeftTip: true,
+			includeRightTip: true,
+			excludeOriginTick: true,
+			includeNumbers: false,
+		},
+		yAxis: {
+			length: ctx.height,
+			rotation: Math.PI / 2,
+			textRotation: -Math.PI / 2,
+			textDirection: [-0.3, 0.5],
+			includeTick: true,
+			includeLeftTip: true,
+			includeRightTip: true,
+			excludeOriginTick: true,
+			includeNumbers: false,
+		},
 	};
 	// configurations
 	config = applyDefault(defaultConfigs, config);
@@ -171,33 +162,33 @@ function axes(config = {}) {
 function numberLine(config = {}) {
 	const ctx = C.workingCanvas;
 	const defaultConfigs = {
-		rotation: [0, "number"],
-		lineWidth: [2, "number"],
-		tipWidth: [13, "number"],
-		textSize: [17, "number"],
-		tipHeight: [10, "number"],
-		tickHeight: [10, "number"],
-		textRotation: [0, "number"],
-		length: [ctx.width, "number"],
-		longerTickMultiple: [1.5, "number"],
+		rotation: 0,
+		lineWidth: 2,
+		tipWidth: 13,
+		textSize: 17,
+		tipHeight: 10,
+		tickHeight: 10,
+		textRotation: 0,
+		length: ctx.width,
+		longerTickMultiple: 1.5,
 
-		center: [[0, 0], "array"],
-		range: [[-5, 5, 1], "array"],
-		numbersToInclude: [[], "array"],
-		numbersToExclude: [[], "array"],
-		textDirection: [[-0.3, -1], "array"],
-		numbersWithElongatedTicks: [[], "array"],
+		center: [0, 0],
+		range: [-5, 5, 1],
+		numbersToInclude: [],
+		numbersToExclude: [],
+		textDirection: [-0.3, -1],
+		numbersWithElongatedTicks: [],
 
-		includeTick: [true, "boolean"],
-		includeNumbers: [true, "boolean"],
-		includeLeftTip: [false, "boolean"],
-		includeRightTip: [false, "boolean"],
-		excludeOriginTick: [false, "boolean"],
+		includeTick: true,
+		includeNumbers: true,
+		includeLeftTip: false,
+		includeRightTip: false,
+		excludeOriginTick: false,
 
-		color: [GREY, "string"],
-		textColor: [WHITE, "string"],
+		color: GREY,
+		textColor: WHITE,
 	};
-	applyDefault(defaultConfigs, config);
+	config = applyDefault(defaultConfigs, config);
 	const {
 		color,
 		center,
@@ -354,49 +345,40 @@ function numberPlane(config = {}) {
 	const ctx = C.workingCanvas;
 	// default configurations
 	const defaultConfigs = {
-		xAxis: [
-			{
-				length: [ctx.width, "number"],
+		xAxis: {
+			length: ctx.width,
 
-				range: [[-5, 5, 1], "array"],
-				textDirection: [[-0.2, 1.3], "array"],
+			range: [-5, 5, 1],
+			textDirection: [-0.2, 1.3],
 
-				includeTick: [true, "boolean"],
-				includeNumbers: [true, "boolean"],
-				includeLeftTip: [false, "boolean"],
-				includeRightTip: [false, "boolean"],
-				excludeOriginTick: [true, "boolean"],
-			},
-			"object",
-		],
-		yAxis: [
-			{
-				length: [ctx.height, "number"],
-				textRotation: [-Math.PI / 2, "number"],
+			includeTick: true,
+			includeNumbers: true,
+			includeLeftTip: false,
+			includeRightTip: false,
+			excludeOriginTick: true,
+		},
+		yAxis: {
+			length: ctx.height,
+			textRotation: -Math.PI / 2,
 
-				range: [[-5, 5, 1], "array"],
-				textDirection: [[1.1, 0.6], "array"],
+			range: [-5, 5, 1],
+			textDirection: [1.1, 0.6],
 
-				includeTick: [true, "boolean"],
-				includeNumbers: [true, "boolean"],
-				includeLeftTip: [false, "boolean"],
-				includeRightTip: [false, "boolean"],
-				excludeOriginTick: [true, "boolean"],
-			},
-			"object",
-		],
-		grid: [
-			{
-				subgrids: [1, "number"],
-				lineWidth: [1, "number"],
-				subgridLineWidth: [0.7, "number"],
+			includeTick: true,
+			includeNumbers: true,
+			includeLeftTip: false,
+			includeRightTip: false,
+			excludeOriginTick: true,
+		},
+		grid: {
+			subgrids: 1,
+			lineWidth: 1,
+			subgridLineWidth: 0.7,
 
-				color: [BLUE_C + "a0", "string"],
-				subgridLineColor: [GREY + "50", "string"],
-			},
-			"object",
-		],
-		center: [[0, 0], "array"],
+			color: BLUE_C + "a0",
+			subgridLineColor: GREY + "50",
+		},
+		center: [0, 0],
 	};
 
 	// configurations

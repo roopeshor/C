@@ -1,10 +1,9 @@
-import { GREEN_C, RED_C } from "../../src/constants/colors.js";
+import { GREEN_C } from "../../src/constants/colors.js";
 import { E, PI, TAU } from "../../src/constants/math.js";
 import { C } from "../../src/main.js";
 import { axes } from "../../src/objects/coordinate-systems.js";
 import { parametricFunction } from "../../src/objects/functions.js";
 import {
-	fill,
 	initBlackboardCanvas,
 	noFill,
 	stroke,
@@ -14,7 +13,11 @@ import { abs, cos, lcm, sgn, sin } from "../../src/utils/math.js";
 
 const W = 300;
 const H = 300;
-
+const CFG = {
+	width: W,
+	height: H,
+};
+Object.freeze(CFG);
 function setup(min = -4, max = 4, dx = 1) {
 	initBlackboardCanvas();
 	strokeWidth(2);
@@ -56,10 +59,7 @@ C(
 		}).animate(10000);
 	},
 	".lissajous",
-	{
-		width: W,
-		height: H,
-	}
+	CFG
 );
 C(
 	() => {
@@ -87,10 +87,7 @@ C(
 		}).animate();
 	},
 	".hypotrochoid",
-	{
-		width: W,
-		height: H,
-	}
+	CFG
 );
 C(
 	() => {
@@ -112,14 +109,11 @@ C(
 			unitLength: cfgs.unitLength,
 			unitValue: cfgs.unitValue,
 			draw: false,
-			smoothen: false
+			smoothen: true
 		}).animate();
 	},
 	".superellipse",
-	{
-		width: W,
-		height: H,
-	}
+	CFG
 );
 C(
 	() => {
@@ -132,7 +126,6 @@ C(
 		const cfgs = setup(-4, 4, 1);
 		stroke(GREEN_C);
 		noFill();
-		strokeWidth(0.5);
 		var dt = 0.1;
 		parametricFunction({
 			paramFunction: ft,
@@ -144,8 +137,5 @@ C(
 		}).animate(10000);
 	},
 	".Butterfly-curve",
-	{
-		width: W,
-		height: H,
-	}
+	CFG
 );
