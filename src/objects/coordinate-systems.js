@@ -2,6 +2,7 @@ import { BLUE_C, GREY, WHITE } from "../constants/colors.js";
 import { C } from "../main.js";
 import { applyDefault, arange } from "../utils/utils.js";
 import { arrowTip } from "./arrows.js";
+import { functionGraph, parametricFunction } from "./functions.js";
 import { line } from "./geometry.js";
 import {
 	fill,
@@ -15,18 +16,37 @@ import {
 } from "./settings.js";
 import { fillText } from "./text.js";
 
+function getPlotters(unitLength, unitValue) {
+	return {
+		getParametricFunction: function (configs) {
+			configs.unitLength = unitLength;
+			configs.unitValue = unitValue;
+			return parametricFunction(configs);
+		},
+		getFunctionGraph: function (configs) {
+			configs.unitLength = unitLength;
+			configs.unitValue = unitValue;
+			return functionGraph(configs);
+		},
+	};
+}
 
 /**
  * Creates a axes.
- * xAxis: <object> configs for x axis.
- *   This will be given to numberLine. see {@link numberLine} function for possible values
- * yAxis: <object> configs for y axis.
- *   This will be given to numberLine. see {@link numberLine} function for possible values
- * center: <array> [[0, 0]]
- *   center of axes
- *
  * @param {Object} config
- * @returns axis configs
+ * Possible configurations are:
+ *
+ * * xAxis  <object>         : Configurations for x axis. (See {@link numberLine} for more configurations)
+ * * yAxis  <object>         : Configurations for y axis. (See {@link numberLine} for more configurations)
+ * * center <array> [[0, 0]] : center of axes
+ *
+ * @returns {object} object that contains following properties:
+ * * xAxis                 <object>   : x axis confiurations from numberLine (See {@link numberLine} for those configurations).
+ * * yAxis                 <object>   : y axis confiurations from numberLine (See {@link numberLine} for those configurations).
+ * * unitValue             <array>    : How much a unit is in its value in x and y directions.
+ * * unitLength            <array>    : How much a unit is in px in x and y directions.
+ * * getParametricFunction <function> : Draws a parametric function whose unit sizing are predefined by the axes. see {@link parametricFunction} to see possible configurations.
+ * * getFunctionGraph      <function> : Draws a function graph whose unit sizing are predefined by the axes. see {@link functionGraph} to see possible configurations.
  */
 function axes(config = {}) {
 	const ctx = C.workingCanvas;
@@ -101,83 +121,52 @@ function axes(config = {}) {
 	// reverse the effect of overall shift
 	ctx.translate(-center[0], -center[1] - yShift);
 	ctx.restore();
-	return {
-		xAxis: xAxisLine, // x axis confiurations from numberLine
-		yAxis: yAxisLine, // y axis confiurations from numberLine
-		unitValue: unitValue, // how much a unit is in its value
-		unitLength: unitLength, // how much a unit is in px
-	};
+
+	return Object.assign(
+		{
+			center: center, // center of axis as [x, y] in px
+			xAxis: xAxisLine, // x axis confiurations from numberLine
+			yAxis: yAxisLine, // y axis confiurations from numberLine
+			unitValue: unitValue, // how much a unit is as [x, y] in its value
+			unitLength: unitLength, // how much a unit is as [x, y] in px
+		},
+		getPlotters(unitLength, unitValue)
+	);
 }
 
 /**
  * Creates a numberLine with parameters in a object
- * (default values for each properties are given in square brackets)
- *
- * point1 : <Array> [[-ctx.width / 2, 0]]
- *   starting point of line
- *
- * point2 : <Array> [[ctx.width / 2, 0]]
- *   ending point of line
- *
- * range : <Array> [[-5, 5, 1]]
- *   range of numbers to draw ticks and numbers
- *
- * numbersToExclude : <Array> [defaultValue=[]]
- *   list of numbers that shouldn't be displayed
- *
- * numbersToInclude : <Array> [defaultValue=[]]
- *   list of numbers to be displayed
- *
- * numbersWithElongatedTicks : <Array> [defaultValue=[]]
- *   list of numbers where tick line should be longer
- *
- * includeLeftTip : <boolean> [false]
- *   whether to add an arrow tip at left
- *
- * includeRightTip : <boolean> [false]
- *   whether to add an arrow tip at right
- *
- * tipWidth : <number> [20]
- *   width of arrow tip in px
- *
- * tipHeight : <number> [1]
- *   height/width of tip
- *
- * color : <hex string> [GREY]
- *   color of axis and ticks
- *
- * lineWidth : <number> 32]
- *   width of lines in px
- *
- * includeTick : <boolean> [true]
- *   whether ticks should be added
- *
- * excludeOriginTick : <boolean> [false]
- *   whether exclude ticks at origin (0)
- *
- * longerTickMultiple : <number> [2]
- *   factor to increase height of ticks at elongated ticks
- *
- * tickHeight : <number> [15]
- *   height of ticks in px
- *
- * textDirection : <array> [0, -0.8]
- *   direction of text relative to nearby tick
- *
- * textColor : <hex string> [WHITE]
- *   color of text
- *
- * textSize : <number> [17]
- *   font size of text
- *
- * textRotation : <number> [0]
- *   amount to rotate text
- *
- * decimalPlaces : <number> [number of decimals in step]
- *   number of decimal places in text
- *
  * @param {object} config
- * @returns unit length
+ * Possible properties:
+ *
+ * * point1                    <array>   ([-ctx.width / 2, 0]): starting point of line
+ * * point2                    <array>   ([ctx.width / 2, 0]) : ending point of line
+ * * range                     <array>   ([-5, 5, 1])         : range of numbers to draw ticks and numbers
+ * * numbersToInclude          <array>   ([])                 : list of numbers to be displayed
+ * * numbersToExclude          <array>   ([])                 : list of numbers that shouldn't be displayed
+ * * numbersWithElongatedTicks <array>   ([])               : list of numbers where tick line should be longer
+ * * textDirection             <array>   (0, -0.8)          : Direction of text relative to nearby tick
+ * * includeLeftTip            <boolean> (false)            : whether to add an arrow tip at left
+ * * includeRightTip           <boolean> (false)            : whether to add an arrow tip at right
+ * * includeTick               <boolean> (true)             : Whether ticks should be added
+ * * excludeOriginTick         <boolean> (false)            : Whether exclude ticks at origin
+ * * tipWidth                  <number>  (20)               : width of arrow tip in px
+ * * tipHeight                 <number>  (1)                : height/width of tip
+ * * lineWidth                 <number>  (32)               : Width of lines in px
+ * * longerTickMultiple        <number>  (2)                : Factor to increase height of ticks at elongated ticks
+ * * tickHeight                <number>  (15)               : Height of ticks in px
+ * * textSize                  <number>  (17)               : Font size of text
+ * * textRotation              <number>  (0)                : Amount to rotate text
+ * * decimalPlaces             <number>  (#decimals in step): Number of decimal places in text
+ * * color                     <string>  (GREY)             : Color of axis and ticks
+ * * textColor                 <string>  (WHITE)            : Color of text
+ *
+ * @returns {object} configurations about the number line
+ *
+ * * center     <array>: Center of the number line in px
+ * * tickList   <array>: List of tick inervals
+ * * unitValue  <array>: How much a unit is in its value in x and y directions.
+ * * unitLength <array>: How much a unit is in px in x and y directions.
  */
 function numberLine(config = {}) {
 	const ctx = C.workingCanvas;
@@ -337,28 +326,29 @@ function numberLine(config = {}) {
 }
 
 /**
- * creates a numberPlane based on following parameters inside a Object
- * xAxis: <object> configs for x axis.
- *   This will be given to numberLine. see {@link numberLine} function for possible values
-
- * yAxis: <object> configs for y axis.
- *   This will be given to numberLine. see {@link numberLine} function for possible values
- *
- * grid : <object> set of styles to draw grid & subgrids
- *
- * possible properties:
- *   lineWidth        : <number> stroke width of grid lines [1],
- *
- *   color            : <hex string> color of grid lines ["#58C4DDA0"],
- *
- *   subgrids         : <number> number of sub-grid division to draw [0],
- *
- *   subgridLineColor : <hex string> color of sub-grids ["#888888A0"],
- *
- *   subgridLineWidth : <number> stroke width of sub-grid [0.7],
- *
+ * Creates a numberPlane based on following parameters inside a Object
  * @param {Object} config
- * @returns {Object} configurations
+ * Possible parameters:
+ *
+ * * xAxis  <object>: Configurations for x axis. See {@link numberLine} for possible configurations.
+ * * yAxis  <object>: Configurations for y axis. See {@link numberLine} for possible configurations.
+ * * center <array> : Center of number plane as [x, y] in px.
+ * * grid   <object>: Set of styles to draw grid & subgrids. This can have following properties:
+ *   * lineWidth        <number> (1)          : stroke width of grid lines
+ *   * subgrids         <number> (0)          : number of sub-grid division to draw
+ *   * subgridLineWidth <number> (0.7)        : stroke width of sub-grid
+ *   * color            <string> ("#58c4dda0"): color of grid lines
+ *   * subgridLineColor <string> ("#888888a0"): color of sub-grids
+ * @returns {Object} configurations of number plane. Those are :
+ *
+ * * center                <array>   : Center of number plane as [x, y] in px.
+ * * unitValue             <array>   : How much a unit is in its value in x and y directions.
+ * * unitLength            <array>   : How much a unit is in px in x and y directions.
+ * * subgridUnit           <array>   : How much a sub-grid is in px in x and y directions.
+ * * xAxis                 <object>  : x axis confiurations from numberLine (See {@link numberLine} for those configurations).
+ * * yAxis                 <object>  : y axis confiurations from numberLine (See {@link numberLine} for those configurations).
+ * * getParametricFunction <function>: Draws a parametric function whose unit sizing are predefined by the axes. see {@link parametricFunction} to see possible configurations.
+ * * getFunctionGraph      <function>: Draws a function graph whose unit sizing are predefined by the axes. see {@link functionGraph} to see possible configurations.
  */
 function numberPlane(config = {}) {
 	const ctx = C.workingCanvas;
@@ -513,13 +503,17 @@ function numberPlane(config = {}) {
 	}
 
 	restore();
-	return {
-		unitValue: unitValue,
-		unitLength: unitLength,
-		xAxis: axesLines.xAxis, // x axis confiurations from numberLine
-		yAxis: axesLines.yAxis, // y axis confiurations from numberLine
-		subgridUnit: subgridUnit, // subgrid unit size
-	};
+	return Object.assign(
+		{
+			center: center, // center of number plane
+			unitValue: unitValue, // how much a unit is in its value
+			unitLength: unitLength, // how much a unit is in px
+			xAxis: axesLines.xAxis, // x axis confiurations from numberLine
+			yAxis: axesLines.yAxis, // y axis confiurations from numberLine
+			subgridUnit: subgridUnit, // subgrid unit size
+		},
+		getPlotters(unitLength, unitValue)
+	);
 }
 
 export { axes, numberLine, numberPlane };

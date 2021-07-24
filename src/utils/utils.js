@@ -72,6 +72,7 @@ function applyDefault(_default, target = {}, deepApply = true) {
 		if (
 			(objType === "number" && isNaN(target[prop])) ||
 			(objType === "array" && !Array.isArray(target[prop])) ||
+			(objType === "boolean" && typeof target[prop] != "boolean") ||
 			target[prop] === undefined ||
 			target[prop] === null
 		) {

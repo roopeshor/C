@@ -13,22 +13,32 @@ import { loop, noLoop } from "./settings.js";
 
 /**
  * Draws a parametric functions
+ * This accept parameters as object.
+ * @param {object} config configuration object
+ * It can have following properties:
  *
- * @param {function} f function to plot. Must recieve one argument and return a array of point as [x, y]
- * @param {array} [range=[0, 10, 0.1]] range as [min, max, dt]
- * @param {number} [scalar=50] amount to scale the shape.
- * @param {boolean} [smoothen=true] whether to smoothen the shape.
- * @param {number} [tension=1] smoothness tension.
- * @param {array} [discontinuities=[]] array of t where the curve discontinues.
- * @param {boolean} [closed=false] whether the function draws a closed shape.
- * @returns {array} array of computed points as [x, y]
+ * * paramFunction   <function>               : function to plot. Must recieve one argument and return a array of point as [x, y]
+ * * range           <array>    ([0, 10, 0.1]): Range as [min, max, dt]
+ * * smoothen        <boolean>  (true)        : Whether to smoothen the shape.
+ * * tension         <number>   (1)           : Smoothness tension.
+ * * discontinuities <array>    ([])          : Array of t where the curve discontinues.
+ * * closed          <boolean>  (false)       : Whether the function draws a closed shape.
+ * * unitValue       <array>    ([1, 1])      : Value of each unit space
+ * * unitLength      <array>    ([1, 1])      : Length of each unit in pixels
+ * * draw            <boolean>  (true)        : Wheteher to draw the function graph right now.
+ *
+ * @returns {object} object that contains following properties:
+ *
+ * * points  <array>    : Array of computed points in the function
+ * * draw    <function> : Function that draws the plot
+ * * animate <function> : Function that animates the drawing of the shape. Accept argument `duration` which is the duration of animation.
  */
 function parametricFunction(config) {
 	const defaultConfigs = {
 		tension: [1, "number"],
 
 		unitValue: [[1, 1], "array"],
-		unitLength: [[50, 50], "array"],
+		unitLength: [[1, 1], "array"], // length of each unit in pixels
 		range: [[0, 10, 0.1], "array"],
 		discontinuities: [[], "array"],
 
@@ -38,7 +48,7 @@ function parametricFunction(config) {
 	};
 	config = applyDefault(defaultConfigs, config);
 	var {
-		paramFunction: f,
+		paramFunction,
 		range,
 		smoothen,
 		tension,
@@ -67,7 +77,7 @@ function parametricFunction(config) {
 			}
 			continue;
 		}
-		let ft = f(t);
+		let ft = paramFunction(t);
 		points[row].push([ft[0] * unitX, ft[1] * unitY]);
 	}
 
@@ -93,10 +103,10 @@ function parametricFunction(config) {
 	return {
 		points: points,
 		draw: plot,
-		animate: function (time = 2000) {
+		animate: function (duration = 2000) {
 			const ctx = C.workingCanvas;
 			var noPoints = points.flat().length;
-			var dt = time / noPoints;
+			var dt = duration / noPoints;
 			for (let i = 0; i < points.length; i++) {
 				var p = points[i];
 				var j = 0;
@@ -157,19 +167,11 @@ function parametricFunction(config) {
 
 /**
  * Draws graph of funciton
- *
- * @param {function} f function to plot. Must recieve one argument and return a number.
- * @param {array} [range=[0, 10, 0.1]] range as [min, max, dt]
- * @param {number} [scalar=50] amount to scale the shape.
- * @param {boolean} [smoothen=true] whether to smoothen the shape.
- * @param {number} [tension=1] smoothness tension.
- * @param {array} [discontinuities=[]] array of inputs where the curve discontinues.
- * @param {boolean} [closed=false] whether the function draws a closed graph.
- * @return {array} array of computed points as [x, y]
+ * See {@link parametricFunction} For arguments
  */
 function functionGraph(config) {
-	const f = config.paramFunction;
-	config.paramFunction = (x) => [x, f(x)];
+	const paramFunction = config.paramFunction;
+	config.paramFunction = (x) => [x, paramFunction(x)];
 	return parametricFunction(config);
 }
 export { parametricFunction, functionGraph };

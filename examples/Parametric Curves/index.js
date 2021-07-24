@@ -103,8 +103,7 @@ C(
 		}
 		const cfgs = setup(-5, 5, 1);
 		stroke(GREEN_C);
-		fill(RED_C + "80");
-		// noFill();
+		noFill();
 		var dt = PI / 5;
 		parametricFunction({
 			paramFunction: ft,
@@ -113,7 +112,7 @@ C(
 			unitLength: cfgs.unitLength,
 			unitValue: cfgs.unitValue,
 			draw: false,
-			smoothen: 0
+			smoothen: false
 		}).animate();
 	},
 	".superellipse",
