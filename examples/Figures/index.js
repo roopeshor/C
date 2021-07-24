@@ -1,24 +1,33 @@
 import {
-	BLUE_C, DARK_BROWN, GREEN_C, PURPLE_C, RED_C, TEAL_C, WHITE, YELLOW_C
+	BLUE_C,
+	DARK_BROWN,
+	GREEN_C,
+	PURPLE_C,
+	RED_C,
+	TEAL_C,
+	WHITE,
+	YELLOW_C
 } from "../../src/constants/colors.js";
 import { CENTER, MIDDLE } from "../../src/constants/drawing.js";
-import { PI, RAD, TAU, TWO_PI } from "../../src/constants/math.js";
+import { PI, RAD, TWO_PI } from "../../src/constants/math.js";
 import { C } from "../../src/main.js";
 import { doubleArrow, measurement } from "../../src/objects/arrows.js";
 import { arcBrace } from "../../src/objects/braces.js";
 import { linearGradient } from "../../src/objects/color.js";
-import { parametricFunction } from "../../src/objects/functions.js";
 import {
-	angle, circle,
-	circularSegment, line, point, sector
+	angle,
+	circle,
+	circularSegment,
+	line,
+	point,
+	sector
 } from "../../src/objects/geometry.js";
 import {
 	fill,
 	fontStyle,
 	initBlackboardCanvas,
 	lineDash,
-	noFill,
-	save,
+	noFill, save,
 	stroke,
 	strokeWidth,
 	textAlign,
@@ -26,7 +35,7 @@ import {
 	translate
 } from "../../src/objects/settings.js";
 import { fillText, text } from "../../src/objects/text.js";
-import { cos, rotateAroundOrigin, sin } from "../../src/utils/math.js";
+import { rotateAroundOrigin } from "../../src/utils/math.js";
 
 const W = 300;
 const H = 300;
@@ -104,12 +113,12 @@ C(
 		stroke(GREEN_C);
 		fill(RED_C);
 		const line1 = [
-			[ -50, -50 ],
-			[ 120, 120 ],
+			[-50, -50],
+			[120, 120],
 		];
 		const line2 = [
-			[ -70, 70 ],
-			[ 120, -120 ],
+			[-70, 70],
+			[120, -120],
 		];
 		line(line1[0][0], line1[0][1], line1[1][0], line1[1][1]);
 		stroke(RED_C);
@@ -170,28 +179,5 @@ C(
 		width: W,
 		height: H,
 		name: "t",
-	}
-);
-C(
-	() => {
-		function fx (t) {
-			return [
-				cos(t) * 100,
-				sin(t) * 100
-			];
-		}
-		initBlackboardCanvas();
-		strokeWidth(0.5);
-		stroke(GREEN_C);
-		noFill();
-		var dt = TAU/12;
-		parametricFunction(fx, [0, TAU, dt], true, 1, [], dt, true);
-		stroke(RED_C + "a0");
-		// parametricFunction(fx, [-TAU, TAU, 0.01]);
-	},
-	".parametric-function",
-	{
-		width: W,
-		height: H,
 	}
 );

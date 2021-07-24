@@ -657,7 +657,7 @@ function initCenteredCanvas() {
 function invertYAxis () {
 	const ctx = C.workingCanvas;
 	ctx.scale(1, -1);
-	ctx.yAxisInverted = true;
+	ctx.yAxisInverted = !ctx.yAxisInverted;
 }
 
 /**

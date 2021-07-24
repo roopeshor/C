@@ -8,10 +8,16 @@
  */
 function defineProperties(obj, toAssign, specific, message) {
 	toAssign = toAssign || window;
-	specific = (specific === undefined || specific === null) ? window : specific;
+	specific = specific === undefined || specific === null ? window : specific;
 	toAssign = toAssign || window;
 	message =
-    typeof message === "function" ? message : function (k) { console.warn("You changed value of \"" + k + "\" which C uses. Be careful"); };
+		typeof message === "function"
+			? message
+			: function (k) {
+					console.warn(
+						"You changed value of '" + k + "' which C uses. Be careful"
+					);
+				};
 	for (let i = 0, props = Object.keys(obj); i < props.length; i++) {
 		// definer in IIFE to avoid assigning same values to all properties
 		if (specific) {
@@ -27,10 +33,10 @@ function defineProperties(obj, toAssign, specific, message) {
 							configurable: true,
 							enumerable: true,
 							value: value,
-							writable: true
+							writable: true,
 						});
 						message(name);
-					}
+					},
 				});
 			})(props[i], obj[props[i]], toAssign, message);
 		} else {
@@ -46,10 +52,23 @@ function arange(start, end, step, rev = false) {
 	return arr;
 }
 
-function applyDefault(_default, target = {}) {
+/**
+ * Applies default configurations to a given target object
+ * Must be in the form of
+ * <prop>: [<defaultValue>, <type>]
+ *
+ * @param {object} _default default configurations
+ * @param {object} [target={}] target object
+ * @param {boolean} [deepApply=true] whether to apply defaults to deep nested objects
+ * @return {object} applied object
+ */
+function applyDefault(_default, target = {}, deepApply = true) {
 	for (let i = 0, keys = Object.keys(_default); i < keys.length; i++) {
 		const prop = keys[i];
 		const objType = _default[prop][1];
+		if (objType == "object" && deepApply) {
+			target[prop] = applyDefault(_default[prop][0], target[prop]);
+		}
 		if (
 			(objType === "number" && isNaN(target[prop])) ||
 			(objType === "array" && !Array.isArray(target[prop])) ||
@@ -67,13 +86,12 @@ function applyDefault(_default, target = {}) {
  *
  * @param {CanvasRenderingContext2D} ctx
  */
-function doFillAndStroke (ctx) {
+function doFillAndStroke(ctx) {
 	if (ctx.doFill) ctx.fill();
 	if (ctx.doStroke) ctx.stroke();
 }
 
-
-function approximateIndexInArray (val, array, epsilon)  {
+function approximateIndexInArray(val, array, epsilon = 1e-6) {
 	for (let i = 0; i < array.length; i++) {
 		var k = array[i];
 		if (Math.abs(k - val) <= epsilon) {
@@ -87,5 +105,10 @@ export {
 	arange,
 	applyDefault,
 	doFillAndStroke,
-	approximateIndexInArray
+	approximateIndexInArray,
 };
+
+// dev tools
+export function log () {
+	console.log(...arguments);
+}

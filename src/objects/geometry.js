@@ -134,33 +134,52 @@ function sector(x, y, radius, angle = Math.PI / 2, startAngle = 0) {
 }
 
 /**
+ * Returns bēzier control points that passes smoothly through given points.
+ *
+ * @param {array} recentPoint previous point
+ * @param {array} currentPoint
+ * @param {array} nextPoint
+ * @param {array} secondNextPoint
+ * @param {number} [tension=1]
+ * @return {array} two control points as [cp1x, cp1y, cp2x, cp2y]
+ */
+function getBezierControlPoints(
+	recentPoint,
+	currentPoint,
+	nextPoint,
+	secondNextPoint,
+	tension = 1
+) {
+	return [
+		currentPoint[0] + ((nextPoint[0] - recentPoint[0]) / 6) * tension,
+		currentPoint[1] + ((nextPoint[1] - recentPoint[1]) / 6) * tension,
+		nextPoint[0] - ((secondNextPoint[0] - currentPoint[0]) / 6) * tension,
+		nextPoint[1] - ((secondNextPoint[1] - currentPoint[1]) / 6) * tension,
+	];
+}
+
+/**
  * Adds a smooth curve passing through given points and tension using bézie curve to the current shape.
  * Taken from {@link https://stackoverflow.com/a/49371349}
  *
  * @param {array} points array of points as [x, y]
  * @param {number} tension tension of the curve
  */
-function smoothCurveThroughPointsTo(points, tension = 1, loop = true) {
+function smoothCurveThroughPointsTo(points, tension = 1, closed = true) {
 	for (var i = 0; i < points.length - 1; i++) {
-		var recentPoint = i > 0 ? points[i - 1] : loop ? points[points.length-2] : points[0];
+		var recentPoint =
+			i > 0 ? points[i - 1] : closed ? points[points.length - 2] : points[0];
 		var currentPoint = points[i];
 		var nextPoint = points[i + 1];
-		var secondNextPoint = i != points.length - 2 ? points[i + 2] : loop ? points[1] : nextPoint;
+		var secondNextPoint =
+			i != points.length - 2 ? points[i + 2] : closed ? points[1] : nextPoint;
 
-		var cp1x =
-			currentPoint[0] + ((nextPoint[0] - recentPoint[0]) / 6) * tension;
-		var cp1y =
-			currentPoint[1] + ((nextPoint[1] - recentPoint[1]) / 6) * tension;
-		var cp2x =
-			nextPoint[0] - ((secondNextPoint[0] - currentPoint[0]) / 6) * tension;
-		var cp2y =
-			nextPoint[1] - ((secondNextPoint[1] - currentPoint[1]) / 6) * tension;
-
+		var cp = getBezierControlPoints(recentPoint, currentPoint, nextPoint, secondNextPoint, tension);
 		C.workingCanvas.bezierCurveTo(
-			cp1x,
-			cp1y,
-			cp2x,
-			cp2y,
+			cp[0],
+			cp[1],
+			cp[2],
+			cp[3],
 			nextPoint[0],
 			nextPoint[1]
 		);
@@ -173,12 +192,13 @@ function smoothCurveThroughPointsTo(points, tension = 1, loop = true) {
  * @param {array} points array of points as [x, y]
  * @param {number} tension tension of the curve
  */
-function smoothCurveThroughPoints(points, tension = 1) {
+function smoothCurveThroughPoints(points, tension = 1, closed = true) {
 	const ctx = C.workingCanvas;
 	ctx.beginPath();
 	ctx.moveTo(points[0][0], points[0][1]);
 
-	smoothCurveThroughPointsTo(points, tension);
+	smoothCurveThroughPointsTo(points, tension, closed);
+	ctx.closePath();
 	doFillAndStroke(ctx);
 }
 
@@ -591,4 +611,5 @@ export {
 	regularPolygon,
 	regularPolygonWithRadius,
 	polygonWithRatioOfCentralAngles,
+	getBezierControlPoints
 };

@@ -1,11 +1,11 @@
 import { TRANSPARENT } from "../constants/colors.js";
 import { BEVEL, CENTER, MIDDLE } from "../constants/drawing.js";
 import { C } from "../main.js";
-
-import { endShape, restore, save, startShape } from "./settings.js";
-import { applyDefault, doFillAndStroke } from "../utils/utils.js";
 import { circleIntersection } from "../utils/math.js";
+import { applyDefault, doFillAndStroke } from "../utils/utils.js";
+import { endShape, restore, save, startShape } from "./settings.js";
 import { fillText } from "./text.js";
+
 
 const DEFAULT_TIP_WIDTH = 15;
 

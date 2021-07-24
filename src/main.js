@@ -59,6 +59,7 @@ function C (fx, container = document.body, configs = {}) {
 	// initialize canvas
 	let canvas = C.makeCanvas(configs);
 	if (typeof container === "string") { container = document.querySelector(container); }
+	var parentName = container.id || container.classList.item(0);
 	let canvasName;
 	if (configs.name != undefined) {
 		canvasName = configs.name;
@@ -72,11 +73,11 @@ function C (fx, container = document.body, configs = {}) {
 		}
 	} else {
 		// finds a name for canvas that already don't exist
-		while (document.getElementById("canvas-" + C.nameID) != undefined) {
+		while (document.getElementById(parentName+"-" + C.nameID) != undefined) {
 			C.nameID++;
 		}
 
-		canvasName = "canvas-" + C.nameID;
+		canvasName = parentName+"-" + C.nameID;
 		configs.name = canvasName;
 	}
 	function prepareCanvas () {

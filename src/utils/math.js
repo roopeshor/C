@@ -30,17 +30,7 @@ export const {
 	tanh,
 } = Math;
 
-/**
- * return distance between two points
- *
- * @param {array} p1
- * @param {array} p2
- * @return {number} distance between p1 and p2
- */
-function dist(p1, p2) {
-	return Math.sqrt(Math.pow(p1[0] - p2[0], 2) + Math.pow(p1[1] - p2[1], 2));
-}
-
+// --------- Random -----------//
 /**
  * Returns a random integer between given range.
  *
@@ -50,6 +40,80 @@ function dist(p1, p2) {
  */
 function randomInt(max = 10, min = 0) {
 	return Math.round(Math.random() * (max - min) + min);
+}
+
+
+//--------- Arithmetics -----------//
+
+/**
+ * Computes GCD (Greatest Common Divisor) or HCF (Highest Common Factor) of two numbers
+ *
+ * @param {number} a
+ * @param {number} b
+ * @return {number}
+ */
+function gcd(a, b) {
+	while (b != 0) {
+		let ra = b;
+		b = a % b;
+		a = ra;
+	}
+	return a;
+}
+
+/**
+ * Returns greatest common divisor of a list of integers.
+ *
+ * @return {number}
+ */
+function gcdArray() {
+	var n = 0;
+	for (var i = 0; i < arguments.length; ++i) n = gcd(arguments[i], n);
+	return n;
+}
+
+/**
+ * Computes LCM (Least Common Multiple) of two numbers
+ *
+ * @param {number} a
+ * @param {number} b
+ * @return {number}
+ */
+function lcm(a, b) {
+	return (a * b) / gcd(a, b);
+}
+
+//
+/**
+ * Returns least common multiple of a list of integers.
+ *
+ * @return {number}
+ */
+function lcmArray() {
+	var n = 1;
+	for (var i = 0; i < arguments.length; ++i) n = lcm(arguments[i], n);
+	return n;
+}
+
+
+//----- Timing Functions ---------//
+
+function linear (x) {
+	return x;
+}
+
+
+//-------- Point Functions ----------//
+
+/**
+ * return distance between two points
+ *
+ * @param {array} p1
+ * @param {array} p2
+ * @return {number} distance between p1 and p2
+ */
+function dist(p1, p2) {
+	return Math.sqrt(Math.pow(p1[0] - p2[0], 2) + Math.pow(p1[1] - p2[1], 2));
 }
 
 /**
@@ -125,10 +189,15 @@ function circleIntersection(c1, r1, c2, r2) {
 }
 
 export {
-	dist,
 	randomInt,
+	dist,
+	linear,
 	rotateAroundOrigin,
 	rotateAroundPoint,
 	lineIntersection,
 	circleIntersection,
+	gcd,
+	gcdArray,
+	lcm,
+	lcmArray,
 };
