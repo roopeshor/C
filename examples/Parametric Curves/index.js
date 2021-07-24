@@ -1,15 +1,15 @@
 import { GREEN_C } from "../../src/constants/colors.js";
 import { E, PI, TAU } from "../../src/constants/math.js";
 import { C } from "../../src/main.js";
-import { axes } from "../../src/objects/coordinate-systems.js";
-import { parametricFunction } from "../../src/objects/functions.js";
+import { axes } from "../../src/objects/coordinate_systems.js";
 import {
 	initBlackboardCanvas,
 	noFill,
 	stroke,
 	strokeWidth
 } from "../../src/objects/settings.js";
-import { abs, cos, lcm, sgn, sin } from "../../src/utils/math.js";
+import { abs, cos, sgn, sin } from "../../src/math/basic.js";
+import { lcm } from "../../src/math/aritmetics.js";
 
 const W = 300;
 const H = 300;
@@ -17,10 +17,11 @@ const CFG = {
 	width: W,
 	height: H,
 };
-Object.freeze(CFG);
-function setup(min = -4, max = 4, dx = 1) {
+function drawAxis(min = -4, max = 4, dx = 1) {
 	initBlackboardCanvas();
 	strokeWidth(2);
+	stroke(GREEN_C);
+	noFill();
 	return axes({
 		xAxis: {
 			lineWidth: 1,
@@ -45,18 +46,13 @@ C(
 		function ft(t) {
 			return [3 * sin(10 * t), 3 * sin(9 * t)];
 		}
-		const cfgs = setup();
-		stroke(GREEN_C);
-		noFill();
-		var dt = TAU / 500;
-		parametricFunction({
+		drawAxis().getParametricFunction({
 			paramFunction: ft,
-			range: [0, TAU, dt],
+			range: [0, TAU, TAU / 400],
 			closed: true,
-			unitLength: cfgs.unitLength,
-			unitValue: cfgs.unitValue,
 			draw: false
-		}).animate(10000);
+		}).animate(5000);
+
 	},
 	".lissajous",
 	CFG
@@ -65,26 +61,19 @@ C(
 	() => {
 		const R = 5,
 			r = 3,
-			d = 5;
+			d = 5,limit = (TAU * lcm(r, R)) / R;
 		function ft(t) {
 			return [
 				(R - r) * cos(t) + d * cos(((R - r) * t) / r),
 				(R - r) * sin(t) - d * sin(((R - r) * t) / r),
 			];
 		}
-		const cfgs = setup(-8, 8, 1);
-		stroke(GREEN_C);
-		noFill();
-		var limit = (TAU * lcm(r, R)) / R;
-		var dt = limit / 100;
-		parametricFunction({
+		drawAxis(-8, 8, 1).getParametricFunction({
 			paramFunction: ft,
-			range: [0, limit, dt],
+			range: [0, limit, limit / 100],
 			closed: true,
-			unitLength: cfgs.unitLength,
-			unitValue: cfgs.unitValue,
 			draw: false
-		}).animate();
+		}).animate(2000);
 	},
 	".hypotrochoid",
 	CFG
@@ -98,19 +87,13 @@ C(
 				abs(sin(t)) ** (2 / n) * 3 * sgn(sin(t)),
 			];
 		}
-		const cfgs = setup(-5, 5, 1);
-		stroke(GREEN_C);
-		noFill();
-		var dt = PI / 5;
-		parametricFunction({
+		drawAxis(-5, 5, 1).getParametricFunction({
 			paramFunction: ft,
-			range: [0, TAU, dt],
+			range: [0, TAU, PI / 40],
 			closed: true,
-			unitLength: cfgs.unitLength,
-			unitValue: cfgs.unitValue,
 			draw: false,
 			smoothen: true
-		}).animate();
+		}).animate(2000);
 	},
 	".superellipse",
 	CFG
@@ -119,23 +102,17 @@ C(
 	() => {
 		function ft(t) {
 			return [
-				sin(t) * (E ** cos(t) - 2 * cos(4 * t) - sin(t / 12) ** 5),
-				cos(t) * (E ** cos(t) - 2 * cos(4 * t) - sin(t / 12) ** 5),
+				sin(t) * (E ** cos(t) - 2 * cos(4 * t) - cos(t / 12) ** 5),
+				cos(t) * (E ** cos(t) - 2 * cos(4 * t) - cos(t / 12) ** 5),
 			];
 		}
-		const cfgs = setup(-4, 4, 1);
-		stroke(GREEN_C);
-		noFill();
-		var dt = 0.1;
-		parametricFunction({
+		drawAxis(-4, 4, 1).getParametricFunction({
 			paramFunction: ft,
-			range: [-TAU, TAU, dt],
+			range: [-TAU*2, TAU*2, 0.1],
 			closed: false,
-			unitLength: cfgs.unitLength,
-			unitValue: cfgs.unitValue,
 			draw: false
-		}).animate(10000);
+		}).animate(5000);
 	},
-	".Butterfly-curve",
+	".butterfly-curve",
 	CFG
 );

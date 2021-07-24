@@ -1,6 +1,6 @@
 import { BLUE_C, GREY, WHITE } from "../constants/colors.js";
 import { C } from "../main.js";
-import { applyDefault, arange } from "../utils/utils.js";
+import { applyDefault, arange } from "../utils.js";
 import { arrowTip } from "./arrows.js";
 import { functionGraph, parametricFunction } from "./functions.js";
 import { line } from "./geometry.js";

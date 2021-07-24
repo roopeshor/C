@@ -3,7 +3,7 @@ import {
 	applyDefault,
 	approximateIndexInArray,
 	doFillAndStroke,
-} from "../utils/utils.js";
+} from "../utils.js";
 import {
 	getBezierControlPoints,
 	line,

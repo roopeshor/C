@@ -1,6 +1,6 @@
 import * as COLORLIST from "../constants/colors.js";
 import { C } from "../main.js";
-import { randomInt } from "../utils/math.js";
+import { randomInt } from "../math/random.js";
 
 
 /**

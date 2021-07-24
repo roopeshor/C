@@ -1,111 +1,4 @@
 /**
- * This module contains useful math functions.
- * @module math
- */
-
-export const {
-	abs,
-	acos,
-	asin,
-	atan,
-	atan2,
-	cbrt,
-	ceil,
-	cos,
-	cosh,
-	exp,
-	floor,
-	log,
-	log2,
-	log10,
-	max,
-	min,
-	pow,
-	random,
-	round,
-	sign: sgn,
-	sin,
-	sqrt,
-	tan,
-	tanh,
-} = Math;
-
-// --------- Random -----------//
-/**
- * Returns a random integer between given range.
- *
- * @param {number} [max=10] maximum range
- * @param {number} [min=0] minimum range
- * @return {number}
- */
-function randomInt(max = 10, min = 0) {
-	return Math.round(Math.random() * (max - min) + min);
-}
-
-
-//--------- Arithmetics -----------//
-
-/**
- * Computes GCD (Greatest Common Divisor) or HCF (Highest Common Factor) of two numbers
- *
- * @param {number} a
- * @param {number} b
- * @return {number}
- */
-function gcd(a, b) {
-	while (b != 0) {
-		let ra = b;
-		b = a % b;
-		a = ra;
-	}
-	return a;
-}
-
-/**
- * Returns greatest common divisor of a list of integers.
- *
- * @return {number}
- */
-function gcdArray() {
-	var n = 0;
-	for (var i = 0; i < arguments.length; ++i) n = gcd(arguments[i], n);
-	return n;
-}
-
-/**
- * Computes LCM (Least Common Multiple) of two numbers
- *
- * @param {number} a
- * @param {number} b
- * @return {number}
- */
-function lcm(a, b) {
-	return (a * b) / gcd(a, b);
-}
-
-//
-/**
- * Returns least common multiple of a list of integers.
- *
- * @return {number}
- */
-function lcmArray() {
-	var n = 1;
-	for (var i = 0; i < arguments.length; ++i) n = lcm(arguments[i], n);
-	return n;
-}
-
-
-//----- Timing Functions ---------//
-
-function linear (x) {
-	return x;
-}
-
-
-//-------- Point Functions ----------//
-
-/**
  * return distance between two points
  *
  * @param {array} p1
@@ -179,7 +72,7 @@ function lineIntersection(p1, p2, p3, p4) {
 function circleIntersection(c1, r1, c2, r2) {
 	const d = dist(c1, c2);
 	const a = (r1 * r1 - r2 * r2 + d * d) / (2 * d);
-	const h = sqrt(r1 * r1 - a * a);
+	const h = Math.sqrt(r1 * r1 - a * a);
 	const s = a / d;
 	const p2 = [(c2[0] - c1[0]) * s + c1[0], (c2[1] - c1[1]) * s + c1[1]];
 	return [
@@ -189,15 +82,9 @@ function circleIntersection(c1, r1, c2, r2) {
 }
 
 export {
-	randomInt,
 	dist,
-	linear,
 	rotateAroundOrigin,
 	rotateAroundPoint,
 	lineIntersection,
-	circleIntersection,
-	gcd,
-	gcdArray,
-	lcm,
-	lcmArray,
+	circleIntersection
 };

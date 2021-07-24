@@ -4,6 +4,954 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.TRANSPARENT = exports.ORANGE = exports.GREEN_SCREEN = exports.LIGHT_PINK = exports.PINK = exports.GREY_BROWN = exports.DARKER_GRAY = exports.DARKER_GREY = exports.DARK_GRAY = exports.DARK_GREY = exports.GREY = exports.GRAY = exports.LIGHT_GREY = exports.LIGHT_GRAY = exports.BLACK = exports.WHITE = exports.PURPLE_E = exports.PURPLE_D = exports.PURPLE_C = exports.PURPLE_B = exports.PURPLE_A = exports.MAROON_E = exports.MAROON_D = exports.MAROON_C = exports.MAROON_B = exports.MAROON_A = exports.RED_E = exports.RED_D = exports.RED_C = exports.RED_B = exports.RED_A = exports.GOLD_E = exports.GOLD_D = exports.GOLD_C = exports.GOLD_B = exports.GOLD_A = exports.YELLOW_E = exports.YELLOW_D = exports.YELLOW_C = exports.YELLOW_B = exports.YELLOW_A = exports.GREEN_E = exports.GREEN_D = exports.GREEN_C = exports.GREEN_B = exports.GREEN_A = exports.TEAL_E = exports.TEAL_D = exports.TEAL_C = exports.TEAL_B = exports.TEAL_A = exports.BLUE_E = exports.BLUE_D = exports.BLUE_C = exports.BLUE_B = exports.BLUE_A = exports.LIGHT_BROWN = exports.DARK_BROWN = exports.DARK_BLUE = void 0;
+
+/**
+ * List of colors
+ * @module constants
+ * @submodule colors
+ */
+// from Manim
+const DARK_BLUE = "#236B8E",
+      DARK_BROWN = "#8B4513",
+      LIGHT_BROWN = "#CD853F",
+      BLUE_A = "#C7E9F1",
+      BLUE_B = "#9CDCEB",
+      BLUE_C = "#58C4DD",
+      BLUE_D = "#29ABCA",
+      BLUE_E = "#1C758A",
+      TEAL_A = "#ACEAD7",
+      TEAL_B = "#76DDC0",
+      TEAL_C = "#5CD0B3",
+      TEAL_D = "#55C1A7",
+      TEAL_E = "#49A88F",
+      GREEN_A = "#C9E2AE",
+      GREEN_B = "#A6CF8C",
+      GREEN_C = "#83C167",
+      GREEN_D = "#77B05D",
+      GREEN_E = "#699C52",
+      YELLOW_A = "#FFF1B6",
+      YELLOW_B = "#FFEA94",
+      YELLOW_C = "#FFFF00",
+      YELLOW_D = "#F4D345",
+      YELLOW_E = "#E8C11C",
+      GOLD_A = "#F7C797",
+      GOLD_B = "#F9B775",
+      GOLD_C = "#F0AC5F",
+      GOLD_D = "#E1A158",
+      GOLD_E = "#C78D46",
+      RED_A = "#F7A1A3",
+      RED_B = "#FF8080",
+      RED_C = "#FC6255",
+      RED_D = "#E65A4C",
+      RED_E = "#CF5044",
+      MAROON_A = "#ECABC1",
+      MAROON_B = "#EC92AB",
+      MAROON_C = "#C55F73",
+      MAROON_D = "#A24D61",
+      MAROON_E = "#94424F",
+      PURPLE_A = "#CAA3E8",
+      PURPLE_B = "#B189C6",
+      PURPLE_C = "#9A72AC",
+      PURPLE_D = "#715582",
+      PURPLE_E = "#644172",
+      WHITE = "#FFFFFF",
+      BLACK = "#000000",
+      LIGHT_GRAY = "#BBBBBB",
+      LIGHT_GREY = "#BBBBBB",
+      GRAY = "#888888",
+      GREY = "#888888",
+      DARK_GREY = "#444444",
+      DARK_GRAY = "#444444",
+      DARKER_GREY = "#222222",
+      DARKER_GRAY = "#222222",
+      GREY_BROWN = "#736357",
+      PINK = "#D147BD",
+      LIGHT_PINK = "#DC75CD",
+      GREEN_SCREEN = "#00FF00",
+      ORANGE = "#FF862F",
+      TRANSPARENT = "rgba(0,0,0,0)";
+exports.TRANSPARENT = TRANSPARENT;
+exports.ORANGE = ORANGE;
+exports.GREEN_SCREEN = GREEN_SCREEN;
+exports.LIGHT_PINK = LIGHT_PINK;
+exports.PINK = PINK;
+exports.GREY_BROWN = GREY_BROWN;
+exports.DARKER_GRAY = DARKER_GRAY;
+exports.DARKER_GREY = DARKER_GREY;
+exports.DARK_GRAY = DARK_GRAY;
+exports.DARK_GREY = DARK_GREY;
+exports.GREY = GREY;
+exports.GRAY = GRAY;
+exports.LIGHT_GREY = LIGHT_GREY;
+exports.LIGHT_GRAY = LIGHT_GRAY;
+exports.BLACK = BLACK;
+exports.WHITE = WHITE;
+exports.PURPLE_E = PURPLE_E;
+exports.PURPLE_D = PURPLE_D;
+exports.PURPLE_C = PURPLE_C;
+exports.PURPLE_B = PURPLE_B;
+exports.PURPLE_A = PURPLE_A;
+exports.MAROON_E = MAROON_E;
+exports.MAROON_D = MAROON_D;
+exports.MAROON_C = MAROON_C;
+exports.MAROON_B = MAROON_B;
+exports.MAROON_A = MAROON_A;
+exports.RED_E = RED_E;
+exports.RED_D = RED_D;
+exports.RED_C = RED_C;
+exports.RED_B = RED_B;
+exports.RED_A = RED_A;
+exports.GOLD_E = GOLD_E;
+exports.GOLD_D = GOLD_D;
+exports.GOLD_C = GOLD_C;
+exports.GOLD_B = GOLD_B;
+exports.GOLD_A = GOLD_A;
+exports.YELLOW_E = YELLOW_E;
+exports.YELLOW_D = YELLOW_D;
+exports.YELLOW_C = YELLOW_C;
+exports.YELLOW_B = YELLOW_B;
+exports.YELLOW_A = YELLOW_A;
+exports.GREEN_E = GREEN_E;
+exports.GREEN_D = GREEN_D;
+exports.GREEN_C = GREEN_C;
+exports.GREEN_B = GREEN_B;
+exports.GREEN_A = GREEN_A;
+exports.TEAL_E = TEAL_E;
+exports.TEAL_D = TEAL_D;
+exports.TEAL_C = TEAL_C;
+exports.TEAL_B = TEAL_B;
+exports.TEAL_A = TEAL_A;
+exports.BLUE_E = BLUE_E;
+exports.BLUE_D = BLUE_D;
+exports.BLUE_C = BLUE_C;
+exports.BLUE_B = BLUE_B;
+exports.BLUE_A = BLUE_A;
+exports.LIGHT_BROWN = LIGHT_BROWN;
+exports.DARK_BROWN = DARK_BROWN;
+exports.DARK_BLUE = DARK_BLUE;
+
+},{}],2:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.OBLIQUE = exports.ITALIC = exports.SMALLER = exports.LARGER = exports.XXX_LARGE = exports.XX_LARGE = exports.X_LARGE = exports.LARGE = exports.MEDIUM = exports.SMALL = exports.X_SMALL = exports.XX_SMALL = exports.ULTRA_EXPANDED = exports.EXTRA_EXPANDED = exports.EXPANDED = exports.SEMI_EXPANDED = exports.NORMAL = exports.SEMI_CONDENSED = exports.CONDENSED = exports.EXTRA_CONDENSED = exports.ULTRA_CONDENSED = exports.BOTTOM = exports.IDEOGRAPHIC = exports.ALPHABETIC = exports.MIDDLE = exports.HANGING = exports.TOP = exports.END = exports.START = exports.CENTER = exports.RIGHT = exports.LEFT = exports.MITER = exports.BEVEL = exports.MILTER = exports.ROUND = exports.SQUARE = exports.BUTT = void 0;
+const BUTT = "butt",
+      SQUARE = "square",
+      ROUND = "round",
+      MILTER = "milter",
+      BEVEL = "bevel",
+      MITER = "miter",
+      LEFT = "left",
+      RIGHT = "right",
+      CENTER = "center",
+      START = "start",
+      END = "end",
+      TOP = "top",
+      HANGING = "hanging",
+      MIDDLE = "middle",
+      ALPHABETIC = "alphabetic",
+      IDEOGRAPHIC = "ideographic",
+      BOTTOM = "bottom",
+      // font stretch properties
+ULTRA_CONDENSED = "ultra-condensed",
+      // 50%
+EXTRA_CONDENSED = "extra-condensed",
+      // 62.5%
+CONDENSED = "condensed",
+      // 75%
+SEMI_CONDENSED = "semi-condensed",
+      // 87.5%
+NORMAL = "normal",
+      // 100%
+SEMI_EXPANDED = "semi-expanded",
+      // 112.5%
+EXPANDED = "expanded",
+      // 125%
+EXTRA_EXPANDED = "extra-expanded",
+      // 150%
+ULTRA_EXPANDED = "ultra-expanded",
+      // 200%
+// font size properties
+XX_SMALL = "xx-small",
+      X_SMALL = "x-small",
+      SMALL = "small",
+      MEDIUM = "medium",
+      LARGE = "large",
+      X_LARGE = "x-large",
+      XX_LARGE = "xx-large",
+      XXX_LARGE = "xxx-large",
+      LARGER = "larger",
+      SMALLER = "smaller",
+      // font style properties
+ITALIC = "italic",
+      OBLIQUE = "oblique";
+exports.OBLIQUE = OBLIQUE;
+exports.ITALIC = ITALIC;
+exports.SMALLER = SMALLER;
+exports.LARGER = LARGER;
+exports.XXX_LARGE = XXX_LARGE;
+exports.XX_LARGE = XX_LARGE;
+exports.X_LARGE = X_LARGE;
+exports.LARGE = LARGE;
+exports.MEDIUM = MEDIUM;
+exports.SMALL = SMALL;
+exports.X_SMALL = X_SMALL;
+exports.XX_SMALL = XX_SMALL;
+exports.ULTRA_EXPANDED = ULTRA_EXPANDED;
+exports.EXTRA_EXPANDED = EXTRA_EXPANDED;
+exports.EXPANDED = EXPANDED;
+exports.SEMI_EXPANDED = SEMI_EXPANDED;
+exports.NORMAL = NORMAL;
+exports.SEMI_CONDENSED = SEMI_CONDENSED;
+exports.CONDENSED = CONDENSED;
+exports.EXTRA_CONDENSED = EXTRA_CONDENSED;
+exports.ULTRA_CONDENSED = ULTRA_CONDENSED;
+exports.BOTTOM = BOTTOM;
+exports.IDEOGRAPHIC = IDEOGRAPHIC;
+exports.ALPHABETIC = ALPHABETIC;
+exports.MIDDLE = MIDDLE;
+exports.HANGING = HANGING;
+exports.TOP = TOP;
+exports.END = END;
+exports.START = START;
+exports.CENTER = CENTER;
+exports.RIGHT = RIGHT;
+exports.LEFT = LEFT;
+exports.MITER = MITER;
+exports.BEVEL = BEVEL;
+exports.MILTER = MILTER;
+exports.ROUND = ROUND;
+exports.SQUARE = SQUARE;
+exports.BUTT = BUTT;
+
+},{}],3:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.RAD = exports.DEG = exports.SQRT2 = exports.TWO_PI = exports.TAU = exports.QUATER_PI = exports.TIERCE_PI = exports.HALF_PI = exports.PI = exports.LN10 = exports.LN2 = exports.E = void 0;
+const E = 2.71828182845904523,
+      LN2 = 0.69314718055994530,
+      LN10 = 2.30258509299404568,
+      PI = 3.14159265358979323,
+      HALF_PI = 1.57079632679489661,
+      TIERCE_PI = 1.04719755119659774,
+      QUATER_PI = 0.78539816339744830,
+      TAU = 6.28318530717958647,
+      TWO_PI = 6.28318530717958647,
+      SQRT2 = 1.41421356237309504,
+      // conversion factors
+DEG = Math.PI / 180,
+      // degree to radian
+RAD = 180 / Math.PI // radian to degree
+;
+exports.RAD = RAD;
+exports.DEG = DEG;
+exports.SQRT2 = SQRT2;
+exports.TWO_PI = TWO_PI;
+exports.TAU = TAU;
+exports.QUATER_PI = QUATER_PI;
+exports.TIERCE_PI = TIERCE_PI;
+exports.HALF_PI = HALF_PI;
+exports.PI = PI;
+exports.LN10 = LN10;
+exports.LN2 = LN2;
+exports.E = E;
+
+},{}],4:[function(require,module,exports){
+"use strict";
+
+var _utils = require("./utils.js");
+
+var _main = require("./main.js");
+
+var COLORLIST = _interopRequireWildcard(require("./constants/colors.js"));
+
+var DrawingConstants = _interopRequireWildcard(require("./constants/drawing.js"));
+
+var MathConsts = _interopRequireWildcard(require("./constants/math.js"));
+
+var Colors = _interopRequireWildcard(require("./objects/color.js"));
+
+var Image = _interopRequireWildcard(require("./objects/image.js"));
+
+var Geometry = _interopRequireWildcard(require("./objects/geometry.js"));
+
+var Settings = _interopRequireWildcard(require("./objects/settings.js"));
+
+var Text = _interopRequireWildcard(require("./objects/text.js"));
+
+var Tex = _interopRequireWildcard(require("./objects/tex.js"));
+
+var CoordinateSystems = _interopRequireWildcard(require("./objects/coordinate_systems.js"));
+
+var Braces = _interopRequireWildcard(require("./objects/braces.js"));
+
+var Arrows = _interopRequireWildcard(require("./objects/arrows.js"));
+
+var Functions = _interopRequireWildcard(require("./objects/functions.js"));
+
+var Arithmeics = _interopRequireWildcard(require("./math/aritmetics.js"));
+
+var Basic = _interopRequireWildcard(require("./math/basic.js"));
+
+var Points = _interopRequireWildcard(require("./math/points.js"));
+
+var Random = _interopRequireWildcard(require("./math/random.js"));
+
+var RateFunctions = _interopRequireWildcard(require("./math/rate_functions.js"));
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+(0, _utils.defineProperties)(COLORLIST, window, false);
+(0, _utils.defineProperties)(DrawingConstants, window, false);
+(0, _utils.defineProperties)(MathConsts, window, false);
+(0, _utils.defineProperties)(Colors);
+(0, _utils.defineProperties)(Image);
+(0, _utils.defineProperties)(Geometry);
+(0, _utils.defineProperties)(Settings);
+(0, _utils.defineProperties)(Text);
+(0, _utils.defineProperties)(Tex);
+(0, _utils.defineProperties)(CoordinateSystems);
+(0, _utils.defineProperties)(Braces);
+(0, _utils.defineProperties)(Arrows);
+(0, _utils.defineProperties)(Functions);
+(0, _utils.defineProperties)(Arithmeics);
+(0, _utils.defineProperties)(Basic);
+(0, _utils.defineProperties)(Points);
+(0, _utils.defineProperties)(Random);
+(0, _utils.defineProperties)(RateFunctions);
+(0, _utils.defineProperties)(MathConsts, window, false);
+(0, _utils.defineProperties)(_utils.defineProperties, _main.C);
+(0, _utils.defineProperties)(COLORLIST, _main.C);
+
+},{"./constants/colors.js":1,"./constants/drawing.js":2,"./constants/math.js":3,"./main.js":5,"./math/aritmetics.js":6,"./math/basic.js":7,"./math/points.js":8,"./math/random.js":9,"./math/rate_functions.js":10,"./objects/arrows.js":11,"./objects/braces.js":12,"./objects/color.js":13,"./objects/coordinate_systems.js":14,"./objects/functions.js":15,"./objects/geometry.js":16,"./objects/image.js":17,"./objects/settings.js":18,"./objects/tex.js":19,"./objects/text.js":20,"./utils.js":21}],5:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.C = C;
+
+var _utils = require("./utils.js");
+
+const defaultConfigs = {
+  width: 200,
+  // width of canvas multiplied by dpr
+  height: 200,
+  // height of canvas  multiplied by dpr
+  dpr: Math.ceil(window.devicePixelRatio || 1),
+  // device pixel ratio for clear drawings
+  // states
+  doFill: true,
+  doStroke: true,
+  pathStarted: false,
+  yAxisInverted: false,
+  netRotation: 0,
+  currentLoop: null,
+  textAlign: "start",
+  textBaseline: "alphabetic",
+  // color stuff
+  fillStyle: "#ffffff",
+  background: "#ffffff",
+  strokeStyle: "#000000",
+  colorMode: "rgba",
+  lineWidth: 1,
+  // font properties
+  fontSize: "20px",
+  fontFamily: "serif",
+  fontStyle: "normal",
+  fontVariant: "normal",
+  fontWeight: "normal",
+  fontStretch: "normal",
+  lineHeight: "1.2",
+  font: "20px serif"
+};
+/**
+ * Main Function
+ *
+ * @param {function} fx codes to exeecute
+ * @param {HTMLElement} [container=document.body] container for the drawings
+ * @param {object} [cfgs={}] configurations
+ */
+
+function C(fx, container = document.body, cfgs = {}) {
+  // assign configs
+  const configs = (0, _utils.applyDefault)(defaultConfigs, cfgs); // initialize canvas
+
+  let canvas = C.makeCanvas(configs);
+
+  if (typeof container === "string") {
+    container = document.querySelector(container);
+  }
+
+  var parentName = container.id || container.classList.item(0);
+  let canvasName;
+
+  if (configs.name != undefined) {
+    canvasName = configs.name;
+    const cvs = document.getElementById(canvasName);
+
+    if (cvs instanceof HTMLElement) {
+      // if already exist
+      canvas = cvs;
+      prepareCanvas();
+      fx();
+      return;
+    }
+  } else {
+    // finds a name for canvas that already don't exist
+    while (document.getElementById(parentName + "-" + C.nameID) != undefined) {
+      C.nameID++;
+    }
+
+    canvasName = parentName + "-" + C.nameID;
+    configs.name = canvasName;
+  }
+
+  function prepareCanvas() {
+    // add additional information to rendererContext
+    C.resizeCanvas(canvas, configs);
+    canvas.context = Object.assign(canvas.getContext("2d"), configs);
+    canvas.context.setTransform(configs.dpr, 0, 0, configs.dpr, 0, 0);
+    C.workingCanvas = canvas.context;
+    C.workingCanvas.savedStates = defaultConfigs;
+  } // set canvas's id and class to its name
+
+
+  canvas.id = canvasName;
+  canvas.classList.add(canvasName); // add canvas to container
+
+  container.appendChild(canvas);
+  prepareCanvas();
+  C.canvasList[canvasName] = canvas.context;
+  fx();
+}
+/**
+ * List of available canvases
+ * @type {Object}
+ */
+
+
+C.canvasList = {};
+/**
+ * Number of canvases
+ * @type {Number}
+ */
+
+C.nameID = 0;
+/**
+ * Current working canvas
+ * @type {CanvasRenderingContext2D}
+ */
+
+C.workingCanvas = undefined; // index of current working canvas in `C.canvasList`
+
+/**
+ * Default configurations
+ */
+
+C.defaultConfigs = defaultConfigs;
+/**
+ * return inner width of container tag
+ * @param {HTMLElement} [container=document.body]
+ * @returns {Number}
+ */
+
+C.getContainerWidth = function (container = document.body) {
+  const cs = window.getComputedStyle(container);
+  return parseInt(cs.width) - parseInt(cs.paddingRight) - parseInt(cs.paddingLeft);
+};
+/**
+ * Set width and height attribute of canvas element to the given values in `configs`
+ * and scales CSS width and height to DPR
+ *
+ * @param {HTMLCanvasElement} cvs
+ * @param {Object} configs
+ * values needed in `configs`:
+ *
+ * dpr    <Number>: Device pixel ratio
+ * width  <Number>: Width in pixels
+ * height <Number>: Height in pixels
+ */
+
+
+C.resizeCanvas = function (cvs, configs) {
+  const width = configs.width;
+  const height = configs.height;
+  const dpr = configs.dpr || window.devicePixelRatio;
+  cvs.style.width = width + "px";
+  cvs.style.height = height + "px";
+  cvs.width = dpr * width;
+  cvs.height = dpr * height;
+};
+/**
+ * Returns a canvas element with given params
+ *
+ * @param {Object} configs
+ * @returns {HTMLCanvasElement}
+ */
+
+
+C.makeCanvas = function (configs) {
+  const cvs = document.createElement("canvas");
+  this.resizeCanvas(cvs, configs);
+  return cvs;
+};
+/**
+ * Add extension to window and C extension list
+ *
+ * @param {Object} extObj
+ * @param {boolean} editable warn the edit of functions
+ */
+
+
+C.addExtension = function (extObj, editable) {
+  (0, _utils.defineProperties)(extObj, window, !editable);
+  (0, _utils.defineProperties)(extObj, C.extensions, !editable);
+};
+/**
+ */
+
+
+C.defineProperties = _utils.defineProperties; // register to window
+
+window.C = C;
+
+},{"./utils.js":21}],6:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.gcd = gcd;
+exports.gcdArray = gcdArray;
+exports.lcm = lcm;
+exports.lcmArray = lcmArray;
+
+/**
+ * Computes GCD (Greatest Common Divisor) or HCF (Highest Common Factor) of two numbers
+ *
+ * @param {number} a
+ * @param {number} b
+ * @return {number}
+ */
+function gcd(a, b) {
+  while (b != 0) {
+    let ra = b;
+    b = a % b;
+    a = ra;
+  }
+
+  return a;
+}
+/**
+ * Returns greatest common divisor of a list of integers.
+ *
+ * @return {number}
+ */
+
+
+function gcdArray() {
+  var n = 0;
+
+  for (var i = 0; i < arguments.length; ++i) n = gcd(arguments[i], n);
+
+  return n;
+}
+/**
+ * Computes LCM (Least Common Multiple) of two numbers
+ *
+ * @param {number} a
+ * @param {number} b
+ * @return {number}
+ */
+
+
+function lcm(a, b) {
+  return a * b / gcd(a, b);
+}
+/**
+ * Returns least common multiple of a list of integers.
+ *
+ * @return {number}
+ */
+
+
+function lcmArray() {
+  var n = 1;
+
+  for (var i = 0; i < arguments.length; ++i) n = lcm(arguments[i], n);
+
+  return n;
+}
+
+},{}],7:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.tanh = exports.tan = exports.sqrt = exports.sin = exports.sgn = exports.round = exports.random = exports.pow = exports.min = exports.max = exports.log10 = exports.log2 = exports.log = exports.floor = exports.exp = exports.cosh = exports.cos = exports.ceil = exports.cbrt = exports.atan2 = exports.atan = exports.asin = exports.acos = exports.abs = void 0;
+const {
+  abs,
+  acos,
+  asin,
+  atan,
+  atan2,
+  cbrt,
+  ceil,
+  cos,
+  cosh,
+  exp,
+  floor,
+  log,
+  log2,
+  log10,
+  max,
+  min,
+  pow,
+  random,
+  round,
+  sign: sgn,
+  sin,
+  sqrt,
+  tan,
+  tanh
+} = Math;
+exports.tanh = tanh;
+exports.tan = tan;
+exports.sqrt = sqrt;
+exports.sin = sin;
+exports.sgn = sgn;
+exports.round = round;
+exports.random = random;
+exports.pow = pow;
+exports.min = min;
+exports.max = max;
+exports.log10 = log10;
+exports.log2 = log2;
+exports.log = log;
+exports.floor = floor;
+exports.exp = exp;
+exports.cosh = cosh;
+exports.cos = cos;
+exports.ceil = ceil;
+exports.cbrt = cbrt;
+exports.atan2 = atan2;
+exports.atan = atan;
+exports.asin = asin;
+exports.acos = acos;
+exports.abs = abs;
+
+},{}],8:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.dist = dist;
+exports.rotateAroundOrigin = rotateAroundOrigin;
+exports.rotateAroundPoint = rotateAroundPoint;
+exports.lineIntersection = lineIntersection;
+exports.circleIntersection = circleIntersection;
+
+/**
+ * return distance between two points
+ *
+ * @param {array} p1
+ * @param {array} p2
+ * @return {number} distance between p1 and p2
+ */
+function dist(p1, p2) {
+  return Math.sqrt(Math.pow(p1[0] - p2[0], 2) + Math.pow(p1[1] - p2[1], 2));
+}
+/**
+ * Returns a point rotated around a point by certain angle, exetened by a certain length
+ *
+ * @param {number|array} x center x or center as array of coords [x, y]
+ * @param {number} y center y
+ * @param {number} angle angle of rotation
+ * @param {number} len length to extend the point
+ * @returns {array} array of two points
+ */
+
+
+function rotateAroundPoint(x, y, angle, len = 10) {
+  if (Array.isArray(x) && x.length === 2) {
+    y = x[1];
+    x = x[0];
+  }
+
+  return [Math.cos(angle) * len + x, Math.sin(angle) * len + y];
+}
+/**
+ * Returns a point rotated around origin by certain angle, exetened by a certain length
+ *
+ * @param {number} angle angle of rotation
+ * @param {number} len length to extend the point
+ * @returns {array} array of two points
+ */
+
+
+function rotateAroundOrigin(angle, len = 10) {
+  return rotateAroundPoint(0, 0, angle, len);
+}
+/**
+ * Returns the point of intersection of two lines.
+ *
+ * @param {array} p1 start point of first line as [x, y]
+ * @param {array} p2 end point of first line as [x, y]
+ * @param {array} p3 start point of second line as [x, y]
+ * @param {array} p4 end point of second line as [x, y]
+ * @return {array} intersection point of lines as [x, y]
+ */
+
+
+function lineIntersection(p1, p2, p3, p4) {
+  const m1 = (p2[1] - p1[1]) / (p2[0] - p1[0]);
+  const m2 = (p4[1] - p3[1]) / (p4[0] - p3[0]);
+  const c1 = p1[1] - p1[0] * m1;
+  const c2 = p3[1] - p3[0] * m2;
+  const x = (c2 - c1) / (m1 - m2);
+  const y = m1 * x + c1;
+  return [x, y];
+}
+/**
+ * Finds intersection of two circles.
+ * A translation from {@link https://stackoverflow.com/a/14146166}
+ *
+ * @param {array} c1 center of first circle as [x, y]
+ * @param {number} r1 radius of first circle
+ * @param {array} c2 center of second circle as [x, y]
+ * @param {number} r2 radius of second circle
+ * @return {array} array of two points as [x, y]
+ */
+
+
+function circleIntersection(c1, r1, c2, r2) {
+  const d = dist(c1, c2);
+  const a = (r1 * r1 - r2 * r2 + d * d) / (2 * d);
+  const h = Math.sqrt(r1 * r1 - a * a);
+  const s = a / d;
+  const p2 = [(c2[0] - c1[0]) * s + c1[0], (c2[1] - c1[1]) * s + c1[1]];
+  return [[p2[0] + h * (c2[1] - c1[1]) / d, p2[1] - h * (c2[0] - c1[0]) / d], [p2[0] - h * (c2[1] - c1[1]) / d, p2[1] + h * (c2[0] - c1[0]) / d]];
+}
+
+},{}],9:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.randomInt = randomInt;
+
+/**
+ * Returns a random integer between given range.
+ *
+ * @param {number} [max=10] maximum range
+ * @param {number} [min=0] minimum range
+ * @return {number}
+ */
+function randomInt(max = 10, min = 0) {
+  return Math.round(Math.random() * (max - min) + min);
+}
+
+},{}],10:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.easeOutBounce = easeOutBounce;
+exports.linear = linear;
+exports.easeInQuad = easeInQuad;
+exports.easeOutQuad = easeOutQuad;
+exports.easeInOutQuad = easeInOutQuad;
+exports.easeInCubic = easeInCubic;
+exports.easeOutCubic = easeOutCubic;
+exports.easeInOutCubic = easeInOutCubic;
+exports.easeInQuart = easeInQuart;
+exports.easeOutQuart = easeOutQuart;
+exports.easeInOutQuart = easeInOutQuart;
+exports.easeInQuint = easeInQuint;
+exports.easeOutQuint = easeOutQuint;
+exports.easeInOutQuint = easeInOutQuint;
+exports.easeInSine = easeInSine;
+exports.easeOutSine = easeOutSine;
+exports.easeInOutSine = easeInOutSine;
+exports.easeInExpo = easeInExpo;
+exports.easeOutExpo = easeOutExpo;
+exports.easeInOutExpo = easeInOutExpo;
+exports.easeInCirc = easeInCirc;
+exports.easeOutCirc = easeOutCirc;
+exports.easeInOutCirc = easeInOutCirc;
+exports.easeInBack = easeInBack;
+exports.easeOutBack = easeOutBack;
+exports.easeInOutBack = easeInOutBack;
+exports.easeInElastic = easeInElastic;
+exports.easeOutElastic = easeOutElastic;
+exports.easeInOutElastic = easeInOutElastic;
+exports.easeInBounce = easeInBounce;
+exports.easeInOutBounce = easeInOutBounce;
+
+/**
+ * Rate functions. From https://easings.net
+ * all Functions accept input from 0 to 1 and return output between 0 to 1
+ */
+const c1 = 1.70158;
+const c2 = c1 * 1.525;
+const c3 = c1 + 1;
+const c4 = 2 * Math.PI / 3;
+const c5 = 2 * Math.PI / 4.5;
+
+function easeOutBounce(x) {
+  const n1 = 7.5625;
+  const d1 = 2.75;
+
+  if (x < 1 / d1) {
+    return n1 * x * x;
+  } else if (x < 2 / d1) {
+    return n1 * (x -= 1.5 / d1) * x + 0.75;
+  } else if (x < 2.5 / d1) {
+    return n1 * (x -= 2.25 / d1) * x + 0.9375;
+  } else {
+    return n1 * (x -= 2.625 / d1) * x + 0.984375;
+  }
+}
+
+function linear(x) {
+  return x;
+}
+
+function easeInQuad(x) {
+  return x ** 2;
+}
+
+function easeOutQuad(x) {
+  return 1 - (1 - x) * (1 - x);
+}
+
+function easeInOutQuad(x) {
+  return x < 0.5 ? 2 * x ** 2 : 1 - Math.pow(-2 * x + 2, 2) / 2;
+}
+
+function easeInCubic(x) {
+  return x ** 3;
+}
+
+function easeOutCubic(x) {
+  return 1 - (1 - x) ** 3;
+}
+
+function easeInOutCubic(x) {
+  return x < 0.5 ? 4 * x ** 3 : 1 - Math.pow(-2 * x + 2, 3) / 2;
+}
+
+function easeInQuart(x) {
+  return x ** 4;
+}
+
+function easeOutQuart(x) {
+  return 1 - Math.pow(1 - x, 4);
+}
+
+function easeInOutQuart(x) {
+  return x < 0.5 ? 8 * x ** 4 : 1 - Math.pow(-2 * x + 2, 4) / 2;
+}
+
+function easeInQuint(x) {
+  return x ** 5;
+}
+
+function easeOutQuint(x) {
+  return 1 - (1 - x) ** 5;
+}
+
+function easeInOutQuint(x) {
+  return x < 0.5 ? 16 * x ** 5 : 1 - Math.pow(-2 * x + 2, 5) / 2;
+}
+
+function easeInSine(x) {
+  return 1 - Math.cos(x * Math.PI / 2);
+}
+
+function easeOutSine(x) {
+  return Math.sin(x * Math.PI / 2);
+}
+
+function easeInOutSine(x) {
+  return -(Math.cos(Math.PI * x) - 1) / 2;
+}
+
+function easeInExpo(x) {
+  return x === 0 ? 0 : Math.pow(2, 10 * x - 10);
+}
+
+function easeOutExpo(x) {
+  return x === 1 ? 1 : 1 - Math.pow(2, -10 * x);
+}
+
+function easeInOutExpo(x) {
+  return x === 0 ? 0 : x === 1 ? 1 : x < 0.5 ? Math.pow(2, 20 * x - 10) / 2 : (2 - Math.pow(2, -20 * x + 10)) / 2;
+}
+
+function easeInCirc(x) {
+  return 1 - Math.sqrt(1 - Math.pow(x, 2));
+}
+
+function easeOutCirc(x) {
+  return Math.sqrt(1 - Math.pow(x - 1, 2));
+}
+
+function easeInOutCirc(x) {
+  return x < 0.5 ? (1 - Math.sqrt(1 - Math.pow(2 * x, 2))) / 2 : (Math.sqrt(1 - Math.pow(-2 * x + 2, 2)) + 1) / 2;
+}
+
+function easeInBack(x) {
+  return c3 * x ** 3 - c1 * x ** 2;
+}
+
+function easeOutBack(x) {
+  return 1 + c3 * (x - 1) ** 3 + c1 * (x - 1) ** 2;
+}
+
+function easeInOutBack(x) {
+  return x < 0.5 ? Math.pow(2 * x, 2) * ((c2 + 1) * 2 * x - c2) / 2 : (Math.pow(2 * x - 2, 2) * ((c2 + 1) * (x * 2 - 2) + c2) + 2) / 2;
+}
+
+function easeInElastic(x) {
+  return x === 0 ? 0 : x === 1 ? 1 : -Math.pow(2, 10 * x - 10) * Math.sin((x * 10 - 10.75) * c4);
+}
+
+function easeOutElastic(x) {
+  return x === 0 ? 0 : x === 1 ? 1 : Math.pow(2, -10 * x) * Math.sin((x * 10 - 0.75) * c4) + 1;
+}
+
+function easeInOutElastic(x) {
+  return x === 0 ? 0 : x === 1 ? 1 : x < 0.5 ? -(Math.pow(2, 20 * x - 10) * Math.sin((20 * x - 11.125) * c5)) / 2 : Math.pow(2, -20 * x + 10) * Math.sin((20 * x - 11.125) * c5) / 2 + 1;
+}
+
+function easeInBounce(x) {
+  return 1 - easeOutBounce(1 - x);
+}
+
+function easeInOutBounce(x) {
+  return x < 0.5 ? (1 - easeOutBounce(1 - 2 * x)) / 2 : (1 + easeOutBounce(2 * x - 1)) / 2;
+}
+
+},{}],11:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 exports.arrow = arrow;
 exports.arrowTip = arrowTip;
 exports.doubleArrow = doubleArrow;
@@ -19,11 +967,13 @@ var _drawing = require("../constants/drawing.js");
 
 var _main = require("../main.js");
 
+var _points = require("../math/points.js");
+
+var _utils = require("../utils.js");
+
 var _settings = require("./settings.js");
 
-var _utils = require("../utils/utils.js");
-
-var _math = require("../utils/math.js");
+var _text = require("./text.js");
 
 const DEFAULT_TIP_WIDTH = 15;
 /**
@@ -162,13 +1112,13 @@ function doubleArrow(x1, y1, x2, y2, tipWidth = DEFAULT_TIP_WIDTH, tipHeight = t
 function measurement(configs) {
   const ctx = _main.C.workingCanvas;
   const defaults = {
-    background: [_colors.TRANSPARENT],
-    tipWidth: [DEFAULT_TIP_WIDTH, "number"],
-    tipHeight: [DEFAULT_TIP_WIDTH / 1.3, "number"],
-    innerPadding: [3, "number"],
-    outerPadding: [0, "number"],
-    textRotation: [0, "number"],
-    arrowCurving: [0, "number"]
+    background: _colors.TRANSPARENT,
+    tipWidth: DEFAULT_TIP_WIDTH,
+    tipHeight: DEFAULT_TIP_WIDTH / 1.3,
+    innerPadding: 3,
+    outerPadding: 0,
+    textRotation: 0,
+    arrowCurving: 0
   };
   configs = (0, _utils.applyDefault)(defaults, configs);
   const {
@@ -189,7 +1139,7 @@ function measurement(configs) {
   ctx.textAlign = _drawing.CENTER;
   ctx.textBaseline = _drawing.MIDDLE;
   ctx.rotate(Math.atan2(p2[1] - p1[1], p2[0] - p1[0]) + configs.textRotation);
-  ctx.fillText(configs.text, 0, 0);
+  (0, _text.fillText)(configs.text, 0, 0);
   (0, _settings.restore)();
 }
 /**
@@ -279,7 +1229,7 @@ function curvedArrowBetweenPoints(p1, p2, radius, tipWidth = DEFAULT_TIP_WIDTH, 
   const pathStarted = ctx.pathStarted;
   ctx.save();
   if (!pathStarted) ctx.beginPath();
-  const center = (0, _math.circleIntersection)(p1, radius, p2, radius)[0];
+  const center = (0, _points.circleIntersection)(p1, radius, p2, radius)[0];
   p1[0] -= center[0];
   p1[1] -= center[1];
   p2[0] -= center[0];
@@ -319,7 +1269,7 @@ function curvedArrowBetweenPoints(p1, p2, radius, tipWidth = DEFAULT_TIP_WIDTH, 
 function curvedDoubleArrowBetweenPoints(p1, p2, radius, tipWidth = DEFAULT_TIP_WIDTH, tipHeight = tipWidth / 1.3, arrowCurving = 0, tipOffset = 0, otherArc = false) {
   const ctx = _main.C.workingCanvas;
   ctx.save();
-  const center = (0, _math.circleIntersection)(p1, radius, p2, radius)[0];
+  const center = (0, _points.circleIntersection)(p1, radius, p2, radius)[0];
   p1[0] -= center[0];
   p1[1] -= center[1];
   p2[0] -= center[0];
@@ -346,7 +1296,7 @@ function curvedDoubleArrowBetweenPoints(p1, p2, radius, tipWidth = DEFAULT_TIP_W
   return center;
 }
 
-},{"../constants/colors.js":11,"../constants/drawing.js":12,"../main.js":16,"../utils/math.js":17,"../utils/utils.js":18,"./settings.js":8}],2:[function(require,module,exports){
+},{"../constants/colors.js":1,"../constants/drawing.js":2,"../main.js":5,"../math/points.js":8,"../utils.js":21,"./settings.js":18,"./text.js":20}],12:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -432,7 +1382,7 @@ function arcBrace(x, y, radius = 100, angle = Math.PI / 2, startAngle = 0, small
   return [(largerRadius + extender) * Math.cos(angle / 2 + startAngle) + x, (largerRadius + extender) * Math.sin(angle / 2 + startAngle) + y];
 }
 
-},{"../main.js":16}],3:[function(require,module,exports){
+},{"../main.js":5}],13:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -451,7 +1401,7 @@ var COLORLIST = _interopRequireWildcard(require("../constants/colors.js"));
 
 var _main = require("../main.js");
 
-var _math = require("../utils/math.js");
+var _random = require("../math/random.js");
 
 function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
 
@@ -523,7 +1473,7 @@ function randomColor() {
   let color = "#";
 
   for (let i = 0; i < 3; i++) {
-    let randNum = (0, _math.randomInt)(255).toString(16);
+    let randNum = (0, _random.randomInt)(255).toString(16);
     randNum = randNum.length === 1 ? 0 + randNum : randNum;
     color += randNum;
   }
@@ -537,7 +1487,7 @@ function randomColor() {
 
 
 function randomDefinedColor() {
-  return COLORLIST[__definedColors__[(0, _math.randomInt)(__definedColors__.length - 1)]];
+  return COLORLIST[__definedColors__[(0, _random.randomInt)(__definedColors__.length - 1)]];
 } // color converters
 
 
@@ -554,7 +1504,8 @@ function hue2RGB(p, q, t) {
  * adapted from http://en.wikipedia.org/wiki/HSL_color_space.
  * Assumes values of red, green, and blue are between 0 & 255 and
  * returns hue in range 0 to 360, saturation and lightness in range 0 to 1
- *
+ * @method RGBToHSL
+ * @global
  * @param {number} red The red color value
  * @param {number} green The green color value
  * @param {number} blue The blue color value
@@ -786,7 +1737,7 @@ function linearGradient(initialPoint, finalPoint, colorStops) {
   return gradient;
 }
 
-},{"../constants/colors.js":11,"../main.js":16,"../utils/math.js":17}],4:[function(require,module,exports){
+},{"../constants/colors.js":1,"../main.js":5,"../math/random.js":9}],14:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -800,56 +1751,87 @@ var _colors = require("../constants/colors.js");
 
 var _main = require("../main.js");
 
-var _linear = require("./linear.js");
-
-var _text = require("./text.js");
-
-var _settings = require("./settings.js");
-
-var _utils = require("../utils/utils.js");
+var _utils = require("../utils.js");
 
 var _arrows = require("./arrows.js");
 
+var _functions = require("./functions.js");
+
+var _geometry = require("./geometry.js");
+
+var _settings = require("./settings.js");
+
+var _text = require("./text.js");
+
+function getPlotters(unitLength, unitValue) {
+  return {
+    getParametricFunction: function (configs) {
+      configs.unitLength = unitLength;
+      configs.unitValue = unitValue;
+      return (0, _functions.parametricFunction)(configs);
+    },
+    getFunctionGraph: function (configs) {
+      configs.unitLength = unitLength;
+      configs.unitValue = unitValue;
+      return (0, _functions.functionGraph)(configs);
+    }
+  };
+}
 /**
- * creates a axes.
- * xAxis: <object> configs for x axis.
- *   This will be given to numberLine. see {@link numberLine} function for possible values
- * yAxis: <object> configs for y axis.
- *   This will be given to numberLine. see {@link numberLine} function for possible values
- * center: <array> [[0, 0]]
- *   center of axes
- *
+ * Creates a axes.
  * @param {Object} config
- * @returns axis configs
+ * Possible configurations are:
+ *
+ * * xAxis  <object>         : Configurations for x axis. (See {@link numberLine} for more configurations)
+ * * yAxis  <object>         : Configurations for y axis. (See {@link numberLine} for more configurations)
+ * * center <array> [[0, 0]] : center of axes
+ *
+ * @returns {object} object that contains following properties:
+ * * xAxis                 <object>   : x axis confiurations from numberLine (See {@link numberLine} for those configurations).
+ * * yAxis                 <object>   : y axis confiurations from numberLine (See {@link numberLine} for those configurations).
+ * * unitValue             <array>    : How much a unit is in its value in x and y directions.
+ * * unitLength            <array>    : How much a unit is in px in x and y directions.
+ * * getParametricFunction <function> : Draws a parametric function whose unit sizing are predefined by the axes. see {@link parametricFunction} to see possible configurations.
+ * * getFunctionGraph      <function> : Draws a function graph whose unit sizing are predefined by the axes. see {@link functionGraph} to see possible configurations.
  */
+
+
 function axes(config = {}) {
   const ctx = _main.C.workingCanvas; // default configurations
 
-  const xAxisDefaults = {
-    length: [ctx.width, "number"],
-    includeNumbers: [false],
-    includeTick: [false],
-    includeLeftTip: [true],
-    includeRightTip: [true],
-    textDirection: [[-0.3, -1]]
-  };
-  const yAxisDefaults = {
-    length: [ctx.height, "number"],
-    rotation: [Math.PI / 2, "number"],
-    textRotation: [-Math.PI / 2, "number"],
-    includeNumbers: [false],
-    includeTick: [false],
-    includeLeftTip: [true],
-    includeRightTip: [true]
+  const defaultConfigs = {
+    xAxis: {
+      length: ctx.width,
+      textDirection: [-0.3, -1],
+      includeTick: true,
+      includeLeftTip: true,
+      includeRightTip: true,
+      excludeOriginTick: true,
+      includeNumbers: false
+    },
+    yAxis: {
+      length: ctx.height,
+      rotation: Math.PI / 2,
+      textRotation: -Math.PI / 2,
+      textDirection: [-0.3, 0.5],
+      includeTick: true,
+      includeLeftTip: true,
+      includeRightTip: true,
+      excludeOriginTick: true,
+      includeNumbers: false
+    }
   }; // configurations
 
-  const xAxis = (0, _utils.applyDefault)(xAxisDefaults, config.xAxis);
-  const yAxis = (0, _utils.applyDefault)(yAxisDefaults, config.yAxis); // other configurations
+  config = (0, _utils.applyDefault)(defaultConfigs, config);
+  const {
+    xAxis,
+    yAxis
+  } = config; // other configurations
 
   const center = config.center || [0, 0]; // range of ticks in each axis
 
-  const xRange = xAxis.range || [-8, 8, 1];
-  const yRange = yAxis.range || [-8, 8, 1]; // unit length of each axis
+  const xRange = xAxis.range;
+  const yRange = yAxis.range; // unit length of each axis
   // got by dividing length of axis by number of ticks
 
   const xDX = xAxis.length / ((xRange[1] - xRange[0]) / xRange[2]);
@@ -874,138 +1856,111 @@ function axes(config = {}) {
   const yAxisLine = numberLine(yAxis); // draw y axis
   // size of a unit cell
 
-  const unit = [xAxisLine.unitLength, yAxisLine.unitLength]; // reverse the effect of overall shift
+  const unitLength = [xAxisLine.unitLength, yAxisLine.unitLength];
+  const unitValue = [xAxisLine.unitValue, yAxisLine.unitValue]; // reverse the effect of overall shift
 
   ctx.translate(-center[0], -center[1] - yShift);
   ctx.restore();
-  return {
-    unit: unit,
-    // major unit size
+  return Object.assign({
+    center: center,
+    // center of axis as [x, y] in px
     xAxis: xAxisLine,
     // x axis confiurations from numberLine
-    yAxis: yAxisLine // y axis confiurations from numberLine
+    yAxis: yAxisLine,
+    // y axis confiurations from numberLine
+    unitValue: unitValue,
+    // how much a unit is as [x, y] in its value
+    unitLength: unitLength // how much a unit is as [x, y] in px
 
-  };
+  }, getPlotters(unitLength, unitValue));
 }
 /**
  * Creates a numberLine with parameters in a object
- * (default values for each properties are given in square brackets)
- *
- * point1 : <Array> [[-ctx.width / 2, 0]]
- *   starting point of line
- *
- * point2 : <Array> [[ctx.width / 2, 0]]
- *   ending point of line
- *
- * range : <Array> [[-8, 8, 1]]
- *   range of numbers to draw ticks and numbers
- *
- * numbersToExclude : <Array> [defaultValue=[]]
- *   list of numbers that shouldn't be displayed
- *
- * numbersToInclude : <Array> [defaultValue=[]]
- *   list of numbers to be displayed
- *
- * numbersWithElongatedTicks : <Array> [defaultValue=[]]
- *   list of numbers where tick line should be longer
- *
- * includeLeftTip : <boolean> [false]
- *   whether to add an arrow tip at left
- *
- * includeRightTip : <boolean> [false]
- *   whether to add an arrow tip at right
- *
- * tipWidth : <number> [20]
- *   width of arrow tip in px
- *
- * tipSizeRatio : <number> [1]
- *   height/width of tip
- *
- * color : <hex string> [GREY]
- *   color of axis and ticks
- *
- * lineWidth : <number> [3]
- *   width of lines in px
- *
- * includeTick : <boolean> [true]
- *   whether ticks should be added
- *
- * excludeOriginTick : <boolean> [false]
- *   whether exclude ticks at origin (0)
- *
- * longerTickMultiple : <number> [2]
- *   factor to increase height of ticks at elongated ticks
- *
- * tickHeight : <number> [15]
- *   height of ticks in px
- *
- * textDirection : <array> [0, -0.8]
- *   direction of text relative to nearby tick
- *
- * textColor : <hex string> [WHITE]
- *   color of text
- *
- * textSize : <number> [17]
- *   font size of text
- *
- * textRotation : <number> [0]
- *   amount to rotate text
- *
- * decimalPlaces : <number> [number of decimals in step]
- *   number of decimal places in text
- *
  * @param {object} config
- * @returns unit length
+ * Possible properties:
+ *
+ * * point1                    <array>   ([-ctx.width / 2, 0]): starting point of line
+ * * point2                    <array>   ([ctx.width / 2, 0]) : ending point of line
+ * * range                     <array>   ([-5, 5, 1])         : range of numbers to draw ticks and numbers
+ * * numbersToInclude          <array>   ([])                 : list of numbers to be displayed
+ * * numbersToExclude          <array>   ([])                 : list of numbers that shouldn't be displayed
+ * * numbersWithElongatedTicks <array>   ([])               : list of numbers where tick line should be longer
+ * * textDirection             <array>   (0, -0.8)          : Direction of text relative to nearby tick
+ * * includeLeftTip            <boolean> (false)            : whether to add an arrow tip at left
+ * * includeRightTip           <boolean> (false)            : whether to add an arrow tip at right
+ * * includeTick               <boolean> (true)             : Whether ticks should be added
+ * * excludeOriginTick         <boolean> (false)            : Whether exclude ticks at origin
+ * * tipWidth                  <number>  (20)               : width of arrow tip in px
+ * * tipHeight                 <number>  (1)                : height/width of tip
+ * * lineWidth                 <number>  (32)               : Width of lines in px
+ * * longerTickMultiple        <number>  (2)                : Factor to increase height of ticks at elongated ticks
+ * * tickHeight                <number>  (15)               : Height of ticks in px
+ * * textSize                  <number>  (17)               : Font size of text
+ * * textRotation              <number>  (0)                : Amount to rotate text
+ * * decimalPlaces             <number>  (#decimals in step): Number of decimal places in text
+ * * color                     <string>  (GREY)             : Color of axis and ticks
+ * * textColor                 <string>  (WHITE)            : Color of text
+ *
+ * @returns {object} configurations about the number line
+ *
+ * * center     <array>: Center of the number line in px
+ * * tickList   <array>: List of tick inervals
+ * * unitValue  <array>: How much a unit is in its value in x and y directions.
+ * * unitLength <array>: How much a unit is in px in x and y directions.
  */
 
 
 function numberLine(config = {}) {
   const ctx = _main.C.workingCanvas;
   const defaultConfigs = {
-    length: [ctx.width, "number"],
-    rotation: [0],
-    center: [[0, 0]],
-    range: [[-8, 8, 1], "array"],
-    numbersToExclude: [[]],
-    numbersToInclude: [[]],
-    numbersWithElongatedTicks: [[]],
-    includeLeftTip: [false],
-    includeRightTip: [false],
-    includeNumbers: [true],
-    tipWidth: [20, "number"],
-    tipSizeRatio: [1, "number"],
-    color: [_colors.GREY],
-    lineWidth: [3, "number"],
-    includeTick: [true],
-    excludeOriginTick: [false],
-    longerTickMultiple: [1.5, "number"],
-    tickHeight: [15, "number"],
-    textDirection: [[-0.3, -1]],
-    textColor: [_colors.WHITE],
-    textSize: [17, "number"],
-    textRotation: [0]
+    rotation: 0,
+    lineWidth: 2,
+    tipWidth: 13,
+    textSize: 17,
+    tipHeight: 10,
+    tickHeight: 10,
+    textRotation: 0,
+    length: ctx.width,
+    longerTickMultiple: 1.5,
+    center: [0, 0],
+    range: [-5, 5, 1],
+    numbersToInclude: [],
+    numbersToExclude: [],
+    textDirection: [-0.3, -1],
+    numbersWithElongatedTicks: [],
+    includeTick: true,
+    includeNumbers: true,
+    includeLeftTip: false,
+    includeRightTip: false,
+    excludeOriginTick: false,
+    color: _colors.GREY,
+    textColor: _colors.WHITE
   };
-  (0, _utils.applyDefault)(defaultConfigs, config);
-  const lineLength = config.length;
-  const rotation = config.rotation;
-  const center = config.center;
-  const numbersToExclude = config.numbersToExclude;
-  const numbersToInclude = config.numbersToInclude;
-  const numbersWithElongatedTicks = config.numbersWithElongatedTicks;
-  const includeLeftTip = config.includeLeftTip;
-  const includeRightTip = config.includeRightTip;
-  const tipWidth = config.tipWidth;
-  const tipSizeRatio = config.tipSizeRatio;
-  const color = config.color;
-  const lineWidth = config.lineWidth;
-  const excludeOriginTick = config.excludeOriginTick;
-  const longerTickMultiple = config.longerTickMultiple;
-  const tickHeight = config.tickHeight;
-  const textDirection = config.textDirection;
-  const textSize = config.textSize;
-  const textRotation = config.textRotation;
-  let decimalPlaces = config.decimalPlaces;
-  let range = config.range;
+  config = (0, _utils.applyDefault)(defaultConfigs, config);
+  const {
+    color,
+    center,
+    rotation,
+    tipWidth,
+    textSize,
+    lineWidth,
+    tipHeight,
+    length: lineLength,
+    tickHeight,
+    textRotation,
+    textDirection,
+    includeLeftTip,
+    includeRightTip,
+    numbersToExclude,
+    numbersToInclude,
+    excludeOriginTick,
+    longerTickMultiple,
+    numbersWithElongatedTicks
+  } = config;
+  var {
+    range,
+    decimalPlaces
+  } = config;
 
   if (Array.isArray(range) && range.length === 2) {
     range = [range[0], range[1], 1];
@@ -1036,21 +1991,21 @@ function numberLine(config = {}) {
     (0, _settings.stroke)(color);
     ctx.lineWidth = lineWidth;
     (0, _settings.fill)(color);
-    const r = Math.atan(tipSizeRatio / 2);
+    const r = Math.atan(tipHeight / 2);
     let x1 = -lineLength / 2;
     let x2 = lineLength / 2;
 
     if (includeLeftTip) {
-      (0, _arrows.arrowTip)(x1, 0, tipWidth, 0, tipSizeRatio);
+      (0, _arrows.arrowTip)(x1 + tipWidth, 0, x1, 0, tipWidth, tipHeight);
       x1 += tipWidth * Math.cos(r);
     }
 
     if (includeRightTip) {
-      (0, _arrows.arrowTip)(x2, 0, tipWidth, Math.PI, tipSizeRatio);
+      (0, _arrows.arrowTip)(x2 - tipWidth, 0, x2, 0, tipWidth, tipHeight);
       x2 -= tipWidth * Math.cos(r) * 1;
     }
 
-    (0, _linear.line)(x1, 0, x2, 0);
+    (0, _geometry.line)(x1, 0, x2, 0);
   }
 
   function drawTicks() {
@@ -1068,7 +2023,7 @@ function numberLine(config = {}) {
         TH *= longerTickMultiple;
       }
 
-      (0, _linear.line)(ds * i, -TH / 2, ds * i, TH / 2);
+      (0, _geometry.line)(ds * i, -TH / 2, ds * i, TH / 2);
     }
   }
 
@@ -1095,81 +2050,90 @@ function numberLine(config = {}) {
 
   function getTickList() {
     return (0, _utils.arange)(min, max, step);
-  } // unit interval
-
+  }
 
   (0, _settings.restore)();
   return {
-    unitLength: ds,
+    center: center,
     tickList: list,
-    translation: center
+    unitValue: step,
+    unitLength: ds
   };
 }
 /**
- * creates a numberPlane based on following parameters inside a Object
- * xAxis: <object> configs for x axis.
- *   This will be given to numberLine. see {@link numberLine} function for possible values
-
- * yAxis: <object> configs for y axis.
- *   This will be given to numberLine. see {@link numberLine} function for possible values
- *
- * grid : <object> set of styles to draw grid & subgrids
- *
- * possible properties:
- *   lineWidth        : <number> stroke width of grid lines [1],
- *
- *   color            : <hex string> color of grid lines ["#58C4DDA0"],
- *
- *   subgrids         : <number> number of sub-grid division to draw [0],
- *
- *   subgridLineColor : <hex string> color of sub-grids ["#888888A0"],
- *
- *   subgridLineWidth : <number> stroke width of sub-grid [0.7],
- *
+ * Creates a numberPlane based on following parameters inside a Object
  * @param {Object} config
- * @returns {Object} configurations
+ * Possible parameters:
+ *
+ * * xAxis  <object>: Configurations for x axis. See {@link numberLine} for possible configurations.
+ * * yAxis  <object>: Configurations for y axis. See {@link numberLine} for possible configurations.
+ * * center <array> : Center of number plane as [x, y] in px.
+ * * grid   <object>: Set of styles to draw grid & subgrids. This can have following properties:
+ *   * lineWidth        <number> (1)          : stroke width of grid lines
+ *   * subgrids         <number> (0)          : number of sub-grid division to draw
+ *   * subgridLineWidth <number> (0.7)        : stroke width of sub-grid
+ *   * color            <string> ("#58c4dda0"): color of grid lines
+ *   * subgridLineColor <string> ("#888888a0"): color of sub-grids
+ * @returns {Object} configurations of number plane. Those are :
+ *
+ * * center                <array>   : Center of number plane as [x, y] in px.
+ * * unitValue             <array>   : How much a unit is in its value in x and y directions.
+ * * unitLength            <array>   : How much a unit is in px in x and y directions.
+ * * subgridUnit           <array>   : How much a sub-grid is in px in x and y directions.
+ * * xAxis                 <object>  : x axis confiurations from numberLine (See {@link numberLine} for those configurations).
+ * * yAxis                 <object>  : y axis confiurations from numberLine (See {@link numberLine} for those configurations).
+ * * getParametricFunction <function>: Draws a parametric function whose unit sizing are predefined by the axes. see {@link parametricFunction} to see possible configurations.
+ * * getFunctionGraph      <function>: Draws a function graph whose unit sizing are predefined by the axes. see {@link functionGraph} to see possible configurations.
  */
 
 
 function numberPlane(config = {}) {
   const ctx = _main.C.workingCanvas; // default configurations
 
-  const xAxisDefaults = {
-    textDirection: [[-0.2, 1.3]],
-    length: [ctx.width, "number"],
-    excludeOriginTick: [true],
-    includeLeftTip: [false],
-    includeRightTip: [false],
-    includeNumbers: [true],
-    includeTick: [true]
-  };
-  const yAxisDefaults = {
-    textDirection: [[1.1, 0.6]],
-    length: [ctx.height, "number"],
-    textRotation: [-Math.PI / 2, "number"],
-    excludeOriginTick: [true],
-    includeLeftTip: [false],
-    includeRightTip: [false],
-    includeNumbers: [true],
-    includeTick: [true]
-  };
-  const gridDefaults = {
-    lineWidth: [1, "number"],
-    color: [_colors.BLUE_C + "a0"],
-    subgrids: [1, "number"],
-    subgridLineColor: [_colors.GREY + "50"],
-    subgridLineWidth: [0.7, "number"]
+  const defaultConfigs = {
+    xAxis: {
+      length: ctx.width,
+      range: [-5, 5, 1],
+      textDirection: [-0.2, 1.3],
+      includeTick: true,
+      includeNumbers: true,
+      includeLeftTip: false,
+      includeRightTip: false,
+      excludeOriginTick: true
+    },
+    yAxis: {
+      length: ctx.height,
+      textRotation: -Math.PI / 2,
+      range: [-5, 5, 1],
+      textDirection: [1.1, 0.6],
+      includeTick: true,
+      includeNumbers: true,
+      includeLeftTip: false,
+      includeRightTip: false,
+      excludeOriginTick: true
+    },
+    grid: {
+      subgrids: 1,
+      lineWidth: 1,
+      subgridLineWidth: 0.7,
+      color: _colors.BLUE_C + "a0",
+      subgridLineColor: _colors.GREY + "50"
+    },
+    center: [0, 0]
   }; // configurations
 
-  const xAxis = (0, _utils.applyDefault)(xAxisDefaults, config.xAxis);
-  const yAxis = (0, _utils.applyDefault)(yAxisDefaults, config.yAxis);
-  const grid = (0, _utils.applyDefault)(gridDefaults, config.grid); // other configurations
+  config = (0, _utils.applyDefault)(defaultConfigs, config);
+  const {
+    xAxis,
+    yAxis,
+    grid
+  } = config; // other configurations
 
   const subgrids = grid.subgrids;
-  const center = config.center || [0, 0]; // range of ticks in each axis
+  const center = config.center; // range of ticks in each axis
 
-  const xRange = xAxis.range || [-8, 8, 1];
-  const yRange = yAxis.range || [-8, 8, 1]; // number of ticks in each
+  const xRange = xAxis.range;
+  const yRange = yAxis.range; // number of ticks in each
 
   const xNums = (xRange[1] - xRange[0]) / xRange[2];
   const yNums = (yRange[1] - yRange[0]) / yRange[2]; // unit length of each axis
@@ -1197,7 +2161,8 @@ function numberPlane(config = {}) {
     yAxis: yAxis
   }); // size of a unit cell
 
-  const unit = axesLines.unit; // reverse the effect of overall shift
+  const unitLength = axesLines.unitLength;
+  const unitValue = axesLines.unitValue; // reverse the effect of overall shift
 
   (0, _settings.translate)(-(center[0] + xShift), -center[1] - yShift);
 
@@ -1241,30 +2206,207 @@ function numberPlane(config = {}) {
       (0, _settings.translate)(shiftX, shiftY);
       (0, _settings.strokeWidth)(grid.lineWidth);
       (0, _settings.stroke)(grid.color);
-      (0, _linear.line)(x1, y1, x2, y2);
+      (0, _geometry.line)(x1, y1, x2, y2);
     }
 
     function drawMinor(x1, y1, x2, y2) {
       (0, _settings.strokeWidth)(grid.subgridLineWidth);
       (0, _settings.stroke)(grid.subgridLineColor);
-      (0, _linear.line)(x1, y1, x2, y2);
+      (0, _geometry.line)(x1, y1, x2, y2);
     }
   }
 
   (0, _settings.restore)();
-  return {
-    unit: unit,
-    // major unit size
-    subgridUnit: subgridUnit,
-    // subgrid unit size
+  return Object.assign({
+    center: center,
+    // center of number plane
+    unitValue: unitValue,
+    // how much a unit is in its value
+    unitLength: unitLength,
+    // how much a unit is in px
     xAxis: axesLines.xAxis,
     // x axis confiurations from numberLine
-    yAxis: axesLines.yAxis // y axis confiurations from numberLine
+    yAxis: axesLines.yAxis,
+    // y axis confiurations from numberLine
+    subgridUnit: subgridUnit // subgrid unit size
 
-  };
+  }, getPlotters(unitLength, unitValue));
 }
 
-},{"../constants/colors.js":11,"../main.js":16,"../utils/utils.js":18,"./arrows.js":1,"./linear.js":7,"./settings.js":8,"./text.js":10}],5:[function(require,module,exports){
+},{"../constants/colors.js":1,"../main.js":5,"../utils.js":21,"./arrows.js":11,"./functions.js":15,"./geometry.js":16,"./settings.js":18,"./text.js":20}],15:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.parametricFunction = parametricFunction;
+exports.functionGraph = functionGraph;
+
+var _main = require("../main.js");
+
+var _utils = require("../utils.js");
+
+var _geometry = require("./geometry.js");
+
+var _settings = require("./settings.js");
+
+/**
+ * Draws a parametric functions
+ * This accept parameters as object.
+ * @param {object} config configuration object
+ * It can have following properties:
+ *
+ * * paramFunction   <function>               : function to plot. Must recieve one argument and return a array of point as [x, y]
+ * * range           <array>    ([0, 10, 0.1]): Range as [min, max, dt]
+ * * smoothen        <boolean>  (true)        : Whether to smoothen the shape.
+ * * tension         <number>   (1)           : Smoothness tension.
+ * * discontinuities <array>    ([])          : Array of t where the curve discontinues.
+ * * closed          <boolean>  (false)       : Whether the function draws a closed shape.
+ * * unitValue       <array>    ([1, 1])      : Value of each unit space
+ * * unitLength      <array>    ([1, 1])      : Length of each unit in pixels
+ * * draw            <boolean>  (true)        : Wheteher to draw the function graph right now.
+ *
+ * @returns {object} object that contains following properties:
+ *
+ * * points  <array>    : Array of computed points in the function
+ * * draw    <function> : Function that draws the plot
+ * * animate <function> : Function that animates the drawing of the shape. Accept argument `duration` which is the duration of animation.
+ */
+function parametricFunction(config) {
+  const defaultConfigs = {
+    tension: 1,
+    unitValue: [1, 1],
+    unitLength: [1, 1],
+    // length of each unit in pixels
+    range: [0, 10, 0.1],
+    discontinuities: [],
+    smoothen: true,
+    closed: false,
+    draw: true
+  };
+  config = (0, _utils.applyDefault)(defaultConfigs, config);
+  var {
+    paramFunction,
+    range,
+    smoothen,
+    tension,
+    discontinuities,
+    closed
+  } = config;
+  if (Array.isArray(range) && range.length == 2) range.push((range[1] - range[0]) / 20);
+  var points = [[]];
+  const min = range[0];
+  const max = range[1];
+  const step = range[2];
+  if (!Array.isArray(discontinuities)) discontinuities = []; // generate points
+
+  var epsilon = 1e-6;
+  if (step < epsilon) epsilon = step / 2;
+  var row = 0;
+  const unitX = config.unitLength[0] / config.unitValue[0],
+        unitY = config.unitLength[1] / config.unitValue[1];
+
+  for (var t = min; t <= max + epsilon; t += step) {
+    if ((0, _utils.approximateIndexInArray)(t, discontinuities, epsilon) > -1) {
+      if ((0, _utils.approximateIndexInArray)(t + step, discontinuities, epsilon) > -1) {
+        row++;
+        points.push([]);
+      }
+
+      continue;
+    }
+
+    let ft = paramFunction(t);
+    points[row].push([ft[0] * unitX, ft[1] * unitY]);
+  } // draw the plot
+
+
+  if (config.draw) plot();
+
+  function plot() {
+    const ctx = _main.C.workingCanvas;
+
+    for (let i = 0; i < points.length; i++) {
+      var p = points[i];
+
+      if (smoothen) {
+        (0, _geometry.smoothCurveThroughPoints)(p, tension, closed);
+      } else {
+        ctx.beginPath();
+        ctx.moveTo(p[0][0], p[0][1]);
+
+        for (let j = 1; j < p.length; j++) {
+          ctx.lineTo(p[j][0], p[j][1]);
+        }
+
+        ctx.closePath();
+        (0, _utils.doFillAndStroke)(ctx);
+      }
+    }
+  }
+
+  return {
+    points: points,
+    draw: plot,
+    animate: function (duration = 2000) {
+      const ctx = _main.C.workingCanvas;
+      var noPoints = points.flat().length;
+      var dt = duration / noPoints;
+
+      for (let i = 0; i < points.length; i++) {
+        var p = points[i];
+        var j = 0;
+
+        if (smoothen) {
+          (0, _settings.loop)(() => {
+            if (j >= p.length - 2) {
+              (0, _settings.noLoop)();
+              ctx.closePath();
+              if (ctx.doFill) this.draw();
+            }
+
+            var recentPoint = j > 0 ? p[j - 1] : closed ? p[p.length - 2] : p[0];
+            var currentPoint = p[j];
+            var nextPoint = p[j + 1];
+            var secondNextPoint = j != p.length - 2 ? p[j + 2] : closed ? p[1] : nextPoint;
+            j++;
+            var cp = (0, _geometry.getBezierControlPoints)(recentPoint, currentPoint, nextPoint, secondNextPoint);
+            ctx.beginPath();
+            ctx.moveTo(currentPoint[0], currentPoint[1]);
+            ctx.bezierCurveTo(cp[0], cp[1], cp[2], cp[3], nextPoint[0], nextPoint[1]);
+            ctx.stroke();
+          }, ctx.name, dt);
+        } else {
+          (0, _settings.loop)(() => {
+            if (j >= p.length - 2) {
+              (0, _settings.noLoop)();
+              if (ctx.doFill) this.draw();
+            }
+
+            var p1 = p[j],
+                p2 = p[++j];
+            (0, _geometry.line)(p1[0], p1[1], p2[0], p2[1]);
+          }, ctx.name, dt);
+        }
+      }
+    }
+  };
+}
+/**
+ * Draws graph of funciton
+ * See {@link parametricFunction} For arguments
+ */
+
+
+function functionGraph(config) {
+  const paramFunction = config.paramFunction;
+
+  config.paramFunction = x => [x, paramFunction(x)];
+
+  return parametricFunction(config);
+}
+
+},{"../main.js":5,"../utils.js":21,"./geometry.js":16,"./settings.js":18}],16:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1284,16 +2426,26 @@ exports.annulus = annulus;
 exports.annulusSector = annulusSector;
 exports.angle = angle;
 exports.arcBetweenPoints = arcBetweenPoints;
+exports.line = line;
+exports.rect = rect;
+exports.polygon = polygon;
+exports.square = square;
+exports.quad = quad;
+exports.triangle = triangle;
+exports.equiTriangle = equiTriangle;
+exports.regularPolygon = regularPolygon;
+exports.regularPolygonWithRadius = regularPolygonWithRadius;
+exports.polygonWithRatioOfCentralAngles = polygonWithRatioOfCentralAngles;
+exports.getBezierControlPoints = getBezierControlPoints;
 
 var _main = require("../main.js");
 
-var _math = require("../utils/math.js");
+var _points = require("../math/points.js");
 
-var _utils = require("../utils/utils.js");
+var _utils = require("../utils.js");
 
 /**
- * This module contains functions to draw curved shapes.
- * @module curves
+ * Functions for drawing various shapes
  */
 
 /**
@@ -1422,6 +2574,21 @@ function sector(x, y, radius, angle = Math.PI / 2, startAngle = 0) {
   (0, _utils.doFillAndStroke)(ctx);
 }
 /**
+ * Returns bēzier control points that passes smoothly through given points.
+ *
+ * @param {array} recentPoint previous point
+ * @param {array} currentPoint
+ * @param {array} nextPoint
+ * @param {array} secondNextPoint
+ * @param {number} [tension=1]
+ * @return {array} two control points as [cp1x, cp1y, cp2x, cp2y]
+ */
+
+
+function getBezierControlPoints(recentPoint, currentPoint, nextPoint, secondNextPoint, tension = 1) {
+  return [currentPoint[0] + (nextPoint[0] - recentPoint[0]) / 6 * tension, currentPoint[1] + (nextPoint[1] - recentPoint[1]) / 6 * tension, nextPoint[0] - (secondNextPoint[0] - currentPoint[0]) / 6 * tension, nextPoint[1] - (secondNextPoint[1] - currentPoint[1]) / 6 * tension];
+}
+/**
  * Adds a smooth curve passing through given points and tension using bézie curve to the current shape.
  * Taken from {@link https://stackoverflow.com/a/49371349}
  *
@@ -1430,18 +2597,15 @@ function sector(x, y, radius, angle = Math.PI / 2, startAngle = 0) {
  */
 
 
-function smoothCurveThroughPointsTo(points, tension = 1) {
+function smoothCurveThroughPointsTo(points, tension = 1, closed = true) {
   for (var i = 0; i < points.length - 1; i++) {
-    var recentPoint = i > 0 ? points[i - 1] : points[0];
+    var recentPoint = i > 0 ? points[i - 1] : closed ? points[points.length - 2] : points[0];
     var currentPoint = points[i];
     var nextPoint = points[i + 1];
-    var secondNextPoint = i != points.length - 2 ? points[i + 2] : nextPoint;
-    var cp1x = currentPoint[0] + (nextPoint[0] - recentPoint[0]) / 6 * tension;
-    var cp1y = currentPoint[1] + (nextPoint[1] - recentPoint[1]) / 6 * tension;
-    var cp2x = nextPoint[0] - (secondNextPoint[0] - currentPoint[0]) / 6 * tension;
-    var cp2y = nextPoint[1] - (secondNextPoint[1] - currentPoint[1]) / 6 * tension;
+    var secondNextPoint = i != points.length - 2 ? points[i + 2] : closed ? points[1] : nextPoint;
+    var cp = getBezierControlPoints(recentPoint, currentPoint, nextPoint, secondNextPoint, tension);
 
-    _main.C.workingCanvas.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, nextPoint[0], nextPoint[1]);
+    _main.C.workingCanvas.bezierCurveTo(cp[0], cp[1], cp[2], cp[3], nextPoint[0], nextPoint[1]);
   }
 }
 /**
@@ -1452,11 +2616,12 @@ function smoothCurveThroughPointsTo(points, tension = 1) {
  */
 
 
-function smoothCurveThroughPoints(points, tension = 1) {
+function smoothCurveThroughPoints(points, tension = 1, closed = true) {
   const ctx = _main.C.workingCanvas;
   ctx.beginPath();
   ctx.moveTo(points[0][0], points[0][1]);
-  smoothCurveThroughPointsTo(points, tension);
+  smoothCurveThroughPointsTo(points, tension, closed);
+  ctx.closePath();
   (0, _utils.doFillAndStroke)(ctx);
 }
 /**
@@ -1475,6 +2640,7 @@ function smoothCurveThroughPoints(points, tension = 1) {
  * * 4th argument is y coordinate of the control point
  * * 5th argument is x coordinate of the ending point
  * * 6th argument is y coordinate of the ending point
+ * @global
  */
 
 
@@ -1536,24 +2702,37 @@ function annulusSector(x, y, innerRadius, outerRadius, angle, startAngle) {
  * @param {array} p3 start point of second line array of point as [x, y]
  * @param {array} p4 end point of second line array of point as [x, y]
  * @param {number} radius radius of angle
- * @param {boolean} otherAngle whether to draw the other angle
  * @param {number} extender extender of output point
+ * @param {boolean} otherAngle whether to draw the other angle
+ * @param {number} angleDir there can be four angle in a line intersection. Choose a number from 1 to 4.
  * @returns {array} coordinate of point in the middle of angle as array of point as [x, y]
  */
 
 
-function angle(p1, p2, p3, p4, radius = 20, otherAngle = false, extender = 10) {
-  const [x, y] = (0, _math.lineIntersection)(p1, p2, p3, p4);
+function angle(p1, p2, p3, p4, radius = 20, extender = 10, otherAngle = false, angleDir = 1) {
+  const [x, y] = (0, _points.lineIntersection)(p1, p2, p3, p4);
 
   if (!(isNaN(x) || isNaN(y))) {
-    var angleFromPlane, angle;
+    var ang,
+        startAngle,
+        a1 = Math.atan2(p1[1] - y, p1[0] - x),
+        a2 = Math.atan2(p2[1] - y, p2[0] - x),
+        a3 = Math.atan2(p3[1] - y, p3[0] - x),
+        a4 = Math.atan2(p4[1] - y, p4[0] - x);
+    var angleDirs = {
+      1: [a2, a4],
+      2: [a4, a1],
+      3: [a1, a3],
+      4: [a3, a2]
+    },
+        dir = angleDirs[angleDir];
 
     if (otherAngle) {
-      angleFromPlane = Math.atan2(p2[1] - y, p2[0] - x);
-      angle = Math.atan2(p4[1] - p2[1], p4[0] - p2[0]);
+      startAngle = dir[1];
+      ang = dir[0] - dir[1];
     } else {
-      angleFromPlane = Math.atan2(p4[1] - y, p4[0] - x);
-      angle = Math.atan2(p2[1] - p4[1], p2[0] - p4[0]);
+      startAngle = dir[0];
+      ang = dir[1] - dir[0];
     }
 
     const ctx = _main.C.workingCanvas;
@@ -1561,19 +2740,22 @@ function angle(p1, p2, p3, p4, radius = 20, otherAngle = false, extender = 10) {
     if (ctx.doFill) {
       ctx.beginPath();
       ctx.moveTo(x, y);
-      ctx.arc(x, y, radius, angleFromPlane, angle + angleFromPlane);
+      ctx.arc(x, y, radius, startAngle, ang + startAngle);
       ctx.fill();
       ctx.closePath();
     }
 
     if (ctx.doStroke) {
       ctx.beginPath();
-      ctx.arc(x, y, radius, angleFromPlane, angle + angleFromPlane);
+      ctx.arc(x, y, radius, startAngle, ang + startAngle);
       ctx.stroke();
       ctx.closePath();
     }
 
-    return [x + (radius + extender) * Math.cos(angleFromPlane + angle / 2), y + (radius + extender) * Math.sin(angleFromPlane + angle / 2)];
+    return {
+      center: [x + (radius + extender) * Math.cos(startAngle + ang / 2), y + (radius + extender) * Math.sin(startAngle + ang / 2)],
+      ang: ang
+    };
   } else {
     // TODO: should it be `throw Error()`?
     console.error("No intersection point");
@@ -1597,7 +2779,7 @@ function angle(p1, p2, p3, p4, radius = 20, otherAngle = false, extender = 10) {
 function arcBetweenPoints(x1, y1, x2, y2, radius, otherArc = false) {
   if (x1 == x2 && y1 == y2) // TODO: should it be `throw Error()`?
     console.error("Can't draw a arc between points. Given points are exactly same");
-  var center = (0, _math.circleIntersection)([x1, y1], radius, [x2, y2], radius)[0];
+  var center = (0, _points.circleIntersection)([x1, y1], radius, [x2, y2], radius)[0];
   const ctx = _main.C.workingCanvas;
   const angleFromXAxis = Math.atan2(y1 - center[1], x1 - center[0]);
   const centralAngle = Math.atan2(y2 - center[1], x2 - center[0]) - angleFromXAxis;
@@ -1616,72 +2798,6 @@ function arcBetweenPoints(x1, y1, x2, y2, radius, otherArc = false) {
 
   return center;
 }
-
-},{"../main.js":16,"../utils/math.js":17,"../utils/utils.js":18}],6:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.drawImage = drawImage;
-exports.pixel = pixel;
-
-var _main = require("../main.js");
-
-var _color = require("./color.js");
-
-/**
- * This module contains function for image manipulation.
- * @module image
- */
-
-/**
- * Draws a given image in canvas.
- * See more about the parameters : {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/drawImage}
- *
- */
-function drawImage() {
-  _main.C.workingCanvas.drawImage(...arguments);
-}
-/**
- * Draws a pixel
- *
- * @param {number} x x-coordinate of pixel
- * @param {number} y y-coordinate of pixel
- * @param {string} color color of pixel
- */
-
-
-function pixel(x, y, color) {
-  const ctx = _main.C.workingCanvas;
-  ctx.fillStyle = color == undefined ? ctx.fillStyle : (0, _color.readColor)(color);
-  ctx.fillRect(x, y, 1, 1);
-}
-
-},{"../main.js":16,"./color.js":3}],7:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.line = line;
-exports.rect = rect;
-exports.polygon = polygon;
-exports.square = square;
-exports.quad = quad;
-exports.triangle = triangle;
-exports.equiTriangle = equiTriangle;
-exports.regularPolygon = regularPolygon;
-exports.regularPolygonWithRadius = regularPolygonWithRadius;
-exports.polygonWithRatioOfCentralAngles = polygonWithRatioOfCentralAngles;
-
-var _main = require("../main.js");
-
-/**
- * This module contains functions for drawing linear shapes
- * @module linear
- */
-
 /**
  * Draws a line
  *
@@ -1690,6 +2806,8 @@ var _main = require("../main.js");
  * @param {number} x2 end x coord
  * @param {number} y2 end y coord
  */
+
+
 function line(x1, y1, x2, y2) {
   const ctx = _main.C.workingCanvas;
   ctx.beginPath();
@@ -1894,7 +3012,48 @@ function polygonWithRatioOfCentralAngles(x, y, radius, ratios, rotation = 0) {
   ctx.restore();
 }
 
-},{"../main.js":16}],8:[function(require,module,exports){
+},{"../main.js":5,"../math/points.js":8,"../utils.js":21}],17:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.drawImage = drawImage;
+exports.pixel = pixel;
+
+var _main = require("../main.js");
+
+var _color = require("./color.js");
+
+/**
+ * This module contains function for image manipulation.
+ * @module image
+ */
+
+/**
+ * Draws a given image in canvas.
+ * See more about the parameters : {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/drawImage}
+ *
+ */
+function drawImage() {
+  _main.C.workingCanvas.drawImage(...arguments);
+}
+/**
+ * Draws a pixel
+ *
+ * @param {number} x x-coordinate of pixel
+ * @param {number} y y-coordinate of pixel
+ * @param {string} color color of pixel
+ */
+
+
+function pixel(x, y, color) {
+  const ctx = _main.C.workingCanvas;
+  ctx.fillStyle = color == undefined ? ctx.fillStyle : (0, _color.readColor)(color);
+  ctx.fillRect(x, y, 1, 1);
+}
+
+},{"../main.js":5,"./color.js":13}],18:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1947,6 +3106,7 @@ exports.textBaseline = textBaseline;
 exports.centerdText = centerdText;
 exports.initCenteredCanvas = initCenteredCanvas;
 exports.invertYAxis = invertYAxis;
+exports.initBlackboardCanvas = initBlackboardCanvas;
 
 var _main = require("../main.js");
 
@@ -2643,21 +3803,35 @@ function initCenteredCanvas() {
   const ctx = _main.C.workingCanvas;
   ctx.translate(ctx.width / 2, ctx.height / 2);
 }
+/**
+ * Inverts y-axis
+ */
+
 
 function invertYAxis() {
   const ctx = _main.C.workingCanvas;
   ctx.scale(1, -1);
-  ctx.yAxisInverted = true;
+  ctx.yAxisInverted = !ctx.yAxisInverted;
+}
+/**
+ * Init a blackboard like canvas. Centerd to middle, with black background and y axis inverted
+ */
+
+
+function initBlackboardCanvas() {
+  initCenteredCanvas();
+  background(0);
+  invertYAxis();
 }
 
-},{"../main.js":16,"./color.js":3}],9:[function(require,module,exports){
+},{"../main.js":5,"./color.js":13}],19:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.tex = tex;
-exports.getImgageFromTex = getImgageFromTex;
+exports.getImageFromTex = getImageFromTex;
 
 var _drawing = require("../constants/drawing.js");
 
@@ -2669,7 +3843,7 @@ var _main = require("../main.js");
  * @param {string} input
  * @return {HTMLImageElement}
  */
-function getImgageFromTex(input) {
+function getImageFromTex(input) {
   if (typeof window.MathJax == "object" && typeof window.MathJax.tex2svg == "function") {
     const ctx = _main.C.workingCanvas; // eslint-disable-next-line no-undef
 
@@ -2688,7 +3862,7 @@ function getImgageFromTex(input) {
     image.src = blobURL;
     return image;
   } else {
-    console.error("MathJax is not found. Please include");
+    console.error("MathJax is not found. Please include it.");
   }
 }
 /**
@@ -2702,7 +3876,7 @@ function getImgageFromTex(input) {
 
 
 function tex(input, x = 0, y = 0) {
-  const image = getImgageFromTex(input);
+  const image = getImageFromTex(input);
   const ctx = _main.C.workingCanvas;
   const text_align = ctx.textAlign,
         text_baseline = ctx.textBaseline;
@@ -2741,15 +3915,19 @@ function tex(input, x = 0, y = 0) {
     } // invert axis first
 
 
-    ctx.scale(1, -1);
-    ctx.drawImage(image, x, -y);
+    if (ctx.yAxisInverted) {
+      ctx.scale(1, -1);
+      y *= -1;
+    }
+
+    ctx.drawImage(image, x, y);
     ctx.restore();
   };
 
   return image;
 }
 
-},{"../constants/drawing.js":12,"../main.js":16}],10:[function(require,module,exports){
+},{"../constants/drawing.js":2,"../main.js":5}],20:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2831,269 +4009,30 @@ function strokeText(text, x = 0, y = 0, maxwidth = undefined) {
   if (ctx.yAxisInverted) (0, _settings.scale)(1, -1);
 }
 
-},{"../main.js":16,"./settings.js":8}],11:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.TRANSPARENT = exports.ORANGE = exports.GREEN_SCREEN = exports.LIGHT_PINK = exports.PINK = exports.GREY_BROWN = exports.DARKER_GRAY = exports.DARKER_GREY = exports.DARK_GRAY = exports.DARK_GREY = exports.GREY = exports.GRAY = exports.LIGHT_GREY = exports.LIGHT_GRAY = exports.BLACK = exports.WHITE = exports.PURPLE_E = exports.PURPLE_D = exports.PURPLE_C = exports.PURPLE_B = exports.PURPLE_A = exports.MAROON_E = exports.MAROON_D = exports.MAROON_C = exports.MAROON_B = exports.MAROON_A = exports.RED_E = exports.RED_D = exports.RED_C = exports.RED_B = exports.RED_A = exports.GOLD_E = exports.GOLD_D = exports.GOLD_C = exports.GOLD_B = exports.GOLD_A = exports.YELLOW_E = exports.YELLOW_D = exports.YELLOW_C = exports.YELLOW_B = exports.YELLOW_A = exports.GREEN_E = exports.GREEN_D = exports.GREEN_C = exports.GREEN_B = exports.GREEN_A = exports.TEAL_E = exports.TEAL_D = exports.TEAL_C = exports.TEAL_B = exports.TEAL_A = exports.BLUE_E = exports.BLUE_D = exports.BLUE_C = exports.BLUE_B = exports.BLUE_A = exports.LIGHT_BROWN = exports.DARK_BROWN = exports.DARK_BLUE = void 0;
-
-/**
- * List of colors
- * @module constants/colors
- */
-// from Manim
-const DARK_BLUE = "#236B8E",
-      DARK_BROWN = "#8B4513",
-      LIGHT_BROWN = "#CD853F",
-      BLUE_A = "#C7E9F1",
-      BLUE_B = "#9CDCEB",
-      BLUE_C = "#58C4DD",
-      BLUE_D = "#29ABCA",
-      BLUE_E = "#1C758A",
-      TEAL_A = "#ACEAD7",
-      TEAL_B = "#76DDC0",
-      TEAL_C = "#5CD0B3",
-      TEAL_D = "#55C1A7",
-      TEAL_E = "#49A88F",
-      GREEN_A = "#C9E2AE",
-      GREEN_B = "#A6CF8C",
-      GREEN_C = "#83C167",
-      GREEN_D = "#77B05D",
-      GREEN_E = "#699C52",
-      YELLOW_A = "#FFF1B6",
-      YELLOW_B = "#FFEA94",
-      YELLOW_C = "#FFFF00",
-      YELLOW_D = "#F4D345",
-      YELLOW_E = "#E8C11C",
-      GOLD_A = "#F7C797",
-      GOLD_B = "#F9B775",
-      GOLD_C = "#F0AC5F",
-      GOLD_D = "#E1A158",
-      GOLD_E = "#C78D46",
-      RED_A = "#F7A1A3",
-      RED_B = "#FF8080",
-      RED_C = "#FC6255",
-      RED_D = "#E65A4C",
-      RED_E = "#CF5044",
-      MAROON_A = "#ECABC1",
-      MAROON_B = "#EC92AB",
-      MAROON_C = "#C55F73",
-      MAROON_D = "#A24D61",
-      MAROON_E = "#94424F",
-      PURPLE_A = "#CAA3E8",
-      PURPLE_B = "#B189C6",
-      PURPLE_C = "#9A72AC",
-      PURPLE_D = "#715582",
-      PURPLE_E = "#644172",
-      WHITE = "#FFFFFF",
-      BLACK = "#000000",
-      LIGHT_GRAY = "#BBBBBB",
-      LIGHT_GREY = "#BBBBBB",
-      GRAY = "#888888",
-      GREY = "#888888",
-      DARK_GREY = "#444444",
-      DARK_GRAY = "#444444",
-      DARKER_GREY = "#222222",
-      DARKER_GRAY = "#222222",
-      GREY_BROWN = "#736357",
-      PINK = "#D147BD",
-      LIGHT_PINK = "#DC75CD",
-      GREEN_SCREEN = "#00FF00",
-      ORANGE = "#FF862F",
-      TRANSPARENT = "rgba(0,0,0,0)";
-exports.TRANSPARENT = TRANSPARENT;
-exports.ORANGE = ORANGE;
-exports.GREEN_SCREEN = GREEN_SCREEN;
-exports.LIGHT_PINK = LIGHT_PINK;
-exports.PINK = PINK;
-exports.GREY_BROWN = GREY_BROWN;
-exports.DARKER_GRAY = DARKER_GRAY;
-exports.DARKER_GREY = DARKER_GREY;
-exports.DARK_GRAY = DARK_GRAY;
-exports.DARK_GREY = DARK_GREY;
-exports.GREY = GREY;
-exports.GRAY = GRAY;
-exports.LIGHT_GREY = LIGHT_GREY;
-exports.LIGHT_GRAY = LIGHT_GRAY;
-exports.BLACK = BLACK;
-exports.WHITE = WHITE;
-exports.PURPLE_E = PURPLE_E;
-exports.PURPLE_D = PURPLE_D;
-exports.PURPLE_C = PURPLE_C;
-exports.PURPLE_B = PURPLE_B;
-exports.PURPLE_A = PURPLE_A;
-exports.MAROON_E = MAROON_E;
-exports.MAROON_D = MAROON_D;
-exports.MAROON_C = MAROON_C;
-exports.MAROON_B = MAROON_B;
-exports.MAROON_A = MAROON_A;
-exports.RED_E = RED_E;
-exports.RED_D = RED_D;
-exports.RED_C = RED_C;
-exports.RED_B = RED_B;
-exports.RED_A = RED_A;
-exports.GOLD_E = GOLD_E;
-exports.GOLD_D = GOLD_D;
-exports.GOLD_C = GOLD_C;
-exports.GOLD_B = GOLD_B;
-exports.GOLD_A = GOLD_A;
-exports.YELLOW_E = YELLOW_E;
-exports.YELLOW_D = YELLOW_D;
-exports.YELLOW_C = YELLOW_C;
-exports.YELLOW_B = YELLOW_B;
-exports.YELLOW_A = YELLOW_A;
-exports.GREEN_E = GREEN_E;
-exports.GREEN_D = GREEN_D;
-exports.GREEN_C = GREEN_C;
-exports.GREEN_B = GREEN_B;
-exports.GREEN_A = GREEN_A;
-exports.TEAL_E = TEAL_E;
-exports.TEAL_D = TEAL_D;
-exports.TEAL_C = TEAL_C;
-exports.TEAL_B = TEAL_B;
-exports.TEAL_A = TEAL_A;
-exports.BLUE_E = BLUE_E;
-exports.BLUE_D = BLUE_D;
-exports.BLUE_C = BLUE_C;
-exports.BLUE_B = BLUE_B;
-exports.BLUE_A = BLUE_A;
-exports.LIGHT_BROWN = LIGHT_BROWN;
-exports.DARK_BROWN = DARK_BROWN;
-exports.DARK_BLUE = DARK_BLUE;
-
-},{}],12:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.OBLIQUE = exports.ITALIC = exports.SMALLER = exports.LARGER = exports.XXX_LARGE = exports.XX_LARGE = exports.X_LARGE = exports.LARGE = exports.MEDIUM = exports.SMALL = exports.X_SMALL = exports.XX_SMALL = exports.ULTRA_EXPANDED = exports.EXTRA_EXPANDED = exports.EXPANDED = exports.SEMI_EXPANDED = exports.NORMAL = exports.SEMI_CONDENSED = exports.CONDENSED = exports.EXTRA_CONDENSED = exports.ULTRA_CONDENSED = exports.BOTTOM = exports.IDEOGRAPHIC = exports.ALPHABETIC = exports.MIDDLE = exports.HANGING = exports.TOP = exports.END = exports.START = exports.CENTER = exports.RIGHT = exports.LEFT = exports.MITER = exports.BEVEL = exports.MILTER = exports.ROUND = exports.SQUARE = exports.BUTT = void 0;
-const BUTT = "butt",
-      SQUARE = "square",
-      ROUND = "round",
-      MILTER = "milter",
-      BEVEL = "bevel",
-      MITER = "miter",
-      LEFT = "left",
-      RIGHT = "right",
-      CENTER = "center",
-      START = "start",
-      END = "end",
-      TOP = "top",
-      HANGING = "hanging",
-      MIDDLE = "middle",
-      ALPHABETIC = "alphabetic",
-      IDEOGRAPHIC = "ideographic",
-      BOTTOM = "bottom",
-      // font stretch properties
-ULTRA_CONDENSED = "ultra-condensed",
-      // 50%
-EXTRA_CONDENSED = "extra-condensed",
-      // 62.5%
-CONDENSED = "condensed",
-      // 75%
-SEMI_CONDENSED = "semi-condensed",
-      // 87.5%
-NORMAL = "normal",
-      // 100%
-SEMI_EXPANDED = "semi-expanded",
-      // 112.5%
-EXPANDED = "expanded",
-      // 125%
-EXTRA_EXPANDED = "extra-expanded",
-      // 150%
-ULTRA_EXPANDED = "ultra-expanded",
-      // 200%
-// font size properties
-XX_SMALL = "xx-small",
-      X_SMALL = "x-small",
-      SMALL = "small",
-      MEDIUM = "medium",
-      LARGE = "large",
-      X_LARGE = "x-large",
-      XX_LARGE = "xx-large",
-      XXX_LARGE = "xxx-large",
-      LARGER = "larger",
-      SMALLER = "smaller",
-      // font style properties
-ITALIC = "italic",
-      OBLIQUE = "oblique";
-exports.OBLIQUE = OBLIQUE;
-exports.ITALIC = ITALIC;
-exports.SMALLER = SMALLER;
-exports.LARGER = LARGER;
-exports.XXX_LARGE = XXX_LARGE;
-exports.XX_LARGE = XX_LARGE;
-exports.X_LARGE = X_LARGE;
-exports.LARGE = LARGE;
-exports.MEDIUM = MEDIUM;
-exports.SMALL = SMALL;
-exports.X_SMALL = X_SMALL;
-exports.XX_SMALL = XX_SMALL;
-exports.ULTRA_EXPANDED = ULTRA_EXPANDED;
-exports.EXTRA_EXPANDED = EXTRA_EXPANDED;
-exports.EXPANDED = EXPANDED;
-exports.SEMI_EXPANDED = SEMI_EXPANDED;
-exports.NORMAL = NORMAL;
-exports.SEMI_CONDENSED = SEMI_CONDENSED;
-exports.CONDENSED = CONDENSED;
-exports.EXTRA_CONDENSED = EXTRA_CONDENSED;
-exports.ULTRA_CONDENSED = ULTRA_CONDENSED;
-exports.BOTTOM = BOTTOM;
-exports.IDEOGRAPHIC = IDEOGRAPHIC;
-exports.ALPHABETIC = ALPHABETIC;
-exports.MIDDLE = MIDDLE;
-exports.HANGING = HANGING;
-exports.TOP = TOP;
-exports.END = END;
-exports.START = START;
-exports.CENTER = CENTER;
-exports.RIGHT = RIGHT;
-exports.LEFT = LEFT;
-exports.MITER = MITER;
-exports.BEVEL = BEVEL;
-exports.MILTER = MILTER;
-exports.ROUND = ROUND;
-exports.SQUARE = SQUARE;
-exports.BUTT = BUTT;
-
-},{}],13:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.RAD = exports.DEG = exports.SQRT2 = exports.TAU = exports.PI = exports.LN10 = exports.LN2 = exports.E = void 0;
-const E = 2.718281828459045,
-      LN2 = 0.6931471805599453,
-      LN10 = 2.302585092994046,
-      PI = 3.141592653589793,
-      TAU = 6.283185307179586,
-      SQRT2 = 1.4142135623730951,
-      // conversion factors
-DEG = Math.PI / 180,
-      // degree to radian
-RAD = 180 / Math.PI // radian to degree
-;
-exports.RAD = RAD;
-exports.DEG = DEG;
-exports.SQRT2 = SQRT2;
-exports.TAU = TAU;
-exports.PI = PI;
-exports.LN10 = LN10;
-exports.LN2 = LN2;
-exports.E = E;
-
-},{}],14:[function(require,module,exports){
+},{"../main.js":5,"./settings.js":18}],21:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.defineProperties = defineProperties;
+exports.arange = arange;
+exports.applyDefault = applyDefault;
+exports.doFillAndStroke = doFillAndStroke;
+exports.approximateIndexInArray = approximateIndexInArray;
+exports.log = log;
 
+Object.getType = function (obj) {
+  return Object.prototype.toString.call(obj).replace(/(\[object|\s|])/g, "");
+};
+
+Object.clone = Object.clone || function (toClone) {
+  var newObj = {};
+
+  for (var i = 0, keys = Object.keys(toClone); i < keys.length; i++) newObj[keys[i]] = toClone[keys[i]];
+
+  return newObj;
+};
 /**
  * defines new properties to a given Object
  *
@@ -3102,12 +4041,14 @@ exports.defineProperties = defineProperties;
  * @param {boolean} [specific=true] whether to define properties special
  * @param {function} [message] message given on redefining value. Only works if `specific === true`
  */
+
+
 function defineProperties(obj, toAssign, specific, message) {
   toAssign = toAssign || window;
   specific = specific === undefined || specific === null ? window : specific;
   toAssign = toAssign || window;
   message = typeof message === "function" ? message : function (k) {
-    console.warn("You changed value of \"" + k + "\" which C uses. Be careful");
+    console.warn("You changed value of '" + k + "' which C uses. Be careful");
   };
 
   for (let i = 0, props = Object.keys(obj); i < props.length; i++) {
@@ -3137,437 +4078,38 @@ function defineProperties(obj, toAssign, specific, message) {
   }
 }
 
-},{}],15:[function(require,module,exports){
-"use strict";
-
-var _defineProperties = require("./defineProperties.js");
-
-var _main = require("./main.js");
-
-var COLORLIST = _interopRequireWildcard(require("./constants/colors.js"));
-
-var DrawingConstants = _interopRequireWildcard(require("./constants/drawing.js"));
-
-var MathConsts = _interopRequireWildcard(require("./constants/math.js"));
-
-var Colors = _interopRequireWildcard(require("./basic-constructs/color.js"));
-
-var Curves = _interopRequireWildcard(require("./basic-constructs/curves.js"));
-
-var Image = _interopRequireWildcard(require("./basic-constructs/image.js"));
-
-var Linears = _interopRequireWildcard(require("./basic-constructs/linear.js"));
-
-var Settings = _interopRequireWildcard(require("./basic-constructs/settings.js"));
-
-var Text = _interopRequireWildcard(require("./basic-constructs/text.js"));
-
-var MathFunctions = _interopRequireWildcard(require("./utils/math.js"));
-
-var Tex = _interopRequireWildcard(require("./basic-constructs/tex.js"));
-
-var CoordinateSystems = _interopRequireWildcard(require("./basic-constructs/coordinate-systems.js"));
-
-var Braces = _interopRequireWildcard(require("./basic-constructs/braces.js"));
-
-var extras = _interopRequireWildcard(require("./basic-constructs/arrows.js"));
-
-function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
-
-function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
-
-(0, _defineProperties.defineProperties)(COLORLIST, window, false);
-(0, _defineProperties.defineProperties)(DrawingConstants, window, false);
-(0, _defineProperties.defineProperties)(MathConsts, window, false);
-(0, _defineProperties.defineProperties)(Colors);
-(0, _defineProperties.defineProperties)(Curves);
-(0, _defineProperties.defineProperties)(Image);
-(0, _defineProperties.defineProperties)(Linears);
-(0, _defineProperties.defineProperties)(Settings);
-(0, _defineProperties.defineProperties)(Text);
-(0, _defineProperties.defineProperties)(MathFunctions);
-(0, _defineProperties.defineProperties)(MathConsts, window, false);
-(0, _defineProperties.defineProperties)(Tex);
-(0, _defineProperties.defineProperties)(CoordinateSystems);
-(0, _defineProperties.defineProperties)(Braces);
-(0, _defineProperties.defineProperties)(extras);
-(0, _defineProperties.defineProperties)(_defineProperties.defineProperties, _main.C);
-(0, _defineProperties.defineProperties)(COLORLIST, _main.C);
-
-_main.C.addExtension(extras);
-
-},{"./basic-constructs/arrows.js":1,"./basic-constructs/braces.js":2,"./basic-constructs/color.js":3,"./basic-constructs/coordinate-systems.js":4,"./basic-constructs/curves.js":5,"./basic-constructs/image.js":6,"./basic-constructs/linear.js":7,"./basic-constructs/settings.js":8,"./basic-constructs/tex.js":9,"./basic-constructs/text.js":10,"./constants/colors.js":11,"./constants/drawing.js":12,"./constants/math.js":13,"./defineProperties.js":14,"./main.js":16,"./utils/math.js":17}],16:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.C = C;
-
-var _defineProperties = require("./defineProperties.js");
-
-// main file; defines C function
-const defaultConfig = {
-  width: 200,
-  // width of canvas multiplied by dpr
-  height: 200,
-  // height of canvas  multiplied by dpr
-  dpr: Math.ceil(devicePixelRatio || 1),
-  // device pixel ratio for clear drawings
-  // states
-  doFill: true,
-  doStroke: true,
-  pathStarted: false,
-  yAxisInverted: false,
-  netRotation: 0,
-  currentLoop: null,
-  textAlign: "start",
-  textBaseline: "alphabetic",
-  // color stuff
-  fillStyle: "#ffffff",
-  background: "#ffffff",
-  strokeStyle: "#000000",
-  colorMode: "rgba",
-  lineWidth: 1,
-  // font properties
-  fontSize: "20px",
-  fontFamily: "serif",
-  fontStyle: "normal",
-  fontVariant: "normal",
-  fontWeight: "normal",
-  fontStretch: "normal",
-  lineHeight: "1.2",
-  font: "20px serif"
-};
-
-function assignDefaultConfigs(cfgs) {
-  for (let i = 0, properties = Object.keys(defaultConfig); i < properties.length; i++) {
-    const property = properties[i];
-    if (cfgs[property] === undefined) cfgs[property] = defaultConfig[property];
-  }
-}
-/**
- * Main Function
- * @param {function} fx codes to exeecute
- * @param {HTMLElement} [container=document.body] container for the drawings
- * @param {object} [configs={}] configurations
- */
-
-
-function C(fx, container = document.body, configs = {}) {
-  // assign configs
-  assignDefaultConfigs(configs); // initialize canvas
-
-  let canvas = C.makeCanvas(configs);
-
-  if (typeof container === "string") {
-    container = document.querySelector(container);
-  }
-
-  let canvasName;
-
-  if (configs.name != undefined) {
-    canvasName = configs.name;
-    const cvs = document.getElementById(canvasName);
-
-    if (cvs instanceof HTMLElement) {
-      // if already exist
-      canvas = cvs;
-      prepareCanvas();
-      fx();
-      return;
-    }
-  } else {
-    // finds a name for canvas that already don't exist
-    while (document.getElementById("canvas-" + C.nameID) != undefined) {
-      C.nameID++;
-    }
-
-    canvasName = "canvas-" + C.nameID;
-    configs.name = canvasName;
-  }
-
-  function prepareCanvas() {
-    // add additional information to rendererContext
-    C.resizeCanvas(canvas, configs);
-    canvas.context = Object.assign(canvas.getContext("2d"), configs);
-    canvas.context.setTransform(configs.dpr, 0, 0, configs.dpr, 0, 0);
-    C.workingCanvas = canvas.context;
-    C.workingCanvas.savedStates = defaultConfig;
-  } // set canvas's id and class to its name
-
-
-  canvas.id = canvasName;
-  canvas.classList.add(canvasName); // add canvas to container
-
-  container.appendChild(canvas);
-  prepareCanvas();
-  C.canvasList[canvasName] = canvas.context;
-  fx();
-}
-
-C.canvasList = {};
-/** @type {Number} */
-
-C.nameID = 0;
-/** @type {CanvasRenderingContext2D} */
-
-C.workingCanvas = undefined; // index of current working canvas in `canvasList`
-
-C.defaultConfig = defaultConfig;
-/**
- * return inner width of container tag
- * @param {HTMLElement} [container=document.body]
- * @returns {Number}
- */
-
-C.getContainerWidth = function (container = document.body) {
-  const cs = window.getComputedStyle(container);
-  return parseInt(cs.width) - parseInt(cs.paddingRight) - parseInt(cs.paddingLeft);
-};
-/**
- * set width and height attribute of canvas element to the given values in `configs`
- * and scales CSS width and height to DPR
- *
- * values needed in `configs`:
- *
- *   width: <Number> width in pixels
- *
- *   height: <Number> height in pixels
- *
- *   dpr: <Number> dpr
- * @param {HTMLCanvasElement} cvs
- * @param {Object} configs
- */
-
-
-C.resizeCanvas = function (cvs, configs) {
-  const width = configs.width;
-  const height = configs.height;
-  const dpr = configs.dpr;
-  cvs.style.width = width + "px";
-  cvs.style.height = height + "px";
-  cvs.width = dpr * width;
-  cvs.height = dpr * height;
-};
-/**
- * returns a canvas element with given params
- *
- * @param {Object} configs
- * @returns {HTMLCanvasElement}
- */
-
-
-C.makeCanvas = function (configs) {
-  const cvs = document.createElement("canvas");
-  this.resizeCanvas(cvs, configs);
-  return cvs;
-};
-/**
- * add extension to window and C extension list
- *
- * @param {Object} extObj
- * @param {boolean} editable warn the edit of functions
- */
-
-
-C.addExtension = function (extObj, editable) {
-  (0, _defineProperties.defineProperties)(extObj, window, !editable);
-  (0, _defineProperties.defineProperties)(extObj, C.extensions, !editable);
-};
-
-C.defineProperties = _defineProperties.defineProperties; // register to window
-
-window.C = C;
-
-},{"./defineProperties.js":14}],17:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.dist = dist;
-exports.randomInt = randomInt;
-exports.rotateAroundOrigin = rotateAroundOrigin;
-exports.rotateAroundPoint = rotateAroundPoint;
-exports.lineIntersection = lineIntersection;
-exports.circleIntersection = circleIntersection;
-exports.tanh = exports.tan = exports.sqrt = exports.sin = exports.sgn = exports.round = exports.random = exports.pow = exports.min = exports.max = exports.log10 = exports.log2 = exports.log = exports.floor = exports.exp = exports.cosh = exports.cos = exports.ceil = exports.cbrt = exports.atan2 = exports.atan = exports.asin = exports.acos = exports.abs = void 0;
-
-/**
- * This module contains useful math functions.
- * @module math
- */
-const {
-  abs,
-  acos,
-  asin,
-  atan,
-  atan2,
-  cbrt,
-  ceil,
-  cos,
-  cosh,
-  exp,
-  floor,
-  log,
-  log2,
-  log10,
-  max,
-  min,
-  pow,
-  random,
-  round,
-  sign: sgn,
-  sin,
-  sqrt,
-  tan,
-  tanh
-} = Math;
-/**
- * return distance between two points
- *
- * @param {array} p1
- * @param {array} p2
- * @return {number} distance between p1 and p2
- */
-
-exports.tanh = tanh;
-exports.tan = tan;
-exports.sqrt = sqrt;
-exports.sin = sin;
-exports.sgn = sgn;
-exports.round = round;
-exports.random = random;
-exports.pow = pow;
-exports.min = min;
-exports.max = max;
-exports.log10 = log10;
-exports.log2 = log2;
-exports.log = log;
-exports.floor = floor;
-exports.exp = exp;
-exports.cosh = cosh;
-exports.cos = cos;
-exports.ceil = ceil;
-exports.cbrt = cbrt;
-exports.atan2 = atan2;
-exports.atan = atan;
-exports.asin = asin;
-exports.acos = acos;
-exports.abs = abs;
-
-function dist(p1, p2) {
-  return Math.sqrt(Math.pow(p1[0] - p2[0], 2) + Math.pow(p1[1] - p2[1], 2));
-}
-/**
- * Returns a random integer between given range.
- *
- * @param {number} [max=10] maximum range
- * @param {number} [min=0] minimum range
- * @return {number}
- */
-
-
-function randomInt(max = 10, min = 0) {
-  return Math.round(Math.random() * (max - min) + min);
-}
-/**
- * Returns a point rotated around a point by certain angle, exetened by a certain length
- *
- * @param {number|array} x center x or center as array of coords [x, y]
- * @param {number} y center y
- * @param {number} angle angle of rotation
- * @param {number} len length to extend the point
- * @returns {array} array of two points
- */
-
-
-function rotateAroundPoint(x, y, angle, len = 10) {
-  if (Array.isArray(x) && x.length === 2) {
-    y = x[1];
-    x = x[0];
-  }
-
-  return [Math.cos(angle) * len + x, Math.sin(angle) * len + y];
-}
-/**
- * Returns a point rotated around origin by certain angle, exetened by a certain length
- *
- * @param {number} angle angle of rotation
- * @param {number} len length to extend the point
- * @returns {array} array of two points
- */
-
-
-function rotateAroundOrigin(angle, len = 10) {
-  return rotateAroundPoint(0, 0, angle, len);
-}
-/**
- * Returns the point of intersection of two lines.
- *
- * @param {array} p1 start point of first line as [x, y]
- * @param {array} p2 end point of first line as [x, y]
- * @param {array} p3 start point of second line as [x, y]
- * @param {array} p4 end point of second line as [x, y]
- * @return {array} intersection point of lines as [x, y]
- */
-
-
-function lineIntersection(p1, p2, p3, p4) {
-  const m1 = (p2[1] - p1[1]) / (p2[0] - p1[0]);
-  const m2 = (p4[1] - p3[1]) / (p4[0] - p3[0]);
-  const c1 = p1[1] - p1[0] * m1;
-  const c2 = p3[1] - p3[0] * m2;
-  const x = (c2 - c1) / (m1 - m2);
-  const y = m1 * x + c1;
-  return [x, y];
-}
-/**
- * Finds intersection of two circles.
- * A translation from {@link https://stackoverflow.com/a/14146166}
- *
- * @param {array} c1 center of first circle as [x, y]
- * @param {number} r1 radius of first circle
- * @param {array} c2 center of second circle as [x, y]
- * @param {number} r2 radius of second circle
- * @return {array} array of two points as [x, y]
- */
-
-
-function circleIntersection(c1, r1, c2, r2) {
-  const d = dist(c1, c2);
-  const a = (r1 * r1 - r2 * r2 + d * d) / (2 * d);
-  const h = sqrt(r1 * r1 - a * a);
-  const s = a / d;
-  const p2 = [(c2[0] - c1[0]) * s + c1[0], (c2[1] - c1[1]) * s + c1[1]];
-  return [[p2[0] + h * (c2[1] - c1[1]) / d, p2[1] - h * (c2[0] - c1[0]) / d], [p2[0] - h * (c2[1] - c1[1]) / d, p2[1] + h * (c2[0] - c1[0]) / d]];
-}
-
-},{}],18:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.arange = arange;
-exports.applyDefault = applyDefault;
-exports.doFillAndStroke = doFillAndStroke;
-
 function arange(start, end, step, rev = false) {
   const arr = [];
   if (rev) for (let i = end; i >= start; i -= step) arr.push(i);else for (let i = start; i <= end; i += step) arr.push(i);
   return arr;
 }
+/**
+ * Applies default configurations to a given target object
+ * Must be in the form of
+ * <prop>: [<defaultValue>, <type>]
+ *
+ * @param {object} _default default configurations
+ * @param {object} [target={}] target object
+ * @param {boolean} [deepApply=true] whether to apply defaults to deep nested objects
+ * @return {object} applied object
+ */
 
-function applyDefault(_default, target = {}) {
+
+function applyDefault(_default, target = {}, deepApply = true) {
+  target = Object.clone(target);
+
   for (let i = 0, keys = Object.keys(_default); i < keys.length; i++) {
-    const prop = keys[i];
-    const objType = _default[prop][1];
+    const prop = keys[i],
+          defaultProp = _default[prop],
+          targetProp = target[prop];
+    const defaultType = Object.getType(defaultProp);
+    const targetType = Object.getType(targetProp);
 
-    if (objType === "number" && isNaN(target[prop]) || objType === "array" && !Array.isArray(target[prop]) || target[prop] === undefined || target[prop] === null) {
-      target[prop] = _default[prop][0];
+    if (defaultType == "Object" && deepApply) {
+      target[prop] = applyDefault(defaultProp, targetProp, deepApply);
     }
+
+    if (targetType !== defaultType) target[prop] = _default[prop];
   }
 
   return target;
@@ -3584,4 +4126,21 @@ function doFillAndStroke(ctx) {
   if (ctx.doStroke) ctx.stroke();
 }
 
-},{}]},{},[15]);
+function approximateIndexInArray(val, array, epsilon = 1e-6) {
+  for (let i = 0; i < array.length; i++) {
+    var k = array[i];
+
+    if (Math.abs(k - val) <= epsilon) {
+      return i;
+    }
+  }
+
+  return -1;
+}
+
+// dev tools
+function log() {
+  console.log(...arguments);
+}
+
+},{}]},{},[4]);

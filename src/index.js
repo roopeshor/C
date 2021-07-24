@@ -1,4 +1,4 @@
-import { defineProperties } from "./utils/utils.js";
+import { defineProperties } from "./utils.js";
 import { C } from "./main.js";
 
 import * as COLORLIST from "./constants/colors.js";
@@ -11,12 +11,16 @@ import * as Geometry from "./objects/geometry.js";
 import * as Settings from "./objects/settings.js";
 import * as Text from "./objects/text.js";
 import * as Tex from "./objects/tex.js";
-import * as CoordinateSystems from "./objects/coordinate-systems.js";
+import * as CoordinateSystems from "./objects/coordinate_systems.js";
 import * as Braces from "./objects/braces.js";
 import * as Arrows from "./objects/arrows.js";
 import * as Functions from "./objects/functions.js";
 
-import * as MathFunctions from "./utils/math.js";
+import * as Arithmeics from "./math/aritmetics.js";
+import * as Basic from "./math/basic.js";
+import * as Points from "./math/points.js";
+import * as Random from "./math/random.js";
+import * as RateFunctions from "./math/rate_functions.js";
 
 defineProperties(COLORLIST, window, false);
 defineProperties(DrawingConstants, window, false);
@@ -33,7 +37,11 @@ defineProperties(Braces);
 defineProperties(Arrows);
 defineProperties(Functions);
 
-defineProperties(MathFunctions);
+defineProperties(Arithmeics);
+defineProperties(Basic);
+defineProperties(Points);
+defineProperties(Random);
+defineProperties(RateFunctions);
 
 defineProperties(MathConsts, window, false);
 

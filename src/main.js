@@ -1,10 +1,10 @@
-import { applyDefault, defineProperties } from "./utils/utils.js";
+import { applyDefault, defineProperties } from "./utils.js";
 
 const defaultConfigs = {
 	width: 200, // width of canvas multiplied by dpr
 	height: 200, // height of canvas  multiplied by dpr
 
-	dpr: Math.ceil(devicePixelRatio || 1), // device pixel ratio for clear drawings
+	dpr: Math.ceil(window.devicePixelRatio || 1), // device pixel ratio for clear drawings
 
 	// states
 	doFill: true,

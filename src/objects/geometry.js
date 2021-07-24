@@ -2,8 +2,8 @@
  * Functions for drawing various shapes
  */
 import { C } from "../main.js";
-import { circleIntersection, lineIntersection } from "../utils/math.js";
-import { doFillAndStroke } from "../utils/utils.js";
+import { circleIntersection, lineIntersection } from "../math/points.js";
+import { doFillAndStroke } from "../utils.js";
 
 /**
  * Adds a circular arc to the current shape if {@link startShape} was called.
