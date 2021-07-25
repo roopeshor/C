@@ -1,16 +1,4 @@
-import { GREEN_C } from "../../src/constants/colors.js";
-import { E, PI, TAU } from "../../src/constants/math.js";
-import { C } from "../../src/main.js";
-import { axes } from "../../src/objects/coordinate_systems.js";
-import {
-	initBlackboardCanvas,
-	noFill,
-	stroke,
-	strokeWidth
-} from "../../src/objects/settings.js";
-import { abs, cos, sgn, sin } from "../../src/math/basic.js";
-import { lcm } from "../../src/math/aritmetics.js";
-
+/* eslint-disable no-undef */
 const W = 300;
 const H = 300;
 const CFG = {
