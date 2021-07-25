@@ -8,7 +8,7 @@ const CFG = {
 function drawAxis(min = -4, max = 4, dx = 1) {
 	initBlackboardCanvas();
 	strokeWidth(2);
-	stroke(GREEN_C);
+	stroke(GREEN);
 	noFill();
 	return axes({
 		xAxis: {

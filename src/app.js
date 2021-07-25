@@ -55,6 +55,5 @@ defineProperties(RateFunctions);
 
 defineProperties(MathConsts, window, false);
 
-
 defineProperties(defineProperties, C);
 defineProperties(COLORLIST, C);

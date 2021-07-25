@@ -43,7 +43,7 @@ const defaultConfigs = {
  */
 function C(fx, container = document.body, cfgs = {}) {
 	// assign configs
-	const configs = applyDefault(defaultConfigs,cfgs);
+	const configs = applyDefault(defaultConfigs, cfgs);
 
 	// initialize canvas
 	let canvas = C.makeCanvas(configs);

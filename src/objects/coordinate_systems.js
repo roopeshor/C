@@ -1,8 +1,8 @@
-import { BLUE_C, GREY, WHITE } from "../constants/colors.js";
+import { BLUE, GREY, WHITE } from "../constants/colors.js";
 import { C } from "../main.js";
 import { applyDefault, arange } from "../utils.js";
 import { arrowTip } from "./arrows.js";
-import { functionGraph, parametricFunction } from "./functions.js";
+import { functionGraph, heatPlot, parametricFunction } from "./functions.js";
 import { line } from "./geometry.js";
 import {
 	fill,
@@ -16,7 +16,7 @@ import {
 } from "../settings.js";
 import { fillText } from "./text.js";
 
-function getPlotters(unitLength, unitValue) {
+function getPlotterList(unitLength, unitValue, cfgs = {}) {
 	return {
 		getParametricFunction: function (configs) {
 			configs.unitLength = unitLength;
@@ -27,6 +27,13 @@ function getPlotters(unitLength, unitValue) {
 			configs.unitLength = unitLength;
 			configs.unitValue = unitValue;
 			return functionGraph(configs);
+		},
+		getHeatPlot: function (configs) {
+			configs.unitLength = unitLength;
+			configs.unitValue = unitValue;
+			configs.min = [cfgs.xAxis.range[0], cfgs.yAxis.range[0]];
+			configs.max = [cfgs.xAxis.range[1], cfgs.yAxis.range[1]];
+			return heatPlot(configs);
 		},
 	};
 }
@@ -60,6 +67,7 @@ function axes(config = {}) {
 			includeRightTip: true,
 			excludeOriginTick: true,
 			includeNumbers: false,
+			range: [-10, 10, 1],
 		},
 		yAxis: {
 			length: ctx.height,
@@ -71,6 +79,7 @@ function axes(config = {}) {
 			includeRightTip: true,
 			excludeOriginTick: true,
 			includeNumbers: false,
+			range: [-10, 10, 1],
 		},
 	};
 	// configurations
@@ -112,17 +121,14 @@ function axes(config = {}) {
 	// reverse the effect of overall shift
 	ctx.translate(-center[0], -center[1] - yShift);
 	ctx.restore();
-
-	return Object.assign(
-		{
-			center: center, // center of axis as [x, y] in px
-			xAxis: xAxisLine, // x axis confiurations from numberLine
-			yAxis: yAxisLine, // y axis confiurations from numberLine
-			unitValue: unitValue, // how much a unit is as [x, y] in its value
-			unitLength: unitLength, // how much a unit is as [x, y] in px
-		},
-		getPlotters(unitLength, unitValue)
-	);
+	const ret = {
+		center: center, // center of axis as [x, y] in px
+		xAxis: xAxisLine, // x axis confiurations from numberLine
+		yAxis: yAxisLine, // y axis confiurations from numberLine
+		unitValue: unitValue, // how much a unit is as [x, y] in its value
+		unitLength: unitLength, // how much a unit is as [x, y] in px
+	};
+	return Object.assign(ret, getPlotterList(unitLength, unitValue, ret));
 }
 
 /**
@@ -309,6 +315,7 @@ function numberLine(config = {}) {
 
 	restore();
 	return {
+		range: range,
 		center: center,
 		tickList: list,
 		unitValue: step,
@@ -375,7 +382,7 @@ function numberPlane(config = {}) {
 			lineWidth: 1,
 			subgridLineWidth: 0.7,
 
-			color: BLUE_C + "a0",
+			color: BLUE + "a0",
 			subgridLineColor: GREY + "50",
 		},
 		center: [0, 0],
@@ -485,17 +492,15 @@ function numberPlane(config = {}) {
 	}
 
 	restore();
-	return Object.assign(
-		{
-			center: center, // center of number plane
-			unitValue: unitValue, // how much a unit is in its value
-			unitLength: unitLength, // how much a unit is in px
-			xAxis: axesLines.xAxis, // x axis confiurations from numberLine
-			yAxis: axesLines.yAxis, // y axis confiurations from numberLine
-			subgridUnit: subgridUnit, // subgrid unit size
-		},
-		getPlotters(unitLength, unitValue)
-	);
+	const ret = {
+		center: center, // center of number plane
+		unitValue: unitValue, // how much a unit is in its value
+		unitLength: unitLength, // how much a unit is in px
+		xAxis: axesLines.xAxis, // x axis confiurations from numberLine
+		yAxis: axesLines.yAxis, // y axis confiurations from numberLine
+		subgridUnit: subgridUnit, // subgrid unit size
+	};
+	return Object.assign(ret, getPlotterList(unitLength, unitValue, ret));
 }
 
 export { axes, numberLine, numberPlane };

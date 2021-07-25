@@ -1,4 +1,8 @@
+import { readColor } from "../color/color_reader.js";
+import { BLUE, RED, YELLOW } from "../constants/colors.js";
 import { C } from "../main.js";
+import { linear } from "../math/rate_functions.js";
+import { loop, noLoop } from "../settings.js";
 import {
 	applyDefault,
 	approximateIndexInArray,
@@ -9,7 +13,6 @@ import {
 	line,
 	smoothCurveThroughPoints,
 } from "./geometry.js";
-import { loop, noLoop } from "../settings.js";
 
 /**
  * Draws a parametric functions
@@ -47,14 +50,8 @@ function parametricFunction(config) {
 		draw: true,
 	};
 	config = applyDefault(defaultConfigs, config);
-	var {
-		paramFunction,
-		range,
-		smoothen,
-		tension,
-		discontinuities,
-		closed,
-	} = config;
+	var { paramFunction, range, smoothen, tension, discontinuities, closed } =
+		config;
 	if (Array.isArray(range) && range.length == 2)
 		range.push((range[1] - range[0]) / 20);
 	var points = [[]];
@@ -153,7 +150,8 @@ function parametricFunction(config) {
 								noLoop();
 								if (ctx.doFill) this.draw();
 							}
-							var p1 = p[j], p2 = p[++j];
+							var p1 = p[j],
+								p2 = p[++j];
 							line(p1[0], p1[1], p2[0], p2[1]);
 						},
 						ctx.name,
@@ -174,4 +172,96 @@ function functionGraph(config) {
 	config.paramFunction = (x) => [x, paramFunction(x)];
 	return parametricFunction(config);
 }
-export { parametricFunction, functionGraph };
+
+/**
+ * Draws a heat plot of given function. The function must take atleast 2 arguments and return a number.
+ * More precisely f: ℜ² → ℜ
+ * All parameters should be enclosed in a object.
+ * @param {object} config
+ * Possible parameters are:
+ *
+ * * min          <array>   ([-4, -4]): minimum point
+ * * max          <array>   ([4, 4])  : maximum point
+ * * colors       <object>            : object of color map
+ * * unitValue    <array>   ([1, 1])  : Value of each unit space
+ * * unitLength   <array>   ([1, 1])  : Length of each unit in pixels
+ * * resolution   <number>  (1)       : resolution of plot
+ * * interpolator <function> (linear) : function to interpolate color.
+ * @return {object} metadatas
+ */
+function heatPlot(config) {
+	const defaultConfigs = {
+		min: [-4, -4],
+		max: [4, 4],
+		colors: {
+			"-4": BLUE,
+			0: YELLOW,
+			4: RED,
+		},
+		unitLength: [1, 1],
+		unitValue: [1, 1],
+		resolution: 1,
+		interpolator: linear,
+	};
+	config = applyDefault(defaultConfigs, config);
+	const { min, max, colors, resolution, plotFunction, interpolator } = config;
+	const ctx = C.workingCanvas;
+	const unitSizeX = config.unitLength[0] / config.unitValue[0];
+	const unitSizeY = config.unitLength[1] / config.unitValue[1];
+	const UVX = config.unitValue[0] / unitSizeX;
+	const UVY = config.unitValue[1] / unitSizeY;
+	const stopes = Object.keys(colors).sort();
+
+	// converting colors to rgba array
+
+	for (var i = 0; i < stopes.length; i++) {
+		colors[stopes[i]] = readColor([colors[stopes[i]]], true);
+	}
+
+	const minS = Math.min(...stopes);
+	const maxS = Math.max(...stopes);
+	// const w = (max[0] - min[0]) / (resolution * UVX);
+	// const h = (max[1] - min[1]) / (resolution * UVY);
+	ctx.save();
+	// const img = ctx.createImageData(w, h);
+	// console.log(img.data);
+	for (var x = min[0]; x <= max[0]; x += resolution * UVX) {
+		for (var y = min[1]; y <= max[1]; y += resolution * UVY) {
+			let c = lerpColorArray(plotFunction(x, y));
+			ctx.fillStyle = c;
+			ctx.fillRect(x * unitSizeX, y * unitSizeY, resolution, resolution);
+			// img.data[]
+		}
+	}
+	// ctx.putImageData(img, 0, 0);
+	function lerpColorArray(v) {
+		if (v >= maxS) return "rgba(" + colors[maxS].join() + ")";
+		if (v <= minS) return "rgba(" + colors[minS].join() + ")";
+		for (var i = 0; i < stopes.length - 1; i++) {
+			let a = stopes[i],
+				b = stopes[i + 1],
+				c1 = colors[a],
+				c2 = colors[b],
+				k = interpolator((v - a) / (b - a));
+			if (v >= a && v < b) {
+				return (
+					"rgba(" +
+					[
+						(c2[0] - c1[0]) * k + c1[0],
+						(c2[1] - c1[1]) * k + c1[1],
+						(c2[2] - c1[2]) * k + c1[2],
+						(c2[3] - c1[3]) * k + c1[3],
+					].join() +
+					")"
+				);
+			}
+		}
+	}
+	ctx.restore();
+	return {
+		min: minS,
+		max: maxS,
+		colors: colors,
+	};
+}
+export { parametricFunction, functionGraph, heatPlot };

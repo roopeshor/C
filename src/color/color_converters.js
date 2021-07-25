@@ -35,15 +35,15 @@ function RGBToHSL(red, green, blue) {
 		const d = max - min;
 		saturation = lightness > 0.5 ? d / (2 - max - min) : d / (max + min);
 		switch (max) {
-		case r:
-			hue = (g - b) / d + (g < b ? 6 : 0);
-			break;
-		case g:
-			hue = (b - r) / d + 2;
-			break;
-		case b:
-			hue = (r - g) / d + 4;
-			break;
+			case r:
+				hue = (g - b) / d + (g < b ? 6 : 0);
+				break;
+			case g:
+				hue = (b - r) / d + 2;
+				break;
+			case b:
+				hue = (r - g) / d + 4;
+				break;
 		}
 		hue /= 6;
 	}
@@ -69,7 +69,9 @@ function HSLToRGB(hue, saturation, lightness) {
 		r = g = b = lightness; // achromatic
 	} else {
 		const q =
-      lightness < 0.5 ? lightness * (1 + saturation) : lightness + saturation - lightness * saturation;
+			lightness < 0.5
+				? lightness * (1 + saturation)
+				: lightness + saturation - lightness * saturation;
 		const p = 2 * lightness - q;
 		r = hue2RGB(p, q, hue + 1 / 3);
 		g = hue2RGB(p, q, hue);
@@ -105,15 +107,15 @@ function RGBToHSV(red, green, blue) {
 		hue = 0; // achromatic
 	} else {
 		switch (max) {
-		case r:
-			hue = (g - b) / d + (g < b ? 6 : 0);
-			break;
-		case g:
-			hue = (b - r) / d + 2;
-			break;
-		case b:
-			hue = (r - g) / d + 4;
-			break;
+			case r:
+				hue = (g - b) / d + (g < b ? 6 : 0);
+				break;
+			case g:
+				hue = (b - r) / d + 2;
+				break;
+			case b:
+				hue = (r - g) / d + 4;
+				break;
 		}
 		hue /= 6;
 	}
@@ -141,45 +143,39 @@ function HSVToRGB(hue, saturation, value) {
 	const t = value * (1 - (1 - f) * saturation);
 
 	switch (i % 6) {
-	case 0:
-		r = value;
-		g = t;
-		b = p;
-		break;
-	case 1:
-		r = q;
-		g = value;
-		b = p;
-		break;
-	case 2:
-		r = p;
-		g = value;
-		b = t;
-		break;
-	case 3:
-		r = p;
-		g = q;
-		b = value;
-		break;
-	case 4:
-		r = t;
-		g = p;
-		b = value;
-		break;
-	case 5:
-		r = value;
-		g = p;
-		b = q;
-		break;
+		case 0:
+			r = value;
+			g = t;
+			b = p;
+			break;
+		case 1:
+			r = q;
+			g = value;
+			b = p;
+			break;
+		case 2:
+			r = p;
+			g = value;
+			b = t;
+			break;
+		case 3:
+			r = p;
+			g = q;
+			b = value;
+			break;
+		case 4:
+			r = t;
+			g = p;
+			b = value;
+			break;
+		case 5:
+			r = value;
+			g = p;
+			b = q;
+			break;
 	}
 
 	return [r * 255, g * 255, b * 255];
 }
 
-export {
-	RGBToHSL,
-	HSLToRGB,
-	RGBToHSV,
-	HSVToRGB,
-};
-
+export { RGBToHSL, HSLToRGB, RGBToHSV, HSVToRGB };

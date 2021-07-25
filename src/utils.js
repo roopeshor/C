@@ -77,13 +77,15 @@ function arange(start, end, step, rev = false) {
 function applyDefault(_default, target = {}, deepApply = true) {
 	target = Object.clone(target);
 	for (let i = 0, keys = Object.keys(_default); i < keys.length; i++) {
-		const prop = keys[i], defaultProp = _default[prop], targetProp = target[prop];
+		const prop = keys[i],
+			defaultProp = _default[prop],
+			targetProp = target[prop];
 		const defaultType = Object.getType(defaultProp);
 		const targetType = Object.getType(targetProp);
 		if (defaultType == "Object" && deepApply) {
 			target[prop] = applyDefault(defaultProp, targetProp, deepApply);
 		}
-		if (targetType !== defaultType)	target[prop] = _default[prop];
+		if (targetType !== defaultType) target[prop] = _default[prop];
 	}
 	return target;
 }
@@ -114,8 +116,3 @@ export {
 	doFillAndStroke,
 	approximateIndexInArray,
 };
-
-// dev tools
-export function log() {
-	console.log(...arguments);
-}

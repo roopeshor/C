@@ -51,4 +51,4 @@ function linearGradient(initialPoint, finalPoint, colorStops) {
 	return gradient;
 }
 
-export {linearGradient};
+export { linearGradient };

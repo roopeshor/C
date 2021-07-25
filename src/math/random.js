@@ -9,6 +9,4 @@ function randomInt(max = 10, min = 0) {
 	return Math.round(Math.random() * (max - min) + min);
 }
 
-export {
-	randomInt
-};
+export { randomInt };

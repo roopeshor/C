@@ -86,5 +86,5 @@ export {
 	rotateAroundOrigin,
 	rotateAroundPoint,
 	lineIntersection,
-	circleIntersection
+	circleIntersection,
 };

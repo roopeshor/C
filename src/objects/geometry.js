@@ -174,7 +174,13 @@ function smoothCurveThroughPointsTo(points, tension = 1, closed = true) {
 		var secondNextPoint =
 			i != points.length - 2 ? points[i + 2] : closed ? points[1] : nextPoint;
 
-		var cp = getBezierControlPoints(recentPoint, currentPoint, nextPoint, secondNextPoint, tension);
+		var cp = getBezierControlPoints(
+			recentPoint,
+			currentPoint,
+			nextPoint,
+			secondNextPoint,
+			tension
+		);
 		C.workingCanvas.bezierCurveTo(
 			cp[0],
 			cp[1],
@@ -611,5 +617,5 @@ export {
 	regularPolygon,
 	regularPolygonWithRadius,
 	polygonWithRatioOfCentralAngles,
-	getBezierControlPoints
+	getBezierControlPoints,
 };

@@ -26,14 +26,14 @@ C(
     function set1 () {
       // first set of colors
       const colors = [
-        [BLUE_A, BLUE_B, BLUE_C, BLUE_D, BLUE_E],
-        [TEAL_A, TEAL_B, TEAL_C, TEAL_D, TEAL_E],
-        [GREEN_A, GREEN_B, GREEN_C, GREEN_D, GREEN_E],
-        [YELLOW_A, YELLOW_B, YELLOW_C, YELLOW_D, YELLOW_E],
-        [GOLD_A, GOLD_B, GOLD_C, GOLD_D, GOLD_E],
-        [RED_A, RED_B, RED_C, RED_D, RED_E],
-        [MAROON_A, MAROON_B, MAROON_C, MAROON_D, MAROON_E],
-        [PURPLE_A, PURPLE_B, PURPLE_C, PURPLE_D, PURPLE_E]
+        [BLUE_A, BLUE_B, BLUE, BLUE_D, BLUE_E],
+        [TEAL_A, TEAL_B, TEAL, TEAL_D, TEAL_E],
+        [GREEN_A, GREEN_B, GREEN, GREEN_D, GREEN_E],
+        [YELLOW_A, YELLOW_B, YELLOW, YELLOW_D, YELLOW_E],
+        [GOLD_A, GOLD_B, GOLD, GOLD_D, GOLD_E],
+        [RED_A, RED_B, RED, RED_D, RED_E],
+        [MAROON_A, MAROON_B, MAROON, MAROON_D, MAROON_E],
+        [PURPLE_A, PURPLE_B, PURPLE, PURPLE_D, PURPLE_E]
       ];
       const stopNames = [
         "Blue",
@@ -48,7 +48,7 @@ C(
       const colorIntensities = ["A", "B", "C", "D", "E"];
 
       noFill();
-      stroke(BLUE_C);
+      stroke(BLUE);
       rect(0, 0, boxW, boxH);
       stroke(BLACK);
       translate(paddingX, paddingY);
@@ -103,7 +103,7 @@ C(
       const stopNames = ["Blue & Brown", "Grey shades", "Others"];
       const pd = 40; // a quick fix
       noFill();
-      stroke(BLUE_C);
+      stroke(BLUE);
       rect(0, 0, boxW, boxH);
       stroke(BLACK);
       translate(paddingX + pd, paddingY / 2);

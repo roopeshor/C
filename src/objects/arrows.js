@@ -6,7 +6,6 @@ import { applyDefault, doFillAndStroke } from "../utils.js";
 import { endShape, restore, save, startShape } from "../settings.js";
 import { fillText } from "./text.js";
 
-
 const DEFAULT_TIP_WIDTH = 15;
 
 /**

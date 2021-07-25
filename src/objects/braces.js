@@ -97,7 +97,10 @@ function arcBrace(
 
 	// tip line
 	ctx.moveTo(radius * Math.cos(angle / 2), radius * Math.sin(angle / 2));
-	ctx.lineTo(largerRadius * Math.cos(angle / 2), largerRadius * Math.sin(angle / 2));
+	ctx.lineTo(
+		largerRadius * Math.cos(angle / 2),
+		largerRadius * Math.sin(angle / 2)
+	);
 
 	ctx.stroke();
 	ctx.closePath();

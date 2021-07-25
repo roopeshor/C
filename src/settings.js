@@ -4,7 +4,7 @@ import { readColor } from "./color/color_reader.js";
 /**
  * This module contains functions to manipulate the canvas.
  * @module settings
-*/
+ */
 
 /**
  * Begins a new shape at the point specified by the given (x, y) coordinates.
@@ -356,7 +356,12 @@ function getContextStates() {
  *  If not provided the loop will be run with requestAnimationFrame (this keeps a consistant frame rate between 40 to 50 FPS).
  * @param {number} [timeDelaysToRemember=10] number of time delays to remember.
  */
-function loop(functionToRun, canvasName, timeDelay, timeDelaysToRemember=100) {
+function loop(
+	functionToRun,
+	canvasName,
+	timeDelay,
+	timeDelaysToRemember = 100
+) {
 	let ctx;
 
 	// if canvasName isn't given it will assume the drawing context to be the current working canvas
@@ -379,7 +384,7 @@ function loop(functionToRun, canvasName, timeDelay, timeDelaysToRemember=100) {
 		functionToRun(window.performance.now() - ctx.timeStart, getFPS());
 	}
 
-	function getFPS () {
+	function getFPS() {
 		const now = window.performance.now();
 		const timeDelay = now - ctx.recentTimeStamp; // time delays between frames
 		ctx.recentTimeStamp = now;
@@ -638,7 +643,7 @@ function textBaseline(baseline) {
  * Sets the text alignment to centered in x and y axes.
  *
  */
-function centerdText () {
+function centerdText() {
 	textAlign("center");
 	textBaseline("middle");
 }
@@ -648,13 +653,13 @@ function centerdText () {
  */
 function initCenteredCanvas() {
 	const ctx = C.workingCanvas;
-	ctx.translate(ctx.width/2, ctx.height/2);
+	ctx.translate(ctx.width / 2, ctx.height / 2);
 }
 
 /**
  * Inverts y-axis
  */
-function invertYAxis () {
+function invertYAxis() {
 	const ctx = C.workingCanvas;
 	ctx.scale(1, -1);
 	ctx.yAxisInverted = !ctx.yAxisInverted;
@@ -663,7 +668,7 @@ function invertYAxis () {
 /**
  * Init a blackboard like canvas. Centerd to middle, with black background and y axis inverted
  */
-function initBlackboardCanvas () {
+function initBlackboardCanvas() {
 	initCenteredCanvas();
 	background(0);
 	invertYAxis();
@@ -717,5 +722,5 @@ export {
 	centerdText,
 	initCenteredCanvas,
 	invertYAxis,
-	initBlackboardCanvas
+	initBlackboardCanvas,
 };

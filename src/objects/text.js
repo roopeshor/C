@@ -4,7 +4,7 @@ import { scale } from "../settings.js";
 /**
  * This module contains functions for drawing different types of text.
  * @module text
-*/
+ */
 
 /**
  * Draws a filled & stroked text
@@ -62,8 +62,4 @@ function strokeText(text, x = 0, y = 0, maxwidth = undefined) {
 	if (ctx.yAxisInverted) scale(1, -1);
 }
 
-export {
-	text,
-	fillText,
-	strokeText,
-};
+export { text, fillText, strokeText };

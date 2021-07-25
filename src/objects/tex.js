@@ -79,7 +79,4 @@ function tex(input, x = 0, y = 0) {
 	return image;
 }
 
-export {
-	tex,
-	getImageFromTex
-};
+export { tex, getImageFromTex };

@@ -12,51 +12,31 @@ function readColor(color, toArray = false) {
 	let read;
 	if (typeof c1 === "number") {
 		if (color.length === 1) {
-			read = [
-				c1,
-				c1,
-				c1,
-				255
-			];
+			read = [c1, c1, c1, 1];
 		} else if (color.length === 2) {
-			read = [
-				c1,
-				color[1],
-				0,
-				255
-			];
+			read = [c1, color[1], 0, 1];
 		} else if (color.length === 3) {
-			read = [
-				c1,
-				color[1],
-				color[2],
-				255
-			];
+			read = [c1, color[1], color[2], 1];
 		} else if (color.length === 4) {
-			read = [
-				c1,
-				color[1],
-				color[2],
-				color[3],
-			];
+			read = [c1, color[1], color[2], color[3]];
 		}
 	} else if (c1[0] == "#") {
 		c1 = c1.substr(1);
 		if (c1.length == 3 || c1.length == 4) {
-		let alpha = c1[3] || "ff";
+			let alpha = c1[3] || "ff";
 			read = [
 				Number("0x" + c1[0] + c1[0]),
 				Number("0x" + c1[1] + c1[1]),
 				Number("0x" + c1[2] + c1[2]),
-				Number("0x" + alpha),
+				Number("0x" + alpha) / 255,
 			];
 		} else if (c1.length == 6 || c1.length == 8) {
-		let alpha = c1.substr(6, 2) || "ff";
+			let alpha = c1.substr(6, 2) || "ff";
 			read = [
 				Number("0x" + c1.substr(0, 2)),
 				Number("0x" + c1.substr(2, 2)),
 				Number("0x" + c1.substr(4, 2)),
-				Number("0x" + alpha),
+				Number("0x" + alpha) / 255,
 			];
 		}
 	}
@@ -70,4 +50,4 @@ function readColor(color, toArray = false) {
 	}
 	return read;
 }
-export {readColor};
+export { readColor };
