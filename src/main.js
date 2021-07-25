@@ -105,7 +105,7 @@ C.nameID = 0;
  * Current working canvas
  * @type {CanvasRenderingContext2D}
  */
-C.workingCanvas = undefined; // index of current working canvas in `C.canvasList`
+C.workingCanvas = {}; // index of current working canvas in `C.canvasList`
 
 /**
  * Default configurations

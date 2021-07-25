@@ -13,7 +13,7 @@ import {
 	stroke,
 	strokeWidth,
 	translate,
-} from "./settings.js";
+} from "../settings.js";
 import { fillText } from "./text.js";
 
 function getPlotters(unitLength, unitValue) {

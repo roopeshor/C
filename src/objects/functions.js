@@ -9,7 +9,7 @@ import {
 	line,
 	smoothCurveThroughPoints,
 } from "./geometry.js";
-import { loop, noLoop } from "./settings.js";
+import { loop, noLoop } from "../settings.js";
 
 /**
  * Draws a parametric functions

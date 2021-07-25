@@ -1,5 +1,5 @@
-import { C } from "../main.js";
-import { readColor } from "./color.js";
+import { C } from "./main.js";
+import { readColor } from "./color/color_reader.js";
 
 /**
  * This module contains functions to manipulate the canvas.

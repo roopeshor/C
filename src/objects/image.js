@@ -1,6 +1,5 @@
 import { C } from "../main.js";
-import { readColor } from "./color.js";
-
+import {readColor} from "../color/color_reader.js";
 /**
  * This module contains function for image manipulation.
  * @module image

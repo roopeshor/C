@@ -3,7 +3,7 @@ import { BEVEL, CENTER, MIDDLE } from "../constants/drawing.js";
 import { C } from "../main.js";
 import { circleIntersection } from "../math/points.js";
 import { applyDefault, doFillAndStroke } from "../utils.js";
-import { endShape, restore, save, startShape } from "./settings.js";
+import { endShape, restore, save, startShape } from "../settings.js";
 import { fillText } from "./text.js";
 
 

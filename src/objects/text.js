@@ -1,5 +1,5 @@
 import { C } from "../main.js";
-import { scale } from "./settings.js";
+import { scale } from "../settings.js";
 
 /**
  * This module contains functions for drawing different types of text.
