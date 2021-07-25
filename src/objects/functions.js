@@ -64,6 +64,7 @@ function parametricFunction(config) {
 	var epsilon = 1e-6;
 	if (step < epsilon) epsilon = step / 2;
 	var row = 0;
+	var noPoints = 0;
 	const unitX = config.unitLength[0] / config.unitValue[0],
 		unitY = config.unitLength[1] / config.unitValue[1];
 	for (var t = min; t <= max + epsilon; t += step) {
@@ -76,6 +77,7 @@ function parametricFunction(config) {
 		}
 		let ft = paramFunction(t);
 		points[row].push([ft[0] * unitX, ft[1] * unitY]);
+		noPoints++;
 	}
 
 	// draw the plot
@@ -102,7 +104,6 @@ function parametricFunction(config) {
 		draw: plot,
 		animate: function (duration = 2000) {
 			const ctx = C.workingCanvas;
-			var noPoints = points.flat().length;
 			var dt = duration / noPoints;
 			for (let i = 0; i < points.length; i++) {
 				var p = points[i];

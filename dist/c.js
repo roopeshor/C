@@ -1,10 +1,501 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 "use strict";
 
+var _utils = require("./utils.js");
+
+var _main = require("./main.js");
+
+var COLORLIST = _interopRequireWildcard(require("./constants/colors.js"));
+
+var DrawingConstants = _interopRequireWildcard(require("./constants/drawing.js"));
+
+var MathConsts = _interopRequireWildcard(require("./constants/math.js"));
+
+var Color_Converters = _interopRequireWildcard(require("./color/color_converters.js"));
+
+var Color_Reader = _interopRequireWildcard(require("./color/color_reader.js"));
+
+var Gradients = _interopRequireWildcard(require("./color/gradients.js"));
+
+var Color_Random = _interopRequireWildcard(require("./color/random.js"));
+
+var Interpolation = _interopRequireWildcard(require("./color/interpolation.js"));
+
+var Image = _interopRequireWildcard(require("./objects/image.js"));
+
+var Geometry = _interopRequireWildcard(require("./objects/geometry.js"));
+
+var Settings = _interopRequireWildcard(require("./settings.js"));
+
+var Text = _interopRequireWildcard(require("./objects/text.js"));
+
+var Tex = _interopRequireWildcard(require("./objects/tex.js"));
+
+var CoordinateSystems = _interopRequireWildcard(require("./objects/coordinate_systems.js"));
+
+var Braces = _interopRequireWildcard(require("./objects/braces.js"));
+
+var Arrows = _interopRequireWildcard(require("./objects/arrows.js"));
+
+var Functions = _interopRequireWildcard(require("./objects/functions.js"));
+
+var Arithmeics = _interopRequireWildcard(require("./math/aritmetics.js"));
+
+var Basic = _interopRequireWildcard(require("./math/basic.js"));
+
+var Points = _interopRequireWildcard(require("./math/points.js"));
+
+var Math_Random = _interopRequireWildcard(require("./math/random.js"));
+
+var RateFunctions = _interopRequireWildcard(require("./math/rate_functions.js"));
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+(0, _utils.defineProperties)(COLORLIST, window, false);
+(0, _utils.defineProperties)(DrawingConstants, window, false);
+(0, _utils.defineProperties)(MathConsts, window, false);
+(0, _utils.defineProperties)(Color_Converters);
+(0, _utils.defineProperties)(Color_Reader);
+(0, _utils.defineProperties)(Gradients);
+(0, _utils.defineProperties)(Color_Random);
+(0, _utils.defineProperties)(Interpolation);
+(0, _utils.defineProperties)(Image);
+(0, _utils.defineProperties)(Geometry);
+(0, _utils.defineProperties)(Settings);
+(0, _utils.defineProperties)(Text);
+(0, _utils.defineProperties)(Tex);
+(0, _utils.defineProperties)(CoordinateSystems);
+(0, _utils.defineProperties)(Braces);
+(0, _utils.defineProperties)(Arrows);
+(0, _utils.defineProperties)(Functions);
+(0, _utils.defineProperties)(Arithmeics);
+(0, _utils.defineProperties)(Basic);
+(0, _utils.defineProperties)(Points);
+(0, _utils.defineProperties)(Math_Random);
+(0, _utils.defineProperties)(RateFunctions);
+(0, _utils.defineProperties)(MathConsts, window, false);
+(0, _utils.defineProperties)(_utils.defineProperties, _main.C);
+(0, _utils.defineProperties)(COLORLIST, _main.C);
+
+},{"./color/color_converters.js":2,"./color/color_reader.js":3,"./color/gradients.js":4,"./color/interpolation.js":5,"./color/random.js":6,"./constants/colors.js":7,"./constants/drawing.js":8,"./constants/math.js":9,"./main.js":10,"./math/aritmetics.js":11,"./math/basic.js":12,"./math/points.js":13,"./math/random.js":14,"./math/rate_functions.js":15,"./objects/arrows.js":16,"./objects/braces.js":17,"./objects/coordinate_systems.js":18,"./objects/functions.js":19,"./objects/geometry.js":20,"./objects/image.js":21,"./objects/tex.js":22,"./objects/text.js":23,"./settings.js":24,"./utils.js":25}],2:[function(require,module,exports){
+"use strict";
+
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.TRANSPARENT = exports.ORANGE = exports.GREEN_SCREEN = exports.LIGHT_PINK = exports.PINK = exports.GREY_BROWN = exports.DARKER_GRAY = exports.DARKER_GREY = exports.DARK_GRAY = exports.DARK_GREY = exports.GREY = exports.GRAY = exports.LIGHT_GREY = exports.LIGHT_GRAY = exports.BLACK = exports.WHITE = exports.PURPLE_E = exports.PURPLE_D = exports.PURPLE_C = exports.PURPLE_B = exports.PURPLE_A = exports.MAROON_E = exports.MAROON_D = exports.MAROON_C = exports.MAROON_B = exports.MAROON_A = exports.RED_E = exports.RED_D = exports.RED_C = exports.RED_B = exports.RED_A = exports.GOLD_E = exports.GOLD_D = exports.GOLD_C = exports.GOLD_B = exports.GOLD_A = exports.YELLOW_E = exports.YELLOW_D = exports.YELLOW_C = exports.YELLOW_B = exports.YELLOW_A = exports.GREEN_E = exports.GREEN_D = exports.GREEN_C = exports.GREEN_B = exports.GREEN_A = exports.TEAL_E = exports.TEAL_D = exports.TEAL_C = exports.TEAL_B = exports.TEAL_A = exports.BLUE_E = exports.BLUE_D = exports.BLUE_C = exports.BLUE_B = exports.BLUE_A = exports.LIGHT_BROWN = exports.DARK_BROWN = exports.DARK_BLUE = void 0;
+exports.RGBToHSL = RGBToHSL;
+exports.HSLToRGB = HSLToRGB;
+exports.RGBToHSV = RGBToHSV;
+exports.HSVToRGB = HSVToRGB;
+
+function hue2RGB(p, q, t) {
+  if (t < 0) t += 1;
+  if (t > 1) t -= 1;
+  if (t < 1 / 6) return p + (q - p) * 6 * t;
+  if (t < 1 / 2) return q;
+  if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+  return p;
+}
+/**
+ * Converts an RGB color value to HSL. Conversion formula
+ * adapted from http://en.wikipedia.org/wiki/HSL_color_space.
+ * Assumes values of red, green, and blue are between 0 & 255 and
+ * returns hue in range 0 to 360, saturation and lightness in range 0 to 1
+ * @method RGBToHSL
+ * @global
+ * @param {number} red The red color value
+ * @param {number} green The green color value
+ * @param {number} blue The blue color value
+ * @return {array} The HSL representation
+ */
+
+
+function RGBToHSL(red, green, blue) {
+  const r = red / 255;
+  const g = green / 255;
+  const b = blue / 255;
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  let hue;
+  let saturation;
+  const lightness = (max + min) / 2;
+
+  if (max === min) {
+    hue = saturation = 0; // achromatic
+  } else {
+    const d = max - min;
+    saturation = lightness > 0.5 ? d / (2 - max - min) : d / (max + min);
+
+    switch (max) {
+      case r:
+        hue = (g - b) / d + (g < b ? 6 : 0);
+        break;
+
+      case g:
+        hue = (b - r) / d + 2;
+        break;
+
+      case b:
+        hue = (r - g) / d + 4;
+        break;
+    }
+
+    hue /= 6;
+  }
+
+  return [hue * 360, saturation, lightness];
+}
+/**
+ * Converts an HSL color value to RGB. Conversion formula
+ * adapted from http://en.wikipedia.org/wiki/HSL_color_space.
+ * Assumes values of hue is between 0 and 360, saturation and lightness are between 0 & 1 and
+ * returns red, green, and blue values between 0 & 255
+ *
+ * @param {number} hue The hue
+ * @param {number} saturation The saturation
+ * @param {number} lightness The lightness
+ * @return {array} The RGB representation
+ */
+
+
+function HSLToRGB(hue, saturation, lightness) {
+  let r, g, b;
+  hue /= 360;
+
+  if (saturation === 0) {
+    r = g = b = lightness; // achromatic
+  } else {
+    const q = lightness < 0.5 ? lightness * (1 + saturation) : lightness + saturation - lightness * saturation;
+    const p = 2 * lightness - q;
+    r = hue2RGB(p, q, hue + 1 / 3);
+    g = hue2RGB(p, q, hue);
+    b = hue2RGB(p, q, hue - 1 / 3);
+  }
+
+  return [r * 255, g * 255, b * 255];
+}
+/**
+ * Converts an RGB color value to HSV. Conversion formula
+ * adapted from http://en.wikipedia.org/wiki/HSV_color_space.
+ * Assumes values of red, green, and blue are between 0 & 255 and
+ * returns hue in range 0 to 360, saturation and value in range 0 to 1
+ *
+ * @param {number} red The red color value
+ * @param {number} green The green color value
+ * @param {number} blue The blue color value
+ * @return {array} The HSV representation
+ */
+
+
+function RGBToHSV(red, green, blue) {
+  const r = red / 255;
+  const g = green / 255;
+  const b = blue / 255;
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  let hue;
+  const value = max;
+  const d = max - min;
+  const saturation = max === 0 ? 0 : d / max;
+
+  if (max === min) {
+    hue = 0; // achromatic
+  } else {
+    switch (max) {
+      case r:
+        hue = (g - b) / d + (g < b ? 6 : 0);
+        break;
+
+      case g:
+        hue = (b - r) / d + 2;
+        break;
+
+      case b:
+        hue = (r - g) / d + 4;
+        break;
+    }
+
+    hue /= 6;
+  }
+
+  return [hue * 360, saturation, value];
+}
+/**
+ * Converts an HSV color value to RGB. Conversion formula
+ * adapted from http://en.wikipedia.org/wiki/HSV_color_space.
+ * Assumes values of hue is between 0 to 360, saturation, and value are between 0 & 1 and
+ * returns red, green, and blue in range 0 to 255
+ *
+ * @param {number} hue The hue
+ * @param {number} saturation The saturation
+ * @param {number} value The value
+ * @return {array} The RGB representation
+ */
+
+
+function HSVToRGB(hue, saturation, value) {
+  let r, g, b;
+  const i = Math.floor(hue / 60);
+  const f = hue / 60 - i;
+  const p = value * (1 - saturation);
+  const q = value * (1 - f * saturation);
+  const t = value * (1 - (1 - f) * saturation);
+
+  switch (i % 6) {
+    case 0:
+      r = value;
+      g = t;
+      b = p;
+      break;
+
+    case 1:
+      r = q;
+      g = value;
+      b = p;
+      break;
+
+    case 2:
+      r = p;
+      g = value;
+      b = t;
+      break;
+
+    case 3:
+      r = p;
+      g = q;
+      b = value;
+      break;
+
+    case 4:
+      r = t;
+      g = p;
+      b = value;
+      break;
+
+    case 5:
+      r = value;
+      g = p;
+      b = q;
+      break;
+  }
+
+  return [r * 255, g * 255, b * 255];
+}
+
+},{}],3:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.readColor = readColor;
+
+var _main = require("../main.js");
+
+/**
+ * Reads the argument and finds color
+ *
+ * @param {string} colors
+ * @param {boolean} toArray whether to return a array instead of string.
+ * @return {string}
+ */
+function readColor(color, toArray = false) {
+  let c1 = color[0];
+  let read;
+
+  if (typeof c1 === "number") {
+    if (color.length === 1) {
+      read = [c1, c1, c1, 1];
+    } else if (color.length === 2) {
+      read = [c1, color[1], 0, 1];
+    } else if (color.length === 3) {
+      read = [c1, color[1], color[2], 1];
+    } else if (color.length === 4) {
+      read = [c1, color[1], color[2], color[3]];
+    }
+  } else if (c1[0] == "#") {
+    c1 = c1.substr(1);
+
+    if (c1.length == 3 || c1.length == 4) {
+      let alpha = c1[3] || "ff";
+      read = [Number("0x" + c1[0] + c1[0]), Number("0x" + c1[1] + c1[1]), Number("0x" + c1[2] + c1[2]), Number("0x" + alpha) / 255];
+    } else if (c1.length == 6 || c1.length == 8) {
+      let alpha = c1.substr(6, 2) || "ff";
+      read = [Number("0x" + c1.substr(0, 2)), Number("0x" + c1.substr(2, 2)), Number("0x" + c1.substr(4, 2)), Number("0x" + alpha) / 255];
+    }
+  }
+
+  if (!toArray) {
+    const mode = _main.C.workingCanvas.colorMode || "rgba";
+
+    if (mode === "hsl" || mode === "rgb") {
+      read = mode + `(${read[0]}, ${read[1]}, ${read[2]})`;
+    } else if (mode === "rgba") {
+      read = `rgba(${read[0]}, ${read[1]}, ${read[2]}, ${read[3]})`;
+    }
+  }
+
+  return read;
+}
+
+},{"../main.js":10}],4:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.linearGradient = linearGradient;
+
+var _main = require("../main.js");
+
+/**
+ * creates a linear gradient
+ *
+ * @param {array} initialPoint initial point as [x, y]
+ * @param {array} finalPoint final point as [x, y]
+ * @param {Object|array} colorStops color stops
+ @example
+ ```js
+var color = linearGradient(
+	[0, 0], [200, 0],
+	{
+			0: "green",
+			0.5: "cyan",
+			1: "yellow"
+	}
+);
+```,
+```js
+var color = linearGradient(
+	[0, 0], [200, 0],
+	[
+		"green",
+		"cyan",
+		"yellow"
+	]
+);
+```
+ */
+function linearGradient(initialPoint, finalPoint, colorStops) {
+  const ctx = _main.C.workingCanvas;
+  const gradient = ctx.createLinearGradient(initialPoint[0], initialPoint[1], finalPoint[0], finalPoint[1]);
+
+  if (Array.isArray(colorStops)) {
+    const stops = {};
+    const step = 1 / colorStops.length;
+
+    for (let i = 0; i < colorStops.length; i++) {
+      stops[step * i] = colorStops[i];
+    }
+
+    colorStops = stops;
+  }
+
+  for (let stops = Object.keys(colorStops), i = 0; i < stops.length; i++) {
+    const stop = stops[i];
+    gradient.addColorStop(stop, colorStops[stop]);
+  }
+
+  return gradient;
+}
+
+},{"../main.js":10}],5:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.lerpColor = lerpColor;
+exports.lerpColorArray = lerpColorArray;
+
+var _color_reader = require("./color_reader.js");
+
+/**
+ * gives an interpolated color.
+ *
+ * @param {string} color1 color
+ * @param {string} color2 color
+ * @param {number} v should be between 0 and 1.
+ */
+function lerpColor(color1, color2, v) {
+  const c1 = (0, _color_reader.readColor)([color1], true);
+  const c2 = (0, _color_reader.readColor)([color2], true);
+  return (0, _color_reader.readColor)([(c2[0] - c1[0]) * v + c1[0], (c2[1] - c1[1]) * v + c1[1], (c2[2] - c1[2]) * v + c1[2], (c2[3] - c1[3]) * v + c1[3]]);
+}
+
+function lerpColorArray(colorArr, v) {
+  const stopes = Object.keys(colorArr).sort();
+  const min = Math.min(...stopes);
+  const max = Math.max(...stopes);
+  if (v >= max) return colorArr[max];
+  if (v <= min) return colorArr[min];
+
+  for (var i = 0; i < stopes.length - 1; i++) {
+    let a = stopes[i];
+
+    if (v > a) {
+      return lerpColor(colorArr[a], colorArr[stopes[i + 1]], (v - a) / (stopes[i + 1] - a));
+    } else if (v == a) {
+      return colorArr[a];
+    }
+  }
+}
+
+},{"./color_reader.js":3}],6:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.randomColor = randomColor;
+exports.randomDefinedColor = randomDefinedColor;
+
+var _random = require("../math/random.js");
+
+var COLORLIST = _interopRequireWildcard(require("../constants/colors.js"));
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+var definedColorList = Object.keys(COLORLIST);
+const TR_INDEX = definedColorList.indexOf("TRANSPARENT");
+definedColorList = definedColorList.slice(0, TR_INDEX).concat(definedColorList.slice(TR_INDEX + 1));
+/**
+ * returns a random hex color
+ *
+ */
+
+function randomColor() {
+  let color = "#";
+
+  for (let i = 0; i < 3; i++) {
+    let randNum = (0, _random.randomInt)(255).toString(16);
+    randNum = randNum.length === 1 ? 0 + randNum : randNum;
+    color += randNum;
+  }
+
+  return color;
+}
+/**
+ * picks a random color from defined ones
+ *
+ */
+
+
+function randomDefinedColor() {
+  return COLORLIST[definedColorList[(0, _random.randomInt)(definedColorList.length - 1)]];
+}
+
+},{"../constants/colors.js":7,"../math/random.js":14}],7:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.TRANSPARENT = exports.ORANGE = exports.GREEN_SCREEN = exports.LIGHT_PINK = exports.PINK = exports.GREY_BROWN = exports.DARKER_GRAY = exports.DARKER_GREY = exports.DARK_GRAY = exports.DARK_GREY = exports.GREY = exports.GRAY = exports.LIGHT_GREY = exports.LIGHT_GRAY = exports.BLACK = exports.WHITE = exports.PURPLE = exports.PURPLE_E = exports.PURPLE_D = exports.PURPLE_C = exports.PURPLE_B = exports.PURPLE_A = exports.MAROON = exports.MAROON_E = exports.MAROON_D = exports.MAROON_C = exports.MAROON_B = exports.MAROON_A = exports.RED = exports.RED_E = exports.RED_D = exports.RED_C = exports.RED_B = exports.RED_A = exports.GOLD = exports.GOLD_E = exports.GOLD_D = exports.GOLD_C = exports.GOLD_B = exports.GOLD_A = exports.YELLOW = exports.YELLOW_E = exports.YELLOW_D = exports.YELLOW_C = exports.YELLOW_B = exports.YELLOW_A = exports.GREEN = exports.GREEN_E = exports.GREEN_D = exports.GREEN_C = exports.GREEN_B = exports.GREEN_A = exports.TEAL = exports.TEAL_E = exports.TEAL_D = exports.TEAL_C = exports.TEAL_B = exports.TEAL_A = exports.BLUE = exports.BLUE_E = exports.BLUE_D = exports.BLUE_C = exports.BLUE_B = exports.BLUE_A = exports.LIGHT_BROWN = exports.DARK_BROWN = exports.DARK_BLUE = void 0;
 
 /**
  * List of colors
@@ -20,41 +511,49 @@ const DARK_BLUE = "#236B8E",
       BLUE_C = "#58C4DD",
       BLUE_D = "#29ABCA",
       BLUE_E = "#1C758A",
+      BLUE = "#58C4DD",
       TEAL_A = "#ACEAD7",
       TEAL_B = "#76DDC0",
       TEAL_C = "#5CD0B3",
       TEAL_D = "#55C1A7",
       TEAL_E = "#49A88F",
+      TEAL = "#5CD0B3",
       GREEN_A = "#C9E2AE",
       GREEN_B = "#A6CF8C",
       GREEN_C = "#83C167",
       GREEN_D = "#77B05D",
       GREEN_E = "#699C52",
+      GREEN = "#83C167",
       YELLOW_A = "#FFF1B6",
       YELLOW_B = "#FFEA94",
       YELLOW_C = "#FFFF00",
       YELLOW_D = "#F4D345",
       YELLOW_E = "#E8C11C",
+      YELLOW = "#FFFF00",
       GOLD_A = "#F7C797",
       GOLD_B = "#F9B775",
       GOLD_C = "#F0AC5F",
       GOLD_D = "#E1A158",
       GOLD_E = "#C78D46",
+      GOLD = "#F0AC5F",
       RED_A = "#F7A1A3",
       RED_B = "#FF8080",
       RED_C = "#FC6255",
       RED_D = "#E65A4C",
       RED_E = "#CF5044",
+      RED = "#FC6255",
       MAROON_A = "#ECABC1",
       MAROON_B = "#EC92AB",
       MAROON_C = "#C55F73",
       MAROON_D = "#A24D61",
       MAROON_E = "#94424F",
+      MAROON = "#C55F73",
       PURPLE_A = "#CAA3E8",
       PURPLE_B = "#B189C6",
       PURPLE_C = "#9A72AC",
       PURPLE_D = "#715582",
       PURPLE_E = "#644172",
+      PURPLE = "#9A72AC",
       WHITE = "#FFFFFF",
       BLACK = "#000000",
       LIGHT_GRAY = "#BBBBBB",
@@ -87,41 +586,49 @@ exports.LIGHT_GREY = LIGHT_GREY;
 exports.LIGHT_GRAY = LIGHT_GRAY;
 exports.BLACK = BLACK;
 exports.WHITE = WHITE;
+exports.PURPLE = PURPLE;
 exports.PURPLE_E = PURPLE_E;
 exports.PURPLE_D = PURPLE_D;
 exports.PURPLE_C = PURPLE_C;
 exports.PURPLE_B = PURPLE_B;
 exports.PURPLE_A = PURPLE_A;
+exports.MAROON = MAROON;
 exports.MAROON_E = MAROON_E;
 exports.MAROON_D = MAROON_D;
 exports.MAROON_C = MAROON_C;
 exports.MAROON_B = MAROON_B;
 exports.MAROON_A = MAROON_A;
+exports.RED = RED;
 exports.RED_E = RED_E;
 exports.RED_D = RED_D;
 exports.RED_C = RED_C;
 exports.RED_B = RED_B;
 exports.RED_A = RED_A;
+exports.GOLD = GOLD;
 exports.GOLD_E = GOLD_E;
 exports.GOLD_D = GOLD_D;
 exports.GOLD_C = GOLD_C;
 exports.GOLD_B = GOLD_B;
 exports.GOLD_A = GOLD_A;
+exports.YELLOW = YELLOW;
 exports.YELLOW_E = YELLOW_E;
 exports.YELLOW_D = YELLOW_D;
 exports.YELLOW_C = YELLOW_C;
 exports.YELLOW_B = YELLOW_B;
 exports.YELLOW_A = YELLOW_A;
+exports.GREEN = GREEN;
 exports.GREEN_E = GREEN_E;
 exports.GREEN_D = GREEN_D;
 exports.GREEN_C = GREEN_C;
 exports.GREEN_B = GREEN_B;
 exports.GREEN_A = GREEN_A;
+exports.TEAL = TEAL;
 exports.TEAL_E = TEAL_E;
 exports.TEAL_D = TEAL_D;
 exports.TEAL_C = TEAL_C;
 exports.TEAL_B = TEAL_B;
 exports.TEAL_A = TEAL_A;
+exports.BLUE = BLUE;
 exports.BLUE_E = BLUE_E;
 exports.BLUE_D = BLUE_D;
 exports.BLUE_C = BLUE_C;
@@ -131,7 +638,7 @@ exports.LIGHT_BROWN = LIGHT_BROWN;
 exports.DARK_BROWN = DARK_BROWN;
 exports.DARK_BLUE = DARK_BLUE;
 
-},{}],2:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -227,7 +734,7 @@ exports.ROUND = ROUND;
 exports.SQUARE = SQUARE;
 exports.BUTT = BUTT;
 
-},{}],3:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -235,20 +742,20 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.RAD = exports.DEG = exports.SQRT2 = exports.TWO_PI = exports.TAU = exports.QUATER_PI = exports.TIERCE_PI = exports.HALF_PI = exports.PI = exports.LN10 = exports.LN2 = exports.E = void 0;
 const E = 2.71828182845904523,
-      LN2 = 0.69314718055994530,
+      LN2 = 0.6931471805599453,
       LN10 = 2.30258509299404568,
       PI = 3.14159265358979323,
       HALF_PI = 1.57079632679489661,
       TIERCE_PI = 1.04719755119659774,
-      QUATER_PI = 0.78539816339744830,
+      QUATER_PI = 0.7853981633974483,
       TAU = 6.28318530717958647,
       TWO_PI = 6.28318530717958647,
       SQRT2 = 1.41421356237309504,
       // conversion factors
 DEG = Math.PI / 180,
       // degree to radian
-RAD = 180 / Math.PI // radian to degree
-;
+RAD = 180 / Math.PI; // radian to degree
+
 exports.RAD = RAD;
 exports.DEG = DEG;
 exports.SQRT2 = SQRT2;
@@ -262,76 +769,7 @@ exports.LN10 = LN10;
 exports.LN2 = LN2;
 exports.E = E;
 
-},{}],4:[function(require,module,exports){
-"use strict";
-
-var _utils = require("./utils.js");
-
-var _main = require("./main.js");
-
-var COLORLIST = _interopRequireWildcard(require("./constants/colors.js"));
-
-var DrawingConstants = _interopRequireWildcard(require("./constants/drawing.js"));
-
-var MathConsts = _interopRequireWildcard(require("./constants/math.js"));
-
-var Colors = _interopRequireWildcard(require("./objects/color.js"));
-
-var Image = _interopRequireWildcard(require("./objects/image.js"));
-
-var Geometry = _interopRequireWildcard(require("./objects/geometry.js"));
-
-var Settings = _interopRequireWildcard(require("./objects/settings.js"));
-
-var Text = _interopRequireWildcard(require("./objects/text.js"));
-
-var Tex = _interopRequireWildcard(require("./objects/tex.js"));
-
-var CoordinateSystems = _interopRequireWildcard(require("./objects/coordinate_systems.js"));
-
-var Braces = _interopRequireWildcard(require("./objects/braces.js"));
-
-var Arrows = _interopRequireWildcard(require("./objects/arrows.js"));
-
-var Functions = _interopRequireWildcard(require("./objects/functions.js"));
-
-var Arithmeics = _interopRequireWildcard(require("./math/aritmetics.js"));
-
-var Basic = _interopRequireWildcard(require("./math/basic.js"));
-
-var Points = _interopRequireWildcard(require("./math/points.js"));
-
-var Random = _interopRequireWildcard(require("./math/random.js"));
-
-var RateFunctions = _interopRequireWildcard(require("./math/rate_functions.js"));
-
-function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
-
-function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
-
-(0, _utils.defineProperties)(COLORLIST, window, false);
-(0, _utils.defineProperties)(DrawingConstants, window, false);
-(0, _utils.defineProperties)(MathConsts, window, false);
-(0, _utils.defineProperties)(Colors);
-(0, _utils.defineProperties)(Image);
-(0, _utils.defineProperties)(Geometry);
-(0, _utils.defineProperties)(Settings);
-(0, _utils.defineProperties)(Text);
-(0, _utils.defineProperties)(Tex);
-(0, _utils.defineProperties)(CoordinateSystems);
-(0, _utils.defineProperties)(Braces);
-(0, _utils.defineProperties)(Arrows);
-(0, _utils.defineProperties)(Functions);
-(0, _utils.defineProperties)(Arithmeics);
-(0, _utils.defineProperties)(Basic);
-(0, _utils.defineProperties)(Points);
-(0, _utils.defineProperties)(Random);
-(0, _utils.defineProperties)(RateFunctions);
-(0, _utils.defineProperties)(MathConsts, window, false);
-(0, _utils.defineProperties)(_utils.defineProperties, _main.C);
-(0, _utils.defineProperties)(COLORLIST, _main.C);
-
-},{"./constants/colors.js":1,"./constants/drawing.js":2,"./constants/math.js":3,"./main.js":5,"./math/aritmetics.js":6,"./math/basic.js":7,"./math/points.js":8,"./math/random.js":9,"./math/rate_functions.js":10,"./objects/arrows.js":11,"./objects/braces.js":12,"./objects/color.js":13,"./objects/coordinate_systems.js":14,"./objects/functions.js":15,"./objects/geometry.js":16,"./objects/image.js":17,"./objects/settings.js":18,"./objects/tex.js":19,"./objects/text.js":20,"./utils.js":21}],5:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -451,7 +889,7 @@ C.nameID = 0;
  * @type {CanvasRenderingContext2D}
  */
 
-C.workingCanvas = undefined; // index of current working canvas in `C.canvasList`
+C.workingCanvas = {}; // index of current working canvas in `C.canvasList`
 
 /**
  * Default configurations
@@ -524,7 +962,7 @@ C.defineProperties = _utils.defineProperties; // register to window
 
 window.C = C;
 
-},{"./utils.js":21}],6:[function(require,module,exports){
+},{"./utils.js":25}],11:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -592,7 +1030,7 @@ function lcmArray() {
   return n;
 }
 
-},{}],7:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -650,7 +1088,7 @@ exports.asin = asin;
 exports.acos = acos;
 exports.abs = abs;
 
-},{}],8:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -744,7 +1182,7 @@ function circleIntersection(c1, r1, c2, r2) {
   return [[p2[0] + h * (c2[1] - c1[1]) / d, p2[1] - h * (c2[0] - c1[0]) / d], [p2[0] - h * (c2[1] - c1[1]) / d, p2[1] + h * (c2[0] - c1[0]) / d]];
 }
 
-},{}],9:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -763,7 +1201,7 @@ function randomInt(max = 10, min = 0) {
   return Math.round(Math.random() * (max - min) + min);
 }
 
-},{}],10:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -946,7 +1384,7 @@ function easeInOutBounce(x) {
   return x < 0.5 ? (1 - easeOutBounce(1 - 2 * x)) / 2 : (1 + easeOutBounce(2 * x - 1)) / 2;
 }
 
-},{}],11:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -971,7 +1409,7 @@ var _points = require("../math/points.js");
 
 var _utils = require("../utils.js");
 
-var _settings = require("./settings.js");
+var _settings = require("../settings.js");
 
 var _text = require("./text.js");
 
@@ -1296,7 +1734,7 @@ function curvedDoubleArrowBetweenPoints(p1, p2, radius, tipWidth = DEFAULT_TIP_W
   return center;
 }
 
-},{"../constants/colors.js":1,"../constants/drawing.js":2,"../main.js":5,"../math/points.js":8,"../utils.js":21,"./settings.js":18,"./text.js":20}],12:[function(require,module,exports){
+},{"../constants/colors.js":7,"../constants/drawing.js":8,"../main.js":10,"../math/points.js":13,"../settings.js":24,"../utils.js":25,"./text.js":23}],17:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1382,362 +1820,7 @@ function arcBrace(x, y, radius = 100, angle = Math.PI / 2, startAngle = 0, small
   return [(largerRadius + extender) * Math.cos(angle / 2 + startAngle) + x, (largerRadius + extender) * Math.sin(angle / 2 + startAngle) + y];
 }
 
-},{"../main.js":5}],13:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.randomColor = randomColor;
-exports.randomDefinedColor = randomDefinedColor;
-exports.RGBToHSL = RGBToHSL;
-exports.HSLToRGB = HSLToRGB;
-exports.RGBToHSV = RGBToHSV;
-exports.HSVToRGB = HSVToRGB;
-exports.linearGradient = linearGradient;
-exports.readColor = readColor;
-
-var COLORLIST = _interopRequireWildcard(require("../constants/colors.js"));
-
-var _main = require("../main.js");
-
-var _random = require("../math/random.js");
-
-function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
-
-function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
-
-/**
- * This module contains functions for different color operations.
- * @module color
- */
-const __definedColors__ = Object.keys(COLORLIST);
-/**
- * Reads the argument and finds color
- *
- * @param {string} colors
- * @return {string}
- */
-
-
-function readColor(colors) {
-  let color1;
-  let color2;
-  let color3;
-  let alpha = 255;
-  let read = "";
-
-  if (typeof colors[0] === "number") {
-    if (colors.length === 1) {
-      color1 = colors[0];
-      color2 = color1;
-      color3 = color1;
-    } else if (colors.length === 2) {
-      color1 = colors[0];
-      color2 = colors[1];
-      color3 = 0;
-    } else if (colors.length === 3) {
-      color1 = colors[0];
-      color2 = colors[1];
-      color3 = colors[2];
-    } else if (colors.length === 4) {
-      color1 = colors[0];
-      color2 = colors[1];
-      color3 = colors[2];
-      alpha = colors[3];
-    }
-
-    const mode = _main.C.workingCanvas.colorMode;
-
-    if (mode === "HSL") {
-      read = `hsl(${color1}, ${color2}, ${color3})`;
-    } else if (mode === "rgb") {
-      read = `rgb(${color1}, ${color2}, ${color3})`;
-    } else if (mode === "rgba") {
-      read = `rgba(${color1}, ${color2}, ${color3}, ${alpha})`;
-    }
-  } else {
-    read = colors[0];
-  }
-
-  return read;
-} // color randomizers
-
-/**
- * returns a random hex color
- *
-*/
-
-
-function randomColor() {
-  let color = "#";
-
-  for (let i = 0; i < 3; i++) {
-    let randNum = (0, _random.randomInt)(255).toString(16);
-    randNum = randNum.length === 1 ? 0 + randNum : randNum;
-    color += randNum;
-  }
-
-  return color;
-}
-/**
- * picks a random color from defined ones
- *
-*/
-
-
-function randomDefinedColor() {
-  return COLORLIST[__definedColors__[(0, _random.randomInt)(__definedColors__.length - 1)]];
-} // color converters
-
-
-function hue2RGB(p, q, t) {
-  if (t < 0) t += 1;
-  if (t > 1) t -= 1;
-  if (t < 1 / 6) return p + (q - p) * 6 * t;
-  if (t < 1 / 2) return q;
-  if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
-  return p;
-}
-/**
- * Converts an RGB color value to HSL. Conversion formula
- * adapted from http://en.wikipedia.org/wiki/HSL_color_space.
- * Assumes values of red, green, and blue are between 0 & 255 and
- * returns hue in range 0 to 360, saturation and lightness in range 0 to 1
- * @method RGBToHSL
- * @global
- * @param {number} red The red color value
- * @param {number} green The green color value
- * @param {number} blue The blue color value
- * @return {array} The HSL representation
- */
-
-
-function RGBToHSL(red, green, blue) {
-  const r = red / 255;
-  const g = green / 255;
-  const b = blue / 255;
-  const max = Math.max(r, g, b);
-  const min = Math.min(r, g, b);
-  let hue;
-  let saturation;
-  const lightness = (max + min) / 2;
-
-  if (max === min) {
-    hue = saturation = 0; // achromatic
-  } else {
-    const d = max - min;
-    saturation = lightness > 0.5 ? d / (2 - max - min) : d / (max + min);
-
-    switch (max) {
-      case r:
-        hue = (g - b) / d + (g < b ? 6 : 0);
-        break;
-
-      case g:
-        hue = (b - r) / d + 2;
-        break;
-
-      case b:
-        hue = (r - g) / d + 4;
-        break;
-    }
-
-    hue /= 6;
-  }
-
-  return [hue * 360, saturation, lightness];
-}
-/**
- * Converts an HSL color value to RGB. Conversion formula
- * adapted from http://en.wikipedia.org/wiki/HSL_color_space.
- * Assumes values of hue is between 0 and 360, saturation and lightness are between 0 & 1 and
- * returns red, green, and blue values between 0 & 255
- *
- * @param {number} hue The hue
- * @param {number} saturation The saturation
- * @param {number} lightness The lightness
- * @return {array} The RGB representation
- */
-
-
-function HSLToRGB(hue, saturation, lightness) {
-  let r, g, b;
-  hue /= 360;
-
-  if (saturation === 0) {
-    r = g = b = lightness; // achromatic
-  } else {
-    const q = lightness < 0.5 ? lightness * (1 + saturation) : lightness + saturation - lightness * saturation;
-    const p = 2 * lightness - q;
-    r = hue2RGB(p, q, hue + 1 / 3);
-    g = hue2RGB(p, q, hue);
-    b = hue2RGB(p, q, hue - 1 / 3);
-  }
-
-  return [r * 255, g * 255, b * 255];
-}
-/**
- * Converts an RGB color value to HSV. Conversion formula
- * adapted from http://en.wikipedia.org/wiki/HSV_color_space.
- * Assumes values of red, green, and blue are between 0 & 255 and
- * returns hue in range 0 to 360, saturation and value in range 0 to 1
- *
- * @param {number} red The red color value
- * @param {number} green The green color value
- * @param {number} blue The blue color value
- * @return {array} The HSV representation
- */
-
-
-function RGBToHSV(red, green, blue) {
-  const r = red / 255;
-  const g = green / 255;
-  const b = blue / 255;
-  const max = Math.max(r, g, b);
-  const min = Math.min(r, g, b);
-  let hue;
-  const value = max;
-  const d = max - min;
-  const saturation = max === 0 ? 0 : d / max;
-
-  if (max === min) {
-    hue = 0; // achromatic
-  } else {
-    switch (max) {
-      case r:
-        hue = (g - b) / d + (g < b ? 6 : 0);
-        break;
-
-      case g:
-        hue = (b - r) / d + 2;
-        break;
-
-      case b:
-        hue = (r - g) / d + 4;
-        break;
-    }
-
-    hue /= 6;
-  }
-
-  return [hue * 360, saturation, value];
-}
-/**
- * Converts an HSV color value to RGB. Conversion formula
- * adapted from http://en.wikipedia.org/wiki/HSV_color_space.
- * Assumes values of hue is between 0 to 360, saturation, and value are between 0 & 1 and
- * returns red, green, and blue in range 0 to 255
- *
- * @param {number} hue The hue
- * @param {number} saturation The saturation
- * @param {number} value The value
- * @return {array} The RGB representation
- */
-
-
-function HSVToRGB(hue, saturation, value) {
-  let r, g, b;
-  const i = Math.floor(hue / 60);
-  const f = hue / 60 - i;
-  const p = value * (1 - saturation);
-  const q = value * (1 - f * saturation);
-  const t = value * (1 - (1 - f) * saturation);
-
-  switch (i % 6) {
-    case 0:
-      r = value;
-      g = t;
-      b = p;
-      break;
-
-    case 1:
-      r = q;
-      g = value;
-      b = p;
-      break;
-
-    case 2:
-      r = p;
-      g = value;
-      b = t;
-      break;
-
-    case 3:
-      r = p;
-      g = q;
-      b = value;
-      break;
-
-    case 4:
-      r = t;
-      g = p;
-      b = value;
-      break;
-
-    case 5:
-      r = value;
-      g = p;
-      b = q;
-      break;
-  }
-
-  return [r * 255, g * 255, b * 255];
-}
-/**
- * creates a linear gradient
- *
- * @param {array} initialPoint initial point as [x, y]
- * @param {array} finalPoint final point as [x, y]
- * @param {Object|array} colorStops color stops
- @example
- ```js
-var color = linearGradient(
-	[0, 0], [200, 0],
-	{
-			0: "green",
-			0.5: "cyan",
-			1: "yellow"
-	}
-);
-```,
-```js
-var color = linearGradient(
-	[0, 0], [200, 0],
-	[
-		"green",
-		"cyan",
-		"yellow"
-	]
-);
-```
- */
-
-
-function linearGradient(initialPoint, finalPoint, colorStops) {
-  const ctx = _main.C.workingCanvas;
-  const gradient = ctx.createLinearGradient(initialPoint[0], initialPoint[1], finalPoint[0], finalPoint[1]);
-
-  if (Array.isArray(colorStops)) {
-    const stops = {};
-    const step = 1 / colorStops.length;
-
-    for (let i = 0; i < colorStops.length; i++) {
-      stops[step * i] = colorStops[i];
-    }
-
-    colorStops = stops;
-  }
-
-  for (let stops = Object.keys(colorStops), i = 0; i < stops.length; i++) {
-    const stop = stops[i];
-    gradient.addColorStop(stop, colorStops[stop]);
-  }
-
-  return gradient;
-}
-
-},{"../constants/colors.js":1,"../main.js":5,"../math/random.js":9}],14:[function(require,module,exports){
+},{"../main.js":10}],18:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1759,11 +1842,11 @@ var _functions = require("./functions.js");
 
 var _geometry = require("./geometry.js");
 
-var _settings = require("./settings.js");
+var _settings = require("../settings.js");
 
 var _text = require("./text.js");
 
-function getPlotters(unitLength, unitValue) {
+function getPlotterList(unitLength, unitValue, cfgs = {}) {
   return {
     getParametricFunction: function (configs) {
       configs.unitLength = unitLength;
@@ -1774,6 +1857,13 @@ function getPlotters(unitLength, unitValue) {
       configs.unitLength = unitLength;
       configs.unitValue = unitValue;
       return (0, _functions.functionGraph)(configs);
+    },
+    getHeatPlot: function (configs) {
+      configs.unitLength = unitLength;
+      configs.unitValue = unitValue;
+      configs.min = [cfgs.xAxis.range[0], cfgs.yAxis.range[0]];
+      configs.max = [cfgs.xAxis.range[1], cfgs.yAxis.range[1]];
+      return (0, _functions.heatPlot)(configs);
     }
   };
 }
@@ -1807,7 +1897,8 @@ function axes(config = {}) {
       includeLeftTip: true,
       includeRightTip: true,
       excludeOriginTick: true,
-      includeNumbers: false
+      includeNumbers: false,
+      range: [-10, 10, 1]
     },
     yAxis: {
       length: ctx.height,
@@ -1818,7 +1909,8 @@ function axes(config = {}) {
       includeLeftTip: true,
       includeRightTip: true,
       excludeOriginTick: true,
-      includeNumbers: false
+      includeNumbers: false,
+      range: [-10, 10, 1]
     }
   }; // configurations
 
@@ -1861,7 +1953,7 @@ function axes(config = {}) {
 
   ctx.translate(-center[0], -center[1] - yShift);
   ctx.restore();
-  return Object.assign({
+  const ret = {
     center: center,
     // center of axis as [x, y] in px
     xAxis: xAxisLine,
@@ -1872,7 +1964,8 @@ function axes(config = {}) {
     // how much a unit is as [x, y] in its value
     unitLength: unitLength // how much a unit is as [x, y] in px
 
-  }, getPlotters(unitLength, unitValue));
+  };
+  return Object.assign(ret, getPlotterList(unitLength, unitValue, ret));
 }
 /**
  * Creates a numberLine with parameters in a object
@@ -2054,6 +2147,7 @@ function numberLine(config = {}) {
 
   (0, _settings.restore)();
   return {
+    range: range,
     center: center,
     tickList: list,
     unitValue: step,
@@ -2116,7 +2210,7 @@ function numberPlane(config = {}) {
       subgrids: 1,
       lineWidth: 1,
       subgridLineWidth: 0.7,
-      color: _colors.BLUE_C + "a0",
+      color: _colors.BLUE + "a0",
       subgridLineColor: _colors.GREY + "50"
     },
     center: [0, 0]
@@ -2217,7 +2311,7 @@ function numberPlane(config = {}) {
   }
 
   (0, _settings.restore)();
-  return Object.assign({
+  const ret = {
     center: center,
     // center of number plane
     unitValue: unitValue,
@@ -2230,10 +2324,11 @@ function numberPlane(config = {}) {
     // y axis confiurations from numberLine
     subgridUnit: subgridUnit // subgrid unit size
 
-  }, getPlotters(unitLength, unitValue));
+  };
+  return Object.assign(ret, getPlotterList(unitLength, unitValue, ret));
 }
 
-},{"../constants/colors.js":1,"../main.js":5,"../utils.js":21,"./arrows.js":11,"./functions.js":15,"./geometry.js":16,"./settings.js":18,"./text.js":20}],15:[function(require,module,exports){
+},{"../constants/colors.js":7,"../main.js":10,"../settings.js":24,"../utils.js":25,"./arrows.js":16,"./functions.js":19,"./geometry.js":20,"./text.js":23}],19:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2241,14 +2336,21 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.parametricFunction = parametricFunction;
 exports.functionGraph = functionGraph;
+exports.heatPlot = heatPlot;
+
+var _color_reader = require("../color/color_reader.js");
+
+var _colors = require("../constants/colors.js");
 
 var _main = require("../main.js");
+
+var _rate_functions = require("../math/rate_functions.js");
+
+var _settings = require("../settings.js");
 
 var _utils = require("../utils.js");
 
 var _geometry = require("./geometry.js");
-
-var _settings = require("./settings.js");
 
 /**
  * Draws a parametric functions
@@ -2405,8 +2507,100 @@ function functionGraph(config) {
 
   return parametricFunction(config);
 }
+/**
+ * Draws a heat plot of given function. The function must take atleast 2 arguments and return a number.
+ * More precisely f: ℜ² → ℜ
+ * All parameters should be enclosed in a object.
+ * @param {object} config
+ * Possible parameters are:
+ *
+ * * min          <array>   ([-4, -4]): minimum point
+ * * max          <array>   ([4, 4])  : maximum point
+ * * colors       <object>            : object of color map
+ * * unitValue    <array>   ([1, 1])  : Value of each unit space
+ * * unitLength   <array>   ([1, 1])  : Length of each unit in pixels
+ * * resolution   <number>  (1)       : resolution of plot
+ * * interpolator <function> (linear) : function to interpolate color.
+ * @return {object} metadatas
+ */
 
-},{"../main.js":5,"../utils.js":21,"./geometry.js":16,"./settings.js":18}],16:[function(require,module,exports){
+
+function heatPlot(config) {
+  const defaultConfigs = {
+    min: [-4, -4],
+    max: [4, 4],
+    colors: {
+      "-4": _colors.BLUE,
+      0: _colors.YELLOW,
+      4: _colors.RED
+    },
+    unitLength: [1, 1],
+    unitValue: [1, 1],
+    resolution: 1,
+    interpolator: _rate_functions.linear
+  };
+  config = (0, _utils.applyDefault)(defaultConfigs, config);
+  const {
+    min,
+    max,
+    colors,
+    resolution,
+    plotFunction,
+    interpolator
+  } = config;
+  const ctx = _main.C.workingCanvas;
+  const unitSizeX = config.unitLength[0] / config.unitValue[0];
+  const unitSizeY = config.unitLength[1] / config.unitValue[1];
+  const UVX = config.unitValue[0] / unitSizeX;
+  const UVY = config.unitValue[1] / unitSizeY;
+  const stopes = Object.keys(colors).sort(); // converting colors to rgba array
+
+  for (var i = 0; i < stopes.length; i++) {
+    colors[stopes[i]] = (0, _color_reader.readColor)([colors[stopes[i]]], true);
+  }
+
+  const minS = Math.min(...stopes);
+  const maxS = Math.max(...stopes); // const w = (max[0] - min[0]) / (resolution * UVX);
+  // const h = (max[1] - min[1]) / (resolution * UVY);
+
+  ctx.save(); // const img = ctx.createImageData(w, h);
+  // console.log(img.data);
+
+  for (var x = min[0]; x <= max[0]; x += resolution * UVX) {
+    for (var y = min[1]; y <= max[1]; y += resolution * UVY) {
+      let c = lerpColorArray(plotFunction(x, y));
+      ctx.fillStyle = c;
+      ctx.fillRect(x * unitSizeX, y * unitSizeY, resolution, resolution); // img.data[]
+    }
+  } // ctx.putImageData(img, 0, 0);
+
+
+  function lerpColorArray(v) {
+    if (v >= maxS) return "rgba(" + colors[maxS].join() + ")";
+    if (v <= minS) return "rgba(" + colors[minS].join() + ")";
+
+    for (var i = 0; i < stopes.length - 1; i++) {
+      let a = stopes[i],
+          b = stopes[i + 1],
+          c1 = colors[a],
+          c2 = colors[b],
+          k = interpolator((v - a) / (b - a));
+
+      if (v >= a && v < b) {
+        return "rgba(" + [(c2[0] - c1[0]) * k + c1[0], (c2[1] - c1[1]) * k + c1[1], (c2[2] - c1[2]) * k + c1[2], (c2[3] - c1[3]) * k + c1[3]].join() + ")";
+      }
+    }
+  }
+
+  ctx.restore();
+  return {
+    min: minS,
+    max: maxS,
+    colors: colors
+  };
+}
+
+},{"../color/color_reader.js":3,"../constants/colors.js":7,"../main.js":10,"../math/rate_functions.js":15,"../settings.js":24,"../utils.js":25,"./geometry.js":20}],20:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3012,7 +3206,7 @@ function polygonWithRatioOfCentralAngles(x, y, radius, ratios, rotation = 0) {
   ctx.restore();
 }
 
-},{"../main.js":5,"../math/points.js":8,"../utils.js":21}],17:[function(require,module,exports){
+},{"../main.js":10,"../math/points.js":13,"../utils.js":25}],21:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3023,7 +3217,7 @@ exports.pixel = pixel;
 
 var _main = require("../main.js");
 
-var _color = require("./color.js");
+var _color_reader = require("../color/color_reader.js");
 
 /**
  * This module contains function for image manipulation.
@@ -3049,11 +3243,196 @@ function drawImage() {
 
 function pixel(x, y, color) {
   const ctx = _main.C.workingCanvas;
-  ctx.fillStyle = color == undefined ? ctx.fillStyle : (0, _color.readColor)(color);
+  ctx.fillStyle = color == undefined ? ctx.fillStyle : (0, _color_reader.readColor)(color);
   ctx.fillRect(x, y, 1, 1);
 }
 
-},{"../main.js":5,"./color.js":13}],18:[function(require,module,exports){
+},{"../color/color_reader.js":3,"../main.js":10}],22:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.tex = tex;
+exports.getImageFromTex = getImageFromTex;
+
+var _drawing = require("../constants/drawing.js");
+
+var _main = require("../main.js");
+
+/**
+ * Renders the input tex into a HTMLImageElement
+ *
+ * @param {string} input
+ * @return {HTMLImageElement}
+ */
+function getImageFromTex(input) {
+  if (typeof window.MathJax == "object" && typeof window.MathJax.tex2svg == "function") {
+    const ctx = _main.C.workingCanvas; // eslint-disable-next-line no-undef
+
+    const svgOutput = MathJax.tex2svg(input).getElementsByTagName("svg")[0];
+    const g = svgOutput.getElementsByTagName("g")[0];
+    svgOutput.style.verticalAlign = "1ex";
+    g.setAttribute("stroke", ctx.strokeStyle);
+    g.setAttribute("fill", ctx.fillStyle);
+    let outerHTML = svgOutput.outerHTML,
+        blob = new Blob([outerHTML], {
+      type: "image/svg+xml;charset=utf-8"
+    });
+    let URL = window.URL || window.webkitURL || window;
+    let blobURL = URL.createObjectURL(blob);
+    let image = new Image();
+    image.src = blobURL;
+    return image;
+  } else {
+    console.error("MathJax is not found. Please include it.");
+  }
+}
+/**
+ * Draws tex inputs
+ *
+ * @param {string} input
+ * @param {number} [x=0]
+ * @param {number} [y=0]
+ * @return {HTMLImageElement} image representation of tex
+ */
+
+
+function tex(input, x = 0, y = 0) {
+  const image = getImageFromTex(input);
+  const ctx = _main.C.workingCanvas;
+  const text_align = ctx.textAlign,
+        text_baseline = ctx.textBaseline;
+
+  image.onload = function () {
+    ctx.save();
+    const {
+      width,
+      height
+    } = image; // translating the image according to text-align and text-baseline
+
+    switch (text_align) {
+      case _drawing.CENTER:
+        ctx.translate(-width / 2, 0);
+        break;
+
+      case _drawing.RIGHT:
+        ctx.translate(-width, 0);
+        break;
+
+      default:
+        break;
+    }
+
+    switch (text_baseline) {
+      case "middle":
+        ctx.translate(0, height / 2);
+        break;
+
+      case "bottom":
+        ctx.translate(0, height);
+        break;
+
+      default:
+        break;
+    } // invert axis first
+
+
+    if (ctx.yAxisInverted) {
+      ctx.scale(1, -1);
+      y *= -1;
+    }
+
+    ctx.drawImage(image, x, y);
+    ctx.restore();
+  };
+
+  return image;
+}
+
+},{"../constants/drawing.js":8,"../main.js":10}],23:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.text = text;
+exports.fillText = fillText;
+exports.strokeText = strokeText;
+
+var _main = require("../main.js");
+
+var _settings = require("../settings.js");
+
+/**
+ * This module contains functions for drawing different types of text.
+ * @module text
+ */
+
+/**
+ * Draws a filled & stroked text
+ *
+ * @param {string} text text to draw
+ * @param {number} [x=0] x-coord
+ * @param {number} [y=0] y-coord
+ * @param {number} [maxwidth=undefined] maximum width
+ */
+function text(text, x = 0, y = 0, maxwidth = undefined) {
+  const ctx = _main.C.workingCanvas;
+
+  if (ctx.yAxisInverted) {
+    // if inverted reverse it and invert y component
+    (0, _settings.scale)(1, -1);
+    y *= -1;
+  }
+
+  if (ctx.doFill) ctx.fillText(text, x, y, maxwidth);else if (ctx.doStroke) ctx.strokeText(text, x, y, maxwidth);
+  if (ctx.yAxisInverted) (0, _settings.scale)(1, -1); // reverse y-invertion
+}
+/**
+ * Draws a text without border
+ *
+ * @param {string} text text to draw
+ * @param {number} x x-coord
+ * @param {number} [y=x] y-coord
+ * @param {number} [maxwidth=undefined] maximum width
+ */
+
+
+function fillText(text, x = 0, y = 0, maxwidth = undefined) {
+  const ctx = _main.C.workingCanvas;
+
+  if (ctx.yAxisInverted) {
+    (0, _settings.scale)(1, -1);
+    y *= -1;
+  }
+
+  ctx.fillText(text, x, y, maxwidth);
+  if (ctx.yAxisInverted) (0, _settings.scale)(1, -1);
+}
+/**
+ * Draws a stroked text
+ *
+ * @param {string} text text to draw
+ * @param {number} x x-coord
+ * @param {number} [y=x] y-coord
+ * @param {number} [maxwidth=undefined] maximum width
+ */
+
+
+function strokeText(text, x = 0, y = 0, maxwidth = undefined) {
+  const ctx = _main.C.workingCanvas;
+
+  if (ctx.yAxisInverted) {
+    (0, _settings.scale)(1, -1);
+    y *= -1;
+  }
+
+  ctx.strokeText(text, x, y, maxwidth);
+  if (ctx.yAxisInverted) (0, _settings.scale)(1, -1);
+}
+
+},{"../main.js":10,"../settings.js":24}],24:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3108,14 +3487,14 @@ exports.initCenteredCanvas = initCenteredCanvas;
 exports.invertYAxis = invertYAxis;
 exports.initBlackboardCanvas = initBlackboardCanvas;
 
-var _main = require("../main.js");
+var _main = require("./main.js");
 
-var _color = require("./color.js");
+var _color_reader = require("./color/color_reader.js");
 
 /**
  * This module contains functions to manipulate the canvas.
  * @module settings
-*/
+ */
 
 /**
  * Begins a new shape at the point specified by the given (x, y) coordinates.
@@ -3148,7 +3527,7 @@ function lineTo(x, y) {
 
 
 function background() {
-  const col = (0, _color.readColor)(arguments),
+  const col = (0, _color_reader.readColor)(arguments),
         ctx = _main.C.workingCanvas;
   ctx.background = col;
   ctx.save();
@@ -3418,7 +3797,7 @@ function stroke() {
   const ctx = _main.C.workingCanvas;
 
   if (arguments.length > 0) {
-    ctx.strokeStyle = (0, _color.readColor)(arguments);
+    ctx.strokeStyle = (0, _color_reader.readColor)(arguments);
     ctx.doStroke = true;
   } else {
     ctx.stroke();
@@ -3440,7 +3819,7 @@ function fill() {
   const ctx = _main.C.workingCanvas;
 
   if (arguments.length !== 0) {
-    ctx.fillStyle = (0, _color.readColor)(arguments);
+    ctx.fillStyle = (0, _color_reader.readColor)(arguments);
     ctx.doFill = true;
   } else {
     ctx.fill();
@@ -3824,192 +4203,7 @@ function initBlackboardCanvas() {
   invertYAxis();
 }
 
-},{"../main.js":5,"./color.js":13}],19:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.tex = tex;
-exports.getImageFromTex = getImageFromTex;
-
-var _drawing = require("../constants/drawing.js");
-
-var _main = require("../main.js");
-
-/**
- * Renders the input tex into a HTMLImageElement
- *
- * @param {string} input
- * @return {HTMLImageElement}
- */
-function getImageFromTex(input) {
-  if (typeof window.MathJax == "object" && typeof window.MathJax.tex2svg == "function") {
-    const ctx = _main.C.workingCanvas; // eslint-disable-next-line no-undef
-
-    const svgOutput = MathJax.tex2svg(input).getElementsByTagName("svg")[0];
-    const g = svgOutput.getElementsByTagName("g")[0];
-    svgOutput.style.verticalAlign = "1ex";
-    g.setAttribute("stroke", ctx.strokeStyle);
-    g.setAttribute("fill", ctx.fillStyle);
-    let outerHTML = svgOutput.outerHTML,
-        blob = new Blob([outerHTML], {
-      type: "image/svg+xml;charset=utf-8"
-    });
-    let URL = window.URL || window.webkitURL || window;
-    let blobURL = URL.createObjectURL(blob);
-    let image = new Image();
-    image.src = blobURL;
-    return image;
-  } else {
-    console.error("MathJax is not found. Please include it.");
-  }
-}
-/**
- * Draws tex inputs
- *
- * @param {string} input
- * @param {number} [x=0]
- * @param {number} [y=0]
- * @return {HTMLImageElement} image representation of tex
- */
-
-
-function tex(input, x = 0, y = 0) {
-  const image = getImageFromTex(input);
-  const ctx = _main.C.workingCanvas;
-  const text_align = ctx.textAlign,
-        text_baseline = ctx.textBaseline;
-
-  image.onload = function () {
-    ctx.save();
-    const {
-      width,
-      height
-    } = image; // translating the image according to text-align and text-baseline
-
-    switch (text_align) {
-      case _drawing.CENTER:
-        ctx.translate(-width / 2, 0);
-        break;
-
-      case _drawing.RIGHT:
-        ctx.translate(-width, 0);
-        break;
-
-      default:
-        break;
-    }
-
-    switch (text_baseline) {
-      case "middle":
-        ctx.translate(0, height / 2);
-        break;
-
-      case "bottom":
-        ctx.translate(0, height);
-        break;
-
-      default:
-        break;
-    } // invert axis first
-
-
-    if (ctx.yAxisInverted) {
-      ctx.scale(1, -1);
-      y *= -1;
-    }
-
-    ctx.drawImage(image, x, y);
-    ctx.restore();
-  };
-
-  return image;
-}
-
-},{"../constants/drawing.js":2,"../main.js":5}],20:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.text = text;
-exports.fillText = fillText;
-exports.strokeText = strokeText;
-
-var _main = require("../main.js");
-
-var _settings = require("./settings.js");
-
-/**
- * This module contains functions for drawing different types of text.
- * @module text
-*/
-
-/**
- * Draws a filled & stroked text
- *
- * @param {string} text text to draw
- * @param {number} [x=0] x-coord
- * @param {number} [y=0] y-coord
- * @param {number} [maxwidth=undefined] maximum width
- */
-function text(text, x = 0, y = 0, maxwidth = undefined) {
-  const ctx = _main.C.workingCanvas;
-
-  if (ctx.yAxisInverted) {
-    // if inverted reverse it and invert y component
-    (0, _settings.scale)(1, -1);
-    y *= -1;
-  }
-
-  if (ctx.doFill) ctx.fillText(text, x, y, maxwidth);else if (ctx.doStroke) ctx.strokeText(text, x, y, maxwidth);
-  if (ctx.yAxisInverted) (0, _settings.scale)(1, -1); // reverse y-invertion
-}
-/**
- * Draws a text without border
- *
- * @param {string} text text to draw
- * @param {number} x x-coord
- * @param {number} [y=x] y-coord
- * @param {number} [maxwidth=undefined] maximum width
- */
-
-
-function fillText(text, x = 0, y = 0, maxwidth = undefined) {
-  const ctx = _main.C.workingCanvas;
-
-  if (ctx.yAxisInverted) {
-    (0, _settings.scale)(1, -1);
-    y *= -1;
-  }
-
-  ctx.fillText(text, x, y, maxwidth);
-  if (ctx.yAxisInverted) (0, _settings.scale)(1, -1);
-}
-/**
- * Draws a stroked text
- *
- * @param {string} text text to draw
- * @param {number} x x-coord
- * @param {number} [y=x] y-coord
- * @param {number} [maxwidth=undefined] maximum width
- */
-
-
-function strokeText(text, x = 0, y = 0, maxwidth = undefined) {
-  const ctx = _main.C.workingCanvas;
-
-  if (ctx.yAxisInverted) {
-    (0, _settings.scale)(1, -1);
-    y *= -1;
-  }
-
-  ctx.strokeText(text, x, y, maxwidth);
-  if (ctx.yAxisInverted) (0, _settings.scale)(1, -1);
-}
-
-},{"../main.js":5,"./settings.js":18}],21:[function(require,module,exports){
+},{"./color/color_reader.js":3,"./main.js":10}],25:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4020,7 +4214,6 @@ exports.arange = arange;
 exports.applyDefault = applyDefault;
 exports.doFillAndStroke = doFillAndStroke;
 exports.approximateIndexInArray = approximateIndexInArray;
-exports.log = log;
 
 Object.getType = function (obj) {
   return Object.prototype.toString.call(obj).replace(/(\[object|\s|])/g, "");
@@ -4138,9 +4331,4 @@ function approximateIndexInArray(val, array, epsilon = 1e-6) {
   return -1;
 }
 
-// dev tools
-function log() {
-  console.log(...arguments);
-}
-
-},{}]},{},[4]);
+},{}]},{},[1]);

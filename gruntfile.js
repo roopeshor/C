@@ -19,7 +19,7 @@ module.exports = function (grunt) {
 				plugin: [[require("esmify"), {}]],
 			},
 			target: {
-				src: ["src/index.js"],
+				src: ["src/app.js"],
 				dest: devRelease,
 			},
 		},
@@ -42,7 +42,7 @@ module.exports = function (grunt) {
 				esversion: 7
 			},
 			target: {
-				src: ["src/**/**.js"],
+				src: ["src/**.js"],
 			},
 		},
 		copy: {
@@ -64,7 +64,7 @@ module.exports = function (grunt) {
 		},
 		jsdoc : {
 			dist : {
-				src: ['src/**/**.js'],
+				src: ['src/**.js'],
 				options: {
 					destination: 'doc',
 				},
