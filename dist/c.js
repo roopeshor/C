@@ -499,8 +499,6 @@ exports.TRANSPARENT = exports.ORANGE = exports.GREEN_SCREEN = exports.LIGHT_PINK
 
 /**
  * List of colors
- * @module constants
- * @submodule colors
  */
 // from Manim
 const DARK_BLUE = "#236B8E",
@@ -779,6 +777,8 @@ exports.C = C;
 
 var _utils = require("./utils.js");
 
+var _random = require("./math/random.js");
+
 const defaultConfigs = {
   width: 200,
   // width of canvas multiplied by dpr
@@ -819,7 +819,7 @@ const defaultConfigs = {
  * @param {object} [cfgs={}] configurations
  */
 
-function C(fx, container = document.body, cfgs = {}) {
+function C(fx, container, cfgs = {}) {
   // assign configs
   const configs = (0, _utils.applyDefault)(defaultConfigs, cfgs); // initialize canvas
 
@@ -827,14 +827,15 @@ function C(fx, container = document.body, cfgs = {}) {
 
   if (typeof container === "string") {
     container = document.querySelector(container);
+  } else if (!(container instanceof HTMLElement)) {
+    container = document.body;
   }
 
   var parentName = container.id || container.classList.item(0);
-  let canvasName;
+  let canvasName = configs.name;
 
-  if (configs.name != undefined) {
-    canvasName = configs.name;
-    const cvs = document.getElementById(canvasName);
+  if (typeof canvasName == "string") {
+    const cvs = container.querySelector("#" + canvasName);
 
     if (cvs instanceof HTMLElement) {
       // if already exist
@@ -844,13 +845,7 @@ function C(fx, container = document.body, cfgs = {}) {
       return;
     }
   } else {
-    // finds a name for canvas that already don't exist
-    while (document.getElementById(parentName + "-" + C.nameID) != undefined) {
-      C.nameID++;
-    }
-
-    canvasName = parentName + "-" + C.nameID;
-    configs.name = canvasName;
+    configs.name = parentName + "-" + (0, _random.randomInt)(1000000, 0);
   }
 
   function prepareCanvas() {
@@ -962,7 +957,7 @@ C.defineProperties = _utils.defineProperties; // register to window
 
 window.C = C;
 
-},{"./utils.js":25}],11:[function(require,module,exports){
+},{"./math/random.js":14,"./utils.js":25}],11:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1240,8 +1235,8 @@ exports.easeInBounce = easeInBounce;
 exports.easeInOutBounce = easeInOutBounce;
 
 /**
- * Rate functions. From https://easings.net
- * all Functions accept input from 0 to 1 and return output between 0 to 1
+ * Rate functions. From https://easings.net .
+ * All Functions accept input from 0 to 1 and return output between 0 to 1
  */
 const c1 = 1.70158;
 const c2 = c1 * 1.525;
@@ -1273,11 +1268,11 @@ function easeInQuad(x) {
 }
 
 function easeOutQuad(x) {
-  return 1 - (1 - x) * (1 - x);
+  return 1 - (1 - x) ** 2;
 }
 
 function easeInOutQuad(x) {
-  return x < 0.5 ? 2 * x ** 2 : 1 - Math.pow(-2 * x + 2, 2) / 2;
+  return x < 0.5 ? 2 * x ** 2 : 1 - Math.pow(2 - 2 * x, 2) / 2;
 }
 
 function easeInCubic(x) {
@@ -1289,7 +1284,7 @@ function easeOutCubic(x) {
 }
 
 function easeInOutCubic(x) {
-  return x < 0.5 ? 4 * x ** 3 : 1 - Math.pow(-2 * x + 2, 3) / 2;
+  return x < 0.5 ? 4 * x ** 3 : 1 - Math.pow(2 - 2 * x, 3) / 2;
 }
 
 function easeInQuart(x) {
@@ -1297,11 +1292,11 @@ function easeInQuart(x) {
 }
 
 function easeOutQuart(x) {
-  return 1 - Math.pow(1 - x, 4);
+  return 1 - (1 - x) ** 4;
 }
 
 function easeInOutQuart(x) {
-  return x < 0.5 ? 8 * x ** 4 : 1 - Math.pow(-2 * x + 2, 4) / 2;
+  return x < 0.5 ? 8 * x ** 4 : 1 - Math.pow(2 - 2 * x, 4) / 2;
 }
 
 function easeInQuint(x) {
@@ -1313,7 +1308,7 @@ function easeOutQuint(x) {
 }
 
 function easeInOutQuint(x) {
-  return x < 0.5 ? 16 * x ** 5 : 1 - Math.pow(-2 * x + 2, 5) / 2;
+  return x < 0.5 ? 16 * x ** 5 : 1 - Math.pow(2 - 2 * x, 5) / 2;
 }
 
 function easeInSine(x) {
@@ -1329,27 +1324,27 @@ function easeInOutSine(x) {
 }
 
 function easeInExpo(x) {
-  return x === 0 ? 0 : Math.pow(2, 10 * x - 10);
+  return x == 0 ? 0 : Math.pow(2, 10 * x - 10);
 }
 
 function easeOutExpo(x) {
-  return x === 1 ? 1 : 1 - Math.pow(2, -10 * x);
+  return x == 1 ? 1 : 1 - Math.pow(2, -10 * x);
 }
 
 function easeInOutExpo(x) {
-  return x === 0 ? 0 : x === 1 ? 1 : x < 0.5 ? Math.pow(2, 20 * x - 10) / 2 : (2 - Math.pow(2, -20 * x + 10)) / 2;
+  return x == 0 ? 0 : x == 1 ? 1 : x < 0.5 ? Math.pow(2, 20 * x - 10) / 2 : (2 - Math.pow(2, 10 - 20 * x)) / 2;
 }
 
 function easeInCirc(x) {
-  return 1 - Math.sqrt(1 - Math.pow(x, 2));
+  return 1 - Math.sqrt(1 - x ** 2);
 }
 
 function easeOutCirc(x) {
-  return Math.sqrt(1 - Math.pow(x - 1, 2));
+  return Math.sqrt(1 - (x - 1) ** 2);
 }
 
 function easeInOutCirc(x) {
-  return x < 0.5 ? (1 - Math.sqrt(1 - Math.pow(2 * x, 2))) / 2 : (Math.sqrt(1 - Math.pow(-2 * x + 2, 2)) + 1) / 2;
+  return x < 0.5 ? (1 - Math.sqrt(1 - (2 * x) ** 2)) / 2 : (Math.sqrt(1 - (2 - 2 * x) ** 2) + 1) / 2;
 }
 
 function easeInBack(x) {
@@ -1361,7 +1356,7 @@ function easeOutBack(x) {
 }
 
 function easeInOutBack(x) {
-  return x < 0.5 ? Math.pow(2 * x, 2) * ((c2 + 1) * 2 * x - c2) / 2 : (Math.pow(2 * x - 2, 2) * ((c2 + 1) * (x * 2 - 2) + c2) + 2) / 2;
+  return x < 0.5 ? (2 * x) ** 2 * ((c2 + 1) * 2 * x - c2) / 2 : ((2 * x - 2) ** 2 * ((c2 + 1) * (x * 2 - 2) + c2) + 2) / 2;
 }
 
 function easeInElastic(x) {
@@ -1861,8 +1856,8 @@ function getPlotterList(unitLength, unitValue, cfgs = {}) {
     getHeatPlot: function (configs) {
       configs.unitLength = unitLength;
       configs.unitValue = unitValue;
-      configs.min = [cfgs.xAxis.range[0], cfgs.yAxis.range[0]];
-      configs.max = [cfgs.xAxis.range[1], cfgs.yAxis.range[1]];
+      configs.min = configs.min || [cfgs.xAxis.range[0], cfgs.yAxis.range[0]];
+      configs.max = configs.max || [cfgs.xAxis.range[1], cfgs.yAxis.range[1]];
       return (0, _functions.heatPlot)(configs);
     }
   };
@@ -2340,11 +2335,7 @@ exports.heatPlot = heatPlot;
 
 var _color_reader = require("../color/color_reader.js");
 
-var _colors = require("../constants/colors.js");
-
 var _main = require("../main.js");
-
-var _rate_functions = require("../math/rate_functions.js");
 
 var _settings = require("../settings.js");
 
@@ -2405,6 +2396,7 @@ function parametricFunction(config) {
   var epsilon = 1e-6;
   if (step < epsilon) epsilon = step / 2;
   var row = 0;
+  var noPoints = 0;
   const unitX = config.unitLength[0] / config.unitValue[0],
         unitY = config.unitLength[1] / config.unitValue[1];
 
@@ -2420,6 +2412,7 @@ function parametricFunction(config) {
 
     let ft = paramFunction(t);
     points[row].push([ft[0] * unitX, ft[1] * unitY]);
+    noPoints++;
   } // draw the plot
 
 
@@ -2452,7 +2445,6 @@ function parametricFunction(config) {
     draw: plot,
     animate: function (duration = 2000) {
       const ctx = _main.C.workingCanvas;
-      var noPoints = points.flat().length;
       var dt = duration / noPoints;
 
       for (let i = 0; i < points.length; i++) {
@@ -2530,14 +2522,18 @@ function heatPlot(config) {
     min: [-4, -4],
     max: [4, 4],
     colors: {
-      "-4": _colors.BLUE,
-      0: _colors.YELLOW,
-      4: _colors.RED
+      "-5": "#b36e38a0",
+      "-3": "#ff9c52a0",
+      "-1": "#ffcea9a0",
+      0: "#dcdcdda0",
+      1: "#9fcaeda0",
+      3: "#3d96daa0",
+      5: "#2b6b99a0"
     },
     unitLength: [1, 1],
     unitValue: [1, 1],
     resolution: 1,
-    interpolator: _rate_functions.linear
+    interpolator: x => x
   };
   config = (0, _utils.applyDefault)(defaultConfigs, config);
   const {
@@ -2548,32 +2544,25 @@ function heatPlot(config) {
     plotFunction,
     interpolator
   } = config;
-  const ctx = _main.C.workingCanvas;
-  const unitSizeX = config.unitLength[0] / config.unitValue[0];
-  const unitSizeY = config.unitLength[1] / config.unitValue[1];
-  const UVX = config.unitValue[0] / unitSizeX;
-  const UVY = config.unitValue[1] / unitSizeY;
-  const stopes = Object.keys(colors).sort(); // converting colors to rgba array
+  const ctx = _main.C.workingCanvas,
+        unitSizeX = config.unitLength[0] / config.unitValue[0],
+        unitSizeY = config.unitLength[1] / config.unitValue[1],
+        UVX = config.unitValue[0] / unitSizeX,
+        UVY = config.unitValue[1] / unitSizeY,
+        stopes = Object.keys(colors).sort(); // converting colors to rgba array
 
-  for (var i = 0; i < stopes.length; i++) {
-    colors[stopes[i]] = (0, _color_reader.readColor)([colors[stopes[i]]], true);
-  }
+  for (var stop of stopes) colors[stop] = (0, _color_reader.readColor)([colors[stop]], true);
 
   const minS = Math.min(...stopes);
-  const maxS = Math.max(...stopes); // const w = (max[0] - min[0]) / (resolution * UVX);
-  // const h = (max[1] - min[1]) / (resolution * UVY);
-
-  ctx.save(); // const img = ctx.createImageData(w, h);
-  // console.log(img.data);
+  const maxS = Math.max(...stopes);
+  ctx.save();
 
   for (var x = min[0]; x <= max[0]; x += resolution * UVX) {
     for (var y = min[1]; y <= max[1]; y += resolution * UVY) {
-      let c = lerpColorArray(plotFunction(x, y));
-      ctx.fillStyle = c;
-      ctx.fillRect(x * unitSizeX, y * unitSizeY, resolution, resolution); // img.data[]
+      ctx.fillStyle = lerpColorArray(plotFunction(x, y));
+      ctx.fillRect(x * unitSizeX, y * unitSizeY, resolution, resolution);
     }
-  } // ctx.putImageData(img, 0, 0);
-
+  }
 
   function lerpColorArray(v) {
     if (v >= maxS) return "rgba(" + colors[maxS].join() + ")";
@@ -2600,7 +2589,7 @@ function heatPlot(config) {
   };
 }
 
-},{"../color/color_reader.js":3,"../constants/colors.js":7,"../main.js":10,"../math/rate_functions.js":15,"../settings.js":24,"../utils.js":25,"./geometry.js":20}],20:[function(require,module,exports){
+},{"../color/color_reader.js":3,"../main.js":10,"../settings.js":24,"../utils.js":25,"./geometry.js":20}],20:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4216,7 +4205,7 @@ exports.doFillAndStroke = doFillAndStroke;
 exports.approximateIndexInArray = approximateIndexInArray;
 
 Object.getType = function (obj) {
-  return Object.prototype.toString.call(obj).replace(/(\[object|\s|])/g, "");
+  return Object.prototype.toString.call(obj).substr(8).replace("]", "");
 };
 
 Object.clone = Object.clone || function (toClone) {
