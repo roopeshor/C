@@ -1,7 +1,5 @@
 import { readColor } from "../color/color_reader.js";
-import { BLUE, RED, YELLOW } from "../constants/colors.js";
 import { C } from "../main.js";
-import { linear } from "../math/rate_functions.js";
 import { loop, noLoop } from "../settings.js";
 import {
 	applyDefault,
@@ -195,46 +193,42 @@ function heatPlot(config) {
 		min: [-4, -4],
 		max: [4, 4],
 		colors: {
-			"-4": BLUE,
-			0: YELLOW,
-			4: RED,
+			"-5": "#b36e38a0",
+			"-3": "#ff9c52a0",
+			"-1": "#ffcea9a0",
+			0: "#dcdcdda0",
+			1: "#9fcaeda0",
+			3: "#3d96daa0",
+			5: "#2b6b99a0",
 		},
 		unitLength: [1, 1],
 		unitValue: [1, 1],
 		resolution: 1,
-		interpolator: linear,
+		interpolator: (x) => x,
 	};
 	config = applyDefault(defaultConfigs, config);
 	const { min, max, colors, resolution, plotFunction, interpolator } = config;
-	const ctx = C.workingCanvas;
-	const unitSizeX = config.unitLength[0] / config.unitValue[0];
-	const unitSizeY = config.unitLength[1] / config.unitValue[1];
-	const UVX = config.unitValue[0] / unitSizeX;
-	const UVY = config.unitValue[1] / unitSizeY;
-	const stopes = Object.keys(colors).sort();
+	const ctx = C.workingCanvas,
+		unitSizeX = config.unitLength[0] / config.unitValue[0],
+		unitSizeY = config.unitLength[1] / config.unitValue[1],
+		UVX = config.unitValue[0] / unitSizeX,
+		UVY = config.unitValue[1] / unitSizeY,
+		stopes = Object.keys(colors).sort();
 
 	// converting colors to rgba array
 
-	for (var i = 0; i < stopes.length; i++) {
-		colors[stopes[i]] = readColor([colors[stopes[i]]], true);
-	}
+	for (var stop of stopes)
+		colors[stop] = readColor([colors[stop]], true);
 
 	const minS = Math.min(...stopes);
 	const maxS = Math.max(...stopes);
-	// const w = (max[0] - min[0]) / (resolution * UVX);
-	// const h = (max[1] - min[1]) / (resolution * UVY);
 	ctx.save();
-	// const img = ctx.createImageData(w, h);
-	// console.log(img.data);
 	for (var x = min[0]; x <= max[0]; x += resolution * UVX) {
 		for (var y = min[1]; y <= max[1]; y += resolution * UVY) {
-			let c = lerpColorArray(plotFunction(x, y));
-			ctx.fillStyle = c;
+			ctx.fillStyle = lerpColorArray(plotFunction(x, y));
 			ctx.fillRect(x * unitSizeX, y * unitSizeY, resolution, resolution);
-			// img.data[]
 		}
 	}
-	// ctx.putImageData(img, 0, 0);
 	function lerpColorArray(v) {
 		if (v >= maxS) return "rgba(" + colors[maxS].join() + ")";
 		if (v <= minS) return "rgba(" + colors[minS].join() + ")";

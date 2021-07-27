@@ -31,8 +31,8 @@ function getPlotterList(unitLength, unitValue, cfgs = {}) {
 		getHeatPlot: function (configs) {
 			configs.unitLength = unitLength;
 			configs.unitValue = unitValue;
-			configs.min = [cfgs.xAxis.range[0], cfgs.yAxis.range[0]];
-			configs.max = [cfgs.xAxis.range[1], cfgs.yAxis.range[1]];
+			configs.min = configs.min || [cfgs.xAxis.range[0], cfgs.yAxis.range[0]];
+			configs.max = configs.max || [cfgs.xAxis.range[1], cfgs.yAxis.range[1]];
 			return heatPlot(configs);
 		},
 	};

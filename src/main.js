@@ -1,4 +1,5 @@
 import { applyDefault, defineProperties } from "./utils.js";
+import { randomInt } from "./math/random.js";
 
 const defaultConfigs = {
 	width: 200, // width of canvas multiplied by dpr
@@ -41,7 +42,7 @@ const defaultConfigs = {
  * @param {HTMLElement} [container=document.body] container for the drawings
  * @param {object} [cfgs={}] configurations
  */
-function C(fx, container = document.body, cfgs = {}) {
+function C(fx, container, cfgs = {}) {
 	// assign configs
 	const configs = applyDefault(defaultConfigs, cfgs);
 
@@ -49,12 +50,13 @@ function C(fx, container = document.body, cfgs = {}) {
 	let canvas = C.makeCanvas(configs);
 	if (typeof container === "string") {
 		container = document.querySelector(container);
+	} else if (!(container instanceof HTMLElement)) {
+		container = document.body;
 	}
 	var parentName = container.id || container.classList.item(0);
-	let canvasName;
-	if (configs.name != undefined) {
-		canvasName = configs.name;
-		const cvs = document.getElementById(canvasName);
+	let canvasName = configs.name;
+	if (typeof canvasName == "string") {
+		const cvs = container.querySelector("#"+canvasName);
 		if (cvs instanceof HTMLElement) {
 			// if already exist
 			canvas = cvs;
@@ -63,13 +65,7 @@ function C(fx, container = document.body, cfgs = {}) {
 			return;
 		}
 	} else {
-		// finds a name for canvas that already don't exist
-		while (document.getElementById(parentName + "-" + C.nameID) != undefined) {
-			C.nameID++;
-		}
-
-		canvasName = parentName + "-" + C.nameID;
-		configs.name = canvasName;
+		configs.name = parentName + "-" + randomInt(1000000, 0);
 	}
 	function prepareCanvas() {
 		// add additional information to rendererContext

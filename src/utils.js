@@ -1,5 +1,5 @@
 Object.getType = function (obj) {
-	return Object.prototype.toString.call(obj).replace(/(\[object|\s|])/g, "");
+	return Object.prototype.toString.call(obj).substr(8).replace("]", "");
 };
 Object.clone =
 	Object.clone ||

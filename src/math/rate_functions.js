@@ -1,6 +1,6 @@
 /**
- * Rate functions. From https://easings.net
- * all Functions accept input from 0 to 1 and return output between 0 to 1
+ * Rate functions. From https://easings.net .
+ * All Functions accept input from 0 to 1 and return output between 0 to 1
  */
 const c1 = 1.70158;
 const c2 = c1 * 1.525;
@@ -31,11 +31,11 @@ function easeInQuad(x) {
 }
 
 function easeOutQuad(x) {
-	return 1 - (1 - x) * (1 - x);
+	return 1 - (1 - x) ** 2;
 }
 
 function easeInOutQuad(x) {
-	return x < 0.5 ? 2 * x ** 2 : 1 - Math.pow(-2 * x + 2, 2) / 2;
+	return x < 0.5 ? 2 * x ** 2 : 1 - Math.pow(2 - 2 * x, 2) / 2;
 }
 
 function easeInCubic(x) {
@@ -47,7 +47,7 @@ function easeOutCubic(x) {
 }
 
 function easeInOutCubic(x) {
-	return x < 0.5 ? 4 * x ** 3 : 1 - Math.pow(-2 * x + 2, 3) / 2;
+	return x < 0.5 ? 4 * x ** 3 : 1 - Math.pow(2 - 2 * x, 3) / 2;
 }
 
 function easeInQuart(x) {
@@ -55,11 +55,11 @@ function easeInQuart(x) {
 }
 
 function easeOutQuart(x) {
-	return 1 - Math.pow(1 - x, 4);
+	return 1 - (1 - x) ** 4;
 }
 
 function easeInOutQuart(x) {
-	return x < 0.5 ? 8 * x ** 4 : 1 - Math.pow(-2 * x + 2, 4) / 2;
+	return x < 0.5 ? 8 * x ** 4 : 1 - Math.pow(2 - 2 * x, 4) / 2;
 }
 
 function easeInQuint(x) {
@@ -71,7 +71,7 @@ function easeOutQuint(x) {
 }
 
 function easeInOutQuint(x) {
-	return x < 0.5 ? 16 * x ** 5 : 1 - Math.pow(-2 * x + 2, 5) / 2;
+	return x < 0.5 ? 16 * x ** 5 : 1 - Math.pow(2 - 2 * x, 5) / 2;
 }
 
 function easeInSine(x) {
@@ -87,35 +87,35 @@ function easeInOutSine(x) {
 }
 
 function easeInExpo(x) {
-	return x === 0 ? 0 : Math.pow(2, 10 * x - 10);
+	return x == 0 ? 0 : Math.pow(2, 10 * x - 10);
 }
 
 function easeOutExpo(x) {
-	return x === 1 ? 1 : 1 - Math.pow(2, -10 * x);
+	return x == 1 ? 1 : 1 - Math.pow(2, -10 * x);
 }
 
 function easeInOutExpo(x) {
-	return x === 0
+	return x == 0
 		? 0
-		: x === 1
+		: x == 1
 		? 1
 		: x < 0.5
 		? Math.pow(2, 20 * x - 10) / 2
-		: (2 - Math.pow(2, -20 * x + 10)) / 2;
+		: (2 - Math.pow(2, 10 - 20 * x)) / 2;
 }
 
 function easeInCirc(x) {
-	return 1 - Math.sqrt(1 - Math.pow(x, 2));
+	return 1 - Math.sqrt(1 - x ** 2);
 }
 
 function easeOutCirc(x) {
-	return Math.sqrt(1 - Math.pow(x - 1, 2));
+	return Math.sqrt(1 - (x - 1) ** 2);
 }
 
 function easeInOutCirc(x) {
 	return x < 0.5
-		? (1 - Math.sqrt(1 - Math.pow(2 * x, 2))) / 2
-		: (Math.sqrt(1 - Math.pow(-2 * x + 2, 2)) + 1) / 2;
+		? (1 - Math.sqrt(1 - (2 * x) ** 2)) / 2
+		: (Math.sqrt(1 - (2 - 2 * x) ** 2) + 1) / 2;
 }
 
 function easeInBack(x) {
@@ -128,8 +128,8 @@ function easeOutBack(x) {
 
 function easeInOutBack(x) {
 	return x < 0.5
-		? (Math.pow(2 * x, 2) * ((c2 + 1) * 2 * x - c2)) / 2
-		: (Math.pow(2 * x - 2, 2) * ((c2 + 1) * (x * 2 - 2) + c2) + 2) / 2;
+		? ((2 * x) ** 2 * ((c2 + 1) * 2 * x - c2)) / 2
+		: ((2 * x - 2) ** 2 * ((c2 + 1) * (x * 2 - 2) + c2) + 2) / 2;
 }
 
 function easeInElastic(x) {

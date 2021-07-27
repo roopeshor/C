@@ -1,10 +1,8 @@
 /**
  * List of colors
- * @module constants
- * @submodule colors
  */
-// from Manim
 
+// from Manim
 export const DARK_BLUE = "#236B8E",
 	DARK_BROWN = "#8B4513",
 	LIGHT_BROWN = "#CD853F",
