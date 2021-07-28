@@ -1,5 +1,5 @@
 import { getInterpolatedColorList } from "../../src/color/interpolation.js";
-import { Blues, Spectral } from "../../src/constants/color_palettes.js";
+import { Spectral } from "../../src/constants/color_palettes.js";
 import { PI, TAU } from "../../src/constants/math.js";
 import { C } from "../../src/main.js";
 import { axes } from "../../src/objects/coordinate_systems.js";
@@ -31,7 +31,7 @@ const examples = [
 			"3π/2",
 			"2π",
 		],
-		colors: getInterpolatedColorList(Spectral, -2, 2, 1, 0.8),
+		colors: getInterpolatedColorList(Spectral, -2, 2, 0.5, 0.8),
 	},
 
 	{
@@ -45,7 +45,7 @@ const examples = [
 		},
 		resolution: 2,
 		includeNumbers: true,
-		colors: getInterpolatedColorList(Spectral, 0, 2, 1, 0.8),
+		colors: getInterpolatedColorList(Spectral, 0, 7, 1, 0.8),
 	},
 
 	{

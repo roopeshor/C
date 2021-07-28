@@ -12,6 +12,13 @@ import {
 	smoothCurveThroughPoints,
 } from "./geometry.js";
 
+const animationEventChain = {
+	then: function (f) {
+		f();
+		return animationEventChain;
+	},
+};
+
 /**
  * Draws a parametric functions
  * This accept parameters as object.
@@ -53,9 +60,9 @@ function parametricFunction(config) {
 	if (Array.isArray(range) && range.length == 2)
 		range.push((range[1] - range[0]) / 20);
 	var points = [[]];
-	const min = range[0];
-	const max = range[1];
-	const step = range[2];
+	var min = range[0];
+	var max = range[1];
+	var step = range[2];
 	if (!Array.isArray(discontinuities)) discontinuities = [];
 
 	// generate points
@@ -97,15 +104,15 @@ function parametricFunction(config) {
 			}
 		}
 	}
+	const ctx = C.workingCanvas;
 	return {
 		points: points,
 		draw: plot,
 		animate: function (duration = 2000) {
-			const ctx = C.workingCanvas;
 			var dt = duration / noPoints;
 			for (let i = 0; i < points.length; i++) {
 				var p = points[i];
-				var j = 0;
+				let j = 0;
 				if (smoothen) {
 					loop(
 						() => {
@@ -139,7 +146,7 @@ function parametricFunction(config) {
 							);
 							ctx.stroke();
 						},
-						ctx.name,
+						C.workingCanvas.name,
 						dt
 					);
 				} else {
@@ -153,11 +160,11 @@ function parametricFunction(config) {
 								p2 = p[++j];
 							line(p1[0], p1[1], p2[0], p2[1]);
 						},
-						ctx.name,
 						dt
 					);
 				}
 			}
+			return animationEventChain;
 		},
 	};
 }

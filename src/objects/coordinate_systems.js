@@ -101,6 +101,7 @@ function axes(config = {}) {
 	const xShift = xAxis.length / 2 + xMin;
 	const yShift = yAxis.length / 2 + yMin;
 	ctx.save();
+	ctx.beginPath();
 	// translate to center
 	ctx.translate(center[0], center[1]);
 
@@ -120,6 +121,7 @@ function axes(config = {}) {
 
 	// reverse the effect of overall shift
 	ctx.translate(-center[0], -center[1] - yShift);
+	ctx.closePath();
 	ctx.restore();
 	const ret = {
 		center: center, // center of axis as [x, y] in px
@@ -234,6 +236,7 @@ function numberLine(config = {}) {
 	const ds = lineLength / totalTicks;
 
 	const list = getTickList();
+	ctx.beginPath();
 	save();
 	translate(center[0], center[1]);
 	rotate(rotation);
@@ -242,6 +245,8 @@ function numberLine(config = {}) {
 	if (config.includeNumbers) drawNumbers();
 	translate(lineLength / 2, 0);
 	drawAxis();
+	ctx.closePath();
+
 	function drawAxis() {
 		stroke(color);
 		ctx.lineWidth = lineWidth;

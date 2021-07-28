@@ -1,5 +1,4 @@
 import { applyDefault, defineProperties } from "./utils.js";
-import { randomInt } from "./math/random.js";
 
 const defaultConfigs = {
 	width: 200, // width of canvas multiplied by dpr
@@ -53,6 +52,11 @@ function C(fx, container, cfgs = {}) {
 	} else if (!(container instanceof HTMLElement)) {
 		container = document.body;
 	}
+
+	if (typeof container.CID !== "number") {
+		container.CID = 1;
+	}
+	var parentCID = container.CID;
 	var parentName = container.id || container.classList.item(0);
 	let canvasName = configs.name;
 	if (typeof canvasName == "string") {
@@ -65,7 +69,8 @@ function C(fx, container, cfgs = {}) {
 			return;
 		}
 	} else {
-		configs.name = parentName + "-" + randomInt(1000000, 0);
+		canvasName = parentName + "-C-" + parentCID;
+		configs.name = canvasName;
 	}
 	function prepareCanvas() {
 		// add additional information to rendererContext
@@ -90,6 +95,8 @@ function C(fx, container, cfgs = {}) {
  * @type {Object}
  */
 C.canvasList = {};
+
+C.delayedAnimations = [];
 
 /**
  * Number of canvases

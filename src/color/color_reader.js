@@ -62,7 +62,6 @@ function readColor() {
 	} else if (typeof c1 == "string") {
 		// Adapted from p5.js
 		const str = c1.replace(/\s/g, "").toLowerCase();
-
 		// convert string to array if it is a named colour.
 		if (namedColors[str]) result = readColor(namedColors[str], true);
 		else if (HEX3.test(str)) {

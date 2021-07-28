@@ -41,16 +41,17 @@ function lerpColorArray(colorArr, v) {
 function getInterpolatedColorList(colorPalatte, min = 0, max = 5, step = 1, alpha=1) {
 	const len = Math.round((max - min) / step) + 1;
 	const list = Object.keys(colorPalatte),
-		listMin = Math.min(...list),
 		listMax = Math.max(...list);
 	if (len > listMax) {
+    // not implemented
 	} else if (len < 3) {
 		throw new Error("Number of colors to compute is less than 3");
 	}
 	const colorObj = {};
 	const cp = colorPalatte[len];
+  var k = 0;
 	for (var i = min; i <= max; i += step) {
-		const c = readColor(cp[i - min], true);
+		const c = readColor(cp[k++], true);
 		c[3] = alpha;
 		colorObj[i] = readColor(...c);
 	}

@@ -1,5 +1,6 @@
-import { C } from "./main.js";
 import { readColor } from "./color/color_reader.js";
+import { white } from "./constants/named_colors.js";
+import { C } from "./main.js";
 
 /**
  * This module contains functions to manipulate the canvas.
@@ -369,6 +370,16 @@ function loop(
 	else ctx = C.canvasList[canvasName];
 	ctx.timeDelayList = [];
 	ctx.totalTimeCaptured = 0;
+	if (ctx.currentLoop != undefined) {
+		// already a animation is running
+		C.delayedAnimations.push({
+			functionToRun: functionToRun,
+			canvasName: canvasName,
+			timeDelay: timeDelay,
+			timeDelaysToRemember: timeDelaysToRemember,
+		});
+		return;
+	}
 	ctx.recentTimeStamp = window.performance.now();
 	ctx.timeStart = window.performance.now();
 	if (!isNaN(timeDelay)) {
@@ -381,12 +392,13 @@ function loop(
 	}
 	function run() {
 		ctx.currentLoop = window.requestAnimationFrame(run);
+		C.workingCanvas = ctx;
 		functionToRun(window.performance.now() - ctx.timeStart, getFPS());
 	}
 
 	function getFPS() {
-		const now = window.performance.now();
-		const timeDelay = now - ctx.recentTimeStamp; // time delays between frames
+		const now = window.performance.now(),
+			timeDelay = now - ctx.recentTimeStamp; // time delays between frames
 		ctx.recentTimeStamp = now;
 		ctx.timeDelayList.push(timeDelay);
 		ctx.totalTimeCaptured += timeDelay;
@@ -407,6 +419,11 @@ function noLoop(canvasName) {
 	else ctx = C.canvasList[canvasName];
 	clearInterval(ctx.currentLoop);
 	window.cancelAnimationFrame(ctx.currentLoop);
+	ctx.currentLoop = undefined;
+	if (C.delayedAnimations.length > 0) {
+		var toWork = C.delayedAnimations.shift();
+		loop(toWork.functionToRun, toWork.canvasName, toWork.timeDelay, toWork.timeDelaysToRemember);
+	}
 }
 
 /**
@@ -672,6 +689,7 @@ function initBlackboardCanvas() {
 	initCenteredCanvas();
 	background(0);
 	invertYAxis();
+	stroke(white);
 }
 
 export {
