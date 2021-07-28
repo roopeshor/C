@@ -193,39 +193,39 @@ function heatPlot(config) {
 		min: [-4, -4],
 		max: [4, 4],
 		colors: {
-			"-5": "#b36e38a0",
-			"-3": "#ff9c52a0",
-			"-1": "#ffcea9a0",
-			0: "#dcdcdda0",
-			1: "#9fcaeda0",
-			3: "#3d96daa0",
-			5: "#2b6b99a0",
+			"-5": "#b36e38b0",
+			"-3": "#ff9c52b0",
+			"-1": "#ffcea9b0",
+			0: "#dcdcddb0",
+			1: "#9fcaedb0",
+			3: "#3d96dab0",
+			5: "#2b6b99b0",
 		},
 		unitLength: [1, 1],
 		unitValue: [1, 1],
 		resolution: 1,
 		interpolator: (x) => x,
 	};
-	config = applyDefault(defaultConfigs, config);
+	config = applyDefault(defaultConfigs, config, false);
 	const { min, max, colors, resolution, plotFunction, interpolator } = config;
 	const ctx = C.workingCanvas,
 		unitSizeX = config.unitLength[0] / config.unitValue[0],
 		unitSizeY = config.unitLength[1] / config.unitValue[1],
-		UVX = config.unitValue[0] / unitSizeX,
-		UVY = config.unitValue[1] / unitSizeY,
+		UVX = config.unitValue[0] / config.unitLength[0],
+		UVY = config.unitValue[1] / config.unitLength[1],
 		stopes = Object.keys(colors).sort();
 
 	// converting colors to rgba array
 
-	for (var stop of stopes)
-		colors[stop] = readColor([colors[stop]], true);
+	for (var stop of stopes) colors[stop] = readColor(colors[stop], true);
 
 	const minS = Math.min(...stopes);
 	const maxS = Math.max(...stopes);
 	ctx.save();
 	for (var x = min[0]; x <= max[0]; x += resolution * UVX) {
 		for (var y = min[1]; y <= max[1]; y += resolution * UVY) {
-			ctx.fillStyle = lerpColorArray(plotFunction(x, y));
+			let c = lerpColorArray(plotFunction(x, y));
+			ctx.fillStyle = c;
 			ctx.fillRect(x * unitSizeX, y * unitSizeY, resolution, resolution);
 		}
 	}

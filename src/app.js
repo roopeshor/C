@@ -2,6 +2,7 @@ import { defineProperties } from "./utils.js";
 import { C } from "./main.js";
 
 import * as COLORLIST from "./constants/colors.js";
+import * as COLORPALATTES from "./constants/color_palettes.js";
 import * as DrawingConstants from "./constants/drawing.js";
 import * as MathConsts from "./constants/math.js";
 
@@ -28,6 +29,7 @@ import * as Math_Random from "./math/random.js";
 import * as RateFunctions from "./math/rate_functions.js";
 
 defineProperties(COLORLIST, window, false);
+defineProperties(COLORPALATTES, window, false);
 defineProperties(DrawingConstants, window, false);
 defineProperties(MathConsts, window, false);
 

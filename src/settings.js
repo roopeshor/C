@@ -35,7 +35,7 @@ function lineTo(x, y) {
  * * a array of numbers ([0, 244, 34])
  */
 function background() {
-	const col = readColor(arguments),
+	const col = readColor(...arguments),
 		ctx = C.workingCanvas;
 	ctx.background = col;
 	ctx.save();
@@ -283,7 +283,7 @@ function rest() {
 function stroke() {
 	const ctx = C.workingCanvas;
 	if (arguments.length > 0) {
-		ctx.strokeStyle = readColor(arguments);
+		ctx.strokeStyle = readColor(...arguments);
 		ctx.doStroke = true;
 	} else {
 		ctx.stroke();
@@ -303,7 +303,7 @@ function stroke() {
 function fill() {
 	const ctx = C.workingCanvas;
 	if (arguments.length !== 0) {
-		ctx.fillStyle = readColor(arguments);
+		ctx.fillStyle = readColor(...arguments);
 		ctx.doFill = true;
 	} else {
 		ctx.fill();

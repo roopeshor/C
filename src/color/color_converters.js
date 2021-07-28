@@ -10,8 +10,8 @@ function hue2RGB(p, q, t) {
 /**
  * Converts an RGB color value to HSL. Conversion formula
  * adapted from http://en.wikipedia.org/wiki/HSL_color_space.
- * Assumes values of red, green, and blue are between 0 & 255 and
- * returns hue in range 0 to 360, saturation and lightness in range 0 to 1
+ * Assumes values of red, green, and blue are between 0 & 1 and
+ * returns hue, saturation and lightness in range 0 to 1
  * @method RGBToHSL
  * @global
  * @param {number} red The red color value
@@ -19,10 +19,7 @@ function hue2RGB(p, q, t) {
  * @param {number} blue The blue color value
  * @return {array} The HSL representation
  */
-function RGBToHSL(red, green, blue) {
-	const r = red / 255;
-	const g = green / 255;
-	const b = blue / 255;
+function RGBToHSL(r, g, b) {
 	const max = Math.max(r, g, b);
 	const min = Math.min(r, g, b);
 	let hue;
@@ -48,14 +45,14 @@ function RGBToHSL(red, green, blue) {
 		hue /= 6;
 	}
 
-	return [hue * 360, saturation, lightness];
+	return [hue, saturation, lightness];
 }
 
 /**
  * Converts an HSL color value to RGB. Conversion formula
  * adapted from http://en.wikipedia.org/wiki/HSL_color_space.
  * Assumes values of hue is between 0 and 360, saturation and lightness are between 0 & 1 and
- * returns red, green, and blue values between 0 & 255
+ * returns red, green, and blue values between 0 & 1
  *
  * @param {number} hue The hue
  * @param {number} saturation The saturation
@@ -78,26 +75,23 @@ function HSLToRGB(hue, saturation, lightness) {
 		b = hue2RGB(p, q, hue - 1 / 3);
 	}
 
-	return [r * 255, g * 255, b * 255];
+	return [r, g, b];
 }
 
 /**
  * Converts an RGB color value to HSV. Conversion formula
  * adapted from http://en.wikipedia.org/wiki/HSV_color_space.
- * Assumes values of red, green, and blue are between 0 & 255 and
- * returns hue in range 0 to 360, saturation and value in range 0 to 1
+ * Assumes values of red, green, and blue are between 0 & 1 and
+ * returns hue, saturation and value in range 0 to 1
  *
  * @param {number} red The red color value
  * @param {number} green The green color value
  * @param {number} blue The blue color value
  * @return {array} The HSV representation
  */
-function RGBToHSV(red, green, blue) {
-	const r = red / 255;
-	const g = green / 255;
-	const b = blue / 255;
-	const max = Math.max(r, g, b);
-	const min = Math.min(r, g, b);
+function RGBToHSV(r,g,b) {
+	const max = Math.max(r, g, b); // val
+	const min = Math.min(r, g, b); // chroma
 	let hue;
 	const value = max;
 	const d = max - min;
@@ -120,14 +114,14 @@ function RGBToHSV(red, green, blue) {
 		hue /= 6;
 	}
 
-	return [hue * 360, saturation, value];
+	return [hue, saturation, value];
 }
 
 /**
  * Converts an HSV color value to RGB. Conversion formula
  * adapted from http://en.wikipedia.org/wiki/HSV_color_space.
  * Assumes values of hue is between 0 to 360, saturation, and value are between 0 & 1 and
- * returns red, green, and blue in range 0 to 255
+ * returns red, green, and blue in range 0 to 1
  *
  * @param {number} hue The hue
  * @param {number} saturation The saturation
@@ -175,7 +169,7 @@ function HSVToRGB(hue, saturation, value) {
 			break;
 	}
 
-	return [r * 255, g * 255, b * 255];
+	return [r, g, b];
 }
 
 export { RGBToHSL, HSLToRGB, RGBToHSV, HSVToRGB };

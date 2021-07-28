@@ -294,7 +294,7 @@ function numberLine(config = {}) {
 			i < to && numbersToExclude.indexOf(numbers[i]) < 0;
 			i++
 		) {
-			const tick = numbers[i].toFixed(decimalPlaces);
+			const tick = typeof numbers[i] == "number" ? numbers[i].toFixed(decimalPlaces) : numbers[i];
 			if (Number(tick) === 0 && excludeOriginTick) continue;
 			const width = ctx.measureText(tick).width;
 			const xShift =
