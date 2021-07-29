@@ -1,7 +1,3 @@
-/**
- * ! THIS FILE CONTAINS MANY UNSTABLE EXAMPLES. IT IS HERE FOR TESTING ONLY !
- */
-
 import { readColor } from "../../src/color/color_reader.js";
 import { TAU } from "../../src/constants/math.js";
 import { C } from "../../src/main.js";
@@ -54,7 +50,16 @@ function animatedLine(id, pa, pb, dt = 10, next = () => {}) {
 	});
 }
 
-// animate filling of a given shape;
+/**
+ * animate filling of a given shape
+ *
+ * @param {string} id ID of canvas
+ * @param {string} FILL color of canvas
+ * @param {function} f funciton that draws the shape
+ * @param {number} [time=1000] time to run
+ * @param {number} [dt=10] time for each frame
+ * @param {function} [next=() => {}] function to run after filling
+ */
 function animateFill(id, FILL, f, time = 1000, dt = 10, next = () => {}) {
 	var n = time / dt;
 	var _fill = readColor(FILL, true);
@@ -80,7 +85,7 @@ function animateFill(id, FILL, f, time = 1000, dt = 10, next = () => {}) {
  * @param {array} p center
  * @param {number} r radius
  * @param {number} dt delay time in milliseconds
- * @param {function} [next=() => {}] next function
+ * @param {function} [next=() => {}] next function to run
  */
 function pointDraw(
 	id,
@@ -142,27 +147,22 @@ C(
 C(
 	() => {
 		initBlackboardCanvas();
-		// scale(2, 2);
 		const p1 = [-5 * 16, 5 * 16],
 			p2 = [5 * 16, -7 * 16],
 			p3 = [-8 * 16, -5 * 16],
 			p4 = [8 * 16, 7 * 16];
 		animatedLine("lli", p1, p2, 10, () => {
-			setTimeout(() => {
-				animatedLine("lli", p4, p3, 10, () => {
-					setTimeout(() => {
-						fill("orange");
-						pointDraw(
-							"lli",
-							lineIntersection(p1, p2, p3, p4),
-							5,
-							0,
-							0.09,
-							"orange"
-						);
-					}, 0);
-				});
-			}, 0);
+			animatedLine("lli", p4, p3, 10, () => {
+				fill("orange");
+				pointDraw(
+					"lli",
+					lineIntersection(p1, p2, p3, p4),
+					5,
+					0,
+					0.09,
+					"orange"
+				);
+			});
 		});
 	},
 	".container",
