@@ -7,6 +7,8 @@ var _main = require("./main.js");
 
 var COLORLIST = _interopRequireWildcard(require("./constants/colors.js"));
 
+var COLORPALATTES = _interopRequireWildcard(require("./constants/color_palettes.js"));
+
 var DrawingConstants = _interopRequireWildcard(require("./constants/drawing.js"));
 
 var MathConsts = _interopRequireWildcard(require("./constants/math.js"));
@@ -54,6 +56,7 @@ function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "functio
 function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
 (0, _utils.defineProperties)(COLORLIST, window, false);
+(0, _utils.defineProperties)(COLORPALATTES, window, false);
 (0, _utils.defineProperties)(DrawingConstants, window, false);
 (0, _utils.defineProperties)(MathConsts, window, false);
 (0, _utils.defineProperties)(Color_Converters);
@@ -79,7 +82,7 @@ function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && 
 (0, _utils.defineProperties)(_utils.defineProperties, _main.C);
 (0, _utils.defineProperties)(COLORLIST, _main.C);
 
-},{"./color/color_converters.js":2,"./color/color_reader.js":3,"./color/gradients.js":4,"./color/interpolation.js":5,"./color/random.js":6,"./constants/colors.js":7,"./constants/drawing.js":8,"./constants/math.js":9,"./main.js":10,"./math/aritmetics.js":11,"./math/basic.js":12,"./math/points.js":13,"./math/random.js":14,"./math/rate_functions.js":15,"./objects/arrows.js":16,"./objects/braces.js":17,"./objects/coordinate_systems.js":18,"./objects/functions.js":19,"./objects/geometry.js":20,"./objects/image.js":21,"./objects/tex.js":22,"./objects/text.js":23,"./settings.js":24,"./utils.js":25}],2:[function(require,module,exports){
+},{"./color/color_converters.js":2,"./color/color_reader.js":3,"./color/gradients.js":4,"./color/interpolation.js":5,"./color/random.js":6,"./constants/color_palettes.js":7,"./constants/colors.js":8,"./constants/drawing.js":9,"./constants/math.js":10,"./main.js":12,"./math/aritmetics.js":13,"./math/basic.js":14,"./math/points.js":15,"./math/random.js":16,"./math/rate_functions.js":17,"./objects/arrows.js":18,"./objects/braces.js":19,"./objects/coordinate_systems.js":20,"./objects/functions.js":21,"./objects/geometry.js":22,"./objects/image.js":23,"./objects/tex.js":24,"./objects/text.js":25,"./settings.js":26,"./utils.js":27}],2:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -101,8 +104,8 @@ function hue2RGB(p, q, t) {
 /**
  * Converts an RGB color value to HSL. Conversion formula
  * adapted from http://en.wikipedia.org/wiki/HSL_color_space.
- * Assumes values of red, green, and blue are between 0 & 255 and
- * returns hue in range 0 to 360, saturation and lightness in range 0 to 1
+ * Assumes values of red, green, and blue are between 0 & 1 and
+ * returns hue, saturation and lightness in range 0 to 1
  * @method RGBToHSL
  * @global
  * @param {number} red The red color value
@@ -112,10 +115,7 @@ function hue2RGB(p, q, t) {
  */
 
 
-function RGBToHSL(red, green, blue) {
-  const r = red / 255;
-  const g = green / 255;
-  const b = blue / 255;
+function RGBToHSL(r, g, b) {
   const max = Math.max(r, g, b);
   const min = Math.min(r, g, b);
   let hue;
@@ -145,13 +145,13 @@ function RGBToHSL(red, green, blue) {
     hue /= 6;
   }
 
-  return [hue * 360, saturation, lightness];
+  return [hue, saturation, lightness];
 }
 /**
  * Converts an HSL color value to RGB. Conversion formula
  * adapted from http://en.wikipedia.org/wiki/HSL_color_space.
  * Assumes values of hue is between 0 and 360, saturation and lightness are between 0 & 1 and
- * returns red, green, and blue values between 0 & 255
+ * returns red, green, and blue values between 0 & 1
  *
  * @param {number} hue The hue
  * @param {number} saturation The saturation
@@ -174,13 +174,13 @@ function HSLToRGB(hue, saturation, lightness) {
     b = hue2RGB(p, q, hue - 1 / 3);
   }
 
-  return [r * 255, g * 255, b * 255];
+  return [r, g, b];
 }
 /**
  * Converts an RGB color value to HSV. Conversion formula
  * adapted from http://en.wikipedia.org/wiki/HSV_color_space.
- * Assumes values of red, green, and blue are between 0 & 255 and
- * returns hue in range 0 to 360, saturation and value in range 0 to 1
+ * Assumes values of red, green, and blue are between 0 & 1 and
+ * returns hue, saturation and value in range 0 to 1
  *
  * @param {number} red The red color value
  * @param {number} green The green color value
@@ -189,12 +189,11 @@ function HSLToRGB(hue, saturation, lightness) {
  */
 
 
-function RGBToHSV(red, green, blue) {
-  const r = red / 255;
-  const g = green / 255;
-  const b = blue / 255;
-  const max = Math.max(r, g, b);
-  const min = Math.min(r, g, b);
+function RGBToHSV(r, g, b) {
+  const max = Math.max(r, g, b); // val
+
+  const min = Math.min(r, g, b); // chroma
+
   let hue;
   const value = max;
   const d = max - min;
@@ -220,13 +219,13 @@ function RGBToHSV(red, green, blue) {
     hue /= 6;
   }
 
-  return [hue * 360, saturation, value];
+  return [hue, saturation, value];
 }
 /**
  * Converts an HSV color value to RGB. Conversion formula
  * adapted from http://en.wikipedia.org/wiki/HSV_color_space.
  * Assumes values of hue is between 0 to 360, saturation, and value are between 0 & 1 and
- * returns red, green, and blue in range 0 to 255
+ * returns red, green, and blue in range 0 to 1
  *
  * @param {number} hue The hue
  * @param {number} saturation The saturation
@@ -281,7 +280,7 @@ function HSVToRGB(hue, saturation, value) {
       break;
   }
 
-  return [r * 255, g * 255, b * 255];
+  return [r, g, b];
 }
 
 },{}],3:[function(require,module,exports){
@@ -294,53 +293,115 @@ exports.readColor = readColor;
 
 var _main = require("../main.js");
 
+var namedColors = _interopRequireWildcard(require("../constants/named_colors.js"));
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+// adapeted from p5.js
+
 /**
- * Reads the argument and finds color
- *
- * @param {string} colors
- * @param {boolean} toArray whether to return a array instead of string.
- * @return {string}
+ * Full color string patterns. The capture groups are necessary.
  */
-function readColor(color, toArray = false) {
+const // Matching format: #XXX
+HEX3 = /^#([a-f0-9])([a-f0-9])([a-f0-9])$/i,
+      // Matching format: #XXXX
+HEX4 = /^#([a-f0-9])([a-f0-9])([a-f0-9])([a-f0-9])$/i,
+      // Matching format: #xxxxxx
+HEX6 = /^#([a-f0-9]{2})([a-f0-9]{2})([a-f0-9]{2})$/i,
+      // Matching format: #XXXXXXXX
+HEX8 = /^#([a-f0-9]{2})([a-f0-9]{2})([a-f0-9]{2})([a-f0-9]{2})$/i,
+      // Matching format: rgb(R, G, B)
+RGB = /^rgb\((\d{1,3}),(\d{1,3}),(\d{1,3})\)$/i,
+      // Matching format: rgb(R, G, B, A)
+RGBA = /^rgba\((\d{1,3}),(\d{1,3}),(\d{1,3}),(?:(\d+(?:\.\d+)?)|(?:\.\d+))\)$/i;
+/**
+ * Reads the argument and returns color in the prefered colorMode. If last argument is given true, it will return the colors as array
+ * Possible use cases (these assume colorModes to be 'rgba'):
+ * Only accept valid css colors
+ *
+ * * readColor(100)                 // rgba(100, 100, 100, 1)
+ * * readColor(255, 200)            // rgba(255, 200, 0, 1)
+ * * readColor(255, 200, 100)       // rgba(255, 200, 100, 1)
+ * * readColor(290, 134, 50, 0.6)   // rgba(290, 134, 50, 0.6)
+ * * readColor("#f3d")              // rgba(255, 51, 221, 1)
+ * * readColor("#fa054f")           // rgba(250, 5, 79, 1)
+ * * readColor("#fa054fa0")         // rgba(250, 5, 79, 0.6274509803921569)
+ * * readColor(255, 200, 100, true) // [255, 200, 100, 1]
+ * * readColor("#f3da", true)       // [255, 51, 221, 0.0392156862745098]
+ *
+ * @return {string|array} color string/array
+ */
+
+function readColor() {
+  let args = Array.prototype.slice.call(arguments),
+      color,
+      toArray,
+      lastArg = args[args.length - 1],
+      result;
+
+  if (typeof lastArg == "boolean") {
+    toArray = lastArg;
+    color = args.slice(0, args.length - 1);
+  } else {
+    toArray = false;
+    color = args.slice(0, args.length);
+  }
+
   let c1 = color[0];
-  let read;
 
   if (typeof c1 === "number") {
     if (color.length === 1) {
-      read = [c1, c1, c1, 1];
+      result = [c1, c1, c1, 1];
     } else if (color.length === 2) {
-      read = [c1, color[1], 0, 1];
+      result = [c1, color[1], 0, 1];
     } else if (color.length === 3) {
-      read = [c1, color[1], color[2], 1];
+      result = [c1, color[1], color[2], 1];
     } else if (color.length === 4) {
-      read = [c1, color[1], color[2], color[3]];
+      result = [c1, color[1], color[2], color[3]];
     }
-  } else if (c1[0] == "#") {
-    c1 = c1.substr(1);
+  } else if (typeof c1 == "string") {
+    // Adapted from p5.js
+    const str = c1.replace(/\s/g, "").toLowerCase(); // convert string to array if it is a named colour.
 
-    if (c1.length == 3 || c1.length == 4) {
-      let alpha = c1[3] || "ff";
-      read = [Number("0x" + c1[0] + c1[0]), Number("0x" + c1[1] + c1[1]), Number("0x" + c1[2] + c1[2]), Number("0x" + alpha) / 255];
-    } else if (c1.length == 6 || c1.length == 8) {
-      let alpha = c1.substr(6, 2) || "ff";
-      read = [Number("0x" + c1.substr(0, 2)), Number("0x" + c1.substr(2, 2)), Number("0x" + c1.substr(4, 2)), Number("0x" + alpha) / 255];
+    if (namedColors[str]) result = readColor(namedColors[str], true);else if (HEX3.test(str)) {
+      result = HEX3.exec(str).slice(1).map(color => parseInt(color + color, 16));
+      result[3] = 1;
+    } else if (HEX6.test(str)) {
+      result = HEX6.exec(str).slice(1).map(color => parseInt(color, 16));
+      result[3] = 1;
+    } else if (HEX4.test(str)) {
+      result = HEX4.exec(str).slice(1).map(color => parseInt(color + color, 16));
+    } else if (HEX8.test(str)) {
+      result = HEX8.exec(str).slice(1).map(color => parseInt(color, 16));
+    } else if (RGB.test(str)) {
+      result = RGB.exec(str).slice(1).map(color => parseInt(color));
+      result[3] = 1;
+    } else if (RGBA.test(str)) {
+      result = RGBA.exec(str).slice(1).map((color, index) => {
+        if (index == 3) return parseFloat(color);
+        return parseInt(color);
+      });
+    } else {
+      throw new Error("Given color is not valid");
     }
   }
 
   if (!toArray) {
-    const mode = _main.C.workingCanvas.colorMode || "rgba";
+    const mode = _main.C.workingCanvas?.colorMode || "rgba";
 
-    if (mode === "hsl" || mode === "rgb") {
-      read = mode + `(${read[0]}, ${read[1]}, ${read[2]})`;
-    } else if (mode === "rgba") {
-      read = `rgba(${read[0]}, ${read[1]}, ${read[2]}, ${read[3]})`;
+    if (mode === "rgba") {
+      result = `rgba(${result[0]}, ${result[1]}, ${result[2]}, ${result[3]})`;
+    } else if (mode === "hsl" || mode === "rgb") {
+      result = mode + `(${result[0]}, ${result[1]}, ${result[2]})`;
     }
   }
 
-  return read;
+  return result;
 }
 
-},{"../main.js":10}],4:[function(require,module,exports){
+},{"../constants/named_colors.js":11,"../main.js":12}],4:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -401,7 +462,7 @@ function linearGradient(initialPoint, finalPoint, colorStops) {
   return gradient;
 }
 
-},{"../main.js":10}],5:[function(require,module,exports){
+},{"../main.js":12}],5:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -409,6 +470,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.lerpColor = lerpColor;
 exports.lerpColorArray = lerpColorArray;
+exports.getInterpolatedColorList = getInterpolatedColorList;
 
 var _color_reader = require("./color_reader.js");
 
@@ -420,9 +482,9 @@ var _color_reader = require("./color_reader.js");
  * @param {number} v should be between 0 and 1.
  */
 function lerpColor(color1, color2, v) {
-  const c1 = (0, _color_reader.readColor)([color1], true);
-  const c2 = (0, _color_reader.readColor)([color2], true);
-  return (0, _color_reader.readColor)([(c2[0] - c1[0]) * v + c1[0], (c2[1] - c1[1]) * v + c1[1], (c2[2] - c1[2]) * v + c1[2], (c2[3] - c1[3]) * v + c1[3]]);
+  const c1 = (0, _color_reader.readColor)(color1, true);
+  const c2 = (0, _color_reader.readColor)(color2, true);
+  return (0, _color_reader.readColor)((c2[0] - c1[0]) * v + c1[0], (c2[1] - c1[1]) * v + c1[1], (c2[2] - c1[2]) * v + c1[2], (c2[3] - c1[3]) * v + c1[3]);
 }
 
 function lerpColorArray(colorArr, v) {
@@ -441,6 +503,29 @@ function lerpColorArray(colorArr, v) {
       return colorArr[a];
     }
   }
+}
+
+function getInterpolatedColorList(colorPalatte, min = 0, max = 5, step = 1, alpha = 1) {
+  const len = Math.round((max - min) / step) + 1;
+  const list = Object.keys(colorPalatte),
+        listMax = Math.max(...list);
+
+  if (len > listMax) {// not implemented
+  } else if (len < 3) {
+    throw new Error("Number of colors to compute is less than 3");
+  }
+
+  const colorObj = {};
+  const cp = colorPalatte[len];
+  var k = 0;
+
+  for (var i = min; i <= max; i += step) {
+    const c = (0, _color_reader.readColor)(cp[k++], true);
+    c[3] = alpha;
+    colorObj[i] = (0, _color_reader.readColor)(...c);
+  }
+
+  return colorObj;
 }
 
 },{"./color_reader.js":3}],6:[function(require,module,exports){
@@ -489,7 +574,306 @@ function randomDefinedColor() {
   return COLORLIST[definedColorList[(0, _random.randomInt)(definedColorList.length - 1)]];
 }
 
-},{"../constants/colors.js":7,"../math/random.js":14}],7:[function(require,module,exports){
+},{"../constants/colors.js":8,"../math/random.js":16}],7:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.RdYlGn = exports.Spectral = exports.RdYlBu = exports.RdGy = exports.RdBu = exports.PiYG = exports.PRGn = exports.BrBG = exports.PuOr = exports.Greys = exports.Reds = exports.Oranges = exports.Greens = exports.Blues = exports.Purples = exports.YlOrBr = exports.YlOrRd = exports.OrRd = exports.PuRd = exports.RdPu = exports.BuPu = exports.PuBu = exports.PuBuGn = exports.BuGn = exports.GnBu = exports.YlGnBu = exports.YlGn = void 0;
+// This product includes color specifications and designs developed by Cynthia Brewer (http://colorbrewer.org/).
+// Please see license at http://colorbrewer.org/export/LICENSE.txt
+//! do not format this file
+const YlGn = {
+  3: ["#f7fcb9", "#addd8e", "#31a354"],
+  4: ["#ffffcc", "#c2e699", "#78c679", "#238443"],
+  5: ["#ffffcc", "#c2e699", "#78c679", "#31a354", "#006837"],
+  6: ["#ffffcc", "#d9f0a3", "#addd8e", "#78c679", "#31a354", "#006837"],
+  7: ["#ffffcc", "#d9f0a3", "#addd8e", "#78c679", "#41ab5d", "#238443", "#005a32"],
+  8: ["#ffffe5", "#f7fcb9", "#d9f0a3", "#addd8e", "#78c679", "#41ab5d", "#238443", "#005a32"],
+  9: ["#ffffe5", "#f7fcb9", "#d9f0a3", "#addd8e", "#78c679", "#41ab5d", "#238443", "#006837", "#004529"]
+},
+      YlGnBu = {
+  3: ["#edf8b1", "#7fcdbb", "#2c7fb8"],
+  4: ["#ffffcc", "#a1dab4", "#41b6c4", "#225ea8"],
+  5: ["#ffffcc", "#a1dab4", "#41b6c4", "#2c7fb8", "#253494"],
+  6: ["#ffffcc", "#c7e9b4", "#7fcdbb", "#41b6c4", "#2c7fb8", "#253494"],
+  7: ["#ffffcc", "#c7e9b4", "#7fcdbb", "#41b6c4", "#1d91c0", "#225ea8", "#0c2c84"],
+  8: ["#ffffd9", "#edf8b1", "#c7e9b4", "#7fcdbb", "#41b6c4", "#1d91c0", "#225ea8", "#0c2c84"],
+  9: ["#ffffd9", "#edf8b1", "#c7e9b4", "#7fcdbb", "#41b6c4", "#1d91c0", "#225ea8", "#253494", "#081d58"]
+},
+      GnBu = {
+  3: ["#e0f3db", "#a8ddb5", "#43a2ca"],
+  4: ["#f0f9e8", "#bae4bc", "#7bccc4", "#2b8cbe"],
+  5: ["#f0f9e8", "#bae4bc", "#7bccc4", "#43a2ca", "#0868ac"],
+  6: ["#f0f9e8", "#ccebc5", "#a8ddb5", "#7bccc4", "#43a2ca", "#0868ac"],
+  7: ["#f0f9e8", "#ccebc5", "#a8ddb5", "#7bccc4", "#4eb3d3", "#2b8cbe", "#08589e"],
+  8: ["#f7fcf0", "#e0f3db", "#ccebc5", "#a8ddb5", "#7bccc4", "#4eb3d3", "#2b8cbe", "#08589e"],
+  9: ["#f7fcf0", "#e0f3db", "#ccebc5", "#a8ddb5", "#7bccc4", "#4eb3d3", "#2b8cbe", "#0868ac", "#084081"]
+},
+      BuGn = {
+  3: ["#e5f5f9", "#99d8c9", "#2ca25f"],
+  4: ["#edf8fb", "#b2e2e2", "#66c2a4", "#238b45"],
+  5: ["#edf8fb", "#b2e2e2", "#66c2a4", "#2ca25f", "#006d2c"],
+  6: ["#edf8fb", "#ccece6", "#99d8c9", "#66c2a4", "#2ca25f", "#006d2c"],
+  7: ["#edf8fb", "#ccece6", "#99d8c9", "#66c2a4", "#41ae76", "#238b45", "#005824"],
+  8: ["#f7fcfd", "#e5f5f9", "#ccece6", "#99d8c9", "#66c2a4", "#41ae76", "#238b45", "#005824"],
+  9: ["#f7fcfd", "#e5f5f9", "#ccece6", "#99d8c9", "#66c2a4", "#41ae76", "#238b45", "#006d2c", "#00441b"]
+},
+      PuBuGn = {
+  3: ["#ece2f0", "#a6bddb", "#1c9099"],
+  4: ["#f6eff7", "#bdc9e1", "#67a9cf", "#02818a"],
+  5: ["#f6eff7", "#bdc9e1", "#67a9cf", "#1c9099", "#016c59"],
+  6: ["#f6eff7", "#d0d1e6", "#a6bddb", "#67a9cf", "#1c9099", "#016c59"],
+  7: ["#f6eff7", "#d0d1e6", "#a6bddb", "#67a9cf", "#3690c0", "#02818a", "#016450"],
+  8: ["#fff7fb", "#ece2f0", "#d0d1e6", "#a6bddb", "#67a9cf", "#3690c0", "#02818a", "#016450"],
+  9: ["#fff7fb", "#ece2f0", "#d0d1e6", "#a6bddb", "#67a9cf", "#3690c0", "#02818a", "#016c59", "#014636"]
+},
+      PuBu = {
+  3: ["#ece7f2", "#a6bddb", "#2b8cbe"],
+  4: ["#f1eef6", "#bdc9e1", "#74a9cf", "#0570b0"],
+  5: ["#f1eef6", "#bdc9e1", "#74a9cf", "#2b8cbe", "#045a8d"],
+  6: ["#f1eef6", "#d0d1e6", "#a6bddb", "#74a9cf", "#2b8cbe", "#045a8d"],
+  7: ["#f1eef6", "#d0d1e6", "#a6bddb", "#74a9cf", "#3690c0", "#0570b0", "#034e7b"],
+  8: ["#fff7fb", "#ece7f2", "#d0d1e6", "#a6bddb", "#74a9cf", "#3690c0", "#0570b0", "#034e7b"],
+  9: ["#fff7fb", "#ece7f2", "#d0d1e6", "#a6bddb", "#74a9cf", "#3690c0", "#0570b0", "#045a8d", "#023858"]
+},
+      BuPu = {
+  3: ["#e0ecf4", "#9ebcda", "#8856a7"],
+  4: ["#edf8fb", "#b3cde3", "#8c96c6", "#88419d"],
+  5: ["#edf8fb", "#b3cde3", "#8c96c6", "#8856a7", "#810f7c"],
+  6: ["#edf8fb", "#bfd3e6", "#9ebcda", "#8c96c6", "#8856a7", "#810f7c"],
+  7: ["#edf8fb", "#bfd3e6", "#9ebcda", "#8c96c6", "#8c6bb1", "#88419d", "#6e016b"],
+  8: ["#f7fcfd", "#e0ecf4", "#bfd3e6", "#9ebcda", "#8c96c6", "#8c6bb1", "#88419d", "#6e016b"],
+  9: ["#f7fcfd", "#e0ecf4", "#bfd3e6", "#9ebcda", "#8c96c6", "#8c6bb1", "#88419d", "#810f7c", "#4d004b"]
+},
+      RdPu = {
+  3: ["#fde0dd", "#fa9fb5", "#c51b8a"],
+  4: ["#feebe2", "#fbb4b9", "#f768a1", "#ae017e"],
+  5: ["#feebe2", "#fbb4b9", "#f768a1", "#c51b8a", "#7a0177"],
+  6: ["#feebe2", "#fcc5c0", "#fa9fb5", "#f768a1", "#c51b8a", "#7a0177"],
+  7: ["#feebe2", "#fcc5c0", "#fa9fb5", "#f768a1", "#dd3497", "#ae017e", "#7a0177"],
+  8: ["#fff7f3", "#fde0dd", "#fcc5c0", "#fa9fb5", "#f768a1", "#dd3497", "#ae017e", "#7a0177"],
+  9: ["#fff7f3", "#fde0dd", "#fcc5c0", "#fa9fb5", "#f768a1", "#dd3497", "#ae017e", "#7a0177", "#49006a"]
+},
+      PuRd = {
+  3: ["#e7e1ef", "#c994c7", "#dd1c77"],
+  4: ["#f1eef6", "#d7b5d8", "#df65b0", "#ce1256"],
+  5: ["#f1eef6", "#d7b5d8", "#df65b0", "#dd1c77", "#980043"],
+  6: ["#f1eef6", "#d4b9da", "#c994c7", "#df65b0", "#dd1c77", "#980043"],
+  7: ["#f1eef6", "#d4b9da", "#c994c7", "#df65b0", "#e7298a", "#ce1256", "#91003f"],
+  8: ["#f7f4f9", "#e7e1ef", "#d4b9da", "#c994c7", "#df65b0", "#e7298a", "#ce1256", "#91003f"],
+  9: ["#f7f4f9", "#e7e1ef", "#d4b9da", "#c994c7", "#df65b0", "#e7298a", "#ce1256", "#980043", "#67001f"]
+},
+      OrRd = {
+  3: ["#fee8c8", "#fdbb84", "#e34a33"],
+  4: ["#fef0d9", "#fdcc8a", "#fc8d59", "#d7301f"],
+  5: ["#fef0d9", "#fdcc8a", "#fc8d59", "#e34a33", "#b30000"],
+  6: ["#fef0d9", "#fdd49e", "#fdbb84", "#fc8d59", "#e34a33", "#b30000"],
+  7: ["#fef0d9", "#fdd49e", "#fdbb84", "#fc8d59", "#ef6548", "#d7301f", "#990000"],
+  8: ["#fff7ec", "#fee8c8", "#fdd49e", "#fdbb84", "#fc8d59", "#ef6548", "#d7301f", "#990000"],
+  9: ["#fff7ec", "#fee8c8", "#fdd49e", "#fdbb84", "#fc8d59", "#ef6548", "#d7301f", "#b30000", "#7f0000"]
+},
+      YlOrRd = {
+  3: ["#ffeda0", "#feb24c", "#f03b20"],
+  4: ["#ffffb2", "#fecc5c", "#fd8d3c", "#e31a1c"],
+  5: ["#ffffb2", "#fecc5c", "#fd8d3c", "#f03b20", "#bd0026"],
+  6: ["#ffffb2", "#fed976", "#feb24c", "#fd8d3c", "#f03b20", "#bd0026"],
+  7: ["#ffffb2", "#fed976", "#feb24c", "#fd8d3c", "#fc4e2a", "#e31a1c", "#b10026"],
+  8: ["#ffffcc", "#ffeda0", "#fed976", "#feb24c", "#fd8d3c", "#fc4e2a", "#e31a1c", "#b10026"],
+  9: ["#ffffcc", "#ffeda0", "#fed976", "#feb24c", "#fd8d3c", "#fc4e2a", "#e31a1c", "#bd0026", "#800026"]
+},
+      YlOrBr = {
+  3: ["#fff7bc", "#fec44f", "#d95f0e"],
+  4: ["#ffffd4", "#fed98e", "#fe9929", "#cc4c02"],
+  5: ["#ffffd4", "#fed98e", "#fe9929", "#d95f0e", "#993404"],
+  6: ["#ffffd4", "#fee391", "#fec44f", "#fe9929", "#d95f0e", "#993404"],
+  7: ["#ffffd4", "#fee391", "#fec44f", "#fe9929", "#ec7014", "#cc4c02", "#8c2d04"],
+  8: ["#ffffe5", "#fff7bc", "#fee391", "#fec44f", "#fe9929", "#ec7014", "#cc4c02", "#8c2d04"],
+  9: ["#ffffe5", "#fff7bc", "#fee391", "#fec44f", "#fe9929", "#ec7014", "#cc4c02", "#993404", "#662506"]
+},
+      Purples = {
+  3: ["#efedf5", "#bcbddc", "#756bb1"],
+  4: ["#f2f0f7", "#cbc9e2", "#9e9ac8", "#6a51a3"],
+  5: ["#f2f0f7", "#cbc9e2", "#9e9ac8", "#756bb1", "#54278f"],
+  6: ["#f2f0f7", "#dadaeb", "#bcbddc", "#9e9ac8", "#756bb1", "#54278f"],
+  7: ["#f2f0f7", "#dadaeb", "#bcbddc", "#9e9ac8", "#807dba", "#6a51a3", "#4a1486"],
+  8: ["#fcfbfd", "#efedf5", "#dadaeb", "#bcbddc", "#9e9ac8", "#807dba", "#6a51a3", "#4a1486"],
+  9: ["#fcfbfd", "#efedf5", "#dadaeb", "#bcbddc", "#9e9ac8", "#807dba", "#6a51a3", "#54278f", "#3f007d"]
+},
+      Blues = {
+  3: ["#deebf7", "#9ecae1", "#3182bd"],
+  4: ["#eff3ff", "#bdd7e7", "#6baed6", "#2171b5"],
+  5: ["#eff3ff", "#bdd7e7", "#6baed6", "#3182bd", "#08519c"],
+  6: ["#eff3ff", "#c6dbef", "#9ecae1", "#6baed6", "#3182bd", "#08519c"],
+  7: ["#eff3ff", "#c6dbef", "#9ecae1", "#6baed6", "#4292c6", "#2171b5", "#084594"],
+  8: ["#f7fbff", "#deebf7", "#c6dbef", "#9ecae1", "#6baed6", "#4292c6", "#2171b5", "#084594"],
+  9: ["#f7fbff", "#deebf7", "#c6dbef", "#9ecae1", "#6baed6", "#4292c6", "#2171b5", "#08519c", "#08306b"]
+},
+      Greens = {
+  3: ["#e5f5e0", "#a1d99b", "#31a354"],
+  4: ["#edf8e9", "#bae4b3", "#74c476", "#238b45"],
+  5: ["#edf8e9", "#bae4b3", "#74c476", "#31a354", "#006d2c"],
+  6: ["#edf8e9", "#c7e9c0", "#a1d99b", "#74c476", "#31a354", "#006d2c"],
+  7: ["#edf8e9", "#c7e9c0", "#a1d99b", "#74c476", "#41ab5d", "#238b45", "#005a32"],
+  8: ["#f7fcf5", "#e5f5e0", "#c7e9c0", "#a1d99b", "#74c476", "#41ab5d", "#238b45", "#005a32"],
+  9: ["#f7fcf5", "#e5f5e0", "#c7e9c0", "#a1d99b", "#74c476", "#41ab5d", "#238b45", "#006d2c", "#00441b"]
+},
+      Oranges = {
+  3: ["#fee6ce", "#fdae6b", "#e6550d"],
+  4: ["#feedde", "#fdbe85", "#fd8d3c", "#d94701"],
+  5: ["#feedde", "#fdbe85", "#fd8d3c", "#e6550d", "#a63603"],
+  6: ["#feedde", "#fdd0a2", "#fdae6b", "#fd8d3c", "#e6550d", "#a63603"],
+  7: ["#feedde", "#fdd0a2", "#fdae6b", "#fd8d3c", "#f16913", "#d94801", "#8c2d04"],
+  8: ["#fff5eb", "#fee6ce", "#fdd0a2", "#fdae6b", "#fd8d3c", "#f16913", "#d94801", "#8c2d04"],
+  9: ["#fff5eb", "#fee6ce", "#fdd0a2", "#fdae6b", "#fd8d3c", "#f16913", "#d94801", "#a63603", "#7f2704"]
+},
+      Reds = {
+  3: ["#fee0d2", "#fc9272", "#de2d26"],
+  4: ["#fee5d9", "#fcae91", "#fb6a4a", "#cb181d"],
+  5: ["#fee5d9", "#fcae91", "#fb6a4a", "#de2d26", "#a50f15"],
+  6: ["#fee5d9", "#fcbba1", "#fc9272", "#fb6a4a", "#de2d26", "#a50f15"],
+  7: ["#fee5d9", "#fcbba1", "#fc9272", "#fb6a4a", "#ef3b2c", "#cb181d", "#99000d"],
+  8: ["#fff5f0", "#fee0d2", "#fcbba1", "#fc9272", "#fb6a4a", "#ef3b2c", "#cb181d", "#99000d"],
+  9: ["#fff5f0", "#fee0d2", "#fcbba1", "#fc9272", "#fb6a4a", "#ef3b2c", "#cb181d", "#a50f15", "#67000d"]
+},
+      Greys = {
+  3: ["#f0f0f0", "#bdbdbd", "#636363"],
+  4: ["#f7f7f7", "#cccccc", "#969696", "#525252"],
+  5: ["#f7f7f7", "#cccccc", "#969696", "#636363", "#252525"],
+  6: ["#f7f7f7", "#d9d9d9", "#bdbdbd", "#969696", "#636363", "#252525"],
+  7: ["#f7f7f7", "#d9d9d9", "#bdbdbd", "#969696", "#737373", "#525252", "#252525"],
+  8: ["#ffffff", "#f0f0f0", "#d9d9d9", "#bdbdbd", "#969696", "#737373", "#525252", "#252525"],
+  9: ["#ffffff", "#f0f0f0", "#d9d9d9", "#bdbdbd", "#969696", "#737373", "#525252", "#252525", "#000000"]
+},
+      PuOr = {
+  3: ["#f1a340", "#f7f7f7", "#998ec3"],
+  4: ["#e66101", "#fdb863", "#b2abd2", "#5e3c99"],
+  5: ["#e66101", "#fdb863", "#f7f7f7", "#b2abd2", "#5e3c99"],
+  6: ["#b35806", "#f1a340", "#fee0b6", "#d8daeb", "#998ec3", "#542788"],
+  7: ["#b35806", "#f1a340", "#fee0b6", "#f7f7f7", "#d8daeb", "#998ec3", "#542788"],
+  8: ["#b35806", "#e08214", "#fdb863", "#fee0b6", "#d8daeb", "#b2abd2", "#8073ac", "#542788"],
+  9: ["#b35806", "#e08214", "#fdb863", "#fee0b6", "#f7f7f7", "#d8daeb", "#b2abd2", "#8073ac", "#542788"],
+  10: ["#7f3b08", "#b35806", "#e08214", "#fdb863", "#fee0b6", "#d8daeb", "#b2abd2", "#8073ac", "#542788", "#2d004b"],
+  11: ["#7f3b08", "#b35806", "#e08214", "#fdb863", "#fee0b6", "#f7f7f7", "#d8daeb", "#b2abd2", "#8073ac", "#542788", "#2d004b"]
+},
+      BrBG = {
+  3: ["#d8b365", "#f5f5f5", "#5ab4ac"],
+  4: ["#a6611a", "#dfc27d", "#80cdc1", "#018571"],
+  5: ["#a6611a", "#dfc27d", "#f5f5f5", "#80cdc1", "#018571"],
+  6: ["#8c510a", "#d8b365", "#f6e8c3", "#c7eae5", "#5ab4ac", "#01665e"],
+  7: ["#8c510a", "#d8b365", "#f6e8c3", "#f5f5f5", "#c7eae5", "#5ab4ac", "#01665e"],
+  8: ["#8c510a", "#bf812d", "#dfc27d", "#f6e8c3", "#c7eae5", "#80cdc1", "#35978f", "#01665e"],
+  9: ["#8c510a", "#bf812d", "#dfc27d", "#f6e8c3", "#f5f5f5", "#c7eae5", "#80cdc1", "#35978f", "#01665e"],
+  10: ["#543005", "#8c510a", "#bf812d", "#dfc27d", "#f6e8c3", "#c7eae5", "#80cdc1", "#35978f", "#01665e", "#003c30"],
+  11: ["#543005", "#8c510a", "#bf812d", "#dfc27d", "#f6e8c3", "#f5f5f5", "#c7eae5", "#80cdc1", "#35978f", "#01665e", "#003c30"]
+},
+      PRGn = {
+  3: ["#af8dc3", "#f7f7f7", "#7fbf7b"],
+  4: ["#7b3294", "#c2a5cf", "#a6dba0", "#008837"],
+  5: ["#7b3294", "#c2a5cf", "#f7f7f7", "#a6dba0", "#008837"],
+  6: ["#762a83", "#af8dc3", "#e7d4e8", "#d9f0d3", "#7fbf7b", "#1b7837"],
+  7: ["#762a83", "#af8dc3", "#e7d4e8", "#f7f7f7", "#d9f0d3", "#7fbf7b", "#1b7837"],
+  8: ["#762a83", "#9970ab", "#c2a5cf", "#e7d4e8", "#d9f0d3", "#a6dba0", "#5aae61", "#1b7837"],
+  9: ["#762a83", "#9970ab", "#c2a5cf", "#e7d4e8", "#f7f7f7", "#d9f0d3", "#a6dba0", "#5aae61", "#1b7837"],
+  10: ["#40004b", "#762a83", "#9970ab", "#c2a5cf", "#e7d4e8", "#d9f0d3", "#a6dba0", "#5aae61", "#1b7837", "#00441b"],
+  11: ["#40004b", "#762a83", "#9970ab", "#c2a5cf", "#e7d4e8", "#f7f7f7", "#d9f0d3", "#a6dba0", "#5aae61", "#1b7837", "#00441b"]
+},
+      PiYG = {
+  3: ["#e9a3c9", "#f7f7f7", "#a1d76a"],
+  4: ["#d01c8b", "#f1b6da", "#b8e186", "#4dac26"],
+  5: ["#d01c8b", "#f1b6da", "#f7f7f7", "#b8e186", "#4dac26"],
+  6: ["#c51b7d", "#e9a3c9", "#fde0ef", "#e6f5d0", "#a1d76a", "#4d9221"],
+  7: ["#c51b7d", "#e9a3c9", "#fde0ef", "#f7f7f7", "#e6f5d0", "#a1d76a", "#4d9221"],
+  8: ["#c51b7d", "#de77ae", "#f1b6da", "#fde0ef", "#e6f5d0", "#b8e186", "#7fbc41", "#4d9221"],
+  9: ["#c51b7d", "#de77ae", "#f1b6da", "#fde0ef", "#f7f7f7", "#e6f5d0", "#b8e186", "#7fbc41", "#4d9221"],
+  10: ["#8e0152", "#c51b7d", "#de77ae", "#f1b6da", "#fde0ef", "#e6f5d0", "#b8e186", "#7fbc41", "#4d9221", "#276419"],
+  11: ["#8e0152", "#c51b7d", "#de77ae", "#f1b6da", "#fde0ef", "#f7f7f7", "#e6f5d0", "#b8e186", "#7fbc41", "#4d9221", "#276419"]
+},
+      RdBu = {
+  3: ["#ef8a62", "#f7f7f7", "#67a9cf"],
+  4: ["#ca0020", "#f4a582", "#92c5de", "#0571b0"],
+  5: ["#ca0020", "#f4a582", "#f7f7f7", "#92c5de", "#0571b0"],
+  6: ["#b2182b", "#ef8a62", "#fddbc7", "#d1e5f0", "#67a9cf", "#2166ac"],
+  7: ["#b2182b", "#ef8a62", "#fddbc7", "#f7f7f7", "#d1e5f0", "#67a9cf", "#2166ac"],
+  8: ["#b2182b", "#d6604d", "#f4a582", "#fddbc7", "#d1e5f0", "#92c5de", "#4393c3", "#2166ac"],
+  9: ["#b2182b", "#d6604d", "#f4a582", "#fddbc7", "#f7f7f7", "#d1e5f0", "#92c5de", "#4393c3", "#2166ac"],
+  10: ["#67001f", "#b2182b", "#d6604d", "#f4a582", "#fddbc7", "#d1e5f0", "#92c5de", "#4393c3", "#2166ac", "#053061"],
+  11: ["#67001f", "#b2182b", "#d6604d", "#f4a582", "#fddbc7", "#f7f7f7", "#d1e5f0", "#92c5de", "#4393c3", "#2166ac", "#053061"]
+},
+      RdGy = {
+  3: ["#ef8a62", "#ffffff", "#999999"],
+  4: ["#ca0020", "#f4a582", "#bababa", "#404040"],
+  5: ["#ca0020", "#f4a582", "#ffffff", "#bababa", "#404040"],
+  6: ["#b2182b", "#ef8a62", "#fddbc7", "#e0e0e0", "#999999", "#4d4d4d"],
+  7: ["#b2182b", "#ef8a62", "#fddbc7", "#ffffff", "#e0e0e0", "#999999", "#4d4d4d"],
+  8: ["#b2182b", "#d6604d", "#f4a582", "#fddbc7", "#e0e0e0", "#bababa", "#878787", "#4d4d4d"],
+  9: ["#b2182b", "#d6604d", "#f4a582", "#fddbc7", "#ffffff", "#e0e0e0", "#bababa", "#878787", "#4d4d4d"],
+  10: ["#67001f", "#b2182b", "#d6604d", "#f4a582", "#fddbc7", "#e0e0e0", "#bababa", "#878787", "#4d4d4d", "#1a1a1a"],
+  11: ["#67001f", "#b2182b", "#d6604d", "#f4a582", "#fddbc7", "#ffffff", "#e0e0e0", "#bababa", "#878787", "#4d4d4d", "#1a1a1a"]
+},
+      RdYlBu = {
+  3: ["#fc8d59", "#ffffbf", "#91bfdb"],
+  4: ["#d7191c", "#fdae61", "#abd9e9", "#2c7bb6"],
+  5: ["#d7191c", "#fdae61", "#ffffbf", "#abd9e9", "#2c7bb6"],
+  6: ["#d73027", "#fc8d59", "#fee090", "#e0f3f8", "#91bfdb", "#4575b4"],
+  7: ["#d73027", "#fc8d59", "#fee090", "#ffffbf", "#e0f3f8", "#91bfdb", "#4575b4"],
+  8: ["#d73027", "#f46d43", "#fdae61", "#fee090", "#e0f3f8", "#abd9e9", "#74add1", "#4575b4"],
+  9: ["#d73027", "#f46d43", "#fdae61", "#fee090", "#ffffbf", "#e0f3f8", "#abd9e9", "#74add1", "#4575b4"],
+  10: ["#a50026", "#d73027", "#f46d43", "#fdae61", "#fee090", "#e0f3f8", "#abd9e9", "#74add1", "#4575b4", "#313695"],
+  11: ["#a50026", "#d73027", "#f46d43", "#fdae61", "#fee090", "#ffffbf", "#e0f3f8", "#abd9e9", "#74add1", "#4575b4", "#313695"]
+},
+      Spectral = {
+  3: ["#fc8d59", "#ffffbf", "#99d594"],
+  4: ["#d7191c", "#fdae61", "#abdda4", "#2b83ba"],
+  5: ["#d7191c", "#fdae61", "#ffffbf", "#abdda4", "#2b83ba"],
+  6: ["#d53e4f", "#fc8d59", "#fee08b", "#e6f598", "#99d594", "#3288bd"],
+  7: ["#d53e4f", "#fc8d59", "#fee08b", "#ffffbf", "#e6f598", "#99d594", "#3288bd"],
+  8: ["#d53e4f", "#f46d43", "#fdae61", "#fee08b", "#e6f598", "#abdda4", "#66c2a5", "#3288bd"],
+  9: ["#d53e4f", "#f46d43", "#fdae61", "#fee08b", "#ffffbf", "#e6f598", "#abdda4", "#66c2a5", "#3288bd"],
+  10: ["#9e0142", "#d53e4f", "#f46d43", "#fdae61", "#fee08b", "#e6f598", "#abdda4", "#66c2a5", "#3288bd", "#5e4fa2"],
+  11: ["#9e0142", "#d53e4f", "#f46d43", "#fdae61", "#fee08b", "#ffffbf", "#e6f598", "#abdda4", "#66c2a5", "#3288bd", "#5e4fa2"]
+},
+      RdYlGn = {
+  3: ["#fc8d59", "#ffffbf", "#91cf60"],
+  4: ["#d7191c", "#fdae61", "#a6d96a", "#1a9641"],
+  5: ["#d7191c", "#fdae61", "#ffffbf", "#a6d96a", "#1a9641"],
+  6: ["#d73027", "#fc8d59", "#fee08b", "#d9ef8b", "#91cf60", "#1a9850"],
+  7: ["#d73027", "#fc8d59", "#fee08b", "#ffffbf", "#d9ef8b", "#91cf60", "#1a9850"],
+  8: ["#d73027", "#f46d43", "#fdae61", "#fee08b", "#d9ef8b", "#a6d96a", "#66bd63", "#1a9850"],
+  9: ["#d73027", "#f46d43", "#fdae61", "#fee08b", "#ffffbf", "#d9ef8b", "#a6d96a", "#66bd63", "#1a9850"],
+  10: ["#a50026", "#d73027", "#f46d43", "#fdae61", "#fee08b", "#d9ef8b", "#a6d96a", "#66bd63", "#1a9850", "#006837"],
+  11: ["#a50026", "#d73027", "#f46d43", "#fdae61", "#fee08b", "#ffffbf", "#d9ef8b", "#a6d96a", "#66bd63", "#1a9850", "#006837"]
+};
+exports.RdYlGn = RdYlGn;
+exports.Spectral = Spectral;
+exports.RdYlBu = RdYlBu;
+exports.RdGy = RdGy;
+exports.RdBu = RdBu;
+exports.PiYG = PiYG;
+exports.PRGn = PRGn;
+exports.BrBG = BrBG;
+exports.PuOr = PuOr;
+exports.Greys = Greys;
+exports.Reds = Reds;
+exports.Oranges = Oranges;
+exports.Greens = Greens;
+exports.Blues = Blues;
+exports.Purples = Purples;
+exports.YlOrBr = YlOrBr;
+exports.YlOrRd = YlOrRd;
+exports.OrRd = OrRd;
+exports.PuRd = PuRd;
+exports.RdPu = RdPu;
+exports.BuPu = BuPu;
+exports.PuBu = PuBu;
+exports.PuBuGn = PuBuGn;
+exports.BuGn = BuGn;
+exports.GnBu = GnBu;
+exports.YlGnBu = YlGnBu;
+exports.YlGn = YlGn;
+
+},{}],8:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -636,7 +1020,7 @@ exports.LIGHT_BROWN = LIGHT_BROWN;
 exports.DARK_BROWN = DARK_BROWN;
 exports.DARK_BLUE = DARK_BLUE;
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -732,7 +1116,7 @@ exports.ROUND = ROUND;
 exports.SQUARE = SQUARE;
 exports.BUTT = BUTT;
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -767,7 +1151,313 @@ exports.LN10 = LN10;
 exports.LN2 = LN2;
 exports.E = E;
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.moccasin = exports.mistyrose = exports.mintcream = exports.midnightblue = exports.mediumvioletred = exports.mediumturquoise = exports.mediumspringgreen = exports.mediumslateblue = exports.mediumseagreen = exports.mediumpurple = exports.mediumorchid = exports.mediumblue = exports.mediumaquamarine = exports.maroon = exports.magenta = exports.linen = exports.limegreen = exports.lime = exports.lightyellow = exports.lightsteelblue = exports.lightslategrey = exports.lightslategray = exports.lightskyblue = exports.lightseagreen = exports.lightsalmon = exports.lightpink = exports.lightgrey = exports.lightgreen = exports.lightgray = exports.lightgoldenrodyellow = exports.lightcyan = exports.lightcoral = exports.lightblue = exports.lemonchiffon = exports.lawngreen = exports.lavenderblush = exports.lavender = exports.khaki = exports.ivory = exports.indigo = exports.indianred = exports.hotpink = exports.honeydew = exports.grey = exports.greenyellow = exports.green = exports.gray = exports.goldenrod = exports.gold = exports.ghostwhite = exports.gainsboro = exports.fuchsia = exports.forestgreen = exports.floralwhite = exports.firebrick = exports.dodgerblue = exports.dimgrey = exports.dimgray = exports.deepskyblue = exports.deeppink = exports.darkviolet = exports.darkturquoise = exports.darkslategrey = exports.darkslategray = exports.darkslateblue = exports.darkseagreen = exports.darksalmon = exports.darkred = exports.darkorchid = exports.darkorange = exports.darkolivegreen = exports.darkmagenta = exports.darkkhaki = exports.darkgrey = exports.darkgreen = exports.darkgray = exports.darkgoldenrod = exports.darkcyan = exports.darkblue = exports.cyan = exports.crimson = exports.cornsilk = exports.cornflowerblue = exports.coral = exports.chocolate = exports.chartreuse = exports.cadetblue = exports.burlywood = exports.brown = exports.blueviolet = exports.blue = exports.blanchedalmond = exports.black = exports.bisque = exports.beige = exports.azure = exports.aquamarine = exports.aqua = exports.antiquewhite = exports.aliceblue = void 0;
+exports.yellowgreen = exports.yellow = exports.whitesmoke = exports.white = exports.wheat = exports.violet = exports.turquoise = exports.tomato = exports.thistle = exports.teal = exports.tan = exports.steelblue = exports.springgreen = exports.snow = exports.slategrey = exports.slategray = exports.slateblue = exports.skyblue = exports.silver = exports.sienna = exports.seashell = exports.seagreen = exports.sandybrown = exports.salmon = exports.saddlebrown = exports.royalblue = exports.rosybrown = exports.red = exports.rebeccapurple = exports.purple = exports.powderblue = exports.plum = exports.pink = exports.peru = exports.peachpuff = exports.papayawhip = exports.palevioletred = exports.paleturquoise = exports.palegreen = exports.palegoldenrod = exports.orchid = exports.orangered = exports.orange = exports.olivedrab = exports.olive = exports.oldlace = exports.navy = exports.navajowhite = void 0;
+// Named css colors
+const aliceblue = "#f0f8ff",
+      antiquewhite = "#faebd7",
+      aqua = "#00ffff",
+      aquamarine = "#7fffd4",
+      azure = "#f0ffff",
+      beige = "#f5f5dc",
+      bisque = "#ffe4c4",
+      black = "#000000",
+      blanchedalmond = "#ffebcd",
+      blue = "#0000ff",
+      blueviolet = "#8a2be2",
+      brown = "#a52a2a",
+      burlywood = "#deb887",
+      cadetblue = "#5f9ea0",
+      chartreuse = "#7fff00",
+      chocolate = "#d2691e",
+      coral = "#ff7f50",
+      cornflowerblue = "#6495ed",
+      cornsilk = "#fff8dc",
+      crimson = "#dc143c",
+      cyan = "#00ffff",
+      darkblue = "#00008b",
+      darkcyan = "#008b8b",
+      darkgoldenrod = "#b8860b",
+      darkgray = "#a9a9a9",
+      darkgreen = "#006400",
+      darkgrey = "#a9a9a9",
+      darkkhaki = "#bdb76b",
+      darkmagenta = "#8b008b",
+      darkolivegreen = "#556b2f",
+      darkorange = "#ff8c00",
+      darkorchid = "#9932cc",
+      darkred = "#8b0000",
+      darksalmon = "#e9967a",
+      darkseagreen = "#8fbc8f",
+      darkslateblue = "#483d8b",
+      darkslategray = "#2f4f4f",
+      darkslategrey = "#2f4f4f",
+      darkturquoise = "#00ced1",
+      darkviolet = "#9400d3",
+      deeppink = "#ff1493",
+      deepskyblue = "#00bfff",
+      dimgray = "#696969",
+      dimgrey = "#696969",
+      dodgerblue = "#1e90ff",
+      firebrick = "#b22222",
+      floralwhite = "#fffaf0",
+      forestgreen = "#228b22",
+      fuchsia = "#ff00ff",
+      gainsboro = "#dcdcdc",
+      ghostwhite = "#f8f8ff",
+      gold = "#ffd700",
+      goldenrod = "#daa520",
+      gray = "#808080",
+      green = "#008000",
+      greenyellow = "#adff2f",
+      grey = "#808080",
+      honeydew = "#f0fff0",
+      hotpink = "#ff69b4",
+      indianred = "#cd5c5c",
+      indigo = "#4b0082",
+      ivory = "#fffff0",
+      khaki = "#f0e68c",
+      lavender = "#e6e6fa",
+      lavenderblush = "#fff0f5",
+      lawngreen = "#7cfc00",
+      lemonchiffon = "#fffacd",
+      lightblue = "#add8e6",
+      lightcoral = "#f08080",
+      lightcyan = "#e0ffff",
+      lightgoldenrodyellow = "#fafad2",
+      lightgray = "#d3d3d3",
+      lightgreen = "#90ee90",
+      lightgrey = "#d3d3d3",
+      lightpink = "#ffb6c1",
+      lightsalmon = "#ffa07a",
+      lightseagreen = "#20b2aa",
+      lightskyblue = "#87cefa",
+      lightslategray = "#778899",
+      lightslategrey = "#778899",
+      lightsteelblue = "#b0c4de",
+      lightyellow = "#ffffe0",
+      lime = "#00ff00",
+      limegreen = "#32cd32",
+      linen = "#faf0e6",
+      magenta = "#ff00ff",
+      maroon = "#800000",
+      mediumaquamarine = "#66cdaa",
+      mediumblue = "#0000cd",
+      mediumorchid = "#ba55d3",
+      mediumpurple = "#9370db",
+      mediumseagreen = "#3cb371",
+      mediumslateblue = "#7b68ee",
+      mediumspringgreen = "#00fa9a",
+      mediumturquoise = "#48d1cc",
+      mediumvioletred = "#c71585",
+      midnightblue = "#191970",
+      mintcream = "#f5fffa",
+      mistyrose = "#ffe4e1",
+      moccasin = "#ffe4b5",
+      navajowhite = "#ffdead",
+      navy = "#000080",
+      oldlace = "#fdf5e6",
+      olive = "#808000",
+      olivedrab = "#6b8e23",
+      orange = "#ffa500",
+      orangered = "#ff4500",
+      orchid = "#da70d6",
+      palegoldenrod = "#eee8aa",
+      palegreen = "#98fb98",
+      paleturquoise = "#afeeee",
+      palevioletred = "#db7093",
+      papayawhip = "#ffefd5",
+      peachpuff = "#ffdab9",
+      peru = "#cd853f",
+      pink = "#ffc0cb",
+      plum = "#dda0dd",
+      powderblue = "#b0e0e6",
+      purple = "#800080",
+      rebeccapurple = "#663399",
+      red = "#ff0000",
+      rosybrown = "#bc8f8f",
+      royalblue = "#4169e1",
+      saddlebrown = "#8b4513",
+      salmon = "#fa8072",
+      sandybrown = "#f4a460",
+      seagreen = "#2e8b57",
+      seashell = "#fff5ee",
+      sienna = "#a0522d",
+      silver = "#c0c0c0",
+      skyblue = "#87ceeb",
+      slateblue = "#6a5acd",
+      slategray = "#708090",
+      slategrey = "#708090",
+      snow = "#fffafa",
+      springgreen = "#00ff7f",
+      steelblue = "#4682b4",
+      tan = "#d2b48c",
+      teal = "#008080",
+      thistle = "#d8bfd8",
+      tomato = "#ff6347",
+      turquoise = "#40e0d0",
+      violet = "#ee82ee",
+      wheat = "#f5deb3",
+      white = "#ffffff",
+      whitesmoke = "#f5f5f5",
+      yellow = "#ffff00",
+      yellowgreen = "#9acd32";
+exports.yellowgreen = yellowgreen;
+exports.yellow = yellow;
+exports.whitesmoke = whitesmoke;
+exports.white = white;
+exports.wheat = wheat;
+exports.violet = violet;
+exports.turquoise = turquoise;
+exports.tomato = tomato;
+exports.thistle = thistle;
+exports.teal = teal;
+exports.tan = tan;
+exports.steelblue = steelblue;
+exports.springgreen = springgreen;
+exports.snow = snow;
+exports.slategrey = slategrey;
+exports.slategray = slategray;
+exports.slateblue = slateblue;
+exports.skyblue = skyblue;
+exports.silver = silver;
+exports.sienna = sienna;
+exports.seashell = seashell;
+exports.seagreen = seagreen;
+exports.sandybrown = sandybrown;
+exports.salmon = salmon;
+exports.saddlebrown = saddlebrown;
+exports.royalblue = royalblue;
+exports.rosybrown = rosybrown;
+exports.red = red;
+exports.rebeccapurple = rebeccapurple;
+exports.purple = purple;
+exports.powderblue = powderblue;
+exports.plum = plum;
+exports.pink = pink;
+exports.peru = peru;
+exports.peachpuff = peachpuff;
+exports.papayawhip = papayawhip;
+exports.palevioletred = palevioletred;
+exports.paleturquoise = paleturquoise;
+exports.palegreen = palegreen;
+exports.palegoldenrod = palegoldenrod;
+exports.orchid = orchid;
+exports.orangered = orangered;
+exports.orange = orange;
+exports.olivedrab = olivedrab;
+exports.olive = olive;
+exports.oldlace = oldlace;
+exports.navy = navy;
+exports.navajowhite = navajowhite;
+exports.moccasin = moccasin;
+exports.mistyrose = mistyrose;
+exports.mintcream = mintcream;
+exports.midnightblue = midnightblue;
+exports.mediumvioletred = mediumvioletred;
+exports.mediumturquoise = mediumturquoise;
+exports.mediumspringgreen = mediumspringgreen;
+exports.mediumslateblue = mediumslateblue;
+exports.mediumseagreen = mediumseagreen;
+exports.mediumpurple = mediumpurple;
+exports.mediumorchid = mediumorchid;
+exports.mediumblue = mediumblue;
+exports.mediumaquamarine = mediumaquamarine;
+exports.maroon = maroon;
+exports.magenta = magenta;
+exports.linen = linen;
+exports.limegreen = limegreen;
+exports.lime = lime;
+exports.lightyellow = lightyellow;
+exports.lightsteelblue = lightsteelblue;
+exports.lightslategrey = lightslategrey;
+exports.lightslategray = lightslategray;
+exports.lightskyblue = lightskyblue;
+exports.lightseagreen = lightseagreen;
+exports.lightsalmon = lightsalmon;
+exports.lightpink = lightpink;
+exports.lightgrey = lightgrey;
+exports.lightgreen = lightgreen;
+exports.lightgray = lightgray;
+exports.lightgoldenrodyellow = lightgoldenrodyellow;
+exports.lightcyan = lightcyan;
+exports.lightcoral = lightcoral;
+exports.lightblue = lightblue;
+exports.lemonchiffon = lemonchiffon;
+exports.lawngreen = lawngreen;
+exports.lavenderblush = lavenderblush;
+exports.lavender = lavender;
+exports.khaki = khaki;
+exports.ivory = ivory;
+exports.indigo = indigo;
+exports.indianred = indianred;
+exports.hotpink = hotpink;
+exports.honeydew = honeydew;
+exports.grey = grey;
+exports.greenyellow = greenyellow;
+exports.green = green;
+exports.gray = gray;
+exports.goldenrod = goldenrod;
+exports.gold = gold;
+exports.ghostwhite = ghostwhite;
+exports.gainsboro = gainsboro;
+exports.fuchsia = fuchsia;
+exports.forestgreen = forestgreen;
+exports.floralwhite = floralwhite;
+exports.firebrick = firebrick;
+exports.dodgerblue = dodgerblue;
+exports.dimgrey = dimgrey;
+exports.dimgray = dimgray;
+exports.deepskyblue = deepskyblue;
+exports.deeppink = deeppink;
+exports.darkviolet = darkviolet;
+exports.darkturquoise = darkturquoise;
+exports.darkslategrey = darkslategrey;
+exports.darkslategray = darkslategray;
+exports.darkslateblue = darkslateblue;
+exports.darkseagreen = darkseagreen;
+exports.darksalmon = darksalmon;
+exports.darkred = darkred;
+exports.darkorchid = darkorchid;
+exports.darkorange = darkorange;
+exports.darkolivegreen = darkolivegreen;
+exports.darkmagenta = darkmagenta;
+exports.darkkhaki = darkkhaki;
+exports.darkgrey = darkgrey;
+exports.darkgreen = darkgreen;
+exports.darkgray = darkgray;
+exports.darkgoldenrod = darkgoldenrod;
+exports.darkcyan = darkcyan;
+exports.darkblue = darkblue;
+exports.cyan = cyan;
+exports.crimson = crimson;
+exports.cornsilk = cornsilk;
+exports.cornflowerblue = cornflowerblue;
+exports.coral = coral;
+exports.chocolate = chocolate;
+exports.chartreuse = chartreuse;
+exports.cadetblue = cadetblue;
+exports.burlywood = burlywood;
+exports.brown = brown;
+exports.blueviolet = blueviolet;
+exports.blue = blue;
+exports.blanchedalmond = blanchedalmond;
+exports.black = black;
+exports.bisque = bisque;
+exports.beige = beige;
+exports.azure = azure;
+exports.aquamarine = aquamarine;
+exports.aqua = aqua;
+exports.antiquewhite = antiquewhite;
+exports.aliceblue = aliceblue;
+
+},{}],12:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -776,8 +1466,6 @@ Object.defineProperty(exports, "__esModule", {
 exports.C = C;
 
 var _utils = require("./utils.js");
-
-var _random = require("./math/random.js");
 
 const defaultConfigs = {
   width: 200,
@@ -831,6 +1519,11 @@ function C(fx, container, cfgs = {}) {
     container = document.body;
   }
 
+  if (typeof container.CID !== "number") {
+    container.CID = 1;
+  }
+
+  var parentCID = container.CID;
   var parentName = container.id || container.classList.item(0);
   let canvasName = configs.name;
 
@@ -845,7 +1538,8 @@ function C(fx, container, cfgs = {}) {
       return;
     }
   } else {
-    configs.name = parentName + "-" + (0, _random.randomInt)(1000000, 0);
+    canvasName = parentName + "-C-" + parentCID;
+    configs.name = canvasName;
   }
 
   function prepareCanvas() {
@@ -873,6 +1567,7 @@ function C(fx, container, cfgs = {}) {
 
 
 C.canvasList = {};
+C.delayedAnimations = [];
 /**
  * Number of canvases
  * @type {Number}
@@ -957,7 +1652,7 @@ C.defineProperties = _utils.defineProperties; // register to window
 
 window.C = C;
 
-},{"./math/random.js":14,"./utils.js":25}],11:[function(require,module,exports){
+},{"./utils.js":27}],13:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1025,7 +1720,7 @@ function lcmArray() {
   return n;
 }
 
-},{}],12:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1083,7 +1778,7 @@ exports.asin = asin;
 exports.acos = acos;
 exports.abs = abs;
 
-},{}],13:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1177,7 +1872,7 @@ function circleIntersection(c1, r1, c2, r2) {
   return [[p2[0] + h * (c2[1] - c1[1]) / d, p2[1] - h * (c2[0] - c1[0]) / d], [p2[0] - h * (c2[1] - c1[1]) / d, p2[1] + h * (c2[0] - c1[0]) / d]];
 }
 
-},{}],14:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1196,7 +1891,7 @@ function randomInt(max = 10, min = 0) {
   return Math.round(Math.random() * (max - min) + min);
 }
 
-},{}],15:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1379,7 +2074,7 @@ function easeInOutBounce(x) {
   return x < 0.5 ? (1 - easeOutBounce(1 - 2 * x)) / 2 : (1 + easeOutBounce(2 * x - 1)) / 2;
 }
 
-},{}],16:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1729,7 +2424,7 @@ function curvedDoubleArrowBetweenPoints(p1, p2, radius, tipWidth = DEFAULT_TIP_W
   return center;
 }
 
-},{"../constants/colors.js":7,"../constants/drawing.js":8,"../main.js":10,"../math/points.js":13,"../settings.js":24,"../utils.js":25,"./text.js":23}],17:[function(require,module,exports){
+},{"../constants/colors.js":8,"../constants/drawing.js":9,"../main.js":12,"../math/points.js":15,"../settings.js":26,"../utils.js":27,"./text.js":25}],19:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1815,7 +2510,7 @@ function arcBrace(x, y, radius = 100, angle = Math.PI / 2, startAngle = 0, small
   return [(largerRadius + extender) * Math.cos(angle / 2 + startAngle) + x, (largerRadius + extender) * Math.sin(angle / 2 + startAngle) + y];
 }
 
-},{"../main.js":10}],18:[function(require,module,exports){
+},{"../main.js":12}],20:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1929,7 +2624,8 @@ function axes(config = {}) {
 
   const xShift = xAxis.length / 2 + xMin;
   const yShift = yAxis.length / 2 + yMin;
-  ctx.save(); // translate to center
+  ctx.save();
+  ctx.beginPath(); // translate to center
 
   ctx.translate(center[0], center[1]); // draws axes
   // x-axis
@@ -1947,6 +2643,7 @@ function axes(config = {}) {
   const unitValue = [xAxisLine.unitValue, yAxisLine.unitValue]; // reverse the effect of overall shift
 
   ctx.translate(-center[0], -center[1] - yShift);
+  ctx.closePath();
   ctx.restore();
   const ret = {
     center: center,
@@ -2066,6 +2763,7 @@ function numberLine(config = {}) {
   const totalTicks = (max - min) / step;
   const ds = lineLength / totalTicks;
   const list = getTickList();
+  ctx.beginPath();
   (0, _settings.save)();
   (0, _settings.translate)(center[0], center[1]);
   (0, _settings.rotate)(rotation);
@@ -2074,6 +2772,7 @@ function numberLine(config = {}) {
   if (config.includeNumbers) drawNumbers();
   (0, _settings.translate)(lineLength / 2, 0);
   drawAxis();
+  ctx.closePath();
 
   function drawAxis() {
     (0, _settings.stroke)(color);
@@ -2124,7 +2823,7 @@ function numberLine(config = {}) {
     const to = includeRightTip ? numbers.length - 1 : numbers.length;
 
     for (let i = from; i < to && numbersToExclude.indexOf(numbers[i]) < 0; i++) {
-      const tick = numbers[i].toFixed(decimalPlaces);
+      const tick = typeof numbers[i] == "number" ? numbers[i].toFixed(decimalPlaces) : numbers[i];
       if (Number(tick) === 0 && excludeOriginTick) continue;
       const width = ctx.measureText(tick).width;
       const xShift = -width / 2 * Math.cos(textRotation) + textDirection[0] * textSize + textSize / 2 * Math.sin(textRotation);
@@ -2323,7 +3022,7 @@ function numberPlane(config = {}) {
   return Object.assign(ret, getPlotterList(unitLength, unitValue, ret));
 }
 
-},{"../constants/colors.js":7,"../main.js":10,"../settings.js":24,"../utils.js":25,"./arrows.js":16,"./functions.js":19,"./geometry.js":20,"./text.js":23}],19:[function(require,module,exports){
+},{"../constants/colors.js":8,"../main.js":12,"../settings.js":26,"../utils.js":27,"./arrows.js":18,"./functions.js":21,"./geometry.js":22,"./text.js":25}],21:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2343,6 +3042,12 @@ var _utils = require("../utils.js");
 
 var _geometry = require("./geometry.js");
 
+const animationEventChain = {
+  then: function (f) {
+    f();
+    return animationEventChain;
+  }
+};
 /**
  * Draws a parametric functions
  * This accept parameters as object.
@@ -2365,6 +3070,7 @@ var _geometry = require("./geometry.js");
  * * draw    <function> : Function that draws the plot
  * * animate <function> : Function that animates the drawing of the shape. Accept argument `duration` which is the duration of animation.
  */
+
 function parametricFunction(config) {
   const defaultConfigs = {
     tension: 1,
@@ -2388,9 +3094,9 @@ function parametricFunction(config) {
   } = config;
   if (Array.isArray(range) && range.length == 2) range.push((range[1] - range[0]) / 20);
   var points = [[]];
-  const min = range[0];
-  const max = range[1];
-  const step = range[2];
+  var min = range[0];
+  var max = range[1];
+  var step = range[2];
   if (!Array.isArray(discontinuities)) discontinuities = []; // generate points
 
   var epsilon = 1e-6;
@@ -2440,16 +3146,16 @@ function parametricFunction(config) {
     }
   }
 
+  const ctx = _main.C.workingCanvas;
   return {
     points: points,
     draw: plot,
     animate: function (duration = 2000) {
-      const ctx = _main.C.workingCanvas;
       var dt = duration / noPoints;
 
       for (let i = 0; i < points.length; i++) {
         var p = points[i];
-        var j = 0;
+        let j = 0;
 
         if (smoothen) {
           (0, _settings.loop)(() => {
@@ -2469,7 +3175,7 @@ function parametricFunction(config) {
             ctx.moveTo(currentPoint[0], currentPoint[1]);
             ctx.bezierCurveTo(cp[0], cp[1], cp[2], cp[3], nextPoint[0], nextPoint[1]);
             ctx.stroke();
-          }, ctx.name, dt);
+          }, _main.C.workingCanvas.name, dt);
         } else {
           (0, _settings.loop)(() => {
             if (j >= p.length - 2) {
@@ -2480,9 +3186,11 @@ function parametricFunction(config) {
             var p1 = p[j],
                 p2 = p[++j];
             (0, _geometry.line)(p1[0], p1[1], p2[0], p2[1]);
-          }, ctx.name, dt);
+          }, dt);
         }
       }
+
+      return animationEventChain;
     }
   };
 }
@@ -2522,20 +3230,20 @@ function heatPlot(config) {
     min: [-4, -4],
     max: [4, 4],
     colors: {
-      "-5": "#b36e38a0",
-      "-3": "#ff9c52a0",
-      "-1": "#ffcea9a0",
-      0: "#dcdcdda0",
-      1: "#9fcaeda0",
-      3: "#3d96daa0",
-      5: "#2b6b99a0"
+      "-5": "#b36e38b0",
+      "-3": "#ff9c52b0",
+      "-1": "#ffcea9b0",
+      0: "#dcdcddb0",
+      1: "#9fcaedb0",
+      3: "#3d96dab0",
+      5: "#2b6b99b0"
     },
     unitLength: [1, 1],
     unitValue: [1, 1],
     resolution: 1,
     interpolator: x => x
   };
-  config = (0, _utils.applyDefault)(defaultConfigs, config);
+  config = (0, _utils.applyDefault)(defaultConfigs, config, false);
   const {
     min,
     max,
@@ -2547,11 +3255,11 @@ function heatPlot(config) {
   const ctx = _main.C.workingCanvas,
         unitSizeX = config.unitLength[0] / config.unitValue[0],
         unitSizeY = config.unitLength[1] / config.unitValue[1],
-        UVX = config.unitValue[0] / unitSizeX,
-        UVY = config.unitValue[1] / unitSizeY,
+        UVX = config.unitValue[0] / config.unitLength[0],
+        UVY = config.unitValue[1] / config.unitLength[1],
         stopes = Object.keys(colors).sort(); // converting colors to rgba array
 
-  for (var stop of stopes) colors[stop] = (0, _color_reader.readColor)([colors[stop]], true);
+  for (var stop of stopes) colors[stop] = (0, _color_reader.readColor)(colors[stop], true);
 
   const minS = Math.min(...stopes);
   const maxS = Math.max(...stopes);
@@ -2559,7 +3267,8 @@ function heatPlot(config) {
 
   for (var x = min[0]; x <= max[0]; x += resolution * UVX) {
     for (var y = min[1]; y <= max[1]; y += resolution * UVY) {
-      ctx.fillStyle = lerpColorArray(plotFunction(x, y));
+      let c = lerpColorArray(plotFunction(x, y));
+      ctx.fillStyle = c;
       ctx.fillRect(x * unitSizeX, y * unitSizeY, resolution, resolution);
     }
   }
@@ -2589,7 +3298,7 @@ function heatPlot(config) {
   };
 }
 
-},{"../color/color_reader.js":3,"../main.js":10,"../settings.js":24,"../utils.js":25,"./geometry.js":20}],20:[function(require,module,exports){
+},{"../color/color_reader.js":3,"../main.js":12,"../settings.js":26,"../utils.js":27,"./geometry.js":22}],22:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3195,7 +3904,7 @@ function polygonWithRatioOfCentralAngles(x, y, radius, ratios, rotation = 0) {
   ctx.restore();
 }
 
-},{"../main.js":10,"../math/points.js":13,"../utils.js":25}],21:[function(require,module,exports){
+},{"../main.js":12,"../math/points.js":15,"../utils.js":27}],23:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3236,7 +3945,7 @@ function pixel(x, y, color) {
   ctx.fillRect(x, y, 1, 1);
 }
 
-},{"../color/color_reader.js":3,"../main.js":10}],22:[function(require,module,exports){
+},{"../color/color_reader.js":3,"../main.js":12}],24:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3339,7 +4048,7 @@ function tex(input, x = 0, y = 0) {
   return image;
 }
 
-},{"../constants/drawing.js":8,"../main.js":10}],23:[function(require,module,exports){
+},{"../constants/drawing.js":9,"../main.js":12}],25:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3421,7 +4130,7 @@ function strokeText(text, x = 0, y = 0, maxwidth = undefined) {
   if (ctx.yAxisInverted) (0, _settings.scale)(1, -1);
 }
 
-},{"../main.js":10,"../settings.js":24}],24:[function(require,module,exports){
+},{"../main.js":12,"../settings.js":26}],26:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3476,9 +4185,11 @@ exports.initCenteredCanvas = initCenteredCanvas;
 exports.invertYAxis = invertYAxis;
 exports.initBlackboardCanvas = initBlackboardCanvas;
 
-var _main = require("./main.js");
-
 var _color_reader = require("./color/color_reader.js");
+
+var _named_colors = require("./constants/named_colors.js");
+
+var _main = require("./main.js");
 
 /**
  * This module contains functions to manipulate the canvas.
@@ -3516,7 +4227,7 @@ function lineTo(x, y) {
 
 
 function background() {
-  const col = (0, _color_reader.readColor)(arguments),
+  const col = (0, _color_reader.readColor)(...arguments),
         ctx = _main.C.workingCanvas;
   ctx.background = col;
   ctx.save();
@@ -3786,7 +4497,7 @@ function stroke() {
   const ctx = _main.C.workingCanvas;
 
   if (arguments.length > 0) {
-    ctx.strokeStyle = (0, _color_reader.readColor)(arguments);
+    ctx.strokeStyle = (0, _color_reader.readColor)(...arguments);
     ctx.doStroke = true;
   } else {
     ctx.stroke();
@@ -3808,7 +4519,7 @@ function fill() {
   const ctx = _main.C.workingCanvas;
 
   if (arguments.length !== 0) {
-    ctx.fillStyle = (0, _color_reader.readColor)(arguments);
+    ctx.fillStyle = (0, _color_reader.readColor)(...arguments);
     ctx.doFill = true;
   } else {
     ctx.fill();
@@ -3864,6 +4575,19 @@ function loop(functionToRun, canvasName, timeDelay, timeDelaysToRemember = 100) 
   if (!canvasName) ctx = _main.C.workingCanvas;else ctx = _main.C.canvasList[canvasName];
   ctx.timeDelayList = [];
   ctx.totalTimeCaptured = 0;
+
+  if (ctx.currentLoop != undefined) {
+    // already a animation is running
+    _main.C.delayedAnimations.push({
+      functionToRun: functionToRun,
+      canvasName: canvasName,
+      timeDelay: timeDelay,
+      timeDelaysToRemember: timeDelaysToRemember
+    });
+
+    return;
+  }
+
   ctx.recentTimeStamp = window.performance.now();
   ctx.timeStart = window.performance.now();
 
@@ -3878,12 +4602,13 @@ function loop(functionToRun, canvasName, timeDelay, timeDelaysToRemember = 100) 
 
   function run() {
     ctx.currentLoop = window.requestAnimationFrame(run);
+    _main.C.workingCanvas = ctx;
     functionToRun(window.performance.now() - ctx.timeStart, getFPS());
   }
 
   function getFPS() {
-    const now = window.performance.now();
-    const timeDelay = now - ctx.recentTimeStamp; // time delays between frames
+    const now = window.performance.now(),
+          timeDelay = now - ctx.recentTimeStamp; // time delays between frames
 
     ctx.recentTimeStamp = now;
     ctx.timeDelayList.push(timeDelay);
@@ -3904,6 +4629,13 @@ function noLoop(canvasName) {
   if (!canvasName) canvasName = ctx.name;else ctx = _main.C.canvasList[canvasName];
   clearInterval(ctx.currentLoop);
   window.cancelAnimationFrame(ctx.currentLoop);
+  ctx.currentLoop = undefined;
+
+  if (_main.C.delayedAnimations.length > 0) {
+    var toWork = _main.C.delayedAnimations.shift();
+
+    loop(toWork.functionToRun, toWork.canvasName, toWork.timeDelay, toWork.timeDelaysToRemember);
+  }
 }
 /**
  * Starts a new Path
@@ -4190,9 +4922,10 @@ function initBlackboardCanvas() {
   initCenteredCanvas();
   background(0);
   invertYAxis();
+  stroke(_named_colors.white);
 }
 
-},{"./color/color_reader.js":3,"./main.js":10}],25:[function(require,module,exports){
+},{"./color/color_reader.js":3,"./constants/named_colors.js":11,"./main.js":12}],27:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4211,7 +4944,10 @@ Object.getType = function (obj) {
 Object.clone = Object.clone || function (toClone) {
   var newObj = {};
 
-  for (var i = 0, keys = Object.keys(toClone); i < keys.length; i++) newObj[keys[i]] = toClone[keys[i]];
+  for (var i = 0, keys = Object.keys(toClone); i < keys.length; i++) {
+    let a = toClone[keys[i]];
+    newObj[keys[i]] = a;
+  }
 
   return newObj;
 };
@@ -4319,5 +5055,7 @@ function approximateIndexInArray(val, array, epsilon = 1e-6) {
 
   return -1;
 }
+
+window.applyDefault = applyDefault;
 
 },{}]},{},[1]);
