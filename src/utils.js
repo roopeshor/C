@@ -5,8 +5,10 @@ Object.clone =
 	Object.clone ||
 	function (toClone) {
 		var newObj = {};
-		for (var i = 0, keys = Object.keys(toClone); i < keys.length; i++)
-			newObj[keys[i]] = toClone[keys[i]];
+		for (var i = 0, keys = Object.keys(toClone); i < keys.length; i++) {
+			let a = toClone[keys[i]];
+			newObj[keys[i]] = a;
+		}
 		return newObj;
 	};
 
@@ -109,6 +111,8 @@ function approximateIndexInArray(val, array, epsilon = 1e-6) {
 	}
 	return -1;
 }
+
+window.applyDefault = applyDefault;
 export {
 	defineProperties,
 	arange,
