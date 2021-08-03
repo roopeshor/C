@@ -1,8 +1,19 @@
 import { readColor } from "../color/color_reader.js";
 import { C } from "../main.js";
 import { dist } from "../math/points.js";
-import { line, point } from "../objects/geometry.js";
+import { smooth } from "../math/rate_functions.js";
+import {
+	line,
+	point,
+	smoothCurveThroughPoints
+} from "../objects/geometry.js";
 import { getStrokeWidth, loop, noLoop } from "../settings.js";
+
+const counters = {
+	pointDraw: 0,
+	animatedLine: 0,
+	animateFill: 0,
+};
 
 /**
  * Animates a line from point pa to point pb.
@@ -109,45 +120,66 @@ function animateFill(name, id, FILL, f, time = 1000, dt = 10, next = null) {
  * @param {number} dt delay time in milliseconds
  * @param {function} [next=null] next function to run
  */
-function pointDraw(
-	name,
-	id,
-	p,
-	r,
-	dt = 10,
-	ds = 0.09,
-	FILL,
-	fillTime,
-	next = null
-) {
-	let t = 0;
-	loop(
+function pointDraw(args) {
+	let defaults = {
+		name: "point-" + ++counters.pointDraw,
+		radius: 3,
+		time: 1000,
+		dTime: 10,
+		fill: false,
+		fillTime: 500,
+		next: null,
+		rateFunction: smooth,
+	};
+	let {
 		name,
-		() => {
-			if (t > Math.PI * 2) noLoop();
-			t += ds;
-			const x1 = Math.cos(t) * r + p[0];
-			const y1 = Math.sin(t) * r + p[1];
-			const x2 = Math.cos(t + ds) * r + p[0];
-			const y2 = Math.sin(t + ds) * r + p[1];
-			const angle = Math.atan2(y2 - y1, x2 - x1);
-			const xFix = Math.cos(angle) * 0.1;
-			const yFix = Math.sin(angle) * 0.1;
-			line(x1 - xFix, y1 - yFix, x2, y2);
-		},
-		id,
-		dt
-	);
-	if (FILL)
-		animateFill(
+		time,
+		center,
+		radius,
+		canvas,
+		dTime,
+		fill: fillColor,
+		fillTime,
+		next,
+		rateFunction
+	} = Object.assign(defaults, args);
+	let dt = dTime / time * Math.PI * 2;
+	canvas = canvas || C.workingCanvas.name;
+	let points = [];
+	for (let t = 0; t <= Math.PI * 2; t += dt) {
+		const x1 = Math.cos(t) * radius + center[0];
+		const y1 = Math.sin(t) * radius + center[1];
+		points.push([x1, y1]);
+	}
+	dt = dTime / time;
+	return function () {
+		let t = 0;
+		loop(
 			name,
-			id,
-			FILL || "#fff",
-			() => point(...p, r * 2 - getStrokeWidth()),
-			fillTime,
-			10,
-			next
+			() => {
+				if (t > 1) noLoop();
+				let im1 = Math.floor((points.length - 1) * rateFunction(t));
+				let i = Math.floor((points.length - 1) * rateFunction(t+dt));
+				let ip1 = Math.floor((points.length - 1) * rateFunction(t+dt*2));
+				let ip2 = Math.floor((points.length - 1) * rateFunction(t+dt*3));
+				let pts= [points[im1],points[i], points[ip1], points[ip2]];
+				smoothCurveThroughPoints(pts, 1, false);
+				t += dt;
+			},
+			canvas,
+			dTime
 		);
+		if (fillColor)
+			animateFill(
+				name,
+				canvas,
+				fillColor,
+				() => point(...center, radius * 2 - getStrokeWidth()),
+				fillTime,
+				10,
+				next
+			);
+	};
 }
 
 export { animatedLine, animateFill, pointDraw };

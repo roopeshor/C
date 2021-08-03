@@ -204,8 +204,9 @@ function smoothCurveThroughPoints(points, tension = 1, closed = true) {
 	ctx.moveTo(points[0][0], points[0][1]);
 
 	smoothCurveThroughPointsTo(points, tension, closed);
+	if (ctx.doFill && closed) ctx.fill();
+	if (ctx.doStroke) ctx.stroke();
 	ctx.closePath();
-	doFillAndStroke(ctx);
 }
 
 /**

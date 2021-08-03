@@ -1,86 +1,4 @@
-import { loop } from "./settings.js";
 import { applyDefault, defineProperties } from "./utils.js";
-
-const defaultConfigs = {
-	width: 200, // width of canvas multiplied by dpr
-	height: 200, // height of canvas  multiplied by dpr
-
-	dpr: Math.ceil(window.devicePixelRatio || 1), // device pixel ratio for clear drawings
-
-	// states
-	doFill: true,
-	doStroke: true,
-	pathStarted: false,
-	yAxisInverted: false,
-	pauseAnimations: false,
-
-	netRotation: 0,
-	currentLoop: undefined,
-	textAlign: "start",
-	textBaseline: "alphabetic",
-	// color stuff
-	fillStyle: "#ffffff",
-	background: "#ffffff",
-	strokeStyle: "#000000",
-	colorMode: "rgba",
-	lineWidth: 1,
-
-	// font properties
-	fontSize: "20px",
-	fontFamily: "serif",
-	fontStyle: "normal",
-	fontVariant: "normal",
-	fontWeight: "normal",
-	fontStretch: "normal",
-	lineHeight: 1.2,
-	font: "20px serif",
-
-	// event listeners
-
-	// mouse
-	onclick: undefined,
-	onmousemove: undefined,
-	onmouseout: undefined,
-	onmousedown: undefined,
-	onmouseup: undefined,
-	onmousewheel: undefined,
-
-	// key
-	onkeydown: undefined,
-	onkeyup: undefined,
-	onkeypress: undefined,
-	oncopy: undefined,
-	onpaste: undefined,
-	oncut: undefined,
-
-	// touch
-	ontouchstart: undefined,
-	ontouchmove: undefined,
-	ontouchend: undefined,
-	ontouchcancel: undefined,
-
-	// scale
-	onresize: undefined,
-
-	// dom
-	onblur: undefined,
-	onfocus: undefined,
-	onchange: undefined,
-	oninput: undefined,
-	onload: undefined,
-	onscroll: undefined,
-	onwheel: undefined,
-
-	onpointerdown: undefined,
-	onpointermove: undefined,
-	onpointerup: undefined,
-	onpointercancel: undefined,
-	onpointerover: undefined,
-	onpointerout: undefined,
-	onpointerenter: undefined,
-	onpointerleave: undefined,
-	onfullscreenchange: undefined,
-};
 
 /**
  * Main Function
@@ -90,9 +8,88 @@ const defaultConfigs = {
  * @param {object} [cfgs={}] configurations
  */
 function C(fx, container, cfgs = {}) {
+	const defaultConfigs = {
+		width: 200, // width of canvas multiplied by dpr
+		height: 200, // height of canvas  multiplied by dpr
+
+		dpr: Math.ceil(window.devicePixelRatio || 1), // device pixel ratio for clear drawings
+
+		// states
+		doFill: true,
+		doStroke: true,
+		pathStarted: false,
+		yAxisInverted: false,
+		pauseAnimations: false,
+
+		netRotation: 0,
+		currentLoop: undefined,
+		textAlign: "start",
+		textBaseline: "alphabetic",
+		// color stuff
+		fillStyle: "#ffffff",
+		background: "#ffffff",
+		strokeStyle: "#000000",
+		colorMode: "rgba",
+		lineWidth: 1,
+
+		// font properties
+		fontSize: "20px",
+		fontFamily: "serif",
+		fontStyle: "normal",
+		fontVariant: "normal",
+		fontWeight: "normal",
+		fontStretch: "normal",
+		lineHeight: 1.2,
+		font: "20px serif",
+
+		// event listeners
+
+		// mouse
+		onclick: undefined,
+		onmousemove: undefined,
+		onmouseout: undefined,
+		onmousedown: undefined,
+		onmouseup: undefined,
+		onmousewheel: undefined,
+
+		// key
+		onkeydown: undefined,
+		onkeyup: undefined,
+		onkeypress: undefined,
+		oncopy: undefined,
+		onpaste: undefined,
+		oncut: undefined,
+
+		// touch
+		ontouchstart: undefined,
+		ontouchmove: undefined,
+		ontouchend: undefined,
+		ontouchcancel: undefined,
+
+		// scale
+		onresize: undefined,
+
+		// dom
+		onblur: undefined,
+		onfocus: undefined,
+		onchange: undefined,
+		oninput: undefined,
+		onload: undefined,
+		onscroll: undefined,
+		onwheel: undefined,
+
+		onpointerdown: undefined,
+		onpointermove: undefined,
+		onpointerup: undefined,
+		onpointercancel: undefined,
+		onpointerover: undefined,
+		onpointerout: undefined,
+		onpointerenter: undefined,
+		onpointerleave: undefined,
+		onfullscreenchange: undefined,
+	};
 	// assign configs
 	const configs = applyDefault(defaultConfigs, cfgs);
-
 	// initialize canvas
 	let canvas = C.makeCanvas(configs);
 	if (typeof container === "string") {
@@ -108,7 +105,7 @@ function C(fx, container, cfgs = {}) {
 	var parentName = container.id || container.classList.item(0);
 	let canvasName = configs.name;
 	if (typeof canvasName == "string") {
-		const cvs = container.querySelector("#"+canvasName);
+		const cvs = container.querySelector("#" + canvasName);
 		if (cvs instanceof HTMLElement) {
 			// if already exist
 			canvas = cvs;
@@ -127,6 +124,7 @@ function C(fx, container, cfgs = {}) {
 		canvas.context.setTransform(configs.dpr, 0, 0, configs.dpr, 0, 0);
 		C.workingCanvas = canvas.context;
 		C.workingCanvas.savedStates = defaultConfigs;
+		C.workingCanvas.delayedAnimations = [];
 	}
 	// set canvas's id and class to its name
 	canvas.id = canvasName;
@@ -144,7 +142,7 @@ function C(fx, container, cfgs = {}) {
  */
 C.canvasList = {};
 
-C.delayedAnimations = [];
+// C.delayedAnimations = [];
 
 /**
  * Number of canvases
@@ -161,7 +159,6 @@ C.workingCanvas = {}; // index of current working canvas in `C.canvasList`
 /**
  * Default configurations
  */
-C.defaultConfigs = defaultConfigs;
 /**
  * return inner width of container tag
  * @param {HTMLElement} [container=document.body]
@@ -224,24 +221,27 @@ C.addExtension = function (extObj, editable) {
  */
 C.defineProperties = defineProperties;
 
-C.runDelayedAnimationsIn = function (canvasName) {
-	for (let i = 0; i < C.delayedAnimations.length; i++) {
-		let anim = C.delayedAnimations[i];
-		if (anim.canvasName == canvasName) {
-			let toWork = C.delayedAnimations.splice(i, 1)[0];
-			loop(
-				toWork.name,
-				toWork.functionToRun,
-				toWork.canvasName,
-				toWork.timeDelay,
-				toWork.timeDelaysToRememberm,
-				toWork.settings
-			);
-			break;
-		}
-	}
-};
+/**
+ * @type {boolean}
+ */
+C.debugAnimations = false; // whther to debug animations
 
+// C.runDelayedAnimationsIn = function (canvasName) {
+// 	let ctx = C.canvasList[canvasName] || C.workingCanvas;
+// 	for (let i = 0; i < ctx.delayedAnimations.length; i++) {
+// 		let toWork = ctx.delayedAnimations.splice(i, 1)[0];
+// 		loop(
+// 			toWork.name,
+// 			toWork.functionToRun,
+// 			toWork.canvasName,
+// 			toWork.timeDelay,
+// 			toWork.timeDelaysToRememberm,
+// 			toWork.settings
+// 		);
+// 		break;
+// 	}
+// 	// }
+// };
 
 // register to window
 window.C = C;

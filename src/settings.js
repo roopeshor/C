@@ -426,19 +426,20 @@ function loop(
 	ctx.timeDelayList = [];
 	ctx.totalTimeCaptured = 0;
 	const _settings = Object.assign(getContextStates(canvasName), settings);
+	// debugger;
 	if (ctx.currentLoop != undefined) {
 		// already a animation is running
-		console.log(canvasName + ": " + name + " %cdelayed", "color: orange;");
-		C.delayedAnimations.push({
+		if(C.debugAnimations) console.log(canvasName + ": " + name + " %cdelayed", "color: orange;");
+		ctx.delayedAnimations.push({
 			name: name,
-			settings: getContextStates(canvasName),
+			settings: _settings,
 			functionToRun: functionToRun,
 			canvasName: canvasName,
 			timeDelay: timeDelay,
 			timeDelaysToRemember: timeDelaysToRemember,
 		});
 	} else {
-		console.log(canvasName + ": " + name + " %crunning", "color: yellow;");
+		if(C.debugAnimations) console.log(canvasName + ": " + name + " %crunning", "color: yellow;");
 		ctx.recentTimeStamp = window.performance.now();
 		ctx.timeStart = window.performance.now();
 		if (!isNaN(timeDelay)) {
@@ -486,8 +487,16 @@ function noLoop(canvasName) {
 	clearInterval(ctx.currentLoop);
 	window.cancelAnimationFrame(ctx.currentLoop);
 	ctx.currentLoop = undefined;
-	if (C.delayedAnimations.length > 0) {
-		C.runDelayedAnimationsIn(canvasName);
+	if (ctx.delayedAnimations.length > 0) {
+		let toWork = ctx.delayedAnimations.shift();
+		loop(
+			toWork.name,
+			toWork.functionToRun,
+			toWork.canvasName,
+			toWork.timeDelay,
+			toWork.timeDelaysToRememberm,
+			toWork.settings
+		);
 	}
 }
 
@@ -777,6 +786,16 @@ function wait(time, canvasName) {
 	);
 }
 
+/**
+ * Whehter to debug animations
+ *
+ * @param {boolean} bool boolean
+ */
+function debugAnimations (bool) {
+	if (typeof bool !== "boolean") C.debugAnimations = true;
+	else C.debugAnimations = bool;
+}
+
 export {
 	moveTo,
 	lineTo,
@@ -828,4 +847,5 @@ export {
 	initBlackboardCanvas,
 	wait,
 	getStrokeWidth,
+	debugAnimations
 };
