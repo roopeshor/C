@@ -1,6 +1,6 @@
 {
   "name": "c",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "JavaScript library for drawing figures & diagrams and also animation. You could save the canvas as image.",
   "main": "index.js",
   "directories": {
