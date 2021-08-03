@@ -22,6 +22,8 @@ import * as Braces from "./objects/braces.js";
 import * as Arrows from "./objects/arrows.js";
 import * as Functions from "./objects/functions.js";
 
+import * as CreateAnimation from "./animations/create.js";
+
 import * as Arithmeics from "./math/aritmetics.js";
 import * as Basic from "./math/basic.js";
 import * as Points from "./math/points.js";
@@ -48,6 +50,8 @@ defineProperties(CoordinateSystems);
 defineProperties(Braces);
 defineProperties(Arrows);
 defineProperties(Functions);
+
+defineProperties(CreateAnimation);
 
 defineProperties(Arithmeics);
 defineProperties(Basic);

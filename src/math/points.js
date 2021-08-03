@@ -61,7 +61,7 @@ function lineIntersection(p1, p2, p3, p4) {
 
 /**
  * Finds intersection of two circles.
- * A translation from {@link https://stackoverflow.com/a/14146166}
+ * Adapted from {@link https://stackoverflow.com/a/14146166}
  *
  * @param {array} c1 center of first circle as [x, y]
  * @param {number} r1 radius of first circle

@@ -261,6 +261,14 @@ function getFill() {
 function getStroke() {
 	return C.workingCanvas.strokeStyle;
 }
+/**
+ * Returns stroke width
+ *
+ * @returns {number}
+ */
+function getStrokeWidth() {
+	return C.workingCanvas.lineWidth;
+}
 
 /**
  * Reset the applied transform to idendity matrix and scales canvas by dpr
@@ -312,12 +320,13 @@ function fill() {
 }
 
 /**
- * Returns variables in workingCanvas
+ * Returns variables in workingCanvas or given canvas
  *
+ * @param {string} canvasID id of canvas to get the data.
  * @returns {Object}
  */
-function getContextStates() {
-	const ctx = C.workingCanvas;
+function getContextStates(canvasName) {
+	const ctx = C.canvasList[canvasName] || C.workingCanvas;
 	return {
 		background: ctx.background,
 		colorMode: ctx.colorMode,
@@ -332,7 +341,6 @@ function getContextStates() {
 		yAxisInverted: ctx.yAxisInverted,
 
 		netRotation: ctx.netRotation,
-		currentLoop: ctx.currentLoop,
 
 		fontStyle: ctx.fontStyle,
 		fontVariant: ctx.fontVariant,
@@ -345,12 +353,55 @@ function getContextStates() {
 
 		textAlign: ctx.textAlign,
 		textBaseline: ctx.textBaseline,
+
+		onclick: ctx.onclick,
+		onmousemove: ctx.onmousemove,
+		onmouseout: ctx.onmouseout,
+		onmousedown: ctx.onmousedown,
+		onmouseup: ctx.onmouseup,
+		onmousewheel: ctx.onmousewheel,
+
+		// key
+		onkeydown: ctx.onkeydown,
+		onkeyup: ctx.onkeyup,
+		onkeypress: ctx.onkeypress,
+		oncopy: ctx.oncopy,
+		onpaste: ctx.onpaste,
+		oncut: ctx.oncut,
+
+		// touch
+		ontouchstart: ctx.ontouchstart,
+		ontouchmove: ctx.ontouchmove,
+		ontouchend: ctx.ontouchend,
+		ontouchcancel: ctx.ontouchcancel,
+
+		// scale
+		onresize: ctx.onresize,
+
+		// dom
+		onblur: ctx.onblur,
+		onfocus: ctx.onfocus,
+		onchange: ctx.onchange,
+		oninput: ctx.oninput,
+		onload: ctx.onload,
+		onscroll: ctx.onscroll,
+		onwheel: ctx.onwheel,
+
+		onpointerdown: ctx.onpointerdown,
+		onpointermove: ctx.onpointermove,
+		onpointerup: ctx.onpointerup,
+		onpointercancel: ctx.onpointercancel,
+		onpointerover: ctx.onpointerover,
+		onpointerout: ctx.onpointerout,
+		onpointerenter: ctx.onpointerenter,
+		onpointerleave: ctx.onpointerleave,
+		onfullscreenchange: ctx.onfullscreenchange,
 	};
 }
 
 /**
  * Starts a new loop
- *
+ * ! Currently in progress with asynchronous animations.
  * @param {function} functionToRun function which contains code to run
  * @param {string} canvasName name of canvas. It must be unique if you're running multiple animation at once
  * @param {number} timeDelay time delay between 2 frames. If given loop will execute with setInterval function.
@@ -358,42 +409,57 @@ function getContextStates() {
  * @param {number} [timeDelaysToRemember=10] number of time delays to remember.
  */
 function loop(
+	name,
 	functionToRun,
 	canvasName,
 	timeDelay,
-	timeDelaysToRemember = 100
+	timeDelaysToRemember = 100,
+	settings = {}
 ) {
 	let ctx;
 
 	// if canvasName isn't given it will assume the drawing context to be the current working canvas
-	if (!canvasName) ctx = C.workingCanvas;
-	else ctx = C.canvasList[canvasName];
+	if (!canvasName) {
+		ctx = C.workingCanvas;
+		canvasName = ctx.name;
+	} else ctx = C.canvasList[canvasName];
 	ctx.timeDelayList = [];
 	ctx.totalTimeCaptured = 0;
+	const _settings = Object.assign(getContextStates(canvasName), settings);
 	if (ctx.currentLoop != undefined) {
 		// already a animation is running
+		console.log(canvasName + ": " + name + " %cdelayed", "color: orange;");
 		C.delayedAnimations.push({
+			name: name,
+			settings: getContextStates(canvasName),
 			functionToRun: functionToRun,
 			canvasName: canvasName,
 			timeDelay: timeDelay,
 			timeDelaysToRemember: timeDelaysToRemember,
 		});
-		return;
-	}
-	ctx.recentTimeStamp = window.performance.now();
-	ctx.timeStart = window.performance.now();
-	if (!isNaN(timeDelay)) {
-		ctx.currentLoop = setInterval(function () {
-			C.workingCanvas = ctx;
-			functionToRun(window.performance.now() - ctx.timeStart, getFPS());
-		}, timeDelay);
 	} else {
-		run();
+		console.log(canvasName + ": " + name + " %crunning", "color: yellow;");
+		ctx.recentTimeStamp = window.performance.now();
+		ctx.timeStart = window.performance.now();
+		if (!isNaN(timeDelay)) {
+			ctx.currentLoop = setInterval(function () {
+				C.workingCanvas = ctx;
+				const S = getContextStates(canvasName);
+				Object.assign(C.workingCanvas, _settings);
+				functionToRun(window.performance.now() - ctx.timeStart, getFPS());
+				Object.assign(C.workingCanvas, S);
+			}, timeDelay);
+		} else {
+			run();
+		}
 	}
 	function run() {
 		ctx.currentLoop = window.requestAnimationFrame(run);
 		C.workingCanvas = ctx;
+		const S = getContextStates(canvasName);
+		if (settings) Object.assign(C.workingCanvas, _settings);
 		functionToRun(window.performance.now() - ctx.timeStart, getFPS());
+		if (settings) Object.assign(C.workingCanvas, S);
 	}
 
 	function getFPS() {
@@ -421,8 +487,7 @@ function noLoop(canvasName) {
 	window.cancelAnimationFrame(ctx.currentLoop);
 	ctx.currentLoop = undefined;
 	if (C.delayedAnimations.length > 0) {
-		var toWork = C.delayedAnimations.shift();
-		loop(toWork.functionToRun, toWork.canvasName, toWork.timeDelay, toWork.timeDelaysToRemember);
+		C.runDelayedAnimationsIn(canvasName);
 	}
 }
 
@@ -692,6 +757,26 @@ function initBlackboardCanvas() {
 	stroke(white);
 }
 
+/**
+ * Wait for a given time in milliseconds.
+ *
+ * @param {number} time time in milliseconds
+ * @param {string} canvasName canvas name
+ */
+function wait(time, canvasName) {
+	canvasName = C.workingCanvas.name || canvasName;
+	loop(
+		"waiter",
+		(elapsed) => {
+			if (elapsed >= time) {
+				noLoop(canvasName);
+			}
+		},
+		canvasName,
+		time
+	);
+}
+
 export {
 	moveTo,
 	lineTo,
@@ -741,4 +826,6 @@ export {
 	initCenteredCanvas,
 	invertYAxis,
 	initBlackboardCanvas,
+	wait,
+	getStrokeWidth,
 };

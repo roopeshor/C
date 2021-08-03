@@ -1,3 +1,4 @@
+import { loop } from "./settings.js";
 import { applyDefault, defineProperties } from "./utils.js";
 
 const defaultConfigs = {
@@ -11,9 +12,10 @@ const defaultConfigs = {
 	doStroke: true,
 	pathStarted: false,
 	yAxisInverted: false,
+	pauseAnimations: false,
 
 	netRotation: 0,
-	currentLoop: null,
+	currentLoop: undefined,
 	textAlign: "start",
 	textBaseline: "alphabetic",
 	// color stuff
@@ -30,8 +32,54 @@ const defaultConfigs = {
 	fontVariant: "normal",
 	fontWeight: "normal",
 	fontStretch: "normal",
-	lineHeight: "1.2",
+	lineHeight: 1.2,
 	font: "20px serif",
+
+	// event listeners
+
+	// mouse
+	onclick: undefined,
+	onmousemove: undefined,
+	onmouseout: undefined,
+	onmousedown: undefined,
+	onmouseup: undefined,
+	onmousewheel: undefined,
+
+	// key
+	onkeydown: undefined,
+	onkeyup: undefined,
+	onkeypress: undefined,
+	oncopy: undefined,
+	onpaste: undefined,
+	oncut: undefined,
+
+	// touch
+	ontouchstart: undefined,
+	ontouchmove: undefined,
+	ontouchend: undefined,
+	ontouchcancel: undefined,
+
+	// scale
+	onresize: undefined,
+
+	// dom
+	onblur: undefined,
+	onfocus: undefined,
+	onchange: undefined,
+	oninput: undefined,
+	onload: undefined,
+	onscroll: undefined,
+	onwheel: undefined,
+
+	onpointerdown: undefined,
+	onpointermove: undefined,
+	onpointerup: undefined,
+	onpointercancel: undefined,
+	onpointerover: undefined,
+	onpointerout: undefined,
+	onpointerenter: undefined,
+	onpointerleave: undefined,
+	onfullscreenchange: undefined,
 };
 
 /**
@@ -172,8 +220,29 @@ C.addExtension = function (extObj, editable) {
 };
 
 /**
+ * @type {object}
  */
 C.defineProperties = defineProperties;
+
+C.runDelayedAnimationsIn = function (canvasName) {
+	for (let i = 0; i < C.delayedAnimations.length; i++) {
+		let anim = C.delayedAnimations[i];
+		if (anim.canvasName == canvasName) {
+			let toWork = C.delayedAnimations.splice(i, 1)[0];
+			loop(
+				toWork.name,
+				toWork.functionToRun,
+				toWork.canvasName,
+				toWork.timeDelay,
+				toWork.timeDelaysToRememberm,
+				toWork.settings
+			);
+			break;
+		}
+	}
+};
+
+
 // register to window
 window.C = C;
 
