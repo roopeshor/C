@@ -39,10 +39,10 @@ module.exports = function (grunt) {
 			options: {
 				trailing: true,
 				eqeqeq: false,
-				esversion: 7
+				esversion: 12
 			},
 			target: {
-				src: ["src/**.js"],
+				src: ["src/**.js", "src/**/**.js"],
 			},
 		},
 		copy: {

@@ -99,7 +99,7 @@ function readColor() {
 		}
 	}
 	if (!toArray) {
-		const mode = C.workingCanvas?.colorMode || "rgba";
+		const mode = (C.workingCanvas || {}).colorMode || "rgba";
 		if (mode === "rgba") {
 			result = `rgba(${result[0]}, ${result[1]}, ${result[2]}, ${result[3]})`;
 		} else if (mode === "hsl" || mode === "rgb") {

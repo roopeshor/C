@@ -25,9 +25,7 @@ function defineProperties(obj, toAssign, specific, message) {
 	specific = specific === undefined || specific === null ? window : specific;
 	toAssign = toAssign || window;
 	message =
-		typeof message === "function"
-			? message
-			: function (k) {
+		typeof message === "function" ? message	: function (k) {
 					console.warn(
 						"You changed value of '" + k + "' which C uses. Be careful"
 					);

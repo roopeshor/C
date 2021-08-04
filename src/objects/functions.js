@@ -22,18 +22,18 @@ const animationEventChain = {
 /**
  * Draws a parametric functions
  * This accept parameters as object.
- * @param {object} config configuration object
+ * @param {object} args configuration object
  * It can have following properties:
  *
- * * paramFunction   <function>               : function to plot. Must recieve one argument and return a array of point as [x, y]
- * * range           <array>    ([0, 10, 0.1]): Range as [min, max, dt]
- * * smoothen        <boolean>  (true)        : Whether to smoothen the shape.
- * * tension         <number>   (1)           : Smoothness tension.
- * * discontinuities <array>    ([])          : Array of t where the curve discontinues.
- * * closed          <boolean>  (false)       : Whether the function draws a closed shape.
- * * unitValue       <array>    ([1, 1])      : Value of each unit space
- * * unitLength      <array>    ([1, 1])      : Length of each unit in pixels
- * * draw            <boolean>  (true)        : Wheteher to draw the function graph right now.
+ * @param {function} args.paramFunction function to plot. Must recieve one argument and return a array of point as [x, y]
+ * @param {number} [args.tension = 1] Smoothness tension.
+ * @param {array} [args.range = [0, 10, 0.1]] Range as [min, max, dt]
+ * @param {array} [args.discontinuities = []] Array of t where the curve discontinues.
+ * @param {array} [args.unitValue = [1, 1]] Value of each unit space
+ * @param {array} [args.unitLength = [1, 1]] Length of each unit in pixels
+ * @param {boolean} [args.smoothen = true] Whether to smoothen the shape.
+ * @param {boolean} [args.closed = false] Whether the function draws a closed shape.
+ * @param {boolean} [args.draw = true] Wheteher to draw the function graph right now.
  *
  * @returns {object} object that contains following properties:
  *
@@ -41,7 +41,7 @@ const animationEventChain = {
  * * draw    <function> : Function that draws the plot
  * * animate <function> : Function that animates the drawing of the shape. Accept argument `duration` which is the duration of animation.
  */
-function parametricFunction(config) {
+function parametricFunction(args) {
 	const defaultConfigs = {
 		tension: 1,
 
@@ -54,9 +54,9 @@ function parametricFunction(config) {
 		closed: false,
 		draw: true,
 	};
-	config = applyDefault(defaultConfigs, config);
+	args = applyDefault(defaultConfigs, args);
 	var { paramFunction, range, smoothen, tension, discontinuities, closed } =
-		config;
+		args;
 	if (Array.isArray(range) && range.length == 2)
 		range.push((range[1] - range[0]) / 20);
 	var points = [[]];
@@ -70,8 +70,8 @@ function parametricFunction(config) {
 	if (step < epsilon) epsilon = step / 2;
 	var row = 0;
 	var noPoints = 0;
-	const unitX = config.unitLength[0] / config.unitValue[0],
-		unitY = config.unitLength[1] / config.unitValue[1];
+	const unitX = args.unitLength[0] / args.unitValue[0],
+		unitY = args.unitLength[1] / args.unitValue[1];
 	for (var t = min; t <= max + epsilon; t += step) {
 		if (approximateIndexInArray(t, discontinuities, epsilon) > -1) {
 			if (approximateIndexInArray(t + step, discontinuities, epsilon) > -1) {
@@ -86,7 +86,7 @@ function parametricFunction(config) {
 	}
 
 	// draw the plot
-	if (config.draw) plot();
+	if (args.draw) plot();
 	function plot() {
 		const ctx = C.workingCanvas;
 		for (let i = 0; i < points.length; i++) {
@@ -114,55 +114,53 @@ function parametricFunction(config) {
 				var p = points[i];
 				let j = 0;
 				if (smoothen) {
-					loop(
-						() => {
-							if (j >= p.length - 2) {
-								noLoop();
-								ctx.closePath();
-								if (ctx.doFill) this.draw();
-							}
-							var recentPoint =
-								j > 0 ? p[j - 1] : closed ? p[p.length - 2] : p[0];
-							var currentPoint = p[j];
-							var nextPoint = p[j + 1];
-							var secondNextPoint =
-								j != p.length - 2 ? p[j + 2] : closed ? p[1] : nextPoint;
-							j++;
-							var cp = getBezierControlPoints(
-								recentPoint,
-								currentPoint,
-								nextPoint,
-								secondNextPoint
-							);
-							ctx.beginPath();
-							ctx.moveTo(currentPoint[0], currentPoint[1]);
-							ctx.bezierCurveTo(
-								cp[0],
-								cp[1],
-								cp[2],
-								cp[3],
-								nextPoint[0],
-								nextPoint[1]
-							);
-							ctx.stroke();
-						},
-						C.workingCanvas.name,
-						dt
-					);
+					loop(smoothed(j), C.workingCanvas.name, dt);
 				} else {
-					loop(
-						() => {
-							if (j >= p.length - 2) {
-								noLoop();
-								if (ctx.doFill) this.draw();
-							}
-							var p1 = p[j],
-								p2 = p[++j];
-							line(p1[0], p1[1], p2[0], p2[1]);
-						},
-						dt
-					);
+					loop(nonSmoothed(j), dt);
 				}
+			}
+			function smoothed(j) {
+				return function () {
+					if (j >= p.length - 2) {
+						noLoop();
+						ctx.closePath();
+						if (ctx.doFill) this.draw();
+					}
+					var recentPoint = j > 0 ? p[j - 1] : closed ? p[p.length - 2] : p[0];
+					var currentPoint = p[j];
+					var nextPoint = p[j + 1];
+					var secondNextPoint =
+						j != p.length - 2 ? p[j + 2] : closed ? p[1] : nextPoint;
+					j++;
+					var cp = getBezierControlPoints(
+						recentPoint,
+						currentPoint,
+						nextPoint,
+						secondNextPoint
+					);
+					ctx.beginPath();
+					ctx.moveTo(currentPoint[0], currentPoint[1]);
+					ctx.bezierCurveTo(
+						cp[0],
+						cp[1],
+						cp[2],
+						cp[3],
+						nextPoint[0],
+						nextPoint[1]
+					);
+					ctx.stroke();
+				};
+			}
+			function nonSmoothed(j) {
+				return function () {
+					if (j >= p.length - 2) {
+						noLoop();
+						if (ctx.doFill) this.draw();
+					}
+					var p1 = p[j],
+						p2 = p[++j];
+					line(p1[0], p1[1], p2[0], p2[1]);
+				};
 			}
 			return animationEventChain;
 		},
@@ -173,29 +171,29 @@ function parametricFunction(config) {
  * Draws graph of funciton
  * See {@link parametricFunction} For arguments
  */
-function functionGraph(config) {
-	const paramFunction = config.paramFunction;
-	config.paramFunction = (x) => [x, paramFunction(x)];
-	return parametricFunction(config);
+function functionGraph(args) {
+	const paramFunction = args.paramFunction;
+	args.paramFunction = (x) => [x, paramFunction(x)];
+	return parametricFunction(args);
 }
 
 /**
  * Draws a heat plot of given function. The function must take atleast 2 arguments and return a number.
  * More precisely f: ℜ² → ℜ
  * All parameters should be enclosed in a object.
- * @param {object} config
+ * @param {object} args
  * Possible parameters are:
  *
- * * min          <array>   ([-4, -4]): minimum point
- * * max          <array>   ([4, 4])  : maximum point
- * * colors       <object>            : object of color map
- * * unitValue    <array>   ([1, 1])  : Value of each unit space
- * * unitLength   <array>   ([1, 1])  : Length of each unit in pixels
- * * resolution   <number>  (1)       : resolution of plot
- * * interpolator <function> (linear) : function to interpolate color.
+ * @param {array} [args.min = [-4, -4]] minimum point
+ * @param {array} [args.max = [4, 4]] maximum point
+ * @param {object} args.colors object of color map
+ * @param {array} [args.unitValue = [1, 1]] Value of each unit space
+ * @param {array} [args.unitLength = [1, 1]] Length of each unit in pixels
+ * @param {number} [args.resolution = 1] resolution of plot
+ * @param {function} [args.interpolator = linear] function to interpolate color.
  * @return {object} metadatas
  */
-function heatPlot(config) {
+function heatPlot(args) {
 	const defaultConfigs = {
 		min: [-4, -4],
 		max: [4, 4],
@@ -213,13 +211,13 @@ function heatPlot(config) {
 		resolution: 1,
 		interpolator: (x) => x,
 	};
-	config = applyDefault(defaultConfigs, config, false);
-	const { min, max, colors, resolution, plotFunction, interpolator } = config;
+	args = applyDefault(defaultConfigs, args, false);
+	const { min, max, colors, resolution, plotFunction, interpolator } = args;
 	const ctx = C.workingCanvas,
-		unitSizeX = config.unitLength[0] / config.unitValue[0],
-		unitSizeY = config.unitLength[1] / config.unitValue[1],
-		UVX = config.unitValue[0] / config.unitLength[0],
-		UVY = config.unitValue[1] / config.unitLength[1],
+		unitSizeX = args.unitLength[0] / args.unitValue[0],
+		unitSizeY = args.unitLength[1] / args.unitValue[1],
+		UVX = args.unitValue[0] / args.unitLength[0],
+		UVY = args.unitValue[1] / args.unitLength[1],
 		stopes = Object.keys(colors).sort();
 
 	// converting colors to rgba array

@@ -23,7 +23,7 @@ function arrowTip(x1, y1, x2, y2, width, height) {
 	var thickness = ctx.lineWidth;
 	var distance = Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2);
 	if (isNaN(width)) width = distance;
-	height = height || width / 1.3;
+	height = height || width / 1.2;
 	var w = width - distance;
 	var r = Math.sqrt(w ** 2 + (height / 2) ** 2);
 	var t = Math.atan(height / (w * 2));
@@ -63,8 +63,8 @@ function arrowTip(x1, y1, x2, y2, width, height) {
  * @param {number} y1 starting y-axis coord
  * @param {number} x2 ending x-axis coord
  * @param {number} y2 ending y-axis coord
- * @param {number} tipWidth width of tip
- * @param {number} tipHeight height of tip
+ * @param {number} [tipWidth=DEFAULT_TIP_WIDTH] width of tip
+ * @param {number} tipHeight height of tip. Default value is tipWidth / 1.2
  * @param {number} [arrowCurving = 0] worping of arrow
  * @param {number} [spacing = 0] padding from end to tip
  *
@@ -75,7 +75,7 @@ function arrow(
 	x2,
 	y2,
 	tipWidth = DEFAULT_TIP_WIDTH,
-	tipHeight = tipWidth / 1.3,
+	tipHeight = tipWidth / 1.2,
 	arrowCurving = 0,
 	spacing = 0
 ) {
@@ -107,10 +107,10 @@ function arrow(
  *
  * @param {number} x1
  * @param {number} y1
- * @param {number} x2
+ * @param {number} x20]
  * @param {number} y2
- * @param {number} [tipWidth=10]
- * @param {number} [tipHeight=0.6]
+ * @param {number} [tipWidth=DEFAULT_TIP_WIDTH] width of tip
+ * @param {number} tipHeight height of tip. Default value is tipWidth / 1.2
  * @param {number} [arrowCurving = 0]
  * @param {number} [spacing=0]
  */
@@ -120,7 +120,7 @@ function doubleArrow(
 	x2,
 	y2,
 	tipWidth = DEFAULT_TIP_WIDTH,
-	tipHeight = tipWidth / 1.3,
+	tipHeight = tipWidth / 1.2,
 	arrowCurving = 0,
 	spacing = 0
 ) {
@@ -145,40 +145,38 @@ function doubleArrow(
 /**
  * Draws a double tipped arrow with text in the middle
  *
- * @param {object} configs parameters.
+ * @param {object} args parameters.
  * Possible values:
- * * {string} text* : text
- * * {array} p1* : first point
- * * {array} p2* : second point
- * * {number} [tipWidth=10] : tip width
- * * {number} [tipScaleRatio=0.6] : tipScaleRatio
- * * {number} [spacing=0] : spacing
- * * {string|number} [background] : background of text
- * * {number} [innerPadding] : padding of text
- * * {number} [outerPadding] : tip spacing
- * * {number} [textRotation] : rotatioin of text
- * * {number} [arrowCurving] : worping of arrow
- *
- * NOTE: '*' indicate mandatory properties
+ * @param {string} args.text text
+ * @param {array} args.p1 first point
+ * @param {array} args.p2 second point
+ * @param {number} [args.tipWidth = 15] tip width
+ * @param {number} [args.tipHeight = 12.5] tip height
+ * @param {number} [args.spacing = 0] spacing
+ * @param {string|number} args.background background of text
+ * @param {number} args.innerPadding padding of text
+ * @param {number} args.outerPadding tip spacing
+ * @param {number} args.textRotation rotatioin of text
+ * @param {number} args.arrowCurving worping of arrow
  */
-function measurement(configs) {
+function measurement(args) {
 	const ctx = C.workingCanvas;
 	const defaults = {
 		background: TRANSPARENT,
 		tipWidth: DEFAULT_TIP_WIDTH,
-		tipHeight: DEFAULT_TIP_WIDTH / 1.3,
+		tipHeight: DEFAULT_TIP_WIDTH / 1.2,
 		innerPadding: 3,
 		outerPadding: 0,
 		textRotation: 0,
 		arrowCurving: 0,
 	};
-	configs = applyDefault(defaults, configs);
-	const { p1, p2 } = configs;
+	args = applyDefault(defaults, args);
+	const { p1, p2 } = args;
 	const angleFromXAxis = Math.atan2(p2[1] - p1[1], p2[0] - p1[0]);
-	const { width } = ctx.measureText(configs.text);
+	const { width } = ctx.measureText(args.text);
 	const innerPadding = [
-		Math.cos(angleFromXAxis) * (configs.innerPadding + width / 2),
-		Math.sin(angleFromXAxis) * (configs.innerPadding + width / 2),
+		Math.cos(angleFromXAxis) * (args.innerPadding + width / 2),
+		Math.sin(angleFromXAxis) * (args.innerPadding + width / 2),
 	];
 	const center = [(p1[0] + p2[0]) / 2, (p1[1] + p2[1]) / 2];
 
@@ -188,28 +186,28 @@ function measurement(configs) {
 		center[1] - innerPadding[1],
 		p1[0],
 		p1[1],
-		configs.tipWidth,
-		configs.tipHeight,
-		configs.arrowCurving,
-		configs.outerPadding
+		args.tipWidth,
+		args.tipHeight,
+		args.arrowCurving,
+		args.outerPadding
 	);
 	arrow(
 		center[0] + innerPadding[0],
 		center[1] + innerPadding[1],
 		p2[0],
 		p2[1],
-		configs.tipWidth,
-		configs.tipHeight,
-		configs.arrowCurving,
-		configs.outerPadding
+		args.tipWidth,
+		args.tipHeight,
+		args.arrowCurving,
+		args.outerPadding
 	);
 
 	save();
 	ctx.translate(center[0], center[1]);
 	ctx.textAlign = CENTER;
 	ctx.textBaseline = MIDDLE;
-	ctx.rotate(Math.atan2(p2[1] - p1[1], p2[0] - p1[0]) + configs.textRotation);
-	fillText(configs.text, 0, 0);
+	ctx.rotate(Math.atan2(p2[1] - p1[1], p2[0] - p1[0]) + args.textRotation);
+	fillText(args.text, 0, 0);
 	restore();
 }
 
@@ -222,7 +220,7 @@ function measurement(configs) {
  * @param {number} [angle=Math.PI / 2] central angle of arc
  * @param {number} [startAngle=0] starting angle
  * @param {number} [tipWidth=DEFAULT_TIP_WIDTH] width of tip
- * @param {number} [tipHeight=tipWidth / 1.3] height of tip
+ * @param {number} tipHeight height of tip. Default value is tipWidth / 1.2
  * @param {number} [arrowCurving=0] arrow curving constant
  * @param {number} [tipOffset=10] offset (padding) of tip from it's defined end
  * @param {boolean} [reverse=false] whether to reverse the direction of arrow
@@ -234,7 +232,7 @@ function curvedArrow(
 	angle = Math.PI / 2,
 	startAngle = 0,
 	tipWidth = DEFAULT_TIP_WIDTH,
-	tipHeight = tipWidth / 1.3,
+	tipHeight = tipWidth / 1.2,
 	arrowCurving = 0,
 	tipOffset = 0,
 	reverse = false
@@ -286,7 +284,7 @@ function curvedArrow(
  * @param {number} [angle=Math.PI / 2] central angle of arrow in radians
  * @param {number} [startAngle=0] start angle of arrow in radians
  * @param {number} [tipWidth=DEFAULT_TIP_WIDTH] width of arrow tip
- * @param {number} [tipHeight=tipWidth / 1.3] height of arrow tip
+ * @param {number} tipHeight height of tip. Default value is tipWidth / 1.2
  * @param {number} [arrowCurving=0] curving of arrow
  * @param {number} [tipOffset=0] angular offset of arrow from radial boundaries in radians.
  */
@@ -297,7 +295,7 @@ function curvedDoubleArrow(
 	angle = Math.PI / 2,
 	startAngle = 0,
 	tipWidth = DEFAULT_TIP_WIDTH,
-	tipHeight = tipWidth / 1.3,
+	tipHeight = tipWidth / 1.2,
 	arrowCurving = 0,
 	tipOffset = 0
 ) {
@@ -340,7 +338,7 @@ function curvedDoubleArrow(
  * @param {array} p2 end point
  * @param {number} radius radius of circle
  * @param {number} [tipWidth=DEFAULT_TIP_WIDTH] width of tip
- * @param {number} [tipHeight=tipWidth / 1.3] height of tip
+ * @param {number} tipHeight height of tip. Default value is tipWidth / 1.2
  * @param {number} [arrowCurving=0] arrow curving const. Expressed in pixels
  * @param {number} [tipOffset=0] offset (padding) of tip from it's defined end. Expressed in radians
  * @param {boolean} [otherArc=false] whether to use other arc
@@ -352,7 +350,7 @@ function curvedArrowBetweenPoints(
 	p2,
 	radius,
 	tipWidth = DEFAULT_TIP_WIDTH,
-	tipHeight = tipWidth / 1.3,
+	tipHeight = tipWidth / 1.2,
 	arrowCurving = 0,
 	tipOffset = 0,
 	otherArc = false,
@@ -401,7 +399,7 @@ function curvedArrowBetweenPoints(
  * @param {array} p2 end point
  * @param {number} radius radius of circle
  * @param {number} [tipWidth=DEFAULT_TIP_WIDTH] width of tip
- * @param {number} [tipHeight=tipWidth / 1.3] height of tip
+ * @param {number} tipHeight height of tip. Default value is tipWidth / 1.2
  * @param {number} [arrowCurving=0] arrow curving const. Expressed in pixels
  * @param {number} [tipOffset=0] offset (padding) of tip from it's defined. Expressed in radians
  * @param {boolean} [otherArc=false] whether to use other arc
@@ -412,7 +410,7 @@ function curvedDoubleArrowBetweenPoints(
 	p2,
 	radius,
 	tipWidth = DEFAULT_TIP_WIDTH,
-	tipHeight = tipWidth / 1.3,
+	tipHeight = tipWidth / 1.2,
 	arrowCurving = 0,
 	tipOffset = 0,
 	otherArc = false

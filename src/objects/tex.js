@@ -13,8 +13,7 @@ function getImageFromTex(input) {
 		typeof window.MathJax.tex2svg == "function"
 	) {
 		const ctx = C.workingCanvas;
-		// eslint-disable-next-line no-undef
-		const svgOutput = MathJax.tex2svg(input).getElementsByTagName("svg")[0];
+		const svgOutput = window.MathJax.tex2svg(input).getElementsByTagName("svg")[0];
 		const g = svgOutput.getElementsByTagName("g")[0];
 		svgOutput.style.verticalAlign = "1ex";
 		g.setAttribute("stroke", ctx.strokeStyle);

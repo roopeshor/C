@@ -202,7 +202,6 @@ function smoothCurveThroughPoints(points, tension = 1, closed = true) {
 	const ctx = C.workingCanvas;
 	ctx.beginPath();
 	ctx.moveTo(points[0][0], points[0][1]);
-
 	smoothCurveThroughPointsTo(points, tension, closed);
 	if (ctx.doFill && closed) ctx.fill();
 	if (ctx.doStroke) ctx.stroke();

@@ -66,9 +66,7 @@ function HSLToRGB(hue, saturation, lightness) {
 		r = g = b = lightness; // achromatic
 	} else {
 		const q =
-			lightness < 0.5
-				? lightness * (1 + saturation)
-				: lightness + saturation - lightness * saturation;
+			lightness < 0.5 ? lightness * (1 + saturation) : lightness + saturation - lightness * saturation;
 		const p = 2 * lightness - q;
 		r = hue2RGB(p, q, hue + 1 / 3);
 		g = hue2RGB(p, q, hue);

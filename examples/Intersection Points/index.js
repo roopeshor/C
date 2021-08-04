@@ -1,11 +1,13 @@
-import { animatedLine, pointDraw } from "../../src/animations/create.js";
+import { animatedLine, circleDraw } from "../../src/animations/create.js";
 import { C } from "../../src/main.js";
 import { circleIntersection, lineIntersection } from "../../src/math/points.js";
+import { linear } from "../../src/math/rate_functions.js";
 import {
 	debugAnimations,
 	fill,
 	initBlackboardCanvas,
 	scale,
+	setImageSmoothing,
 	strokeWidth,
 	wait,
 } from "../../src/settings.js";
@@ -20,28 +22,30 @@ C(
 		const c1 = [-40 / 2, 40 / 2],
 			c2 = [40 / 2, -40 / 2];
 
+
 		debugAnimations(true);
-		pointDraw({
+		circleDraw({
 			name: "bigc1",
 			canvas: "cci",
 			center: c1,
 			radius: 40,
 			time: 1000,
-			timeDelay: 10,
-		})();
+			dTime: 100,
+			rateFunction: linear,
+		}).draw();
 		wait(500);
-		pointDraw({
+		circleDraw({
 			name: "bigc2",
 			canvas: "cci",
 			center: c2,
 			radius: 40,
 			time: 1000,
-			timeDelay: 10,
-		})();
+			dTime: 10,
+		}).draw();
 		const pts = circleIntersection(c1, 40, c2, 40);
 		wait(300);
 		strokeWidth(0.5);
-		pointDraw({
+		circleDraw({
 			name: "point1",
 			canvas: "cci",
 			center: pts[0],
@@ -50,8 +54,8 @@ C(
 			timeDelay: 10,
 			fill: "green",
 			fillTime: 500,
-		})();
-		pointDraw({
+		}).draw();
+		circleDraw({
 			name: "point2",
 			canvas: "cci",
 			center: pts[1],
@@ -60,7 +64,7 @@ C(
 			timeDelay: 10,
 			fill: "green",
 			fillTime: 500,
-		})();
+		}).draw();
 	},
 	".container",
 	{
@@ -81,7 +85,7 @@ C(
 // 		animatedLine("line2", "lli", p4, p3, 10);
 // 		wait(500);
 // 		fill("orange");
-// 		pointDraw(
+// 		circleDraw(
 // 			"intersection",
 // 			"lli",
 // 			lineIntersection(p1, p2, p3, p4),

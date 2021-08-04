@@ -16,6 +16,8 @@ import {
 } from "../settings.js";
 import { fillText } from "./text.js";
 
+
+// list of plotters
 function getPlotterList(unitLength, unitValue, cfgs = {}) {
 	return {
 		getParametricFunction: function (configs) {
@@ -40,12 +42,12 @@ function getPlotterList(unitLength, unitValue, cfgs = {}) {
 
 /**
  * Creates a axes.
- * @param {Object} config
+ * @param {Object} args
  * Possible configurations are:
  *
- * * xAxis  <object>         : Configurations for x axis. (See {@link numberLine} for more configurations)
- * * yAxis  <object>         : Configurations for y axis. (See {@link numberLine} for more configurations)
- * * center <array> [[0, 0]] : center of axes
+ * @param {object} xAxis Configurations for x axis. (See {@link numberLine} for more configurations)
+ * @param {object} yAxis Configurations for y axis. (See {@link numberLine} for more configurations)
+ * @param {array} [center = [0, 0]] center of axes
  *
  * @returns {object} object that contains following properties:
  * * xAxis                 <object>   : x axis confiurations from numberLine (See {@link numberLine} for those configurations).
@@ -55,7 +57,7 @@ function getPlotterList(unitLength, unitValue, cfgs = {}) {
  * * getParametricFunction <function> : Draws a parametric function whose unit sizing are predefined by the axes. see {@link parametricFunction} to see possible configurations.
  * * getFunctionGraph      <function> : Draws a function graph whose unit sizing are predefined by the axes. see {@link functionGraph} to see possible configurations.
  */
-function axes(config = {}) {
+function axes(args = {}) {
 	const ctx = C.workingCanvas;
 	// default configurations
 	const defaultConfigs = {
@@ -83,10 +85,10 @@ function axes(config = {}) {
 		},
 	};
 	// configurations
-	config = applyDefault(defaultConfigs, config);
-	const { xAxis, yAxis } = config;
+	args = applyDefault(defaultConfigs, args);
+	const { xAxis, yAxis } = args;
 	// other configurations
-	const center = config.center || [0, 0];
+	const center = args.center || [0, 0];
 	// range of ticks in each axis
 	const xRange = xAxis.range;
 	const yRange = yAxis.range;
@@ -135,39 +137,41 @@ function axes(config = {}) {
 
 /**
  * Creates a numberLine with parameters in a object
- * @param {object} config
- * Possible properties:
+ * @param {object} args configuration object
  *
- * * point1                    <array>   ([-ctx.width / 2, 0]): starting point of line
- * * point2                    <array>   ([ctx.width / 2, 0]) : ending point of line
- * * range                     <array>   ([-5, 5, 1])         : range of numbers to draw ticks and numbers
- * * numbersToInclude          <array>   ([])                 : list of numbers to be displayed
- * * numbersToExclude          <array>   ([])                 : list of numbers that shouldn't be displayed
- * * numbersWithElongatedTicks <array>   ([])               : list of numbers where tick line should be longer
- * * textDirection             <array>   (0, -0.8)          : Direction of text relative to nearby tick
- * * includeLeftTip            <boolean> (false)            : whether to add an arrow tip at left
- * * includeRightTip           <boolean> (false)            : whether to add an arrow tip at right
- * * includeTick               <boolean> (true)             : Whether ticks should be added
- * * excludeOriginTick         <boolean> (false)            : Whether exclude ticks at origin
- * * tipWidth                  <number>  (20)               : width of arrow tip in px
- * * tipHeight                 <number>  (1)                : height/width of tip
- * * lineWidth                 <number>  (32)               : Width of lines in px
- * * longerTickMultiple        <number>  (2)                : Factor to increase height of ticks at elongated ticks
- * * tickHeight                <number>  (15)               : Height of ticks in px
- * * textSize                  <number>  (17)               : Font size of text
- * * textRotation              <number>  (0)                : Amount to rotate text
- * * decimalPlaces             <number>  (#decimals in step): Number of decimal places in text
- * * color                     <string>  (GREY)             : Color of axis and ticks
- * * textColor                 <string>  (WHITE)            : Color of text
+ * @param {array} [args.point1 = [-ctx.width / 2, 0]] starting point of line. Default value is [-ctx.width / 2, 0]
+ * @param {array} [args.point2 = [ctx.width / 2, 0]] ending point of line
+ * @param {array} [args.range = [-5, 5, 1]] range of numbers to draw ticks and numbers
+ * @param {array} [args.numbersToInclude = []] list of numbers to be displayed
+ * @param {array} [args.numbersToExclude = []] list of numbers that shouldn't be displayed
+ * @param {array} [args.numbersWithElongatedTicks = []] list of numbers where tick line should be longer
+ * @param {array} [args.textDirection = 0, -0.8] Direction of text relative to nearby tick
+ *
+ * @param {boolean} [args.includeLeftTip = false] whether to add an arrow tip at left
+ * @param {boolean} [args.includeRightTip = false] whether to add an arrow tip at right
+ * @param {boolean} [args.includeTick = true] Whether ticks should be added
+ * @param {boolean} [args.excludeOriginTick = false] Whether exclude ticks at origin
+ *
+ * @param {number} [args.tipWidth = 20] width of arrow tip in px
+ * @param {number} [args.tipHeight = 1] height/width of tip
+ * @param {number} [args.lineWidth = 32] Width of lines in px
+ * @param {number} [args.longerTickMultiple = 2] Factor to increase height of ticks at elongated ticks
+ * @param {number} [args.tickHeight = 15] Height of ticks in px
+ * @param {number} [args.textSize = 17] Font size of text
+ * @param {number} [args.textRotation = 0] Amount to rotate text
+ * @param {number} args.decimalPlaces Number of decimal places in text. By default value is number of decimals in step
+ *
+ * @param {string} [args.color = GREY] Color of axis and ticks
+ * @param {string} [args.textColor = WHITE] Color of text
  *
  * @returns {object} configurations about the number line
  *
- * * center     <array>: Center of the number line in px
- * * tickList   <array>: List of tick inervals
- * * unitValue  <array>: How much a unit is in its value in x and y directions.
- * * unitLength <array>: How much a unit is in px in x and y directions.
+ * * center     {array} Center of the number line in px
+ * * tickList   {array} List of tick inervals
+ * * unitValue  {array} How much a unit is in its value in x and y directions.
+ * * unitLength {array} How much a unit is in px in x and y directions.
  */
-function numberLine(config = {}) {
+function numberLine(args = {}) {
 	const ctx = C.workingCanvas;
 	const defaultConfigs = {
 		rotation: 0,
@@ -196,7 +200,7 @@ function numberLine(config = {}) {
 		color: GREY,
 		textColor: WHITE,
 	};
-	config = applyDefault(defaultConfigs, config);
+	args = applyDefault(defaultConfigs, args);
 	const {
 		color,
 		center,
@@ -216,8 +220,8 @@ function numberLine(config = {}) {
 		excludeOriginTick,
 		longerTickMultiple,
 		numbersWithElongatedTicks,
-	} = config;
-	var { range, decimalPlaces } = config;
+	} = args;
+	var { range, decimalPlaces } = args;
 
 	if (Array.isArray(range) && range.length === 2) {
 		range = [range[0], range[1], 1];
@@ -241,8 +245,8 @@ function numberLine(config = {}) {
 	translate(center[0], center[1]);
 	rotate(rotation);
 	translate(-lineLength / 2, 0);
-	if (config.includeTick) drawTicks();
-	if (config.includeNumbers) drawNumbers();
+	if (args.includeTick) drawTicks();
+	if (args.includeNumbers) drawNumbers();
 	translate(lineLength / 2, 0);
 	drawAxis();
 	ctx.closePath();
@@ -287,7 +291,7 @@ function numberLine(config = {}) {
 
 	function drawNumbers() {
 		const numbers = numbersToInclude.length > 0 ? numbersToInclude : list;
-		fill(config.textColor);
+		fill(args.textColor);
 		fontSize(textSize);
 		const yShift =
 			(-textSize / 3) * Math.cos(textRotation) + textDirection[1] * textSize;
@@ -330,18 +334,19 @@ function numberLine(config = {}) {
 
 /**
  * Creates a numberPlane based on following parameters inside a Object
- * @param {Object} config
+ * @param {Object} args
  * Possible parameters:
  *
- * * xAxis  <object>: Configurations for x axis. See {@link numberLine} for possible configurations.
- * * yAxis  <object>: Configurations for y axis. See {@link numberLine} for possible configurations.
- * * center <array> : Center of number plane as [x, y] in px.
- * * grid   <object>: Set of styles to draw grid & subgrids. This can have following properties:
- *   * lineWidth        <number> (1)          : stroke width of grid lines
- *   * subgrids         <number> (0)          : number of sub-grid division to draw
- *   * subgridLineWidth <number> (0.7)        : stroke width of sub-grid
- *   * color            <string> ("#58c4dda0"): color of grid lines
- *   * subgridLineColor <string> ("#888888a0"): color of sub-grids
+ * @param {object} args.xAxis Configurations for x axis. See {@link numberLine} for possible configurations.
+ * @param {object} args.yAxis Configurations for y axis. See {@link numberLine} for possible configurations.
+ * @param {array} args.center Center of number plane as [x, y] in px.
+ * @param {object} args.grid Set of styles to draw grid & subgrids. This can have following properties:
+ *
+ *   @param {number} [args.grid.lineWidth = 1]  stroke width of grid lines
+ *   @param {number} [args.grid.subgrids = 0]  number of sub-grid division to draw
+ *   @param {number} [args.grid.subgridLineWidth = 0.7]  stroke width of sub-grid
+ *   @param {string} [args.grid.color = "#58c4dda0"]  color of grid lines
+ *   @param {string} [args.grid.subgridLineColor = "#888888a0"]  color of sub-grids
  * @returns {Object} configurations of number plane. Those are :
  *
  * * center                <array>   : Center of number plane as [x, y] in px.
@@ -353,7 +358,7 @@ function numberLine(config = {}) {
  * * getParametricFunction <function>: Draws a parametric function whose unit sizing are predefined by the axes. see {@link parametricFunction} to see possible configurations.
  * * getFunctionGraph      <function>: Draws a function graph whose unit sizing are predefined by the axes. see {@link functionGraph} to see possible configurations.
  */
-function numberPlane(config = {}) {
+function numberPlane(args = {}) {
 	const ctx = C.workingCanvas;
 	// default configurations
 	const defaultConfigs = {
@@ -394,11 +399,11 @@ function numberPlane(config = {}) {
 	};
 
 	// configurations
-	config = applyDefault(defaultConfigs, config);
-	const { xAxis, yAxis, grid } = config;
+	args = applyDefault(defaultConfigs, args);
+	const { xAxis, yAxis, grid } = args;
 	// other configurations
 	const subgrids = grid.subgrids;
-	const center = config.center;
+	const center = args.center;
 	// range of ticks in each axis
 	const xRange = xAxis.range;
 	const yRange = yAxis.range;
