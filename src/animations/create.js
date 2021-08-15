@@ -1,76 +1,133 @@
 import { readColor } from "../color/color_reader.js";
 import { C } from "../main.js";
-import { dist } from "../math/points.js";
 import { smooth } from "../math/rate_functions.js";
-import { getBezierControlPoints, line, point } from "../objects/geometry.js";
+import { ellipse, point } from "../objects/geometry.js";
 import { getStrokeWidth, loop, noLoop } from "../settings.js";
+import { applyDefault } from "../utils.js";
 
 const counters = {
-	circleDraw: 0,
-	animatedLine: 0,
-	animateFill: 0,
+	Circle: 1,
+	Line: 1,
+	animateFill: 1,
+	Arc: 1,
 };
 
 /**
- * Animates a line from point pa to point pb.
+ * Animates a line from point p1 to point p2.
  *
- * @param {array} pa The first point.
- * @param {array} pb The second point.
+ * @param {array} p1 The first point.
+ * @param {array} p2 The second point.
  * @param {number} [dt=10] The duration of one frame in milliseconds.
  * @param {function} [next=() => {}] The function to call after the animation.
  */
-function animatedLine(
-	name,
-	id,
-	pa,
-	pb,
-	dt = 10,
-	dp = 0.01,
-	next = null,
-	drawEndPoints = true
-) {
-	let t = 0;
-	let r = 4;
-	let angle = Math.atan2(pb[1] - pa[1], pb[0] - pa[0]);
-	if (drawEndPoints) {
-		circleDraw(name + "-start", id, [...pa], r, 5, 0.09, "green", 500);
-		pa[0] += r * Math.cos(angle);
-		pa[1] += r * Math.sin(angle);
-		pb[0] -= r * Math.cos(angle);
-		pb[1] -= r * Math.sin(angle);
-	}
-	const pa_pb_dist = dist(pa, pb);
-	loop(
-		name,
-		function () {
-			if (t > 1) noLoop();
-			let x1 = pa[0] * (1 - t) + pb[0] * t,
-				y1 = pa[1] * (1 - t) + pb[1] * t,
-				x2 = pa[0] * (1 - (t + dp)) + pb[0] * (t + dp),
-				y2 = pa[1] * (1 - (t + dp)) + pb[1] * (t + dp);
-			if (dist(pa, [x2, y2]) > pa_pb_dist) {
-				x2 = pb[0];
-				y2 = pb[1];
-			}
-			t += dp;
-			line(x1, y1, x2, y2);
-		},
-		id,
-		dt
+function Line(args) {
+	let defaults = {
+		name: "line-" + counters.Line++,
+		dur: 1000,
+		dTime: 10,
+		next: null,
+		rateFunction: smooth,
+	};
+	let { p1, p2, name, dur, canvas, dTime, rateFunction, next } = applyDefault(
+		defaults,
+		args
 	);
-	if (drawEndPoints) {
-		circleDraw(
-			name + "-end",
-			id,
-			[pb[0] + r * Math.cos(angle), pb[1] + r * Math.sin(angle)],
-			r,
-			5,
-			0.09,
-			"blue",
-			200,
-			next
-		);
+	canvas = canvas || C.workingCanvas.name;
+	let ctx = C.canvasList[canvas];
+
+	let angle = Math.atan2(p2[1] - p1[1], p2[0] - p1[0]);
+	let points = [];
+	let xDiff = p2[0] - p1[0];
+	let yDiff = p2[1] - p1[1];
+	let dx = Math.cos(angle) / xDiff;
+	for (let t = 0; t <= 1; t += dx) {
+		points.push([t * xDiff + p1[0], p1[1] + t * yDiff]);
 	}
+	return {
+		points: points, // list of computed points
+		dur: dur,
+		dTime: dTime,
+		canvas: ctx,
+		rateFunction: rateFunction,
+		name: name,
+		closed: false,
+		smoothen: false,
+		fill: false,
+		next: next,
+	};
+}
+
+function Arc(args) {
+	const defaults = {
+		center: [0, 0],
+		name: "arc-" + counters.Arc++,
+		radiusX: 100,
+		radiusY: 100,
+		dur: 1000,
+		dTime: 16,
+		fill: false,
+		fillTime: 500,
+		next: null,
+		rateFunction: smooth,
+		closed: false,
+		startAngle: 0,
+		angle: Math.PI / 2,
+	};
+	let {
+		name,
+		dur,
+		center,
+		canvas,
+		dTime,
+		fill: fillColor,
+		fillTime,
+		next,
+		closed,
+		rateFunction,
+		startAngle,
+		angle,
+		radiusX,
+		radiusY,
+	} = Object.assign(defaults, args);
+	canvas = canvas || C.workingCanvas.name;
+	let ctx = C.canvasList[canvas];
+	let points = [];
+
+	if (args.radius) {
+		radiusX = args.radius;
+		radiusY = args.radius;
+	}
+	let dt = 2 / (ctx.dpr * (radiusX + radiusY));
+	for (let t = startAngle; t <= angle + startAngle + 1e-6; t += dt) {
+		const x1 = Math.cos(t) * radiusX + center[0];
+		const y1 = Math.sin(t) * radiusY + center[1];
+		points.push([x1, y1]);
+	}
+	let rx = radiusX;
+	let ry = radiusY;
+	if (ctx.doStroke) {
+		rx -= getStrokeWidth();
+		ry -= getStrokeWidth();
+	}
+	return {
+		points: points, // list of computed points
+		dur: dur,
+		dTime: dTime,
+		canvas: ctx,
+		rateFunction: rateFunction,
+		name: name,
+		closed: closed,
+		smoothen: true,
+		tension: 1,
+		fill: fillColor,
+		fillTime: fillTime,
+		next: next,
+		rx: rx,
+		ry: ry,
+		filler: function () {
+			ellipse(center[0], center[1], rx, ry, 0, startAngle, angle);
+		},
+	};
 }
 
 /**
@@ -79,19 +136,27 @@ function animatedLine(
  * @param {string} id ID of canvas
  * @param {string} FILL color of canvas
  * @param {function} f funciton that draws the shape
- * @param {number} [time=1000] time to run
- * @param {number} [dt=10] time for each frame
+ * @param {number} [dur=1000] dur to run
+ * @param {number} [dt=10] dur for each frame
  * @param {function} [next=null] function to run after filling
  */
-function animateFill(name, id, FILL, f, time = 1000, dt = 10, next = null) {
+function animateFill(
+	name,
+	canvasName,
+	FILL,
+	f,
+	dur = 1000,
+	dt = 10,
+	next = null
+) {
 	let _fill = readColor(FILL, true);
-	const ctx = C.canvasList[id];
-	let previousT = -time / dt;
+	const ctx = C.canvasList[canvasName];
+	let previousT = -dur / dt;
 	loop(
-		name + " fill",
+		"filling " + name,
 		(t) => {
-			if (t >= time) {
-				noLoop();
+			if (t >= dur) {
+				noLoop(canvasName, t);
 				if (typeof next == "function") next();
 			}
 			ctx.fillStyle = readColor(
@@ -103,8 +168,11 @@ function animateFill(name, id, FILL, f, time = 1000, dt = 10, next = null) {
 			f();
 			previousT = t;
 		},
-		id,
-		dt
+		canvasName,
+		dt,
+		1000,
+		{},
+		dur
 	);
 }
 
@@ -112,110 +180,51 @@ function animateFill(name, id, FILL, f, time = 1000, dt = 10, next = null) {
  * Animates drawing of a point.
  * @param {object} args object containing configs
  *
- * @param {string} [args.name = "point-" + ++counters.circleDraw]
- * @param {number} [args.radius = 3]
- * @param {number} [args.time = 1000]
- * @param {number} [args.dTime = 1]
- * @param {boolean|string} [args.fill = false]
- * @param {number} [args.fillTime = 500]
- * @param {funciton} [args.next = null]
- * @param {funciton} [args.rateFunction = smooth]
+ * @param {string} [args.name = "point-" + counters.Circle] Name of the animation
+ * @param {number} [args.radius = 3] radius of circle
+ * @param {number} [args.dur = 1000] duration of animation
+ * @param {number} [args.dTime = 1] duration of each frame
+ * @param {boolean|string} [args.fill = false] if false, no fill. Else a color to fill with.
+ * @param {number} [args.fillTime = 500] time to fill inside circle.
+ * @param {funciton} [args.next = null] function to run after animation ends.
+ * @param {funciton} [args.rateFunction = smooth] function to use for rate.
  * @param {array} args.center center of the circle
  * @param {string} args.canvas name of canvas in which the animation is rendered
  */
-function circleDraw(args) {
+function Circle(args) {
 	let defaults = {
-		name: "point-" + counters.circleDraw++,
-		radius: 3,
-		time: 1000,
-		dTime: 1,
+		name: "point-" + counters.Circle++,
+		radius: 100,
+		dur: 1000,
+		dTime: 16,
 		fill: false,
 		fillTime: 500,
 		next: null,
 		rateFunction: smooth,
+		startAngle: 0,
+		angle: Math.PI * 2
 	};
-	let {
-		name,
-		time,
-		center,
-		radius,
-		canvas,
-		dTime,
-		fill: fillColor,
-		fillTime,
-		next,
-		rateFunction,
-	} = Object.assign(defaults, args);
-	canvas = canvas || C.workingCanvas.name;
-	let ctx = C.canvasList[canvas];
-	let points = [];
-	let dt = 1 / (ctx.dpr * radius);
-	for (let t = 0; t <= Math.PI * 2 + 1e-6; t += dt) {
-		const x1 = Math.cos(t) * radius + center[0];
-		const y1 = Math.sin(t) * radius + center[1];
-		points.push([x1, y1]);
-	}
-	dt = dTime / time;
+	args = Object.assign(defaults, args);
+	let center = args.center;
+	let {points, dur, dTime, canvas, rateFunction, fill:fillColor, fillTime, next, rx} = Arc(args);
+	console.log(rx);
 	return {
-		// function that animates drawing of circle
-		draw: function () {
-			let t = 0;
-			let len = points.length - 1;
-			loop(
-				name,
-				() => {
-					if (t > 1) {
-						ctx.closePath();
-						t = 0; // for next loop
-						noLoop();
-					}
-					if (t == 0) {
-						ctx.beginPath();
-						ctx.moveTo(
-							...points[len - Math.abs(Math.round(len * rateFunction(0)))]
-						);
-					}
-					let recentPoint =
-						points[Math.round(len * rateFunction(t - dt)) % len] ||
-						points[len - Math.abs(Math.round(len * rateFunction(t - dt)))];
-					let currentPoint = points[Math.round(len * rateFunction(t)) % len];
-					let nextPoint = points[Math.round(len * rateFunction(t + dt)) % len];
-					let secondNextPoint =
-						points[Math.round(len * rateFunction(t + dt * 2)) % len];
-					let cp = getBezierControlPoints(
-						recentPoint,
-						currentPoint,
-						nextPoint,
-						secondNextPoint,
-						1
-					);
-					ctx.bezierCurveTo(
-						cp[0],
-						cp[1],
-						cp[2],
-						cp[3],
-						nextPoint[0],
-						nextPoint[1]
-					);
-					if (ctx.doStroke) ctx.stroke();
-					t += dt;
-				},
-				canvas,
-				dTime
-			);
-			if (fillColor)
-				animateFill(
-					name,
-					canvas,
-					fillColor,
-					() => point(center[0], center[1], radius * 2 - getStrokeWidth() * 2),
-					fillTime,
-					10,
-					next
-				);
+		points: points, // list of computed points
+		dur: dur,
+		dTime: dTime,
+		canvas: canvas,
+		rateFunction: rateFunction,
+		name: args.name,
+		closed: true,
+		smoothen: true,
+		tension: 1,
+		fill: fillColor,
+		fillTime: fillTime,
+		next: next,
+		filler: function () {
+			point(center[0], center[1], rx*2);
 		},
-		points: points // list of computed points
 	};
 }
 
-export { animatedLine, animateFill, circleDraw };
+export { Line, Arc, animateFill, Circle };

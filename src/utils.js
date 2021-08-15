@@ -1,6 +1,14 @@
-Object.getType = function (obj) {
-	return Object.prototype.toString.call(obj).substr(8).replace("]", "");
-};
+
+/**
+ * Returns the type of object
+ *
+ * @param {*} stuff
+ * @return {string}
+ */
+function getType (stuff) {
+	return Object.prototype.toString.call(stuff).slice(8, -1);
+}
+
 Object.clone =
 	Object.clone ||
 	function (toClone) {
@@ -80,8 +88,8 @@ function applyDefault(_default, target = {}, deepApply = true) {
 		const prop = keys[i],
 			defaultProp = _default[prop],
 			targetProp = target[prop];
-		const defaultType = Object.getType(defaultProp);
-		const targetType = Object.getType(targetProp);
+		const defaultType = getType(defaultProp);
+		const targetType = getType(targetProp);
 		if (defaultType == "Object" && deepApply) {
 			target[prop] = applyDefault(defaultProp, targetProp, deepApply);
 		}
@@ -112,6 +120,7 @@ function approximateIndexInArray(val, array, epsilon = 1e-6) {
 
 window.applyDefault = applyDefault;
 export {
+	getType,
 	defineProperties,
 	arange,
 	applyDefault,

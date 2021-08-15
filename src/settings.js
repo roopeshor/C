@@ -1,12 +1,26 @@
+import { animateFill } from "./animations/create.js";
 import { readColor } from "./color/color_reader.js";
 import { white } from "./constants/named_colors.js";
 import { C } from "./main.js";
+import { getBezierControlPoints } from "./objects/geometry.js";
+import { getType } from "./utils.js";
 
 /**
  * This module contains functions to manipulate the canvas.
  * @module settings
  */
 
+const counter = {
+	wait: 1,
+};
+
+const logStyles = {
+	number: "color: #9afcad;",
+	keyword: "color: #adacdf;",
+	running: "color: yellow;",
+	delayed: "color: orange;",
+	finished: "color: #3aff5f;",
+};
 /**
  * Begins a new shape at the point specified by the given (x, y) coordinates.
  *
@@ -414,7 +428,8 @@ function loop(
 	canvasName,
 	timeDelay,
 	timeDelaysToRemember = 100,
-	settings = {}
+	settings = {},
+	dur
 ) {
 	let ctx;
 
@@ -429,7 +444,8 @@ function loop(
 	// debugger;
 	if (ctx.currentLoop != undefined) {
 		// already a animation is running
-		if(C.debugAnimations) console.log(canvasName + ": " + name + " %cdelayed", "color: orange;");
+		if (C.debugAnimations)
+			console.log(canvasName + ": " + name + " %cdelayed", logStyles.delayed);
 		ctx.delayedAnimations.push({
 			name: name,
 			settings: _settings,
@@ -437,12 +453,22 @@ function loop(
 			canvasName: canvasName,
 			timeDelay: timeDelay,
 			timeDelaysToRemember: timeDelaysToRemember,
+			dur: dur,
 		});
 	} else {
-		if(C.debugAnimations) console.log(canvasName + ": " + name + " %crunning", "color: yellow;");
+		if (C.debugAnimations) {
+			let toLog = `${canvasName}: ${name} %crunning`,
+				styles = [logStyles.running];
+			if (dur != undefined) {
+				toLog += `%c for %c${dur}ms`;
+				styles.push(logStyles.keyword, logStyles.number);
+			}
+			console.log(toLog, ...styles);
+		}
 		ctx.recentTimeStamp = window.performance.now();
 		ctx.timeStart = window.performance.now();
 		if (!isNaN(timeDelay)) {
+			ctx.currentLoopName = name;
 			ctx.currentLoop = setInterval(function () {
 				C.workingCanvas = ctx;
 				const S = getContextStates(canvasName);
@@ -480,13 +506,22 @@ function loop(
  *
  * @param {string} canvasName name of the canvas given to {@link loop}
  */
-function noLoop(canvasName) {
+function noLoop(canvasName, time) {
 	let ctx = C.workingCanvas;
 	if (!canvasName) canvasName = ctx.name;
 	else ctx = C.canvasList[canvasName];
 	clearInterval(ctx.currentLoop);
 	window.cancelAnimationFrame(ctx.currentLoop);
 	ctx.currentLoop = undefined;
+	if (C.debugAnimations) {
+		let toLog = `${canvasName}: ${ctx.currentLoopName} %cfinished`,
+			formatter = [logStyles.finished];
+		if (time != undefined) {
+			toLog += `%c in %c${time.toFixed(3)}ms`;
+			formatter.push(logStyles.keyword, logStyles.number);
+		}
+		console.log(toLog, ...formatter);
+	}
 	if (ctx.delayedAnimations.length > 0) {
 		let toWork = ctx.delayedAnimations.shift();
 		loop(
@@ -495,7 +530,8 @@ function noLoop(canvasName) {
 			toWork.canvasName,
 			toWork.timeDelay,
 			toWork.timeDelaysToRememberm,
-			toWork.settings
+			toWork.settings,
+			toWork.dur
 		);
 	}
 }
@@ -772,28 +808,147 @@ function initBlackboardCanvas() {
  * @param {number} time time in milliseconds
  * @param {string} canvasName canvas name
  */
-function wait(time, canvasName) {
+function wait(time, canvasName, name) {
 	canvasName = C.workingCanvas.name || canvasName;
 	loop(
-		"waiter",
+		name || "wait-" + counter.wait++,
 		(elapsed) => {
-			if (elapsed >= time) {
-				noLoop(canvasName);
-			}
+			if (elapsed >= time) noLoop(canvasName, elapsed);
 		},
 		canvasName,
+		time,
+		500,
+		{},
 		time
 	);
 }
 
-/**
- * Whehter to debug animations
- *
- * @param {boolean} bool boolean
- */
-function debugAnimations (bool) {
-	if (typeof bool !== "boolean") C.debugAnimations = true;
-	else C.debugAnimations = bool;
+function showCreation() {
+	let animations = Array.prototype.slice.call(arguments);
+	for (let i = 0; i < animations.length; i++) {
+		let animation = animations[i];
+		if (getType(animation) == "Object") {
+			let name = animation.name;
+			let points = animation.points;
+			let dur = animation.dur;
+			let next = animation.next;
+			let dTime = animation.dTime;
+			let closed = animation.closed;
+			let smoothen = animation.smoothen;
+			let tension = animation.tension || 1;
+			let rateFunction = animation.rateFunction;
+			let ctx = animation.canvas;
+			let dt = dTime / dur;
+			let len = points.length - 1;
+			let t = closed ? 0 : dt;
+			if (ctx.lineWidth > 0 && ctx.doStroke) {
+				if (typeof animation.draw != "function") {
+					if (smoothen) {
+						loop(
+							name,
+							(elapsed) => {
+								if (t >= 1) {
+									t = 0; // for next loop
+									noLoop(ctx.name, elapsed);
+								}
+								let i = Math.round(len * rateFunction(t));
+								let ip1 = Math.round(len * rateFunction(t + dt));
+								let ip2 = Math.round(len * rateFunction(t + dt * 2));
+								if (closed) {
+									i %= len;
+									ip1 %= len;
+									ip2 %= len;
+								}
+								let recentPoint =
+									points[Math.round(len * rateFunction(t - dt))] ||
+									points[
+										len - Math.abs(Math.round(len * rateFunction(t - dt)))
+									];
+								let currentPoint = points[i];
+								let nextPoint = points[ip1];
+								let secondNextPoint = points[ip2];
+								let cp = getBezierControlPoints(
+									recentPoint,
+									currentPoint,
+									nextPoint,
+									secondNextPoint,
+									tension
+								);
+								ctx.beginPath();
+								if (closed) {
+									ctx.moveTo(
+										...points[Math.abs(Math.round(len * rateFunction(t)))]
+									);
+								} else ctx.moveTo(...points[Math.round(len * rateFunction(t))]);
+								ctx.bezierCurveTo(
+									cp[0],
+									cp[1],
+									cp[2],
+									cp[3],
+									nextPoint[0],
+									nextPoint[1]
+								);
+								if (ctx.doStroke) ctx.stroke();
+								ctx.closePath();
+								t += dt;
+							},
+							ctx.name,
+							dTime,
+							50,
+							{},
+							dur
+						);
+					} else {
+						loop(
+							name,
+							(elapsed) => {
+								if (t >= 1) {
+									ctx.closePath();
+									noLoop(ctx.name, elapsed);
+								}
+								if (t == 0) {
+									ctx.beginPath();
+									ctx.moveTo(
+										...points[Math.abs(Math.round(len * rateFunction(0)))]
+									);
+								}
+								let currentPoint =
+									points[Math.round(len * rateFunction(t)) % len];
+								ctx.lineTo(currentPoint[0], currentPoint[1]);
+								if (ctx.doStroke) ctx.stroke();
+								t += dt;
+							},
+							ctx.name,
+							dTime,
+							50,
+							{},
+							dur
+						);
+					}
+				} else {
+					animation.draw();
+				}
+			}
+			if (closed && animation.fill) {
+				animateFill(
+					name,
+					ctx.name,
+					animation.fill,
+					animation.filler,
+					animation.fillTime,
+					10,
+					next
+				);
+			}
+		} else {
+			throw new Error(
+				i +
+					1 +
+					(i == 0 ? "st" : i == 1 ? "nd" : i == 2 ? "rd" : "th") +
+					" argument provided is not a object."
+			);
+		}
+	}
 }
 
 export {
@@ -847,5 +1002,5 @@ export {
 	initBlackboardCanvas,
 	wait,
 	getStrokeWidth,
-	debugAnimations
+	showCreation,
 };

@@ -23,6 +23,7 @@ function C(fx, container, cfgs = {}) {
 
 		netRotation: 0,
 		currentLoop: undefined,
+		currentLoopName: undefined,
 		textAlign: "start",
 		textBaseline: "alphabetic",
 		// color stuff
@@ -226,22 +227,15 @@ C.defineProperties = defineProperties;
  */
 C.debugAnimations = false; // whther to debug animations
 
-// C.runDelayedAnimationsIn = function (canvasName) {
-// 	let ctx = C.canvasList[canvasName] || C.workingCanvas;
-// 	for (let i = 0; i < ctx.delayedAnimations.length; i++) {
-// 		let toWork = ctx.delayedAnimations.splice(i, 1)[0];
-// 		loop(
-// 			toWork.name,
-// 			toWork.functionToRun,
-// 			toWork.canvasName,
-// 			toWork.timeDelay,
-// 			toWork.timeDelaysToRememberm,
-// 			toWork.settings
-// 		);
-// 		break;
-// 	}
-// 	// }
-// };
+/**
+ * Whehter to debug animations
+ *
+ * @param {boolean} bool boolean
+ */
+C.debug = function (bool) {
+	if (typeof bool !== "boolean") C.debugAnimations = true;
+	else C.debugAnimations = bool;
+};
 
 // register to window
 window.C = C;
