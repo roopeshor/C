@@ -1,19 +1,18 @@
-
 /**
  * Returns the type of object
  *
  * @param {*} stuff
  * @return {string}
  */
-function getType (stuff) {
+function getType(stuff) {
 	return Object.prototype.toString.call(stuff).slice(8, -1);
 }
 
 Object.clone =
 	Object.clone ||
 	function (toClone) {
-		var newObj = {};
-		for (var i = 0, keys = Object.keys(toClone); i < keys.length; i++) {
+		let newObj = {};
+		for (let i = 0, keys = Object.keys(toClone); i < keys.length; i++) {
 			let a = toClone[keys[i]];
 			newObj[keys[i]] = a;
 		}
@@ -33,7 +32,9 @@ function defineProperties(obj, toAssign, specific, message) {
 	specific = specific === undefined || specific === null ? window : specific;
 	toAssign = toAssign || window;
 	message =
-		typeof message === "function" ? message	: function (k) {
+		typeof message === "function"
+			? message
+			: function (k) {
 					console.warn(
 						"You changed value of '" + k + "' which C uses. Be careful"
 					);
@@ -66,7 +67,7 @@ function defineProperties(obj, toAssign, specific, message) {
 }
 
 function arange(start, end, step, rev = false) {
-	const arr = [];
+	let arr = [];
 	if (rev) for (let i = end; i >= start; i -= step) arr.push(i);
 	else for (let i = start; i <= end; i += step) arr.push(i);
 	return arr;
@@ -85,11 +86,11 @@ function arange(start, end, step, rev = false) {
 function applyDefault(_default, target = {}, deepApply = true) {
 	target = Object.clone(target);
 	for (let i = 0, keys = Object.keys(_default); i < keys.length; i++) {
-		const prop = keys[i],
+		let prop = keys[i],
 			defaultProp = _default[prop],
-			targetProp = target[prop];
-		const defaultType = getType(defaultProp);
-		const targetType = getType(targetProp);
+			targetProp = target[prop],
+			defaultType = getType(defaultProp),
+			targetType = getType(targetProp);
 		if (defaultType == "Object" && deepApply) {
 			target[prop] = applyDefault(defaultProp, targetProp, deepApply);
 		}
@@ -110,7 +111,7 @@ function doFillAndStroke(ctx) {
 
 function approximateIndexInArray(val, array, epsilon = 1e-6) {
 	for (let i = 0; i < array.length; i++) {
-		var k = array[i];
+		let k = array[i];
 		if (Math.abs(k - val) <= epsilon) {
 			return i;
 		}

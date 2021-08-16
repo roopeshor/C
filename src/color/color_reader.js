@@ -5,7 +5,7 @@ import * as namedColors from "../constants/named_colors.js";
 /**
  * Full color string patterns. The capture groups are necessary.
  */
-const // Matching format: #XXX
+let // Matching format: #XXX
 	HEX3 = /^#([a-f0-9])([a-f0-9])([a-f0-9])$/i,
 	// Matching format: #XXXX
 	HEX4 = /^#([a-f0-9])([a-f0-9])([a-f0-9])([a-f0-9])$/i,
@@ -61,7 +61,7 @@ function readColor() {
 		}
 	} else if (typeof c1 == "string") {
 		// Adapted from p5.js
-		const str = c1.replace(/\s/g, "").toLowerCase();
+		let str = c1.replace(/\s/g, "").toLowerCase();
 		// convert string to array if it is a named colour.
 		if (namedColors[str]) result = readColor(namedColors[str], true);
 		else if (HEX3.test(str)) {
@@ -99,7 +99,7 @@ function readColor() {
 		}
 	}
 	if (!toArray) {
-		const mode = (C.workingCanvas || {}).colorMode || "rgba";
+		let mode = (C.workingCanvas || {}).colorMode || "rgba";
 		if (mode === "rgba") {
 			result = `rgba(${result[0]}, ${result[1]}, ${result[2]}, ${result[3]})`;
 		} else if (mode === "hsl" || mode === "rgb") {

@@ -102,9 +102,9 @@ function C(fx, container, cfgs = {}) {
 	if (typeof container.CID !== "number") {
 		container.CID = 1;
 	}
-	var parentCID = container.CID;
-	var parentName = container.id || container.classList.item(0);
-	let canvasName = configs.name;
+	let parentCID = container.CID,
+		parentName = container.id || container.classList.item(0),
+		canvasName = configs.name;
 	if (typeof canvasName == "string") {
 		const cvs = container.querySelector("#" + canvasName);
 		if (cvs instanceof HTMLElement) {

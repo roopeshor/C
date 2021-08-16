@@ -205,8 +205,8 @@ function Circle(args) {
 		angle: Math.PI * 2
 	};
 	args = Object.assign(defaults, args);
-	let center = args.center;
-	let {points, dur, dTime, canvas, rateFunction, fill:fillColor, fillTime, next, rx} = Arc(args);
+	let center = args.center,
+	{points, dur, dTime, canvas, rateFunction, fill:fillColor, fillTime, next, rx} = Arc(args);
 	console.log(rx);
 	return {
 		points: points, // list of computed points

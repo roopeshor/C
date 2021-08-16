@@ -22,7 +22,7 @@ function drawImage() {
  * @param {string} color color of pixel
  */
 function pixel(x, y, color) {
-	const ctx = C.workingCanvas;
+	let ctx = C.workingCanvas;
 	ctx.fillStyle = color == undefined ? ctx.fillStyle : readColor(color);
 	ctx.fillRect(x, y, 1, 1);
 }

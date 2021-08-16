@@ -22,9 +22,9 @@ function curlyBrace(
 	taleLength = 0.8
 ) {
 	//Calculate unit vector
-	var dx = x1 - x2;
-	var dy = y1 - y2;
-	var len = Math.sqrt(dx * dx + dy * dy);
+	let dx = x1 - x2;
+	let dy = y1 - y2;
+	let len = Math.sqrt(dx * dx + dy * dy);
 	dx /= len;
 	dy /= len;
 

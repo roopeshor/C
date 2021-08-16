@@ -1,7 +1,7 @@
 import { randomInt } from "../math/random.js";
 import * as COLORLIST from "../constants/colors.js";
 
-var definedColorList = Object.keys(COLORLIST);
+let definedColorList = Object.keys(COLORLIST);
 const TR_INDEX = definedColorList.indexOf("TRANSPARENT");
 definedColorList = definedColorList
 	.slice(0, TR_INDEX)

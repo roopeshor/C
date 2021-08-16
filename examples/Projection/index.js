@@ -89,7 +89,7 @@ C(
 		}
 
 		let phi = 0, theta = 0, eps = 0;
-		loop("strt", () => {
+		loop(() => {
 			background(0);
 			phi += 1 * DEG;
 			theta += 1 * DEG;

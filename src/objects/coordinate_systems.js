@@ -221,7 +221,7 @@ function numberLine(args = {}) {
 		longerTickMultiple,
 		numbersWithElongatedTicks,
 	} = args;
-	var { range, decimalPlaces } = args;
+	let { range, decimalPlaces } = args;
 
 	if (Array.isArray(range) && range.length === 2) {
 		range = [range[0], range[1], 1];

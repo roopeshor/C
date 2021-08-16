@@ -8,7 +8,7 @@ import { C } from "../main.js";
  * @param {Object|array} colorStops color stops
  @example
  ```js
-var color = linearGradient(
+let color = linearGradient(
 	[0, 0], [200, 0],
 	{
 			0: "green",
@@ -18,7 +18,7 @@ var color = linearGradient(
 );
 ```,
 ```js
-var color = linearGradient(
+let color = linearGradient(
 	[0, 0], [200, 0],
 	[
 		"green",

@@ -10,11 +10,11 @@ import { getType } from "./utils.js";
  * @module settings
  */
 
-const counter = {
+let counter = {
 	wait: 1,
 };
 
-const logStyles = {
+let logStyles = {
 	number: "color: #9afcad;",
 	keyword: "color: #adacdf;",
 	running: "color: yellow;",
@@ -50,7 +50,7 @@ function lineTo(x, y) {
  * * a array of numbers ([0, 244, 34])
  */
 function background() {
-	const col = readColor(...arguments),
+	let col = readColor(...arguments),
 		ctx = C.workingCanvas;
 	ctx.background = col;
 	ctx.save();
@@ -70,7 +70,7 @@ function background() {
  * @param {number} height Rectangle's height. positive values are down, and negative are up.
  */
 function clear(x, y, width, height) {
-	const ctx = C.workingCanvas;
+	let ctx = C.workingCanvas;
 	x = x || 0;
 	y = y || 0;
 	width = width || ctx.width;
@@ -83,8 +83,8 @@ function clear(x, y, width, height) {
  *
  */
 function clearAll() {
-	const ctx = C.workingCanvas;
-	const d = ctx.dpr;
+	let ctx = C.workingCanvas,
+		d = ctx.dpr;
 	ctx.save();
 	ctx.setTransform(d, 0, 0, d, 0, 0);
 	ctx.clearRect(0, 0, ctx.width, ctx.height);
@@ -97,7 +97,7 @@ function clearAll() {
  *
  */
 function permaBackground() {
-	const canvasStyle = C.workingCanvas.canvas.style;
+	let canvasStyle = C.workingCanvas.canvas.style;
 	canvasStyle.background = "url('" + getCanvasData() + "')";
 	canvasStyle.backgroundPosition = "center";
 	canvasStyle.backgroundSize = "cover";
@@ -118,7 +118,7 @@ function permaBackground() {
  * @param {number} f Vertical translation
  */
 function setTransform(a, b, c, d, e, f) {
-	const ctx = C.workingCanvas;
+	let ctx = C.workingCanvas;
 	if (a instanceof DOMMatrix) ctx.setTransform(a);
 	else ctx.setTransform(a, b, c, d, e, f);
 	ctx.scale(ctx.dpr, ctx.dpr);
@@ -148,7 +148,7 @@ function getTransform() {
  * @param {number} f Vertical translation
  */
 function transform(a, b, c, d, e, f) {
-	const ctx = C.workingCanvas;
+	let ctx = C.workingCanvas;
 	if (a instanceof DOMMatrix) ctx.transform(a);
 	else ctx.transform(a, b, c, d, e, f);
 }
@@ -215,7 +215,7 @@ function scale(x, y = x) {
  * @param {number} angle The rotation angle, clockwise in radians. You can use degree * DEG to calculate a radian from a degree.
  */
 function rotate(angle) {
-	const ctx = C.workingCanvas;
+	let ctx = C.workingCanvas;
 	ctx.rotate(angle);
 	ctx.netRotation = ((ctx.netRotation + angle) % Math.PI) * 2;
 }
@@ -289,7 +289,7 @@ function getStrokeWidth() {
  *
  */
 function rest() {
-	const ctx = C.workingCanvas;
+	let ctx = C.workingCanvas;
 	ctx.setTransform(ctx.dpr, 0, 0, ctx.dpr, 0, 0);
 }
 
@@ -304,7 +304,7 @@ function rest() {
  *
  */
 function stroke() {
-	const ctx = C.workingCanvas;
+	let ctx = C.workingCanvas;
 	if (arguments.length > 0) {
 		ctx.strokeStyle = readColor(...arguments);
 		ctx.doStroke = true;
@@ -324,7 +324,7 @@ function stroke() {
  *
  */
 function fill() {
-	const ctx = C.workingCanvas;
+	let ctx = C.workingCanvas;
 	if (arguments.length !== 0) {
 		ctx.fillStyle = readColor(...arguments);
 		ctx.doFill = true;
@@ -340,7 +340,7 @@ function fill() {
  * @returns {Object}
  */
 function getContextStates(canvasName) {
-	const ctx = C.canvasList[canvasName] || C.workingCanvas;
+	let ctx = C.canvasList[canvasName] || C.workingCanvas;
 	return {
 		background: ctx.background,
 		colorMode: ctx.colorMode,
@@ -433,14 +433,22 @@ function loop(
 ) {
 	let ctx;
 
-	// if canvasName isn't given it will assume the drawing context to be the current working canvas
+	// if name isn't given it will shift the arguments to right
+	if (name == undefined) {
+		// shift arguments
+		functionToRun = arguments[0];
+		canvasName = arguments[1];
+		timeDelay = arguments[2];
+		settings = arguments[3];
+		dur = arguments[4];
+	}
 	if (!canvasName) {
 		ctx = C.workingCanvas;
 		canvasName = ctx.name;
 	} else ctx = C.canvasList[canvasName];
 	ctx.timeDelayList = [];
 	ctx.totalTimeCaptured = 0;
-	const _settings = Object.assign(getContextStates(canvasName), settings);
+	let _settings = Object.assign(getContextStates(canvasName), settings);
 	// debugger;
 	if (ctx.currentLoop != undefined) {
 		// already a animation is running
@@ -471,7 +479,7 @@ function loop(
 			ctx.currentLoopName = name;
 			ctx.currentLoop = setInterval(function () {
 				C.workingCanvas = ctx;
-				const S = getContextStates(canvasName);
+				let S = getContextStates(canvasName);
 				Object.assign(C.workingCanvas, _settings);
 				functionToRun(window.performance.now() - ctx.timeStart, getFPS());
 				Object.assign(C.workingCanvas, S);
@@ -483,14 +491,14 @@ function loop(
 	function run() {
 		ctx.currentLoop = window.requestAnimationFrame(run);
 		C.workingCanvas = ctx;
-		const S = getContextStates(canvasName);
+		let S = getContextStates(canvasName);
 		if (settings) Object.assign(C.workingCanvas, _settings);
 		functionToRun(window.performance.now() - ctx.timeStart, getFPS());
 		if (settings) Object.assign(C.workingCanvas, S);
 	}
 
 	function getFPS() {
-		const now = window.performance.now(),
+		let now = window.performance.now(),
 			timeDelay = now - ctx.recentTimeStamp; // time delays between frames
 		ctx.recentTimeStamp = now;
 		ctx.timeDelayList.push(timeDelay);
@@ -541,7 +549,7 @@ function noLoop(canvasName, time) {
  *
  */
 function startShape() {
-	const ctx = C.workingCanvas;
+	let ctx = C.workingCanvas;
 	ctx.beginPath();
 	ctx.pathStarted = true;
 }
@@ -551,7 +559,7 @@ function startShape() {
  *
  */
 function endShape() {
-	const ctx = C.workingCanvas;
+	let ctx = C.workingCanvas;
 	ctx.closePath();
 	ctx.pathStarted = false;
 }
@@ -563,9 +571,9 @@ function endShape() {
  * @returns {string}
  */
 function getFont(detailed = false) {
-	const ctx = C.workingCanvas;
+	let ctx = C.workingCanvas;
 	if (detailed) {
-		const {
+		let {
 			fontStyle,
 			fontVariant,
 			fontWeight,
@@ -607,7 +615,7 @@ function measureText(text) {
  * * SMALLER
  */
 function fontSize(size) {
-	const ctx = C.workingCanvas;
+	let ctx = C.workingCanvas;
 	size = typeof size === "number" ? size + "px" : size;
 	ctx.fontSize = size;
 	ctx.font = getFont(true);
@@ -619,7 +627,7 @@ function fontSize(size) {
  * @param {string} family
  */
 function fontFamily(family) {
-	const ctx = C.workingCanvas;
+	let ctx = C.workingCanvas;
 	ctx.fontFamily = family;
 	ctx.font = getFont(true);
 }
@@ -634,7 +642,7 @@ function fontFamily(family) {
  * * OBLIQUE [<angle>]
  */
 function fontStyle(style) {
-	const ctx = C.workingCanvas;
+	let ctx = C.workingCanvas;
 	ctx.fontStyle = style;
 	ctx.font = getFont(true);
 }
@@ -646,7 +654,7 @@ function fontStyle(style) {
  * @param {string} variant
  */
 function fontVariant(variant) {
-	const ctx = C.workingCanvas;
+	let ctx = C.workingCanvas;
 	ctx.fontVariant = variant;
 	ctx.font = getFont(true);
 }
@@ -657,7 +665,7 @@ function fontVariant(variant) {
  * @param {string} weight
  */
 function fontWeight(weight) {
-	const ctx = C.workingCanvas;
+	let ctx = C.workingCanvas;
 	ctx.fontWeight = weight;
 	ctx.font = getFont(true);
 }
@@ -681,7 +689,7 @@ function fontWeight(weight) {
  * * <percentage>
  */
 function fontStretch(stretch) {
-	const ctx = C.workingCanvas;
+	let ctx = C.workingCanvas;
 	ctx.fontStretch = stretch;
 	ctx.font = getFont(true);
 }
@@ -693,7 +701,7 @@ function fontStretch(stretch) {
  * @param {string} height
  */
 function lineHeight(height) {
-	const ctx = C.workingCanvas;
+	let ctx = C.workingCanvas;
 	ctx.lineHeight = height;
 	ctx.font = getFont(true);
 }
@@ -715,8 +723,8 @@ function getCanvasData(datURL = "image/png") {
  * @param {string} [datURL="image/png"] type of file
  */
 function saveCanvas(name = "drawing", datURL = "image/png") {
-	const link = getCanvasData().replace(datURL, "image/octet-stream");
-	const a = document.createElement("a");
+	let link = getCanvasData().replace(datURL, "image/octet-stream"),
+		a = document.createElement("a");
 	a.download = name + ".png";
 	a.href = link;
 	a.click();
@@ -779,7 +787,7 @@ function centerdText() {
  * initializes a canvas translated to center and y-axis inverted
  */
 function initCenteredCanvas() {
-	const ctx = C.workingCanvas;
+	let ctx = C.workingCanvas;
 	ctx.translate(ctx.width / 2, ctx.height / 2);
 }
 
@@ -787,7 +795,7 @@ function initCenteredCanvas() {
  * Inverts y-axis
  */
 function invertYAxis() {
-	const ctx = C.workingCanvas;
+	let ctx = C.workingCanvas;
 	ctx.scale(1, -1);
 	ctx.yAxisInverted = !ctx.yAxisInverted;
 }
@@ -828,19 +836,19 @@ function showCreation() {
 	for (let i = 0; i < animations.length; i++) {
 		let animation = animations[i];
 		if (getType(animation) == "Object") {
-			let name = animation.name;
-			let points = animation.points;
-			let dur = animation.dur;
-			let next = animation.next;
-			let dTime = animation.dTime;
-			let closed = animation.closed;
-			let smoothen = animation.smoothen;
-			let tension = animation.tension || 1;
-			let rateFunction = animation.rateFunction;
-			let ctx = animation.canvas;
-			let dt = dTime / dur;
-			let len = points.length - 1;
-			let t = closed ? 0 : dt;
+			let dur = animation.dur,
+				ctx = animation.canvas,
+				next = animation.next,
+				name = animation.name,
+				dTime = animation.dTime,
+				points = animation.points,
+				closed = animation.closed,
+				smoothen = animation.smoothen,
+				tension = animation.tension || 1,
+				rateFunction = animation.rateFunction,
+				dt = dTime / dur,
+				len = points.length - 1,
+				t = closed ? 0 : dt;
 			if (ctx.lineWidth > 0 && ctx.doStroke) {
 				if (typeof animation.draw != "function") {
 					if (smoothen) {
@@ -851,29 +859,29 @@ function showCreation() {
 									t = 0; // for next loop
 									noLoop(ctx.name, elapsed);
 								}
-								let i = Math.round(len * rateFunction(t));
-								let ip1 = Math.round(len * rateFunction(t + dt));
-								let ip2 = Math.round(len * rateFunction(t + dt * 2));
+								let i = Math.round(len * rateFunction(t)),
+									ip1 = Math.round(len * rateFunction(t + dt)),
+									ip2 = Math.round(len * rateFunction(t + dt * 2));
 								if (closed) {
 									i %= len;
 									ip1 %= len;
 									ip2 %= len;
 								}
 								let recentPoint =
-									points[Math.round(len * rateFunction(t - dt))] ||
-									points[
-										len - Math.abs(Math.round(len * rateFunction(t - dt)))
-									];
-								let currentPoint = points[i];
-								let nextPoint = points[ip1];
-								let secondNextPoint = points[ip2];
-								let cp = getBezierControlPoints(
-									recentPoint,
-									currentPoint,
-									nextPoint,
-									secondNextPoint,
-									tension
-								);
+										points[Math.round(len * rateFunction(t - dt))] ||
+										points[
+											len - Math.abs(Math.round(len * rateFunction(t - dt)))
+										],
+									currentPoint = points[i],
+									nextPoint = points[ip1],
+									secondNextPoint = points[ip2],
+									cp = getBezierControlPoints(
+										recentPoint,
+										currentPoint,
+										nextPoint,
+										secondNextPoint,
+										tension
+									);
 								ctx.beginPath();
 								if (closed) {
 									ctx.moveTo(

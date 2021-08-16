@@ -19,21 +19,21 @@ const DEFAULT_TIP_WIDTH = 15;
  * @param {number} height height of tip
  */
 function arrowTip(x1, y1, x2, y2, width, height) {
-	var ctx = C.workingCanvas;
-	var thickness = ctx.lineWidth;
-	var distance = Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2);
+	let ctx = C.workingCanvas;
+	let thickness = ctx.lineWidth;
+	let distance = Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2);
 	if (isNaN(width)) width = distance;
 	height = height || width / 1.2;
-	var w = width - distance;
-	var r = Math.sqrt(w ** 2 + (height / 2) ** 2);
-	var t = Math.atan(height / (w * 2));
+	let w = width - distance;
+	let r = Math.sqrt(w ** 2 + (height / 2) ** 2);
+	let t = Math.atan(height / (w * 2));
 	if (distance > width) t = t + Math.PI;
-	var angleFromXAxis = Math.atan2(y2 - y1, x2 - x1);
-	var A = [
+	let angleFromXAxis = Math.atan2(y2 - y1, x2 - x1);
+	let A = [
 		x1 - Math.cos(t + angleFromXAxis) * r,
 		y1 - Math.sin(t + angleFromXAxis) * r,
 	];
-	var B = [
+	let B = [
 		x1 - Math.cos(-t + angleFromXAxis) * r,
 		y1 - Math.sin(-t + angleFromXAxis) * r,
 	];
@@ -242,7 +242,7 @@ function curvedArrow(
 	const tipAngularDiameter = tipWidth / radius;
 	ctx.save();
 	arrowCurving /= radius;
-	var padding = tipAngularDiameter - arrowCurving;
+	let padding = tipAngularDiameter - arrowCurving;
 
 	ctx.beginPath();
 	if (reverse) {
@@ -367,7 +367,7 @@ function curvedArrowBetweenPoints(
 	p2[1] -= center[1];
 	const p1Angle = Math.atan2(p1[1], p1[0]);
 	const p2Angle = Math.atan2(p2[1], p2[0]);
-	var angleBetweenPoints, startAngle;
+	let angleBetweenPoints, startAngle;
 	if (otherArc) {
 		startAngle = p1Angle;
 		angleBetweenPoints = p2Angle - p1Angle;
@@ -425,7 +425,7 @@ function curvedDoubleArrowBetweenPoints(
 	const tipAngularDiameter = tipWidth / radius;
 	const p1Angle = Math.atan2(p1[1], p1[0]);
 	const p2Angle = Math.atan2(p2[1], p2[0]) + tipAngularDiameter;
-	var angleBetweenPoints, startAngle;
+	let angleBetweenPoints, startAngle;
 	if (otherArc) {
 		startAngle = p1Angle;
 		angleBetweenPoints = p2Angle - p1Angle;
@@ -445,7 +445,7 @@ function curvedDoubleArrowBetweenPoints(
 		arrowCurving * radius,
 		tipOffset
 	);
-	var padding = tipAngularDiameter - arrowCurving + tipOffset;
+	let padding = tipAngularDiameter - arrowCurving + tipOffset;
 	startAngle -= tipAngularDiameter;
 	arrowTip(
 		center[0] + radius * Math.cos(startAngle + padding),

@@ -20,8 +20,8 @@ function gcd(a, b) {
  * @return {number}
  */
 function gcdArray() {
-	var n = 0;
-	for (var i = 0; i < arguments.length; ++i) n = gcd(arguments[i], n);
+	let n = 0;
+	for (let i = 0; i < arguments.length; ++i) n = gcd(arguments[i], n);
 	return n;
 }
 
@@ -42,8 +42,8 @@ function lcm(a, b) {
  * @return {number}
  */
 function lcmArray() {
-	var n = 1;
-	for (var i = 0; i < arguments.length; ++i) n = lcm(arguments[i], n);
+	let n = 1;
+	for (let i = 0; i < arguments.length; ++i) n = lcm(arguments[i], n);
 	return n;
 }
 

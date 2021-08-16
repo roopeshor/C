@@ -16,7 +16,7 @@ import { doFillAndStroke } from "../utils.js";
  * @param {number} [startAngle=0] The angle at which the arc starts in radians, measured from the positive x-axis.
  */
 function arc(x, y, r, angle = Math.PI / 2, startAngle = 0) {
-	const ctx = C.workingCanvas;
+	let ctx = C.workingCanvas;
 	if (!ctx.pathStarted) ctx.beginPath();
 	ctx.arc(x, y, r, startAngle, startAngle + angle);
 	if (!ctx.pathStarted) doFillAndStroke(ctx);
@@ -31,7 +31,7 @@ function arc(x, y, r, angle = Math.PI / 2, startAngle = 0) {
  * @param {boolean} [doStroke=false] whether to stroke or not
  */
 function point(x, y, size = 10, doStroke = false) {
-	const ctx = C.workingCanvas;
+	let ctx = C.workingCanvas;
 	ctx.beginPath();
 	ctx.arc(x, y, size / 2, 0, Math.PI * 2);
 	ctx.fill();
@@ -49,7 +49,7 @@ function point(x, y, size = 10, doStroke = false) {
  * @param {number} [startAngle=0] The angle at which the arc starts in radians, measured from the positive x-axis.
  */
 function circularSegment(x, y, r, angle = Math.PI / 2, startAngle = 0) {
-	const ctx = C.workingCanvas;
+	let ctx = C.workingCanvas;
 	if (!ctx.pathStarted) ctx.beginPath();
 	ctx.arc(x, y, r, startAngle, startAngle + angle);
 	if (!ctx.pathStarted) doFillAndStroke(ctx);
@@ -63,7 +63,7 @@ function circularSegment(x, y, r, angle = Math.PI / 2, startAngle = 0) {
  * @param {number} r radius
  */
 function circle(x, y, r) {
-	const ctx = C.workingCanvas;
+	let ctx = C.workingCanvas;
 	ctx.beginPath();
 	ctx.arc(x, y, r, 0, Math.PI * 2);
 	doFillAndStroke(ctx);
@@ -90,7 +90,7 @@ function ellipse(
 	startAngle = 0,
 	angle = Math.PI * 2
 ) {
-	const ctx = C.workingCanvas;
+	let ctx = C.workingCanvas;
 	if (!ctx.pathStarted) ctx.beginPath();
 	ctx.ellipse(x, y, radius1, radius2, rotation, startAngle, startAngle + angle);
 	if (!ctx.pathStarted) doFillAndStroke(ctx);
@@ -108,8 +108,8 @@ function ellipse(
  * @param {number} y3 y-axis coord of the end point
  */
 function bezier(cpx1, cpy1, cpx2, cpy2, x3, y3) {
-	const ctx = C.workingCanvas;
-	const pathStarted = ctx.pathStarted;
+	let ctx = C.workingCanvas,
+		pathStarted = ctx.pathStarted;
 	if (!pathStarted) ctx.beginPath();
 	ctx.bezierCurveTo(cpx1, cpy1, cpx2, cpy2, x3, y3);
 	if (!ctx.pathStarted) doFillAndStroke(ctx);
@@ -125,7 +125,7 @@ function bezier(cpx1, cpy1, cpx2, cpy2, x3, y3) {
  * @param {number} [startAngle=0] The angle at which the arc starts in radians, measured from the positive x-axis.
  */
 function sector(x, y, radius, angle = Math.PI / 2, startAngle = 0) {
-	const ctx = C.workingCanvas;
+	let ctx = C.workingCanvas;
 	ctx.beginPath();
 	ctx.moveTo(x, y);
 	ctx.arc(x, y, radius, startAngle, startAngle + angle);
@@ -166,21 +166,20 @@ function getBezierControlPoints(
  * @param {number} tension tension of the curve
  */
 function smoothCurveThroughPointsTo(points, tension = 1, closed = true) {
-	for (var i = 0; i < points.length - 1; i++) {
-		var recentPoint =
-			i > 0 ? points[i - 1] : closed ? points[points.length - 2] : points[0];
-		var currentPoint = points[i];
-		var nextPoint = points[i + 1];
-		var secondNextPoint =
-			i != points.length - 2 ? points[i + 2] : closed ? points[1] : nextPoint;
-
-		var cp = getBezierControlPoints(
-			recentPoint,
-			currentPoint,
-			nextPoint,
-			secondNextPoint,
-			tension
-		);
+	for (let i = 0; i < points.length - 1; i++) {
+		let recentPoint =
+				i > 0 ? points[i - 1] : closed ? points[points.length - 2] : points[0],
+			currentPoint = points[i],
+			nextPoint = points[i + 1],
+			secondNextPoint =
+				i != points.length - 2 ? points[i + 2] : closed ? points[1] : nextPoint,
+			cp = getBezierControlPoints(
+				recentPoint,
+				currentPoint,
+				nextPoint,
+				secondNextPoint,
+				tension
+			);
 		C.workingCanvas.bezierCurveTo(
 			cp[0],
 			cp[1],
@@ -199,7 +198,7 @@ function smoothCurveThroughPointsTo(points, tension = 1, closed = true) {
  * @param {number} tension tension of the curve
  */
 function smoothCurveThroughPoints(points, tension = 1, closed = true) {
-	const ctx = C.workingCanvas;
+	let ctx = C.workingCanvas;
 	ctx.beginPath();
 	ctx.moveTo(points[0][0], points[0][1]);
 	smoothCurveThroughPointsTo(points, tension, closed);
@@ -227,7 +226,7 @@ function smoothCurveThroughPoints(points, tension = 1, closed = true) {
  * @global
  */
 function quadraticCurve() {
-	const ctx = C.workingCanvas,
+	let ctx = C.workingCanvas,
 		args = arguments;
 	if (args.length == 4) {
 		ctx.quadraticCurveTo(args[0], args[1], args[2], args[3]);
@@ -248,7 +247,7 @@ function quadraticCurve() {
  * @param {number} outerRadius radius of the outer circle
  */
 function annulus(x, y, innerRadius, outerRadius) {
-	const ctx = C.workingCanvas;
+	let ctx = C.workingCanvas;
 	ctx.beginPath();
 	ctx.arc(x, y, innerRadius, 0, 2 * Math.PI, false);
 	ctx.moveTo(outerRadius, 0);
@@ -267,7 +266,7 @@ function annulus(x, y, innerRadius, outerRadius) {
  * @param {number} startAngle The angle at which the sector starts in radians, measured from the positive x-axis.
  */
 function annulusSector(x, y, innerRadius, outerRadius, angle, startAngle) {
-	const ctx = C.workingCanvas;
+	let ctx = C.workingCanvas;
 	ctx.beginPath();
 	ctx.arc(x, y, innerRadius, startAngle, startAngle + angle, false);
 	ctx.arc(x, y, outerRadius, startAngle + angle, startAngle, true);
@@ -297,22 +296,22 @@ function angle(
 	otherAngle = false,
 	angleDir = 1
 ) {
-	const [x, y] = lineIntersection(p1, p2, p3, p4);
+	let [x, y] = lineIntersection(p1, p2, p3, p4);
 	if (!(isNaN(x) || isNaN(y))) {
-		var ang,
+		let ang,
 			startAngle,
 			a1 = Math.atan2(p1[1] - y, p1[0] - x),
 			a2 = Math.atan2(p2[1] - y, p2[0] - x),
 			a3 = Math.atan2(p3[1] - y, p3[0] - x),
-			a4 = Math.atan2(p4[1] - y, p4[0] - x);
-
-		var angleDirs = {
+			a4 = Math.atan2(p4[1] - y, p4[0] - x),
+			angleDirs = {
 				1: [a2, a4],
 				2: [a4, a1],
 				3: [a1, a3],
 				4: [a3, a2],
 			},
-			dir = angleDirs[angleDir];
+			dir = angleDirs[angleDir],
+			ctx = C.workingCanvas;
 		if (otherAngle) {
 			startAngle = dir[1];
 			ang = dir[0] - dir[1];
@@ -320,8 +319,6 @@ function angle(
 			startAngle = dir[0];
 			ang = dir[1] - dir[0];
 		}
-
-		const ctx = C.workingCanvas;
 		if (ctx.doFill) {
 			ctx.beginPath();
 			ctx.moveTo(x, y);
@@ -367,11 +364,10 @@ function arcBetweenPoints(x1, y1, x2, y2, radius, otherArc = false) {
 		console.error(
 			"Can't draw a arc between points. Given points are exactly same"
 		);
-	var center = circleIntersection([x1, y1], radius, [x2, y2], radius)[0];
-	const ctx = C.workingCanvas;
-	const angleFromXAxis = Math.atan2(y1 - center[1], x1 - center[0]);
-	const centralAngle =
-		Math.atan2(y2 - center[1], x2 - center[0]) - angleFromXAxis;
+	let center = circleIntersection([x1, y1], radius, [x2, y2], radius)[0],
+		ctx = C.workingCanvas,
+		angleFromXAxis = Math.atan2(y1 - center[1], x1 - center[0]),
+		centralAngle = Math.atan2(y2 - center[1], x2 - center[0]) - angleFromXAxis;
 	if (!ctx.pathStarted) {
 		ctx.save();
 		ctx.beginPath();
@@ -400,7 +396,7 @@ function arcBetweenPoints(x1, y1, x2, y2, radius, otherArc = false) {
  * @param {number} y2 end y coord
  */
 function line(x1, y1, x2, y2) {
-	const ctx = C.workingCanvas;
+	let ctx = C.workingCanvas;
 	ctx.beginPath();
 	ctx.moveTo(x1, y1);
 	ctx.lineTo(x2, y2);
@@ -417,7 +413,7 @@ function line(x1, y1, x2, y2) {
  * @param {number} height height
  */
 function rect(x, y, width, height) {
-	const ctx = C.workingCanvas;
+	let ctx = C.workingCanvas;
 	ctx.beginPath();
 	ctx.rect(x, y, width, height);
 	if (ctx.doFill) ctx.fill();
@@ -438,10 +434,10 @@ function rect(x, y, width, height) {
  * ```
  */
 function polygon() {
-	const args = arguments;
+	let args = arguments;
 	if (args.length > 2) {
-		const ctx = C.workingCanvas;
-		const start = args[0];
+		let ctx = C.workingCanvas,
+			start = args[0];
 		ctx.beginPath();
 		ctx.moveTo(start[0], start[1]);
 		for (let i = 1; i < args.length; i++) {
@@ -474,7 +470,7 @@ function square(x, y, sideLength) {
  * @param {array} p4 4th point
  */
 function quad(p1, p2, p3, p4) {
-	const ctx = C.workingCanvas;
+	let ctx = C.workingCanvas;
 	ctx.beginPath();
 	ctx.moveTo(p1[0], p1[1]);
 	ctx.lineTo(p2[0], p2[1]);
@@ -494,7 +490,7 @@ function quad(p1, p2, p3, p4) {
  * @param {array} p3 third point
  */
 function triangle(p1, p2, p3) {
-	const ctx = C.workingCanvas;
+	let ctx = C.workingCanvas;
 	ctx.beginPath();
 	ctx.moveTo(p1[0], p1[1]);
 	ctx.lineTo(p2[0], p2[1]);
@@ -527,7 +523,7 @@ function equiTriangle(x, y, sideLength, rotation = 0) {
  * @param {number} [rotation=0] amound to rotate the entire polygon
  */
 function regularPolygon(x, y, sides, sideLength, rotation = 0) {
-	const radius = sideLength / (2 * Math.sin(Math.PI / sides)); // finds ex-radius
+	let radius = sideLength / (2 * Math.sin(Math.PI / sides)); // finds ex-radius
 	regularPolygonWithRadius(x, y, sides, radius, rotation);
 }
 
@@ -541,11 +537,11 @@ function regularPolygon(x, y, sides, sideLength, rotation = 0) {
  * @param {number} [rotation=0] amound to rotate the entire polygon
  */
 function regularPolygonWithRadius(x, y, sides, radius, rotation = 0) {
-	let i = 0;
-	const e = (Math.PI * 2) / sides;
-	const ctx = C.workingCanvas;
+	let i = 0,
+		e = (Math.PI * 2) / sides,
+		ctx = C.workingCanvas;
 	rotation += e / 2;
-	const initial = [
+	let initial = [
 		Math.cos(rotation) * radius + x,
 		Math.sin(rotation) * radius + y,
 	];
@@ -574,9 +570,9 @@ function regularPolygonWithRadius(x, y, sides, radius, rotation = 0) {
  */
 function polygonWithRatioOfCentralAngles(x, y, radius, ratios, rotation = 0) {
 	if (!Array.isArray(ratios)) console.error("ratio provided is not array");
-	const sumOfRatio = ratios.reduce((a, b) => a + b, 0);
-	const baseAngle = (Math.PI * 2) / sumOfRatio;
-	const ctx = C.workingCanvas;
+	let sumOfRatio = ratios.reduce((a, b) => a + b, 0),
+		baseAngle = (Math.PI * 2) / sumOfRatio,
+		ctx = C.workingCanvas;
 	ctx.save();
 	ctx.translate(x, y);
 	ctx.rotate(rotation);

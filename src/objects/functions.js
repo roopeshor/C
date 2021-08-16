@@ -42,7 +42,7 @@ const animationEventChain = {
  * * animate <function> : Function that animates the drawing of the shape. Accept argument `duration` which is the duration of animation.
  */
 function parametricFunction(args) {
-	const defaultConfigs = {
+	let defaultConfigs = {
 		tension: 1,
 
 		unitValue: [1, 1],
@@ -55,24 +55,24 @@ function parametricFunction(args) {
 		draw: true,
 	};
 	args = applyDefault(defaultConfigs, args);
-	var { paramFunction, range, smoothen, tension, discontinuities, closed } =
+	let { paramFunction, range, smoothen, tension, discontinuities, closed } =
 		args;
 	if (Array.isArray(range) && range.length == 2)
 		range.push((range[1] - range[0]) / 20);
-	var points = [[]];
-	var min = range[0];
-	var max = range[1];
-	var step = range[2];
+	let points = [[]],
+		min = range[0],
+		max = range[1],
+		step = range[2];
 	if (!Array.isArray(discontinuities)) discontinuities = [];
 
 	// generate points
-	var epsilon = 1e-6;
-	if (step < epsilon) epsilon = step / 2;
-	var row = 0;
-	var noPoints = 0;
-	const unitX = args.unitLength[0] / args.unitValue[0],
+	let epsilon = 1e-6,
+		row = 0,
+		noPoints = 0,
+		unitX = args.unitLength[0] / args.unitValue[0],
 		unitY = args.unitLength[1] / args.unitValue[1];
-	for (var t = min; t <= max + epsilon; t += step) {
+	if (step < epsilon) epsilon = step / 2;
+	for (let t = min; t <= max + epsilon; t += step) {
 		if (approximateIndexInArray(t, discontinuities, epsilon) > -1) {
 			if (approximateIndexInArray(t + step, discontinuities, epsilon) > -1) {
 				row++;
@@ -88,9 +88,9 @@ function parametricFunction(args) {
 	// draw the plot
 	if (args.draw) plot();
 	function plot() {
-		const ctx = C.workingCanvas;
+		let ctx = C.workingCanvas;
 		for (let i = 0; i < points.length; i++) {
-			var p = points[i];
+			let p = points[i];
 			if (smoothen) {
 				smoothCurveThroughPoints(p, tension, closed);
 			} else {
@@ -104,12 +104,12 @@ function parametricFunction(args) {
 			}
 		}
 	}
-	const ctx = C.workingCanvas;
+	let ctx = C.workingCanvas;
 	return {
 		points: points,
 		draw: plot,
 		animate: function (duration = 2000) {
-			var dt = duration / noPoints;
+			let dt = duration / noPoints;
 			for (let i = 0; i < points.length; i++) {
 				var p = points[i];
 				let j = 0;
@@ -126,18 +126,18 @@ function parametricFunction(args) {
 						ctx.closePath();
 						if (ctx.doFill) this.draw();
 					}
-					var recentPoint = j > 0 ? p[j - 1] : closed ? p[p.length - 2] : p[0];
-					var currentPoint = p[j];
-					var nextPoint = p[j + 1];
-					var secondNextPoint =
-						j != p.length - 2 ? p[j + 2] : closed ? p[1] : nextPoint;
+					let recentPoint = j > 0 ? p[j - 1] : closed ? p[p.length - 2] : p[0],
+						currentPoint = p[j],
+						nextPoint = p[j + 1],
+						secondNextPoint =
+							j != p.length - 2 ? p[j + 2] : closed ? p[1] : nextPoint,
+						cp = getBezierControlPoints(
+							recentPoint,
+							currentPoint,
+							nextPoint,
+							secondNextPoint
+						);
 					j++;
-					var cp = getBezierControlPoints(
-						recentPoint,
-						currentPoint,
-						nextPoint,
-						secondNextPoint
-					);
 					ctx.beginPath();
 					ctx.moveTo(currentPoint[0], currentPoint[1]);
 					ctx.bezierCurveTo(
@@ -157,7 +157,7 @@ function parametricFunction(args) {
 						noLoop();
 						if (ctx.doFill) this.draw();
 					}
-					var p1 = p[j],
+					let p1 = p[j],
 						p2 = p[++j];
 					line(p1[0], p1[1], p2[0], p2[1]);
 				};
@@ -172,7 +172,7 @@ function parametricFunction(args) {
  * See {@link parametricFunction} For arguments
  */
 function functionGraph(args) {
-	const paramFunction = args.paramFunction;
+	let paramFunction = args.paramFunction;
 	args.paramFunction = (x) => [x, paramFunction(x)];
 	return parametricFunction(args);
 }
@@ -194,7 +194,7 @@ function functionGraph(args) {
  * @return {object} metadatas
  */
 function heatPlot(args) {
-	const defaultConfigs = {
+	let defaultConfigs = {
 		min: [-4, -4],
 		max: [4, 4],
 		colors: {
@@ -212,8 +212,8 @@ function heatPlot(args) {
 		interpolator: (x) => x,
 	};
 	args = applyDefault(defaultConfigs, args, false);
-	const { min, max, colors, resolution, plotFunction, interpolator } = args;
-	const ctx = C.workingCanvas,
+	let { min, max, colors, resolution, plotFunction, interpolator } = args,
+		ctx = C.workingCanvas,
 		unitSizeX = args.unitLength[0] / args.unitValue[0],
 		unitSizeY = args.unitLength[1] / args.unitValue[1],
 		UVX = args.unitValue[0] / args.unitLength[0],
@@ -222,13 +222,13 @@ function heatPlot(args) {
 
 	// converting colors to rgba array
 
-	for (var stop of stopes) colors[stop] = readColor(colors[stop], true);
+	for (let stop of stopes) colors[stop] = readColor(colors[stop], true);
 
-	const minS = Math.min(...stopes);
-	const maxS = Math.max(...stopes);
+	let minS = Math.min(...stopes),
+		maxS = Math.max(...stopes);
 	ctx.save();
-	for (var x = min[0]; x <= max[0]; x += resolution * UVX) {
-		for (var y = min[1]; y <= max[1]; y += resolution * UVY) {
+	for (let x = min[0]; x <= max[0]; x += resolution * UVX) {
+		for (let y = min[1]; y <= max[1]; y += resolution * UVY) {
 			let c = lerpColorArray(plotFunction(x, y));
 			ctx.fillStyle = c;
 			ctx.fillRect(x * unitSizeX, y * unitSizeY, resolution, resolution);
@@ -237,7 +237,7 @@ function heatPlot(args) {
 	function lerpColorArray(v) {
 		if (v >= maxS) return "rgba(" + colors[maxS].join() + ")";
 		if (v <= minS) return "rgba(" + colors[minS].join() + ")";
-		for (var i = 0; i < stopes.length - 1; i++) {
+		for (let i = 0; i < stopes.length - 1; i++) {
 			let a = stopes[i],
 				b = stopes[i + 1],
 				c1 = colors[a],

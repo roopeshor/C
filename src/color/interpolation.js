@@ -24,7 +24,7 @@ function lerpColorArray(colorArr, v) {
 	const max = Math.max(...stopes);
 	if (v >= max) return colorArr[max];
 	if (v <= min) return colorArr[min];
-	for (var i = 0; i < stopes.length - 1; i++) {
+	for (let i = 0; i < stopes.length - 1; i++) {
 		let a = stopes[i];
 		if (v > a) {
 			return lerpColor(
@@ -49,8 +49,8 @@ function getInterpolatedColorList(colorPalatte, min = 0, max = 5, step = 1, alph
 	}
 	const colorObj = {};
 	const cp = colorPalatte[len];
-  var k = 0;
-	for (var i = min; i <= max; i += step) {
+  let k = 0;
+	for (let i = min; i <= max; i += step) {
 		const c = readColor(cp[k++], true);
 		c[3] = alpha;
 		colorObj[i] = readColor(...c);

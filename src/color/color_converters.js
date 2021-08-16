@@ -20,28 +20,20 @@ function hue2RGB(p, q, t) {
  * @return {array} The HSL representation
  */
 function RGBToHSL(r, g, b) {
-	const max = Math.max(r, g, b);
-	const min = Math.min(r, g, b);
-	let hue;
-	let saturation;
-	const lightness = (max + min) / 2;
+	let max = Math.max(r, g, b),
+		min = Math.min(r, g, b),
+		hue,
+		saturation,
+		lightness = (max + min) / 2;
 
 	if (max === min) {
 		hue = saturation = 0; // achromatic
 	} else {
-		const d = max - min;
+		let d = max - min;
 		saturation = lightness > 0.5 ? d / (2 - max - min) : d / (max + min);
-		switch (max) {
-			case r:
-				hue = (g - b) / d + (g < b ? 6 : 0);
-				break;
-			case g:
-				hue = (b - r) / d + 2;
-				break;
-			case b:
-				hue = (r - g) / d + 4;
-				break;
-		}
+		if (max == r) hue = (g - b) / d + (g < b ? 6 : 0);
+		else if (max == g) hue = (b - r) / d + 2;
+		else if (max == b) hue = (r - g) / d + 4;
 		hue /= 6;
 	}
 
@@ -65,9 +57,11 @@ function HSLToRGB(hue, saturation, lightness) {
 	if (saturation === 0) {
 		r = g = b = lightness; // achromatic
 	} else {
-		const q =
-			lightness < 0.5 ? lightness * (1 + saturation) : lightness + saturation - lightness * saturation;
-		const p = 2 * lightness - q;
+		let q =
+			lightness < 0.5
+				? lightness * (1 + saturation)
+				: lightness + saturation - lightness * saturation;
+		let p = 2 * lightness - q;
 		r = hue2RGB(p, q, hue + 1 / 3);
 		g = hue2RGB(p, q, hue);
 		b = hue2RGB(p, q, hue - 1 / 3);
@@ -87,28 +81,20 @@ function HSLToRGB(hue, saturation, lightness) {
  * @param {number} blue The blue color value
  * @return {array} The HSV representation
  */
-function RGBToHSV(r,g,b) {
-	const max = Math.max(r, g, b); // val
-	const min = Math.min(r, g, b); // chroma
-	let hue;
-	const value = max;
-	const d = max - min;
-	const saturation = max === 0 ? 0 : d / max;
+function RGBToHSV(r, g, b) {
+	let max = Math.max(r, g, b), // val
+		min = Math.min(r, g, b), // chroma
+		hue,
+		value = max,
+		d = max - min,
+		saturation = max === 0 ? 0 : d / max;
 
 	if (max === min) {
 		hue = 0; // achromatic
 	} else {
-		switch (max) {
-			case r:
-				hue = (g - b) / d + (g < b ? 6 : 0);
-				break;
-			case g:
-				hue = (b - r) / d + 2;
-				break;
-			case b:
-				hue = (r - g) / d + 4;
-				break;
-		}
+		if (max == r) hue = (g - b) / d + (g < b ? 6 : 0);
+		else if (max == g) hue = (b - r) / d + 2;
+		else if (max == b) hue = (r - g) / d + 4;
 		hue /= 6;
 	}
 
@@ -127,45 +113,22 @@ function RGBToHSV(r,g,b) {
  * @return {array} The RGB representation
  */
 function HSVToRGB(hue, saturation, value) {
-	let r, g, b;
-	const i = Math.floor(hue / 60);
-	const f = hue / 60 - i;
-	const p = value * (1 - saturation);
-	const q = value * (1 - f * saturation);
-	const t = value * (1 - (1 - f) * saturation);
+	let r,
+		g,
+		b,
+		i = Math.floor(hue / 60),
+		f = hue / 60 - i,
+		p = value * (1 - saturation),
+		q = value * (1 - f * saturation),
+		t = value * (1 - (1 - f) * saturation);
 
-	switch (i % 6) {
-		case 0:
-			r = value;
-			g = t;
-			b = p;
-			break;
-		case 1:
-			r = q;
-			g = value;
-			b = p;
-			break;
-		case 2:
-			r = p;
-			g = value;
-			b = t;
-			break;
-		case 3:
-			r = p;
-			g = q;
-			b = value;
-			break;
-		case 4:
-			r = t;
-			g = p;
-			b = value;
-			break;
-		case 5:
-			r = value;
-			g = p;
-			b = q;
-			break;
-	}
+	i %= 6;
+	if (i == 0) (r = value), (g = t), (b = p);
+	else if (i == 1) (r = q), (g = value), (b = p);
+	else if (i == 2) (r = p), (g = value), (b = t);
+	else if (i == 3) (r = p), (g = q), (b = value);
+	else if (i == 4) (r = t), (g = p), (b = value);
+	else if (i == 5) (r = value), (g = p), (b = q);
 
 	return [r, g, b];
 }
