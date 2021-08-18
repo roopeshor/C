@@ -28,7 +28,7 @@ function Line(args) {
 		next: null,
 		rateFunction: smooth,
 	};
-	let { p1, p2, name, dur, canvas, dTime, rateFunction, next } = applyDefault(
+	let { p1, p2, name, dur, canvas, dTime, rateFunction, next, syncWithTime } = applyDefault(
 		defaults,
 		args
 	);
@@ -39,9 +39,12 @@ function Line(args) {
 	let points = [];
 	let xDiff = p2[0] - p1[0];
 	let yDiff = p2[1] - p1[1];
-	let dx = Math.cos(angle) / xDiff;
-	for (let t = 0; t <= 1; t += dx) {
-		points.push([t * xDiff + p1[0], p1[1] + t * yDiff]);
+	let dt = Math.abs(Math.cos(angle) / xDiff);
+	if (Math.abs(Math.PI / 2 - Math.abs(angle)) < 1e-6) {
+		dt = 1 / Math.abs(yDiff);
+	}
+	for (let t = 0; t <= 1 + 1e-6; t += dt) {
+		points.push([p1[0] * (1 - t) + p2[0] * t, p1[1] * (1 - t) + p2[1] * t]);
 	}
 	return {
 		points: points, // list of computed points
@@ -54,6 +57,7 @@ function Line(args) {
 		smoothen: false,
 		fill: false,
 		next: next,
+		syncWithTime: syncWithTime
 	};
 }
 

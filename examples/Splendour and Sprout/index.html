@@ -4,12 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
-    <script defer src="../../src/index.js"></script>
-    <script defer src="./main.js" ></script>
+    <script defer src="../../src/app.js" type="module"></script>
+    <script defer src="./index.js" type="module" ></script>
   <style>
     body {
       margin: 0;
       padding: 0;
+			padding-bottom: 20px;
       background-color: #eee;
       font-family: sans-serif;
     }
@@ -44,7 +45,7 @@
       -webkit-appearance: none;
       margin-top: -8px;
     }
-    
+
     input[type=range]::-moz-range-track {
       width: 100%;
       height: 5px;
@@ -77,7 +78,7 @@
       background-color: #34afff;
     }
     canvas {
-      background-color: #34afff;
+      background-color: black;
     }
   </style>
 </head>
@@ -95,7 +96,7 @@
         <input type="range" min="2" id="ppr" value="15" onchange="updateDC('ppr')"/>
       </td>
       <td>
-        <input id="ppr-op" type="number" value="15" onchange="updateDC('ppr', true)"/>
+        <input id="ppr-result" type="number" value="15" onchange="updateDC('ppr', true)"/>
       </td>
     </tr>
     <tr>
@@ -104,7 +105,7 @@
         <input type="range" min="0.01" max="10" id="lw" value="1" step="0.01"  onchange="updateDC('lw')"/>
       </td>
       <td>
-        <input id="lw-op" type="number" value="1" onchange="updateDC('lw', true)"/>
+        <input id="lw-result" type="number" value="1" onchange="updateDC('lw', true)"/>
       </td>
     </tr>
     <tr>
@@ -113,7 +114,7 @@
         <input type="range" min="0" max="10000" id="tpf" value="50" onchange="updateDC('tpf')"/>
       </td>
       <td>
-        <input id="tpf-op" type="number" value="50" onchange="updateDC('tpf', true)"/>
+        <input id="tpf-result" type="number" value="50" onchange="updateDC('tpf', true)"/>
       </td>
     </tr>
     <tr>
@@ -122,7 +123,7 @@
         <input type="range" min="1" max="" id="shift" value="15" onchange="updateDC('shift')"/>
       </td>
       <td>
-        <input id="shift-op" type="number" value="15" onchange="updateDC('shift', true)"/>
+        <input id="shift-result" type="number" value="15" onchange="updateDC('shift', true)"/>
       </td>
     </tr>
     <tr>

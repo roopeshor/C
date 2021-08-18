@@ -3,17 +3,31 @@ import { BLUE, GREEN, ORANGE, RED } from "../../src/constants/colors.js";
 import { C } from "../../src/main.js";
 import {
 	initBlackboardCanvas,
-	scale,
+	showCreation,
 	stroke,
-	strokeWidth,
+	strokeWidth
 } from "../../src/settings.js";
 
-const W = 700;
-const H = 700;
-
-function createAxis(canvasID, xAxis, yAxis, dt = 0, next = null) {
-	Line(canvasID, ...yAxis, dt, 0.015, next, false);
-	Line(canvasID, ...xAxis, dt, 0.015, next, false);
+const W = 400;
+const H = 400;
+C.debug(true);
+function createAxis(canvasID, xAxis, yAxis) {
+	showCreation(
+		Line({
+			name: "yAxis",
+			p1: yAxis[0],
+			p2: yAxis[1],
+			dTime: 10,
+		})
+	);
+	showCreation(
+		Line({
+			name: "xAxis",
+			p1: xAxis[0],
+			p2: xAxis[1],
+			dTime: 10,
+		})
+	);
 }
 
 C(
@@ -31,8 +45,7 @@ C(
 				[0, -H / 2],
 			]
 		);
-		scale(2.5);
-		const baseLinePoints = [
+		let baseLinePoints = [
 				[0, 0],
 				[-80, 0],
 			],
@@ -43,11 +56,25 @@ C(
 			slope =
 				(slantLinePoints[1][1] - slantLinePoints[0][1]) /
 				(slantLinePoints[1][0] - slantLinePoints[0][0]);
-		strokeWidth(1.5);
 		stroke(GREEN);
-		Line("main", ...baseLinePoints, 14, 0.02, null, false);
+		showCreation(
+			Line({
+				name: "base",
+				p1: baseLinePoints[0],
+				p2: baseLinePoints[1],
+				dTime: 14,
+				time: 1000,
+			})
+		);
 		stroke(RED);
-		Line("main", ...slantLinePoints, 14, 0.02, null, false);
+		showCreation(
+			Line({
+				name: "slant",
+				p1: slantLinePoints[0],
+				p2: slantLinePoints[1],
+				dTime: 14,
+			})
+		);
 
 		// parallel lines
 		const dy = 10; // change in y
@@ -56,7 +83,16 @@ C(
 		for (let y = dy; y <= 6 * dy; y += dy) {
 			let p1 = [0, y],
 				p2 = [y / slope + baseLinePoints[1][0], y];
-			Line("main", p1, p2, 10, 0.02, null, false);
+			showCreation(
+				Line({
+					name: "slide" + y / dy,
+					p1: p1,
+					p2: p2,
+					dTime: 10,
+					time: 500,
+					syncWithTime: false,
+				})
+			);
 		}
 	},
 	".container",

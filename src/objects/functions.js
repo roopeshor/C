@@ -19,6 +19,10 @@ const animationEventChain = {
 	},
 };
 
+let counter = {
+	parametricFunction: 1,
+};
+
 /**
  * Draws a parametric functions
  * This accept parameters as object.
@@ -53,6 +57,9 @@ function parametricFunction(args) {
 		smoothen: true,
 		closed: false,
 		draw: true,
+
+		// for animation
+		dur: 4000,
 	};
 	args = applyDefault(defaultConfigs, args);
 	let { paramFunction, range, smoothen, tension, discontinuities, closed } =
@@ -106,17 +113,34 @@ function parametricFunction(args) {
 	}
 	let ctx = C.workingCanvas;
 	return {
-		points: points,
-		draw: plot,
-		animate: function (duration = 2000) {
+		points: points[0],
+		dur: args.dur,
+		name: "parametric-plot-" + counter.parametricFunction++,
+		closed: args.closed,
+		tension: args.tension || 1,
+		smoothen: args.smoothen,
+		rateFunction: args.rateFunction,
+		syncWithTime: args.syncWithTime || false,
+
+		draw: function (duration = 2000) {
 			let dt = duration / noPoints;
 			for (let i = 0; i < points.length; i++) {
 				var p = points[i];
 				let j = 0;
 				if (smoothen) {
-					loop(smoothed(j), C.workingCanvas.name, dt);
+					loop(
+						"parametric-plot-" + counter.parametricFunction++,
+						smoothed(j),
+						C.workingCanvas.name,
+						dt
+					);
 				} else {
-					loop(nonSmoothed(j), dt);
+					loop(
+						"parametric-plot-" + counter.parametricFunction++,
+						nonSmoothed(j),
+						C.workingCanvas.name,
+						dt
+					);
 				}
 			}
 			function smoothed(j) {

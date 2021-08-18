@@ -13,7 +13,7 @@ import { PI, RAD, TWO_PI } from "../../src/constants/math.js";
 import { C } from "../../src/main.js";
 import { doubleArrow, measurement } from "../../src/objects/arrows.js";
 import { arcBrace } from "../../src/objects/braces.js";
-import { linearGradient } from "../../src/objects/color.js";
+import { linearGradient } from "../../src/color/gradients.js";
 import {
 	angle,
 	circle,
@@ -33,9 +33,9 @@ import {
 	textAlign,
 	textBaseline,
 	translate
-} from "../../src/objects/settings.js";
+} from "../../src/settings.js";
 import { fillText, text } from "../../src/objects/text.js";
-import { rotateAroundOrigin } from "../../src/utils/math.js";
+import { rotateAroundOrigin } from "../../src/math/points.js";
 
 const W = 300;
 const H = 300;

@@ -1,4 +1,11 @@
-/* eslint-disable no-undef */
+import { GREEN } from "../../src/constants/colors.js";
+import { E, PI, TAU } from "../../src/constants/math.js";
+import { C } from "../../src/main.js";
+import { lcm } from "../../src/math/aritmetics.js";
+import { abs, cos, sgn, sin } from "../../src/math/basic.js";
+import { axes } from "../../src/objects/coordinate_systems.js";
+import { initBlackboardCanvas, noFill, stroke, strokeWidth } from "../../src/settings.js";
+
 const W = 300;
 const H = 300;
 const CFG = {
@@ -38,8 +45,8 @@ C(
 			paramFunction: ft,
 			range: [0, TAU, TAU / 400],
 			closed: true,
-			draw: false
-		}).animate(5000);
+			draw: false,
+		}).draw(5000);
 
 	},
 	".lissajous",
@@ -61,7 +68,7 @@ C(
 			range: [0, limit, limit / 100],
 			closed: true,
 			draw: false
-		}).animate(2000);
+		}).draw(2000);
 	},
 	".hypotrochoid",
 	CFG
@@ -78,10 +85,11 @@ C(
 		drawAxis(-5, 5, 1).getParametricFunction({
 			paramFunction: ft,
 			range: [0, TAU, PI / 40],
+
 			closed: true,
 			draw: false,
 			smoothen: true
-		}).animate(2000);
+		}).draw(2000);
 	},
 	".superellipse",
 	CFG
@@ -99,7 +107,7 @@ C(
 			range: [-TAU*2, TAU*2, 0.1],
 			closed: false,
 			draw: false
-		}).animate(5000);
+		}).draw(5000);
 	},
 	".butterfly-curve",
 	CFG

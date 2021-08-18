@@ -8,7 +8,7 @@ import { initBlackboardCanvas } from "../../src/settings.js";
 const container = document.querySelector(".container");
 const W = 300;
 const H = 300;
-const examples = [
+const plots = [
 	{
 		name: "sin__cos",
 		heading: "sin(x) + cos(y)",
@@ -78,34 +78,34 @@ const examples = [
 	},
 ];
 
-for (var example of examples) {
+for (var plot of plots) {
 	const cnt = document.createElement("div");
-	cnt.innerHTML = `<h2>${example.heading}</h2>
-<p>${example.description}</p>
-<div id="${example.name}"></div>`;
-	cnt.classList.add(example.name, "example");
+	cnt.innerHTML = `<h2>${plot.heading}</h2>
+<p>${plot.description}</p>
+<div id="${plot.name}"></div>`;
+	cnt.classList.add(plot.name, "plot");
 	container.appendChild(cnt);
 	C(
 		() => {
 			initBlackboardCanvas();
 			axes({
 				xAxis: {
-					range: example.range?.xAxis,
-					includeNumbers: example.includeNumbers,
-					numbersToInclude: example.numbersToInclude,
+					range: plot.range?.xAxis,
+					includeNumbers: plot.includeNumbers,
+					numbersToInclude: plot.numbersToInclude,
 				},
 				yAxis: {
-					range: example.range?.yAxis,
-					includeNumbers: example.includeNumbers,
-					numbersToInclude: example.numbersToInclude,
+					range: plot.range?.yAxis,
+					includeNumbers: plot.includeNumbers,
+					numbersToInclude: plot.numbersToInclude,
 				},
 			}).getHeatPlot({
-				colors: example.colors,
-				resolution: example.resolution,
-				plotFunction: example._function,
+				colors: plot.colors,
+				resolution: plot.resolution,
+				plotFunction: plot._function,
 			});
 		},
-		"#" + example.name,
+		"#" + plot.name,
 		{
 			width: W,
 			height: H,

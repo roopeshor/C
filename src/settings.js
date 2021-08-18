@@ -2,6 +2,7 @@ import { animateFill } from "./animations/create.js";
 import { readColor } from "./color/color_reader.js";
 import { white } from "./constants/named_colors.js";
 import { C } from "./main.js";
+import { smooth } from "./math/rate_functions.js";
 import { getBezierControlPoints } from "./objects/geometry.js";
 import { getType } from "./utils.js";
 
@@ -276,6 +277,7 @@ function getFill() {
 function getStroke() {
 	return C.workingCanvas.strokeStyle;
 }
+
 /**
  * Returns stroke width
  *
@@ -435,7 +437,7 @@ function loop(
 	let ctx;
 
 	// if name isn't given it will shift the arguments to right
-	if (name == undefined) {
+	if (typeof name != "string") {
 		// shift arguments
 		name = counter.loop++;
 		functionToRun = arguments[0];
@@ -858,19 +860,20 @@ function showCreation() {
 	for (let i = 0; i < animations.length; i++) {
 		let animation = animations[i];
 		if (getType(animation) == "Object") {
-			let dur = animation.dur,
-				ctx = animation.canvas,
-				next = animation.next,
+			let dur = animation.dur || 2000,
+				ctx = animation.canvas || C.workingCanvas,
+				next = animation.next || null,
 				name = animation.name,
-				dTime = animation.dTime,
+				dTime = animation.dTime || 14,
 				points = animation.points,
-				closed = animation.closed,
-				smoothen = animation.smoothen,
+				closed = animation.closed || false,
 				tension = animation.tension || 1,
-				rateFunction = animation.rateFunction,
+				smoothen = animation.smoothen == undefined ? true : animation.smoothen,
+				rateFunction = animation.rateFunction || smooth,
+				syncWithTime = animation.syncWithTime || false,
+				t = 0,
 				dt = dTime / dur,
-				len = points.length - 1,
-				t = closed ? 0 : dt;
+				len = points.length;
 			if (ctx.lineWidth > 0 && ctx.doStroke) {
 				if (typeof animation.draw != "function") {
 					if (smoothen) {
@@ -906,7 +909,7 @@ function showCreation() {
 								ctx.beginPath();
 								if (closed)
 									ctx.moveTo(
-										...points[Math.abs(Math.round(len * rateFunction(t)))]
+										...points[Math.abs(Math.round(len * rateFunction(t)) % len)]
 									);
 								else ctx.moveTo(...points[Math.round(len * rateFunction(t))]);
 
@@ -920,7 +923,8 @@ function showCreation() {
 								);
 								if (ctx.doStroke) ctx.stroke();
 								ctx.closePath();
-								t += dt;
+								if (!syncWithTime) t += dt;
+								else t = elapsed / dur;
 							},
 							ctx.name,
 							dTime,
@@ -933,10 +937,8 @@ function showCreation() {
 							name,
 							(elapsed) => {
 								if (t > 1) {
-									ctx.closePath();
 									noLoop(ctx.name, elapsed);
-								}
-								if (t == 0) {
+								} else if (t == 0) {
 									ctx.beginPath();
 									ctx.moveTo(
 										...points[Math.abs(Math.round(len * rateFunction(0)))]
@@ -946,7 +948,8 @@ function showCreation() {
 									points[Math.round(len * rateFunction(t)) % len];
 								ctx.lineTo(currentPoint[0], currentPoint[1]);
 								if (ctx.doStroke) ctx.stroke();
-								t += dt;
+								if (!syncWithTime) t += dt;
+								else t = elapsed / dur;
 							},
 							ctx.name,
 							dTime,

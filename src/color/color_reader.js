@@ -97,6 +97,8 @@ function readColor() {
 		} else {
 			throw new Error("Given color is not valid");
 		}
+	} else {
+		return c1;
 	}
 	if (!toArray) {
 		let mode = (C.workingCanvas || {}).colorMode || "rgba";
