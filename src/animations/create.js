@@ -106,8 +106,8 @@ function Arc(args) {
 	let rx = radiusX;
 	let ry = radiusY;
 	if (ctx.doStroke) {
-		rx -= getStrokeWidth();
-		ry -= getStrokeWidth();
+		rx -= getStrokeWidth() / 2;
+		ry -= getStrokeWidth() / 2;
 	}
 	return {
 		points: points, // list of computed points
@@ -202,12 +202,21 @@ function Circle(args) {
 		next: null,
 		rateFunction: smooth,
 		startAngle: 0,
-		angle: Math.PI * 2
+		angle: Math.PI * 2,
 	};
 	args = Object.assign(defaults, args);
 	let center = args.center,
-	{points, dur, dTime, canvas, rateFunction, fill:fillColor, fillTime, next, rx} = Arc(args);
-	console.log(rx);
+		{
+			points,
+			dur,
+			dTime,
+			canvas,
+			rateFunction,
+			fill: fillColor,
+			fillTime,
+			next,
+			rx,
+		} = Arc(args);
 	return {
 		points: points, // list of computed points
 		dur: dur,
@@ -222,7 +231,7 @@ function Circle(args) {
 		fillTime: fillTime,
 		next: next,
 		filler: function () {
-			point(center[0], center[1], rx*2);
+			point(center[0], center[1], rx * 2, false);
 		},
 	};
 }

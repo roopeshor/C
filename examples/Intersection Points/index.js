@@ -1,16 +1,14 @@
 import {
-	Arc,
 	Circle,
-	Line,
+	Line
 } from "../../src/animations/create.js";
 import { C } from "../../src/main.js";
 import { circleIntersection, lineIntersection } from "../../src/math/points.js";
-import { point } from "../../src/objects/geometry.js";
 import {
 	initBlackboardCanvas,
 	showCreation,
 	strokeWidth,
-	wait,
+	wait
 } from "../../src/settings.js";
 
 const W = 300;

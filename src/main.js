@@ -237,6 +237,8 @@ C.debug = function (bool) {
 	else C.debugAnimations = bool;
 };
 
+
+C._ANIMATIONLOG_ = [];
 // register to window
 window.C = C;
 

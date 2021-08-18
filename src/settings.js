@@ -12,6 +12,7 @@ import { getType } from "./utils.js";
 
 let counter = {
 	wait: 1,
+	loop: 1,
 };
 
 let logStyles = {
@@ -436,6 +437,7 @@ function loop(
 	// if name isn't given it will shift the arguments to right
 	if (name == undefined) {
 		// shift arguments
+		name = counter.loop++;
 		functionToRun = arguments[0];
 		canvasName = arguments[1];
 		timeDelay = arguments[2];
@@ -448,15 +450,22 @@ function loop(
 	} else ctx = C.canvasList[canvasName];
 	ctx.timeDelayList = [];
 	ctx.totalTimeCaptured = 0;
-	let _settings = Object.assign(getContextStates(canvasName), settings);
+	let assignedSettings = Object.assign(getContextStates(canvasName), settings);
 	// debugger;
 	if (ctx.currentLoop != undefined) {
 		// already a animation is running
-		if (C.debugAnimations)
+		if (C.debugAnimations) {
 			console.log(canvasName + ": " + name + " %cdelayed", logStyles.delayed);
+			C._ANIMATIONLOG_.push({
+				canvas: ctx,
+				animationName: name,
+				state: "delayed",
+				settings: assignedSettings,
+			});
+		}
 		ctx.delayedAnimations.push({
 			name: name,
-			settings: _settings,
+			settings: assignedSettings,
 			functionToRun: functionToRun,
 			canvasName: canvasName,
 			timeDelay: timeDelay,
@@ -471,6 +480,13 @@ function loop(
 				toLog += `%c for %c${dur}ms`;
 				styles.push(logStyles.keyword, logStyles.number);
 			}
+			C._ANIMATIONLOG_.push({
+				canvas: ctx,
+				animationName: name,
+				state: "running",
+				settings: assignedSettings,
+				dur: dur,
+			});
 			console.log(toLog, ...styles);
 		}
 		ctx.recentTimeStamp = window.performance.now();
@@ -480,7 +496,7 @@ function loop(
 			ctx.currentLoop = setInterval(function () {
 				C.workingCanvas = ctx;
 				let S = getContextStates(canvasName);
-				Object.assign(C.workingCanvas, _settings);
+				Object.assign(C.workingCanvas, assignedSettings);
 				functionToRun(window.performance.now() - ctx.timeStart, getFPS());
 				Object.assign(C.workingCanvas, S);
 			}, timeDelay);
@@ -492,7 +508,7 @@ function loop(
 		ctx.currentLoop = window.requestAnimationFrame(run);
 		C.workingCanvas = ctx;
 		let S = getContextStates(canvasName);
-		if (settings) Object.assign(C.workingCanvas, _settings);
+		if (settings) Object.assign(C.workingCanvas, assignedSettings);
 		functionToRun(window.performance.now() - ctx.timeStart, getFPS());
 		if (settings) Object.assign(C.workingCanvas, S);
 	}
@@ -529,6 +545,12 @@ function noLoop(canvasName, time) {
 			formatter.push(logStyles.keyword, logStyles.number);
 		}
 		console.log(toLog, ...formatter);
+		C._ANIMATIONLOG_.push({
+			canvas: ctx,
+			animationName: ctx.currentLoopName,
+			state: "finished",
+			endTime: time,
+		});
 	}
 	if (ctx.delayedAnimations.length > 0) {
 		let toWork = ctx.delayedAnimations.shift();
@@ -855,8 +877,7 @@ function showCreation() {
 						loop(
 							name,
 							(elapsed) => {
-								if (t >= 1) {
-									t = 0; // for next loop
+								if (t > 1) {
 									noLoop(ctx.name, elapsed);
 								}
 								let i = Math.round(len * rateFunction(t)),
@@ -883,11 +904,12 @@ function showCreation() {
 										tension
 									);
 								ctx.beginPath();
-								if (closed) {
+								if (closed)
 									ctx.moveTo(
 										...points[Math.abs(Math.round(len * rateFunction(t)))]
 									);
-								} else ctx.moveTo(...points[Math.round(len * rateFunction(t))]);
+								else ctx.moveTo(...points[Math.round(len * rateFunction(t))]);
+
 								ctx.bezierCurveTo(
 									cp[0],
 									cp[1],
@@ -910,7 +932,7 @@ function showCreation() {
 						loop(
 							name,
 							(elapsed) => {
-								if (t >= 1) {
+								if (t > 1) {
 									ctx.closePath();
 									noLoop(ctx.name, elapsed);
 								}
