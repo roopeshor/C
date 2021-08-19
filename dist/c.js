@@ -4,15 +4,14 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.animatedLine = animatedLine;
+exports.Line = Line;
+exports.Arc = Arc;
 exports.animateFill = animateFill;
-exports.pointDraw = pointDraw;
+exports.Circle = Circle;
 
 var _color_reader = require("../color/color_reader.js");
 
 var _main = require("../main.js");
-
-var _points = require("../math/points.js");
 
 var _rate_functions = require("../math/rate_functions.js");
 
@@ -20,53 +19,151 @@ var _geometry = require("../objects/geometry.js");
 
 var _settings = require("../settings.js");
 
+var _utils = require("../utils.js");
+
 const counters = {
-  pointDraw: 0,
-  animatedLine: 0,
-  animateFill: 0
+  Circle: 1,
+  Line: 1,
+  animateFill: 1,
+  Arc: 1
 };
 /**
- * Animates a line from point pa to point pb.
+ * Animates a line from point p1 to point p2.
  *
- * @param {array} pa The first point.
- * @param {array} pb The second point.
+ * @param {array} p1 The first point.
+ * @param {array} p2 The second point.
  * @param {number} [dt=10] The duration of one frame in milliseconds.
  * @param {function} [next=() => {}] The function to call after the animation.
  */
 
-function animatedLine(name, id, pa, pb, dt = 10, dp = 0.01, next = null, drawEndPoints = true) {
-  let t = 0;
-  let r = 4;
-  let angle = Math.atan2(pb[1] - pa[1], pb[0] - pa[0]);
+function Line(args) {
+  let defaults = {
+    name: "line-" + counters.Line++,
+    dur: 1000,
+    dTime: 10,
+    next: null,
+    rateFunction: _rate_functions.smooth
+  };
+  let {
+    p1,
+    p2,
+    name,
+    dur,
+    canvas,
+    dTime,
+    rateFunction,
+    next,
+    syncWithTime
+  } = (0, _utils.applyDefault)(defaults, args);
+  canvas = canvas || _main.C.workingCanvas.name;
+  let ctx = _main.C.canvasList[canvas];
+  let angle = Math.atan2(p2[1] - p1[1], p2[0] - p1[0]);
+  let points = [];
+  let xDiff = p2[0] - p1[0];
+  let yDiff = p2[1] - p1[1];
+  let dt = Math.abs(Math.cos(angle) / xDiff);
 
-  if (drawEndPoints) {
-    pointDraw(name + "-start", id, [...pa], r, 5, 0.09, "green", 500);
-    pa[0] += r * Math.cos(angle);
-    pa[1] += r * Math.sin(angle);
-    pb[0] -= r * Math.cos(angle);
-    pb[1] -= r * Math.sin(angle);
+  if (Math.abs(Math.PI / 2 - Math.abs(angle)) < 1e-6) {
+    dt = 1 / Math.abs(yDiff);
   }
 
-  const pa_pb_dist = (0, _points.dist)(pa, pb);
-  (0, _settings.loop)(name, function () {
-    if (t > 1) (0, _settings.noLoop)();
-    let x1 = pa[0] * (1 - t) + pb[0] * t,
-        y1 = pa[1] * (1 - t) + pb[1] * t,
-        x2 = pa[0] * (1 - (t + dp)) + pb[0] * (t + dp),
-        y2 = pa[1] * (1 - (t + dp)) + pb[1] * (t + dp);
+  for (let t = 0; t <= 1 + 1e-6; t += dt) {
+    points.push([p1[0] * (1 - t) + p2[0] * t, p1[1] * (1 - t) + p2[1] * t]);
+  }
 
-    if ((0, _points.dist)(pa, [x2, y2]) > pa_pb_dist) {
-      x2 = pb[0];
-      y2 = pb[1];
+  return {
+    points: points,
+    // list of computed points
+    dur: dur,
+    dTime: dTime,
+    canvas: ctx,
+    rateFunction: rateFunction,
+    name: name,
+    closed: false,
+    smoothen: false,
+    fill: false,
+    next: next,
+    syncWithTime: syncWithTime
+  };
+}
+
+function Arc(args) {
+  const defaults = {
+    center: [0, 0],
+    name: "arc-" + counters.Arc++,
+    radiusX: 100,
+    radiusY: 100,
+    dur: 1000,
+    dTime: 16,
+    fill: false,
+    fillTime: 500,
+    next: null,
+    rateFunction: _rate_functions.smooth,
+    closed: false,
+    startAngle: 0,
+    angle: Math.PI / 2
+  };
+  let {
+    name,
+    dur,
+    center,
+    canvas,
+    dTime,
+    fill: fillColor,
+    fillTime,
+    next,
+    closed,
+    rateFunction,
+    startAngle,
+    angle,
+    radiusX,
+    radiusY
+  } = Object.assign(defaults, args);
+  canvas = canvas || _main.C.workingCanvas.name;
+  let ctx = _main.C.canvasList[canvas];
+  let points = [];
+
+  if (args.radius) {
+    radiusX = args.radius;
+    radiusY = args.radius;
+  }
+
+  let dt = 2 / (ctx.dpr * (radiusX + radiusY));
+
+  for (let t = startAngle; t <= angle + startAngle + 1e-6; t += dt) {
+    const x1 = Math.cos(t) * radiusX + center[0];
+    const y1 = Math.sin(t) * radiusY + center[1];
+    points.push([x1, y1]);
+  }
+
+  let rx = radiusX;
+  let ry = radiusY;
+
+  if (ctx.doStroke) {
+    rx -= (0, _settings.getStrokeWidth)() / 2;
+    ry -= (0, _settings.getStrokeWidth)() / 2;
+  }
+
+  return {
+    points: points,
+    // list of computed points
+    dur: dur,
+    dTime: dTime,
+    canvas: ctx,
+    rateFunction: rateFunction,
+    name: name,
+    closed: closed,
+    smoothen: true,
+    tension: 1,
+    fill: fillColor,
+    fillTime: fillTime,
+    next: next,
+    rx: rx,
+    ry: ry,
+    filler: function () {
+      (0, _geometry.ellipse)(center[0], center[1], rx, ry, 0, startAngle, angle);
     }
-
-    t += dp;
-    (0, _geometry.line)(x1, y1, x2, y2);
-  }, id, dt);
-
-  if (drawEndPoints) {
-    pointDraw(name + "-end", id, [pb[0] + r * Math.cos(angle), pb[1] + r * Math.sin(angle)], r, 5, 0.09, "blue", 200, next);
-  }
+  };
 }
 /**
  * animate filling of a given shape
@@ -74,89 +171,92 @@ function animatedLine(name, id, pa, pb, dt = 10, dp = 0.01, next = null, drawEnd
  * @param {string} id ID of canvas
  * @param {string} FILL color of canvas
  * @param {function} f funciton that draws the shape
- * @param {number} [time=1000] time to run
- * @param {number} [dt=10] time for each frame
+ * @param {number} [dur=1000] dur to run
+ * @param {number} [dt=10] dur for each frame
  * @param {function} [next=null] function to run after filling
  */
 
 
-function animateFill(name, id, FILL, f, time = 1000, dt = 10, next = null) {
+function animateFill(name, canvasName, FILL, f, dur = 1000, dt = 10, next = null) {
   let _fill = (0, _color_reader.readColor)(FILL, true);
 
-  const ctx = _main.C.canvasList[id];
-  let previousT = -time / dt;
-  (0, _settings.loop)(name + " fill", t => {
-    if (t >= time) {
-      (0, _settings.noLoop)();
+  const ctx = _main.C.canvasList[canvasName];
+  let previousT = -dur / dt;
+  (0, _settings.loop)("filling " + name, t => {
+    if (t >= dur) {
+      (0, _settings.noLoop)(canvasName, t);
       if (typeof next == "function") next();
     }
 
     ctx.fillStyle = (0, _color_reader.readColor)(_fill[0], _fill[1], _fill[2], _fill[3] / (t - previousT));
     f();
     previousT = t;
-  }, id, dt);
+  }, canvasName, dt, 1000, {}, dur);
 }
 /**
  * Animates drawing of a point.
+ * @param {object} args object containing configs
  *
- * @param {array} p center
- * @param {number} r radius
- * @param {number} dt delay time in milliseconds
- * @param {function} [next=null] next function to run
+ * @param {string} [args.name = "point-" + counters.Circle] Name of the animation
+ * @param {number} [args.radius = 3] radius of circle
+ * @param {number} [args.dur = 1000] duration of animation
+ * @param {number} [args.dTime = 1] duration of each frame
+ * @param {boolean|string} [args.fill = false] if false, no fill. Else a color to fill with.
+ * @param {number} [args.fillTime = 500] time to fill inside circle.
+ * @param {funciton} [args.next = null] function to run after animation ends.
+ * @param {funciton} [args.rateFunction = smooth] function to use for rate.
+ * @param {array} args.center center of the circle
+ * @param {string} args.canvas name of canvas in which the animation is rendered
  */
 
 
-function pointDraw(args) {
+function Circle(args) {
   let defaults = {
-    name: "point-" + ++counters.pointDraw,
-    radius: 3,
-    time: 1000,
-    dTime: 10,
+    name: "point-" + counters.Circle++,
+    radius: 100,
+    dur: 1000,
+    dTime: 16,
     fill: false,
     fillTime: 500,
     next: null,
-    rateFunction: _rate_functions.smooth
+    rateFunction: _rate_functions.smooth,
+    startAngle: 0,
+    angle: Math.PI * 2
   };
-  let {
-    name,
-    time,
-    center,
-    radius,
-    canvas,
+  args = Object.assign(defaults, args);
+  let center = args.center,
+      {
+    points,
+    dur,
     dTime,
+    canvas,
+    rateFunction,
     fill: fillColor,
     fillTime,
     next,
-    rateFunction
-  } = Object.assign(defaults, args);
-  let dt = dTime / time * Math.PI * 2;
-  canvas = canvas || _main.C.workingCanvas.name;
-  let points = [];
-
-  for (let t = 0; t <= Math.PI * 2; t += dt) {
-    const x1 = Math.cos(t) * radius + center[0];
-    const y1 = Math.sin(t) * radius + center[1];
-    points.push([x1, y1]);
-  }
-
-  dt = dTime / time;
-  return function () {
-    let t = 0;
-    (0, _settings.loop)(name, () => {
-      if (t > 1) (0, _settings.noLoop)();
-      let im1 = Math.floor((points.length - 1) * rateFunction(t));
-      let i = Math.floor((points.length - 1) * rateFunction(t + dt));
-      let ip1 = Math.floor((points.length - 1) * rateFunction(t + dt * 2));
-      let ip2 = Math.floor((points.length - 1) * rateFunction(t + dt * 3));
-      let pts = [points[im1], points[i], points[ip1], points[ip2]];
-      (0, _geometry.smoothCurveThroughPoints)(pts, 1, false);
-      t += dt;
-    }, canvas, dTime);
-    if (fillColor) animateFill(name, canvas, fillColor, () => (0, _geometry.point)(...center, radius * 2 - (0, _settings.getStrokeWidth)()), fillTime, 10, next);
+    rx
+  } = Arc(args);
+  return {
+    points: points,
+    // list of computed points
+    dur: dur,
+    dTime: dTime,
+    canvas: canvas,
+    rateFunction: rateFunction,
+    name: args.name,
+    closed: true,
+    smoothen: true,
+    tension: 1,
+    fill: fillColor,
+    fillTime: fillTime,
+    next: next,
+    filler: function () {
+      (0, _geometry.point)(center[0], center[1], rx * 2, false);
+    }
   };
 }
 
-},{"../color/color_reader.js":4,"../main.js":12,"../math/points.js":15,"../math/rate_functions.js":17,"../objects/geometry.js":23,"../settings.js":27}],2:[function(require,module,exports){
+},{"../color/color_reader.js":4,"../main.js":13,"../math/rate_functions.js":18,"../objects/geometry.js":24,"../settings.js":28,"../utils.js":29}],2:[function(require,module,exports){
 "use strict";
 
 var _utils = require("./utils.js");
@@ -179,7 +279,9 @@ var Color_Random = _interopRequireWildcard(require("./color/random.js"));
 
 var Interpolation = _interopRequireWildcard(require("./color/interpolation.js"));
 
-var Image = _interopRequireWildcard(require("./objects/image.js"));
+var ImageFunctions = _interopRequireWildcard(require("./image/imageData.js"));
+
+var ImageDrawings = _interopRequireWildcard(require("./objects/image.js"));
 
 var Geometry = _interopRequireWildcard(require("./objects/geometry.js"));
 
@@ -221,7 +323,8 @@ function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && 
 (0, _utils.defineProperties)(Gradients);
 (0, _utils.defineProperties)(Color_Random);
 (0, _utils.defineProperties)(Interpolation);
-(0, _utils.defineProperties)(Image);
+(0, _utils.defineProperties)(ImageFunctions);
+(0, _utils.defineProperties)(ImageDrawings);
 (0, _utils.defineProperties)(Geometry);
 (0, _utils.defineProperties)(Settings);
 (0, _utils.defineProperties)(Text);
@@ -240,7 +343,7 @@ function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && 
 (0, _utils.defineProperties)(_utils.defineProperties, _main.C);
 (0, _utils.defineProperties)(COLORLIST, _main.C);
 
-},{"./animations/create.js":1,"./color/color_converters.js":3,"./color/color_reader.js":4,"./color/gradients.js":5,"./color/interpolation.js":6,"./color/random.js":7,"./constants/colors.js":8,"./constants/drawing.js":9,"./constants/math.js":10,"./main.js":12,"./math/aritmetics.js":13,"./math/basic.js":14,"./math/points.js":15,"./math/random.js":16,"./math/rate_functions.js":17,"./objects/arrows.js":19,"./objects/braces.js":20,"./objects/coordinate_systems.js":21,"./objects/functions.js":22,"./objects/geometry.js":23,"./objects/image.js":24,"./objects/tex.js":25,"./objects/text.js":26,"./settings.js":27,"./utils.js":28}],3:[function(require,module,exports){
+},{"./animations/create.js":1,"./color/color_converters.js":3,"./color/color_reader.js":4,"./color/gradients.js":5,"./color/interpolation.js":6,"./color/random.js":7,"./constants/colors.js":8,"./constants/drawing.js":9,"./constants/math.js":10,"./image/imageData.js":12,"./main.js":13,"./math/aritmetics.js":14,"./math/basic.js":15,"./math/points.js":16,"./math/random.js":17,"./math/rate_functions.js":18,"./objects/arrows.js":20,"./objects/braces.js":21,"./objects/coordinate_systems.js":22,"./objects/functions.js":23,"./objects/geometry.js":24,"./objects/image.js":25,"./objects/tex.js":26,"./objects/text.js":27,"./settings.js":28,"./utils.js":29}],3:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -274,32 +377,18 @@ function hue2RGB(p, q, t) {
 
 
 function RGBToHSL(r, g, b) {
-  const max = Math.max(r, g, b);
-  const min = Math.min(r, g, b);
-  let hue;
-  let saturation;
-  const lightness = (max + min) / 2;
+  let max = Math.max(r, g, b),
+      min = Math.min(r, g, b),
+      hue,
+      saturation,
+      lightness = (max + min) / 2;
 
   if (max === min) {
     hue = saturation = 0; // achromatic
   } else {
-    const d = max - min;
+    let d = max - min;
     saturation = lightness > 0.5 ? d / (2 - max - min) : d / (max + min);
-
-    switch (max) {
-      case r:
-        hue = (g - b) / d + (g < b ? 6 : 0);
-        break;
-
-      case g:
-        hue = (b - r) / d + 2;
-        break;
-
-      case b:
-        hue = (r - g) / d + 4;
-        break;
-    }
-
+    if (max == r) hue = (g - b) / d + (g < b ? 6 : 0);else if (max == g) hue = (b - r) / d + 2;else if (max == b) hue = (r - g) / d + 4;
     hue /= 6;
   }
 
@@ -325,8 +414,8 @@ function HSLToRGB(hue, saturation, lightness) {
   if (saturation === 0) {
     r = g = b = lightness; // achromatic
   } else {
-    const q = lightness < 0.5 ? lightness * (1 + saturation) : lightness + saturation - lightness * saturation;
-    const p = 2 * lightness - q;
+    let q = lightness < 0.5 ? lightness * (1 + saturation) : lightness + saturation - lightness * saturation;
+    let p = 2 * lightness - q;
     r = hue2RGB(p, q, hue + 1 / 3);
     g = hue2RGB(p, q, hue);
     b = hue2RGB(p, q, hue - 1 / 3);
@@ -348,32 +437,19 @@ function HSLToRGB(hue, saturation, lightness) {
 
 
 function RGBToHSV(r, g, b) {
-  const max = Math.max(r, g, b); // val
-
-  const min = Math.min(r, g, b); // chroma
-
-  let hue;
-  const value = max;
-  const d = max - min;
-  const saturation = max === 0 ? 0 : d / max;
+  let max = Math.max(r, g, b),
+      // val
+  min = Math.min(r, g, b),
+      // chroma
+  hue,
+      value = max,
+      d = max - min,
+      saturation = max === 0 ? 0 : d / max;
 
   if (max === min) {
     hue = 0; // achromatic
   } else {
-    switch (max) {
-      case r:
-        hue = (g - b) / d + (g < b ? 6 : 0);
-        break;
-
-      case g:
-        hue = (b - r) / d + 2;
-        break;
-
-      case b:
-        hue = (r - g) / d + 4;
-        break;
-    }
-
+    if (max == r) hue = (g - b) / d + (g < b ? 6 : 0);else if (max == g) hue = (b - r) / d + 2;else if (max == b) hue = (r - g) / d + 4;
     hue /= 6;
   }
 
@@ -393,51 +469,16 @@ function RGBToHSV(r, g, b) {
 
 
 function HSVToRGB(hue, saturation, value) {
-  let r, g, b;
-  const i = Math.floor(hue / 60);
-  const f = hue / 60 - i;
-  const p = value * (1 - saturation);
-  const q = value * (1 - f * saturation);
-  const t = value * (1 - (1 - f) * saturation);
-
-  switch (i % 6) {
-    case 0:
-      r = value;
-      g = t;
-      b = p;
-      break;
-
-    case 1:
-      r = q;
-      g = value;
-      b = p;
-      break;
-
-    case 2:
-      r = p;
-      g = value;
-      b = t;
-      break;
-
-    case 3:
-      r = p;
-      g = q;
-      b = value;
-      break;
-
-    case 4:
-      r = t;
-      g = p;
-      b = value;
-      break;
-
-    case 5:
-      r = value;
-      g = p;
-      b = q;
-      break;
-  }
-
+  let r,
+      g,
+      b,
+      i = Math.floor(hue / 60),
+      f = hue / 60 - i,
+      p = value * (1 - saturation),
+      q = value * (1 - f * saturation),
+      t = value * (1 - (1 - f) * saturation);
+  i %= 6;
+  if (i == 0) r = value, g = t, b = p;else if (i == 1) r = q, g = value, b = p;else if (i == 2) r = p, g = value, b = t;else if (i == 3) r = p, g = q, b = value;else if (i == 4) r = t, g = p, b = value;else if (i == 5) r = value, g = p, b = q;
   return [r, g, b];
 }
 
@@ -462,17 +503,17 @@ function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && 
 /**
  * Full color string patterns. The capture groups are necessary.
  */
-const // Matching format: #XXX
+let // Matching format: #XXX
 HEX3 = /^#([a-f0-9])([a-f0-9])([a-f0-9])$/i,
-      // Matching format: #XXXX
+    // Matching format: #XXXX
 HEX4 = /^#([a-f0-9])([a-f0-9])([a-f0-9])([a-f0-9])$/i,
-      // Matching format: #xxxxxx
+    // Matching format: #xxxxxx
 HEX6 = /^#([a-f0-9]{2})([a-f0-9]{2})([a-f0-9]{2})$/i,
-      // Matching format: #XXXXXXXX
+    // Matching format: #XXXXXXXX
 HEX8 = /^#([a-f0-9]{2})([a-f0-9]{2})([a-f0-9]{2})([a-f0-9]{2})$/i,
-      // Matching format: rgb(R, G, B)
+    // Matching format: rgb(R, G, B)
 RGB = /^rgb\((\d{1,3}),(\d{1,3}),(\d{1,3})\)$/i,
-      // Matching format: rgb(R, G, B, A)
+    // Matching format: rgb(R, G, B, A)
 RGBA = /^rgba\((\d{1,3}),(\d{1,3}),(\d{1,3}),(?:(\d+(?:\.\d+)?)|(?:\.\d+))\)$/i;
 /**
  * Reads the argument and returns color in the prefered colorMode. If last argument is given true, it will return the colors as array
@@ -521,7 +562,7 @@ function readColor() {
     }
   } else if (typeof c1 == "string") {
     // Adapted from p5.js
-    const str = c1.replace(/\s/g, "").toLowerCase(); // convert string to array if it is a named colour.
+    let str = c1.replace(/\s/g, "").toLowerCase(); // convert string to array if it is a named colour.
 
     if (namedColors[str]) result = readColor(namedColors[str], true);else if (HEX3.test(str)) {
       result = HEX3.exec(str).slice(1).map(color => parseInt(color + color, 16));
@@ -544,10 +585,12 @@ function readColor() {
     } else {
       throw new Error("Given color is not valid");
     }
+  } else {
+    return c1;
   }
 
   if (!toArray) {
-    const mode = _main.C.workingCanvas?.colorMode || "rgba";
+    let mode = (_main.C.workingCanvas || {}).colorMode || "rgba";
 
     if (mode === "rgba") {
       result = `rgba(${result[0]}, ${result[1]}, ${result[2]}, ${result[3]})`;
@@ -559,7 +602,7 @@ function readColor() {
   return result;
 }
 
-},{"../constants/named_colors.js":11,"../main.js":12}],5:[function(require,module,exports){
+},{"../constants/named_colors.js":11,"../main.js":13}],5:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -577,7 +620,7 @@ var _main = require("../main.js");
  * @param {Object|array} colorStops color stops
  @example
  ```js
-var color = linearGradient(
+let color = linearGradient(
 	[0, 0], [200, 0],
 	{
 			0: "green",
@@ -587,7 +630,7 @@ var color = linearGradient(
 );
 ```,
 ```js
-var color = linearGradient(
+let color = linearGradient(
 	[0, 0], [200, 0],
 	[
 		"green",
@@ -620,7 +663,7 @@ function linearGradient(initialPoint, finalPoint, colorStops) {
   return gradient;
 }
 
-},{"../main.js":12}],6:[function(require,module,exports){
+},{"../main.js":13}],6:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -652,7 +695,7 @@ function lerpColorArray(colorArr, v) {
   if (v >= max) return colorArr[max];
   if (v <= min) return colorArr[min];
 
-  for (var i = 0; i < stopes.length - 1; i++) {
+  for (let i = 0; i < stopes.length - 1; i++) {
     let a = stopes[i];
 
     if (v > a) {
@@ -675,9 +718,9 @@ function getInterpolatedColorList(colorPalatte, min = 0, max = 5, step = 1, alph
 
   const colorObj = {};
   const cp = colorPalatte[len];
-  var k = 0;
+  let k = 0;
 
-  for (var i = min; i <= max; i += step) {
+  for (let i = min; i <= max; i += step) {
     const c = (0, _color_reader.readColor)(cp[k++], true);
     c[3] = alpha;
     colorObj[i] = (0, _color_reader.readColor)(...c);
@@ -703,7 +746,7 @@ function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "functio
 
 function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
-var definedColorList = Object.keys(COLORLIST);
+let definedColorList = Object.keys(COLORLIST);
 const TR_INDEX = definedColorList.indexOf("TRANSPARENT");
 definedColorList = definedColorList.slice(0, TR_INDEX).concat(definedColorList.slice(TR_INDEX + 1));
 /**
@@ -732,7 +775,7 @@ function randomDefinedColor() {
   return COLORLIST[definedColorList[(0, _random.randomInt)(definedColorList.length - 1)]];
 }
 
-},{"../constants/colors.js":8,"../math/random.js":16}],8:[function(require,module,exports){
+},{"../constants/colors.js":8,"../math/random.js":17}],8:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1322,6 +1365,110 @@ exports.aliceblue = aliceblue;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.getPixelColor = getPixelColor;
+exports.imageDataToColorArray = imageDataToColorArray;
+exports.hasNeighbourColor = hasNeighbourColor;
+
+/**
+ * returns color at a given point from ImageData
+ *
+ * @param {ImageData} pixels
+ * @param {number} x x-coordinate of point
+ * @param {number} y y-coordinate of point
+ * @return {array} array of color components [r, g, b, a]
+ */
+function getPixelColor(pixels, x, y) {
+  let index = pixels.width * y + x;
+  return pixels.data.subarray(index, index + 4);
+}
+/**
+ * Convert image data to 2d array of colors.
+ *
+ * @param {ImageData} pixels
+ * @returns {array<array>} 2d array of colors
+ */
+
+
+function imageDataToColorArray(pixels) {
+  let w = pixels.width,
+      h = pixels.height,
+      dat = Array.from(pixels.data),
+      image2D = [];
+
+  for (var y = 0; y < h; y++) {
+    image2D.push([]);
+
+    for (var x = 0; x < w; x++) {
+      let i = h * y + x,
+          r = dat[i],
+          g = dat[i + 1],
+          b = dat[i + 2],
+          a = dat[i + 3];
+      image2D[y].push([r, g, b, a]);
+    }
+  }
+
+  return image2D;
+}
+/**
+ * Returns if neighbor pixels have the same color as given.
+ *
+ * @param {array} color color to compare with
+ * @param {ImageData} pixels image data
+ * @param {number} x x-coordinate of point
+ * @param {number} y y-coordinate of point
+ * @return {boolean}
+ */
+
+
+function hasNeighbourColor(color, pixels, x, y) {
+  let dat = pixels.data,
+      w = pixels.width;
+
+  for (let i = x - 1; i <= x + 1; i++) {
+    for (let j = y - 1; j <= y + 1; j++) {
+      if (i !== x || j !== y) {
+        let index = w * y + x,
+            neighbourColor = dat.subarray(index, index + 4);
+
+        if (neighbourColor[0] === color[0] && neighbourColor[1] === color[1] && neighbourColor[2] === color[2] && neighbourColor[3] === color[3]) {
+          return true;
+        }
+      }
+    }
+  }
+
+  return false;
+} // TODO: Under construction
+// function createMapOfLetter(letter) {
+// 	let img = Image.new("RGB", (230, 230), "white"),
+// 		d = ImageDraw.Draw(img),
+// 		font = ImageFont.truetype("arial.ttf", 300);
+// 	d.text((15, -50), letter, (fill = (0, 0, 0)), (font = font));
+// 	let pixels = img.load(),
+// 		ans = [];
+// 	for (let x = 0; x < 230; x++) {
+// 		for (let y = 0; y < 230; y++) {
+// 			if (pixels[(x, y)] == (0, 0, 0)) {
+// 				if (
+// 					hasNeighbourColor((255, 255, 255), pixels, x, y) &&
+// 					!hasNeighbourColor((255, 0, 0), pixels, x, y)
+// 				) {
+// 					pixels[(x, y)] = (255, 0, 0);
+// 					ans.append([x, y]);
+// 				}
+// 			}
+// 		}
+// 	}
+// 	return ans;
+// }
+
+},{}],13:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 exports.C = C;
 
 var _utils = require("./utils.js");
@@ -1349,6 +1496,7 @@ function C(fx, container, cfgs = {}) {
     pauseAnimations: false,
     netRotation: 0,
     currentLoop: undefined,
+    currentLoopName: undefined,
     textAlign: "start",
     textBaseline: "alphabetic",
     // color stuff
@@ -1421,9 +1569,9 @@ function C(fx, container, cfgs = {}) {
     container.CID = 1;
   }
 
-  var parentCID = container.CID;
-  var parentName = container.id || container.classList.item(0);
-  let canvasName = configs.name;
+  let parentCID = container.CID,
+      parentName = container.id || container.classList.item(0),
+      canvasName = configs.name;
 
   if (typeof canvasName == "string") {
     const cvs = container.querySelector("#" + canvasName);
@@ -1553,27 +1701,22 @@ C.defineProperties = _utils.defineProperties;
  */
 
 C.debugAnimations = false; // whther to debug animations
-// C.runDelayedAnimationsIn = function (canvasName) {
-// 	let ctx = C.canvasList[canvasName] || C.workingCanvas;
-// 	for (let i = 0; i < ctx.delayedAnimations.length; i++) {
-// 		let toWork = ctx.delayedAnimations.splice(i, 1)[0];
-// 		loop(
-// 			toWork.name,
-// 			toWork.functionToRun,
-// 			toWork.canvasName,
-// 			toWork.timeDelay,
-// 			toWork.timeDelaysToRememberm,
-// 			toWork.settings
-// 		);
-// 		break;
-// 	}
-// 	// }
-// };
-// register to window
+
+/**
+ * Whehter to debug animations
+ *
+ * @param {boolean} bool boolean
+ */
+
+C.debug = function (bool) {
+  if (typeof bool !== "boolean") C.debugAnimations = true;else C.debugAnimations = bool;
+};
+
+C._ANIMATIONLOG_ = []; // register to window
 
 window.C = C;
 
-},{"./utils.js":28}],13:[function(require,module,exports){
+},{"./utils.js":29}],14:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1607,10 +1750,11 @@ function gcd(a, b) {
  */
 
 
-function gcdArray() {
-  var n = 0;
+function gcdArray(list) {
+  let array = Array.isArray(list) ? list : arguments,
+      n = array[0];
 
-  for (var i = 0; i < arguments.length; ++i) n = gcd(arguments[i], n);
+  for (let i = 1; i < array.length; ++i) n = gcd(array[i], n);
 
   return n;
 }
@@ -1627,21 +1771,21 @@ function lcm(a, b) {
   return a * b / gcd(a, b);
 }
 /**
- * Returns least common multiple of a list of integers.
- *
+ * Returns least common multiple of a list of integers given explictly or as array.
  * @return {number}
  */
 
 
-function lcmArray() {
-  var n = 1;
+function lcmArray(list) {
+  let n = 1,
+      array = Array.isArray(list) ? list : arguments;
 
-  for (var i = 0; i < arguments.length; ++i) n = lcm(arguments[i], n);
+  for (let i = 0; i < array.length; ++i) n = lcm(array[i], n);
 
   return n;
 }
 
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1699,7 +1843,7 @@ exports.asin = asin;
 exports.acos = acos;
 exports.abs = abs;
 
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1793,7 +1937,7 @@ function circleIntersection(c1, r1, c2, r2) {
   return [[p2[0] + h * (c2[1] - c1[1]) / d, p2[1] - h * (c2[0] - c1[0]) / d], [p2[0] - h * (c2[1] - c1[1]) / d, p2[1] + h * (c2[0] - c1[0]) / d]];
 }
 
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1812,7 +1956,7 @@ function randomInt(max = 10, min = 0) {
   return Math.round(Math.random() * (max - min) + min);
 }
 
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1877,16 +2021,7 @@ const c5 = 2 * Math.PI / 4.5;
 function easeOutBounce(t) {
   const n1 = 7.5625;
   const d1 = 2.75;
-
-  if (t < 1 / d1) {
-    return n1 * t * t;
-  } else if (t < 2 / d1) {
-    return n1 * (t -= 1.5 / d1) * t + 0.75;
-  } else if (t < 2.5 / d1) {
-    return n1 * (t -= 2.25 / d1) * t + 0.9375;
-  } else {
-    return n1 * (t -= 2.625 / d1) * t + 0.984375;
-  }
+  if (t < 1 / d1) return n1 * t * t;else if (t < 2 / d1) return n1 * (t -= 1.5 / d1) * t + 0.75;else if (t < 2.5 / d1) return n1 * (t -= 2.25 / d1) * t + 0.9375;else return n1 * (t -= 2.625 / d1) * t + 0.984375;
 }
 
 function linear(t) {
@@ -1962,7 +2097,7 @@ function easeOutExpo(t) {
 }
 
 function easeInOutExpo(t) {
-  return t == 0 ? 0 : t == 1 ? 1 : t < 0.5 ? Math.pow(2, 20 * t - 10) / 2 : (2 - Math.pow(2, 10 - 20 * t)) / 2;
+  if (t == 0) return 0;else if (t == 1) return 1;else if (t < 0.5) return Math.pow(2, 20 * t - 10) / 2;else return (2 - Math.pow(2, 10 - 20 * t)) / 2;
 }
 
 function easeInCirc(t) {
@@ -1974,7 +2109,7 @@ function easeOutCirc(t) {
 }
 
 function easeInOutCirc(t) {
-  return t < 0.5 ? (1 - Math.sqrt(1 - (2 * t) ** 2)) / 2 : (Math.sqrt(1 - (2 - 2 * t) ** 2) + 1) / 2;
+  if (t < 0.5) return (1 - Math.sqrt(1 - (2 * t) ** 2)) / 2;else return (Math.sqrt(1 - (2 - 2 * t) ** 2) + 1) / 2;
 }
 
 function easeInBack(t) {
@@ -1986,19 +2121,19 @@ function easeOutBack(t) {
 }
 
 function easeInOutBack(t) {
-  return t < 0.5 ? (2 * t) ** 2 * ((c2 + 1) * 2 * t - c2) / 2 : ((2 * t - 2) ** 2 * ((c2 + 1) * (t * 2 - 2) + c2) + 2) / 2;
+  if (t < 0.5) return (2 * t) ** 2 * ((c2 + 1) * 2 * t - c2) / 2;else return ((2 * t - 2) ** 2 * ((c2 + 1) * (t * 2 - 2) + c2) + 2) / 2;
 }
 
 function easeInElastic(t) {
-  return t === 0 ? 0 : t === 1 ? 1 : -Math.pow(2, 10 * t - 10) * Math.sin((t * 10 - 10.75) * c4);
+  if (t === 0) return 0;else if (t === 1) return 1;else return -Math.pow(2, 10 * t - 10) * Math.sin((t * 10 - 10.75) * c4);
 }
 
 function easeOutElastic(t) {
-  return t === 0 ? 0 : t === 1 ? 1 : Math.pow(2, -10 * t) * Math.sin((t * 10 - 0.75) * c4) + 1;
+  if (t === 0) return 0;else if (t === 1) return 1;else return Math.pow(2, -10 * t) * Math.sin((t * 10 - 0.75) * c4) + 1;
 }
 
 function easeInOutElastic(t) {
-  return t === 0 ? 0 : t === 1 ? 1 : t < 0.5 ? -(Math.pow(2, 20 * t - 10) * Math.sin((20 * t - 11.125) * c5)) / 2 : Math.pow(2, -20 * t + 10) * Math.sin((20 * t - 11.125) * c5) / 2 + 1;
+  if (t == 0) return 0;else if (t == 1) return 1;else if (t < 0.5) return -(Math.pow(2, 20 * t - 10) * Math.sin((20 * t - 11.125) * c5)) / 2;else return Math.pow(2, -20 * t + 10) * Math.sin((20 * t - 11.125) * c5) / 2 + 1;
 }
 
 function easeInBounce(t) {
@@ -2006,7 +2141,7 @@ function easeInBounce(t) {
 }
 
 function easeInOutBounce(t) {
-  return t < 0.5 ? (1 - easeOutBounce(1 - 2 * t)) / 2 : (1 + easeOutBounce(2 * t - 1)) / 2;
+  if (t < 0.5) return (1 - easeOutBounce(1 - 2 * t)) / 2;else return (1 + easeOutBounce(2 * t - 1)) / 2;
 } // manim rate funcitons
 
 
@@ -2065,7 +2200,7 @@ function exponentialDecay(t, halfLife = 0.1) {
 // 	return bezier([0, 0, pullFactor, pullFactor, 1, 1, 1])(t);
 // }
 
-},{"./simple_functions.js":18}],18:[function(require,module,exports){
+},{"./simple_functions.js":19}],19:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2077,7 +2212,7 @@ function sigmoid(t) {
   return 1.0 / (1 + Math.exp(-t));
 }
 
-},{}],19:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2119,18 +2254,18 @@ const DEFAULT_TIP_WIDTH = 15;
  */
 
 function arrowTip(x1, y1, x2, y2, width, height) {
-  var ctx = _main.C.workingCanvas;
-  var thickness = ctx.lineWidth;
-  var distance = Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2);
+  let ctx = _main.C.workingCanvas;
+  let thickness = ctx.lineWidth;
+  let distance = Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2);
   if (isNaN(width)) width = distance;
-  height = height || width / 1.3;
-  var w = width - distance;
-  var r = Math.sqrt(w ** 2 + (height / 2) ** 2);
-  var t = Math.atan(height / (w * 2));
+  height = height || width / 1.2;
+  let w = width - distance;
+  let r = Math.sqrt(w ** 2 + (height / 2) ** 2);
+  let t = Math.atan(height / (w * 2));
   if (distance > width) t = t + Math.PI;
-  var angleFromXAxis = Math.atan2(y2 - y1, x2 - x1);
-  var A = [x1 - Math.cos(t + angleFromXAxis) * r, y1 - Math.sin(t + angleFromXAxis) * r];
-  var B = [x1 - Math.cos(-t + angleFromXAxis) * r, y1 - Math.sin(-t + angleFromXAxis) * r];
+  let angleFromXAxis = Math.atan2(y2 - y1, x2 - x1);
+  let A = [x1 - Math.cos(t + angleFromXAxis) * r, y1 - Math.sin(t + angleFromXAxis) * r];
+  let B = [x1 - Math.cos(-t + angleFromXAxis) * r, y1 - Math.sin(-t + angleFromXAxis) * r];
 
   if (ctx.doStroke && ctx.lineJoin != _drawing.BEVEL) {
     // correcting tip
@@ -2160,15 +2295,15 @@ function arrowTip(x1, y1, x2, y2, width, height) {
  * @param {number} y1 starting y-axis coord
  * @param {number} x2 ending x-axis coord
  * @param {number} y2 ending y-axis coord
- * @param {number} tipWidth width of tip
- * @param {number} tipHeight height of tip
+ * @param {number} [tipWidth=DEFAULT_TIP_WIDTH] width of tip
+ * @param {number} tipHeight height of tip. Default value is tipWidth / 1.2
  * @param {number} [arrowCurving = 0] worping of arrow
  * @param {number} [spacing = 0] padding from end to tip
  *
  */
 
 
-function arrow(x1, y1, x2, y2, tipWidth = DEFAULT_TIP_WIDTH, tipHeight = tipWidth / 1.3, arrowCurving = 0, spacing = 0) {
+function arrow(x1, y1, x2, y2, tipWidth = DEFAULT_TIP_WIDTH, tipHeight = tipWidth / 1.2, arrowCurving = 0, spacing = 0) {
   const angle = Math.atan2(y2 - y1, x2 - x1); // angle from plain
 
   const yDiff = Math.sin(angle) * spacing;
@@ -2196,16 +2331,16 @@ function arrow(x1, y1, x2, y2, tipWidth = DEFAULT_TIP_WIDTH, tipHeight = tipWidt
  *
  * @param {number} x1
  * @param {number} y1
- * @param {number} x2
+ * @param {number} x20]
  * @param {number} y2
- * @param {number} [tipWidth=10]
- * @param {number} [tipHeight=0.6]
+ * @param {number} [tipWidth=DEFAULT_TIP_WIDTH] width of tip
+ * @param {number} tipHeight height of tip. Default value is tipWidth / 1.2
  * @param {number} [arrowCurving = 0]
  * @param {number} [spacing=0]
  */
 
 
-function doubleArrow(x1, y1, x2, y2, tipWidth = DEFAULT_TIP_WIDTH, tipHeight = tipWidth / 1.3, arrowCurving = 0, spacing = 0) {
+function doubleArrow(x1, y1, x2, y2, tipWidth = DEFAULT_TIP_WIDTH, tipHeight = tipWidth / 1.2, arrowCurving = 0, spacing = 0) {
   const angle = Math.atan2(y2 - y1, x2 - x1);
   const xPadding = Math.cos(angle) * (tipWidth - arrowCurving);
   const yPadding = Math.sin(angle) * (tipWidth - arrowCurving);
@@ -2222,55 +2357,53 @@ function doubleArrow(x1, y1, x2, y2, tipWidth = DEFAULT_TIP_WIDTH, tipHeight = t
 /**
  * Draws a double tipped arrow with text in the middle
  *
- * @param {object} configs parameters.
+ * @param {object} args parameters.
  * Possible values:
- * * {string} text* : text
- * * {array} p1* : first point
- * * {array} p2* : second point
- * * {number} [tipWidth=10] : tip width
- * * {number} [tipScaleRatio=0.6] : tipScaleRatio
- * * {number} [spacing=0] : spacing
- * * {string|number} [background] : background of text
- * * {number} [innerPadding] : padding of text
- * * {number} [outerPadding] : tip spacing
- * * {number} [textRotation] : rotatioin of text
- * * {number} [arrowCurving] : worping of arrow
- *
- * NOTE: '*' indicate mandatory properties
+ * @param {string} args.text text
+ * @param {array} args.p1 first point
+ * @param {array} args.p2 second point
+ * @param {number} [args.tipWidth = 15] tip width
+ * @param {number} [args.tipHeight = 12.5] tip height
+ * @param {number} [args.spacing = 0] spacing
+ * @param {string|number} args.background background of text
+ * @param {number} args.innerPadding padding of text
+ * @param {number} args.outerPadding tip spacing
+ * @param {number} args.textRotation rotatioin of text
+ * @param {number} args.arrowCurving worping of arrow
  */
 
 
-function measurement(configs) {
+function measurement(args) {
   const ctx = _main.C.workingCanvas;
   const defaults = {
     background: _colors.TRANSPARENT,
     tipWidth: DEFAULT_TIP_WIDTH,
-    tipHeight: DEFAULT_TIP_WIDTH / 1.3,
+    tipHeight: DEFAULT_TIP_WIDTH / 1.2,
     innerPadding: 3,
     outerPadding: 0,
     textRotation: 0,
     arrowCurving: 0
   };
-  configs = (0, _utils.applyDefault)(defaults, configs);
+  args = (0, _utils.applyDefault)(defaults, args);
   const {
     p1,
     p2
-  } = configs;
+  } = args;
   const angleFromXAxis = Math.atan2(p2[1] - p1[1], p2[0] - p1[0]);
   const {
     width
-  } = ctx.measureText(configs.text);
-  const innerPadding = [Math.cos(angleFromXAxis) * (configs.innerPadding + width / 2), Math.sin(angleFromXAxis) * (configs.innerPadding + width / 2)];
+  } = ctx.measureText(args.text);
+  const innerPadding = [Math.cos(angleFromXAxis) * (args.innerPadding + width / 2), Math.sin(angleFromXAxis) * (args.innerPadding + width / 2)];
   const center = [(p1[0] + p2[0]) / 2, (p1[1] + p2[1]) / 2]; // draw arrows
 
-  arrow(center[0] - innerPadding[0], center[1] - innerPadding[1], p1[0], p1[1], configs.tipWidth, configs.tipHeight, configs.arrowCurving, configs.outerPadding);
-  arrow(center[0] + innerPadding[0], center[1] + innerPadding[1], p2[0], p2[1], configs.tipWidth, configs.tipHeight, configs.arrowCurving, configs.outerPadding);
+  arrow(center[0] - innerPadding[0], center[1] - innerPadding[1], p1[0], p1[1], args.tipWidth, args.tipHeight, args.arrowCurving, args.outerPadding);
+  arrow(center[0] + innerPadding[0], center[1] + innerPadding[1], p2[0], p2[1], args.tipWidth, args.tipHeight, args.arrowCurving, args.outerPadding);
   (0, _settings.save)();
   ctx.translate(center[0], center[1]);
   ctx.textAlign = _drawing.CENTER;
   ctx.textBaseline = _drawing.MIDDLE;
-  ctx.rotate(Math.atan2(p2[1] - p1[1], p2[0] - p1[0]) + configs.textRotation);
-  (0, _text.fillText)(configs.text, 0, 0);
+  ctx.rotate(Math.atan2(p2[1] - p1[1], p2[0] - p1[0]) + args.textRotation);
+  (0, _text.fillText)(args.text, 0, 0);
   (0, _settings.restore)();
 }
 /**
@@ -2282,19 +2415,19 @@ function measurement(configs) {
  * @param {number} [angle=Math.PI / 2] central angle of arc
  * @param {number} [startAngle=0] starting angle
  * @param {number} [tipWidth=DEFAULT_TIP_WIDTH] width of tip
- * @param {number} [tipHeight=tipWidth / 1.3] height of tip
+ * @param {number} tipHeight height of tip. Default value is tipWidth / 1.2
  * @param {number} [arrowCurving=0] arrow curving constant
  * @param {number} [tipOffset=10] offset (padding) of tip from it's defined end
  * @param {boolean} [reverse=false] whether to reverse the direction of arrow
  */
 
 
-function curvedArrow(x, y, radius, angle = Math.PI / 2, startAngle = 0, tipWidth = DEFAULT_TIP_WIDTH, tipHeight = tipWidth / 1.3, arrowCurving = 0, tipOffset = 0, reverse = false) {
+function curvedArrow(x, y, radius, angle = Math.PI / 2, startAngle = 0, tipWidth = DEFAULT_TIP_WIDTH, tipHeight = tipWidth / 1.2, arrowCurving = 0, tipOffset = 0, reverse = false) {
   const ctx = _main.C.workingCanvas;
   const tipAngularDiameter = tipWidth / radius;
   ctx.save();
   arrowCurving /= radius;
-  var padding = tipAngularDiameter - arrowCurving;
+  let padding = tipAngularDiameter - arrowCurving;
   ctx.beginPath();
 
   if (reverse) {
@@ -2322,13 +2455,13 @@ function curvedArrow(x, y, radius, angle = Math.PI / 2, startAngle = 0, tipWidth
  * @param {number} [angle=Math.PI / 2] central angle of arrow in radians
  * @param {number} [startAngle=0] start angle of arrow in radians
  * @param {number} [tipWidth=DEFAULT_TIP_WIDTH] width of arrow tip
- * @param {number} [tipHeight=tipWidth / 1.3] height of arrow tip
+ * @param {number} tipHeight height of tip. Default value is tipWidth / 1.2
  * @param {number} [arrowCurving=0] curving of arrow
  * @param {number} [tipOffset=0] angular offset of arrow from radial boundaries in radians.
  */
 
 
-function curvedDoubleArrow(x, y, radius, angle = Math.PI / 2, startAngle = 0, tipWidth = DEFAULT_TIP_WIDTH, tipHeight = tipWidth / 1.3, arrowCurving = 0, tipOffset = 0) {
+function curvedDoubleArrow(x, y, radius, angle = Math.PI / 2, startAngle = 0, tipWidth = DEFAULT_TIP_WIDTH, tipHeight = tipWidth / 1.2, arrowCurving = 0, tipOffset = 0) {
   const ctx = _main.C.workingCanvas;
   ctx.save();
   const tipAngularDiameter = tipWidth / radius;
@@ -2346,7 +2479,7 @@ function curvedDoubleArrow(x, y, radius, angle = Math.PI / 2, startAngle = 0, ti
  * @param {array} p2 end point
  * @param {number} radius radius of circle
  * @param {number} [tipWidth=DEFAULT_TIP_WIDTH] width of tip
- * @param {number} [tipHeight=tipWidth / 1.3] height of tip
+ * @param {number} tipHeight height of tip. Default value is tipWidth / 1.2
  * @param {number} [arrowCurving=0] arrow curving const. Expressed in pixels
  * @param {number} [tipOffset=0] offset (padding) of tip from it's defined end. Expressed in radians
  * @param {boolean} [otherArc=false] whether to use other arc
@@ -2355,7 +2488,7 @@ function curvedDoubleArrow(x, y, radius, angle = Math.PI / 2, startAngle = 0, ti
  */
 
 
-function curvedArrowBetweenPoints(p1, p2, radius, tipWidth = DEFAULT_TIP_WIDTH, tipHeight = tipWidth / 1.3, arrowCurving = 0, tipOffset = 0, otherArc = false, reverse = false) {
+function curvedArrowBetweenPoints(p1, p2, radius, tipWidth = DEFAULT_TIP_WIDTH, tipHeight = tipWidth / 1.2, arrowCurving = 0, tipOffset = 0, otherArc = false, reverse = false) {
   const ctx = _main.C.workingCanvas;
   const pathStarted = ctx.pathStarted;
   ctx.save();
@@ -2367,7 +2500,7 @@ function curvedArrowBetweenPoints(p1, p2, radius, tipWidth = DEFAULT_TIP_WIDTH, 
   p2[1] -= center[1];
   const p1Angle = Math.atan2(p1[1], p1[0]);
   const p2Angle = Math.atan2(p2[1], p2[0]);
-  var angleBetweenPoints, startAngle;
+  let angleBetweenPoints, startAngle;
 
   if (otherArc) {
     startAngle = p1Angle;
@@ -2389,7 +2522,7 @@ function curvedArrowBetweenPoints(p1, p2, radius, tipWidth = DEFAULT_TIP_WIDTH, 
  * @param {array} p2 end point
  * @param {number} radius radius of circle
  * @param {number} [tipWidth=DEFAULT_TIP_WIDTH] width of tip
- * @param {number} [tipHeight=tipWidth / 1.3] height of tip
+ * @param {number} tipHeight height of tip. Default value is tipWidth / 1.2
  * @param {number} [arrowCurving=0] arrow curving const. Expressed in pixels
  * @param {number} [tipOffset=0] offset (padding) of tip from it's defined. Expressed in radians
  * @param {boolean} [otherArc=false] whether to use other arc
@@ -2397,7 +2530,7 @@ function curvedArrowBetweenPoints(p1, p2, radius, tipWidth = DEFAULT_TIP_WIDTH, 
  */
 
 
-function curvedDoubleArrowBetweenPoints(p1, p2, radius, tipWidth = DEFAULT_TIP_WIDTH, tipHeight = tipWidth / 1.3, arrowCurving = 0, tipOffset = 0, otherArc = false) {
+function curvedDoubleArrowBetweenPoints(p1, p2, radius, tipWidth = DEFAULT_TIP_WIDTH, tipHeight = tipWidth / 1.2, arrowCurving = 0, tipOffset = 0, otherArc = false) {
   const ctx = _main.C.workingCanvas;
   ctx.save();
   const center = (0, _points.circleIntersection)(p1, radius, p2, radius)[0];
@@ -2408,7 +2541,7 @@ function curvedDoubleArrowBetweenPoints(p1, p2, radius, tipWidth = DEFAULT_TIP_W
   const tipAngularDiameter = tipWidth / radius;
   const p1Angle = Math.atan2(p1[1], p1[0]);
   const p2Angle = Math.atan2(p2[1], p2[0]) + tipAngularDiameter;
-  var angleBetweenPoints, startAngle;
+  let angleBetweenPoints, startAngle;
 
   if (otherArc) {
     startAngle = p1Angle;
@@ -2420,14 +2553,14 @@ function curvedDoubleArrowBetweenPoints(p1, p2, radius, tipWidth = DEFAULT_TIP_W
 
   arrowCurving /= radius;
   curvedArrow(center[0], center[1], radius, angleBetweenPoints + arrowCurving - tipOffset, startAngle - arrowCurving + tipOffset, tipWidth, tipHeight, arrowCurving * radius, tipOffset);
-  var padding = tipAngularDiameter - arrowCurving + tipOffset;
+  let padding = tipAngularDiameter - arrowCurving + tipOffset;
   startAngle -= tipAngularDiameter;
   arrowTip(center[0] + radius * Math.cos(startAngle + padding), center[1] + radius * Math.sin(startAngle + padding), center[0] + radius * Math.cos(startAngle + tipOffset), center[1] + radius * Math.sin(startAngle + tipOffset), tipWidth, tipHeight);
   ctx.restore();
   return center;
 }
 
-},{"../constants/colors.js":8,"../constants/drawing.js":9,"../main.js":12,"../math/points.js":15,"../settings.js":27,"../utils.js":28,"./text.js":26}],20:[function(require,module,exports){
+},{"../constants/colors.js":8,"../constants/drawing.js":9,"../main.js":13,"../math/points.js":16,"../settings.js":28,"../utils.js":29,"./text.js":27}],21:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2452,9 +2585,9 @@ var _main = require("../main.js");
  */
 function curlyBrace(x1, y1, x2, y2, size = 20, curviness = 0.6, taleLength = 0.8) {
   //Calculate unit vector
-  var dx = x1 - x2;
-  var dy = y1 - y2;
-  var len = Math.sqrt(dx * dx + dy * dy);
+  let dx = x1 - x2;
+  let dy = y1 - y2;
+  let len = Math.sqrt(dx * dx + dy * dy);
   dx /= len;
   dy /= len; //Calculate Control Points of path,
 
@@ -2513,7 +2646,7 @@ function arcBrace(x, y, radius = 100, angle = Math.PI / 2, startAngle = 0, small
   return [(largerRadius + extender) * Math.cos(angle / 2 + startAngle) + x, (largerRadius + extender) * Math.sin(angle / 2 + startAngle) + y];
 }
 
-},{"../main.js":12}],21:[function(require,module,exports){
+},{"../main.js":13}],22:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2539,6 +2672,7 @@ var _settings = require("../settings.js");
 
 var _text = require("./text.js");
 
+// list of plotters
 function getPlotterList(unitLength, unitValue, cfgs = {}) {
   return {
     getParametricFunction: function (configs) {
@@ -2562,12 +2696,12 @@ function getPlotterList(unitLength, unitValue, cfgs = {}) {
 }
 /**
  * Creates a axes.
- * @param {Object} config
+ * @param {Object} args
  * Possible configurations are:
  *
- * * xAxis  <object>         : Configurations for x axis. (See {@link numberLine} for more configurations)
- * * yAxis  <object>         : Configurations for y axis. (See {@link numberLine} for more configurations)
- * * center <array> [[0, 0]] : center of axes
+ * @param {object} xAxis Configurations for x axis. (See {@link numberLine} for more configurations)
+ * @param {object} yAxis Configurations for y axis. (See {@link numberLine} for more configurations)
+ * @param {array} [center = [0, 0]] center of axes
  *
  * @returns {object} object that contains following properties:
  * * xAxis                 <object>   : x axis confiurations from numberLine (See {@link numberLine} for those configurations).
@@ -2579,7 +2713,7 @@ function getPlotterList(unitLength, unitValue, cfgs = {}) {
  */
 
 
-function axes(config = {}) {
+function axes(args = {}) {
   const ctx = _main.C.workingCanvas; // default configurations
 
   const defaultConfigs = {
@@ -2607,13 +2741,13 @@ function axes(config = {}) {
     }
   }; // configurations
 
-  config = (0, _utils.applyDefault)(defaultConfigs, config);
+  args = (0, _utils.applyDefault)(defaultConfigs, args);
   const {
     xAxis,
     yAxis
-  } = config; // other configurations
+  } = args; // other configurations
 
-  const center = config.center || [0, 0]; // range of ticks in each axis
+  const center = args.center || [0, 0]; // range of ticks in each axis
 
   const xRange = xAxis.range;
   const yRange = yAxis.range; // unit length of each axis
@@ -2664,41 +2798,43 @@ function axes(config = {}) {
 }
 /**
  * Creates a numberLine with parameters in a object
- * @param {object} config
- * Possible properties:
+ * @param {object} args configuration object
  *
- * * point1                    <array>   ([-ctx.width / 2, 0]): starting point of line
- * * point2                    <array>   ([ctx.width / 2, 0]) : ending point of line
- * * range                     <array>   ([-5, 5, 1])         : range of numbers to draw ticks and numbers
- * * numbersToInclude          <array>   ([])                 : list of numbers to be displayed
- * * numbersToExclude          <array>   ([])                 : list of numbers that shouldn't be displayed
- * * numbersWithElongatedTicks <array>   ([])               : list of numbers where tick line should be longer
- * * textDirection             <array>   (0, -0.8)          : Direction of text relative to nearby tick
- * * includeLeftTip            <boolean> (false)            : whether to add an arrow tip at left
- * * includeRightTip           <boolean> (false)            : whether to add an arrow tip at right
- * * includeTick               <boolean> (true)             : Whether ticks should be added
- * * excludeOriginTick         <boolean> (false)            : Whether exclude ticks at origin
- * * tipWidth                  <number>  (20)               : width of arrow tip in px
- * * tipHeight                 <number>  (1)                : height/width of tip
- * * lineWidth                 <number>  (32)               : Width of lines in px
- * * longerTickMultiple        <number>  (2)                : Factor to increase height of ticks at elongated ticks
- * * tickHeight                <number>  (15)               : Height of ticks in px
- * * textSize                  <number>  (17)               : Font size of text
- * * textRotation              <number>  (0)                : Amount to rotate text
- * * decimalPlaces             <number>  (#decimals in step): Number of decimal places in text
- * * color                     <string>  (GREY)             : Color of axis and ticks
- * * textColor                 <string>  (WHITE)            : Color of text
+ * @param {array} [args.point1 = [-ctx.width / 2, 0]] starting point of line. Default value is [-ctx.width / 2, 0]
+ * @param {array} [args.point2 = [ctx.width / 2, 0]] ending point of line
+ * @param {array} [args.range = [-5, 5, 1]] range of numbers to draw ticks and numbers
+ * @param {array} [args.numbersToInclude = []] list of numbers to be displayed
+ * @param {array} [args.numbersToExclude = []] list of numbers that shouldn't be displayed
+ * @param {array} [args.numbersWithElongatedTicks = []] list of numbers where tick line should be longer
+ * @param {array} [args.textDirection = 0, -0.8] Direction of text relative to nearby tick
+ *
+ * @param {boolean} [args.includeLeftTip = false] whether to add an arrow tip at left
+ * @param {boolean} [args.includeRightTip = false] whether to add an arrow tip at right
+ * @param {boolean} [args.includeTick = true] Whether ticks should be added
+ * @param {boolean} [args.excludeOriginTick = false] Whether exclude ticks at origin
+ *
+ * @param {number} [args.tipWidth = 20] width of arrow tip in px
+ * @param {number} [args.tipHeight = 1] height/width of tip
+ * @param {number} [args.lineWidth = 32] Width of lines in px
+ * @param {number} [args.longerTickMultiple = 2] Factor to increase height of ticks at elongated ticks
+ * @param {number} [args.tickHeight = 15] Height of ticks in px
+ * @param {number} [args.textSize = 17] Font size of text
+ * @param {number} [args.textRotation = 0] Amount to rotate text
+ * @param {number} args.decimalPlaces Number of decimal places in text. By default value is number of decimals in step
+ *
+ * @param {string} [args.color = GREY] Color of axis and ticks
+ * @param {string} [args.textColor = WHITE] Color of text
  *
  * @returns {object} configurations about the number line
  *
- * * center     <array>: Center of the number line in px
- * * tickList   <array>: List of tick inervals
- * * unitValue  <array>: How much a unit is in its value in x and y directions.
- * * unitLength <array>: How much a unit is in px in x and y directions.
+ * * center     {array} Center of the number line in px
+ * * tickList   {array} List of tick inervals
+ * * unitValue  {array} How much a unit is in its value in x and y directions.
+ * * unitLength {array} How much a unit is in px in x and y directions.
  */
 
 
-function numberLine(config = {}) {
+function numberLine(args = {}) {
   const ctx = _main.C.workingCanvas;
   const defaultConfigs = {
     rotation: 0,
@@ -2724,7 +2860,7 @@ function numberLine(config = {}) {
     color: _colors.GREY,
     textColor: _colors.WHITE
   };
-  config = (0, _utils.applyDefault)(defaultConfigs, config);
+  args = (0, _utils.applyDefault)(defaultConfigs, args);
   const {
     color,
     center,
@@ -2744,11 +2880,11 @@ function numberLine(config = {}) {
     excludeOriginTick,
     longerTickMultiple,
     numbersWithElongatedTicks
-  } = config;
-  var {
+  } = args;
+  let {
     range,
     decimalPlaces
-  } = config;
+  } = args;
 
   if (Array.isArray(range) && range.length === 2) {
     range = [range[0], range[1], 1];
@@ -2771,8 +2907,8 @@ function numberLine(config = {}) {
   (0, _settings.translate)(center[0], center[1]);
   (0, _settings.rotate)(rotation);
   (0, _settings.translate)(-lineLength / 2, 0);
-  if (config.includeTick) drawTicks();
-  if (config.includeNumbers) drawNumbers();
+  if (args.includeTick) drawTicks();
+  if (args.includeNumbers) drawNumbers();
   (0, _settings.translate)(lineLength / 2, 0);
   drawAxis();
   ctx.closePath();
@@ -2819,7 +2955,7 @@ function numberLine(config = {}) {
 
   function drawNumbers() {
     const numbers = numbersToInclude.length > 0 ? numbersToInclude : list;
-    (0, _settings.fill)(config.textColor);
+    (0, _settings.fill)(args.textColor);
     (0, _settings.fontSize)(textSize);
     const yShift = -textSize / 3 * Math.cos(textRotation) + textDirection[1] * textSize;
     const from = includeLeftTip ? 1 : 0;
@@ -2853,18 +2989,19 @@ function numberLine(config = {}) {
 }
 /**
  * Creates a numberPlane based on following parameters inside a Object
- * @param {Object} config
+ * @param {Object} args
  * Possible parameters:
  *
- * * xAxis  <object>: Configurations for x axis. See {@link numberLine} for possible configurations.
- * * yAxis  <object>: Configurations for y axis. See {@link numberLine} for possible configurations.
- * * center <array> : Center of number plane as [x, y] in px.
- * * grid   <object>: Set of styles to draw grid & subgrids. This can have following properties:
- *   * lineWidth        <number> (1)          : stroke width of grid lines
- *   * subgrids         <number> (0)          : number of sub-grid division to draw
- *   * subgridLineWidth <number> (0.7)        : stroke width of sub-grid
- *   * color            <string> ("#58c4dda0"): color of grid lines
- *   * subgridLineColor <string> ("#888888a0"): color of sub-grids
+ * @param {object} args.xAxis Configurations for x axis. See {@link numberLine} for possible configurations.
+ * @param {object} args.yAxis Configurations for y axis. See {@link numberLine} for possible configurations.
+ * @param {array} args.center Center of number plane as [x, y] in px.
+ * @param {object} args.grid Set of styles to draw grid & subgrids. This can have following properties:
+ *
+ *   @param {number} [args.grid.lineWidth = 1]  stroke width of grid lines
+ *   @param {number} [args.grid.subgrids = 0]  number of sub-grid division to draw
+ *   @param {number} [args.grid.subgridLineWidth = 0.7]  stroke width of sub-grid
+ *   @param {string} [args.grid.color = "#58c4dda0"]  color of grid lines
+ *   @param {string} [args.grid.subgridLineColor = "#888888a0"]  color of sub-grids
  * @returns {Object} configurations of number plane. Those are :
  *
  * * center                <array>   : Center of number plane as [x, y] in px.
@@ -2878,7 +3015,7 @@ function numberLine(config = {}) {
  */
 
 
-function numberPlane(config = {}) {
+function numberPlane(args = {}) {
   const ctx = _main.C.workingCanvas; // default configurations
 
   const defaultConfigs = {
@@ -2913,15 +3050,15 @@ function numberPlane(config = {}) {
     center: [0, 0]
   }; // configurations
 
-  config = (0, _utils.applyDefault)(defaultConfigs, config);
+  args = (0, _utils.applyDefault)(defaultConfigs, args);
   const {
     xAxis,
     yAxis,
     grid
-  } = config; // other configurations
+  } = args; // other configurations
 
   const subgrids = grid.subgrids;
-  const center = config.center; // range of ticks in each axis
+  const center = args.center; // range of ticks in each axis
 
   const xRange = xAxis.range;
   const yRange = yAxis.range; // number of ticks in each
@@ -3025,7 +3162,7 @@ function numberPlane(config = {}) {
   return Object.assign(ret, getPlotterList(unitLength, unitValue, ret));
 }
 
-},{"../constants/colors.js":8,"../main.js":12,"../settings.js":27,"../utils.js":28,"./arrows.js":19,"./functions.js":22,"./geometry.js":23,"./text.js":26}],22:[function(require,module,exports){
+},{"../constants/colors.js":8,"../main.js":13,"../settings.js":28,"../utils.js":29,"./arrows.js":20,"./functions.js":23,"./geometry.js":24,"./text.js":27}],23:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3051,21 +3188,24 @@ const animationEventChain = {
     return animationEventChain;
   }
 };
+let counter = {
+  parametricFunction: 1
+};
 /**
  * Draws a parametric functions
  * This accept parameters as object.
- * @param {object} config configuration object
+ * @param {object} args configuration object
  * It can have following properties:
  *
- * * paramFunction   <function>               : function to plot. Must recieve one argument and return a array of point as [x, y]
- * * range           <array>    ([0, 10, 0.1]): Range as [min, max, dt]
- * * smoothen        <boolean>  (true)        : Whether to smoothen the shape.
- * * tension         <number>   (1)           : Smoothness tension.
- * * discontinuities <array>    ([])          : Array of t where the curve discontinues.
- * * closed          <boolean>  (false)       : Whether the function draws a closed shape.
- * * unitValue       <array>    ([1, 1])      : Value of each unit space
- * * unitLength      <array>    ([1, 1])      : Length of each unit in pixels
- * * draw            <boolean>  (true)        : Wheteher to draw the function graph right now.
+ * @param {function} args.paramFunction function to plot. Must recieve one argument and return a array of point as [x, y]
+ * @param {number} [args.tension = 1] Smoothness tension.
+ * @param {array} [args.range = [0, 10, 0.1]] Range as [min, max, dt]
+ * @param {array} [args.discontinuities = []] Array of t where the curve discontinues.
+ * @param {array} [args.unitValue = [1, 1]] Value of each unit space
+ * @param {array} [args.unitLength = [1, 1]] Length of each unit in pixels
+ * @param {boolean} [args.smoothen = true] Whether to smoothen the shape.
+ * @param {boolean} [args.closed = false] Whether the function draws a closed shape.
+ * @param {boolean} [args.draw = true] Wheteher to draw the function graph right now.
  *
  * @returns {object} object that contains following properties:
  *
@@ -3074,8 +3214,8 @@ const animationEventChain = {
  * * animate <function> : Function that animates the drawing of the shape. Accept argument `duration` which is the duration of animation.
  */
 
-function parametricFunction(config) {
-  const defaultConfigs = {
+function parametricFunction(args) {
+  let defaultConfigs = {
     tension: 1,
     unitValue: [1, 1],
     unitLength: [1, 1],
@@ -3084,32 +3224,34 @@ function parametricFunction(config) {
     discontinuities: [],
     smoothen: true,
     closed: false,
-    draw: true
+    draw: true,
+    // for animation
+    dur: 4000
   };
-  config = (0, _utils.applyDefault)(defaultConfigs, config);
-  var {
+  args = (0, _utils.applyDefault)(defaultConfigs, args);
+  let {
     paramFunction,
     range,
     smoothen,
     tension,
     discontinuities,
     closed
-  } = config;
+  } = args;
   if (Array.isArray(range) && range.length == 2) range.push((range[1] - range[0]) / 20);
-  var points = [[]];
-  var min = range[0];
-  var max = range[1];
-  var step = range[2];
+  let points = [[]],
+      min = range[0],
+      max = range[1],
+      step = range[2];
   if (!Array.isArray(discontinuities)) discontinuities = []; // generate points
 
-  var epsilon = 1e-6;
+  let epsilon = 1e-6,
+      row = 0,
+      noPoints = 0,
+      unitX = args.unitLength[0] / args.unitValue[0],
+      unitY = args.unitLength[1] / args.unitValue[1];
   if (step < epsilon) epsilon = step / 2;
-  var row = 0;
-  var noPoints = 0;
-  const unitX = config.unitLength[0] / config.unitValue[0],
-        unitY = config.unitLength[1] / config.unitValue[1];
 
-  for (var t = min; t <= max + epsilon; t += step) {
+  for (let t = min; t <= max + epsilon; t += step) {
     if ((0, _utils.approximateIndexInArray)(t, discontinuities, epsilon) > -1) {
       if ((0, _utils.approximateIndexInArray)(t + step, discontinuities, epsilon) > -1) {
         row++;
@@ -3125,13 +3267,13 @@ function parametricFunction(config) {
   } // draw the plot
 
 
-  if (config.draw) plot();
+  if (args.draw) plot();
 
   function plot() {
-    const ctx = _main.C.workingCanvas;
+    let ctx = _main.C.workingCanvas;
 
     for (let i = 0; i < points.length; i++) {
-      var p = points[i];
+      let p = points[i];
 
       if (smoothen) {
         (0, _geometry.smoothCurveThroughPoints)(p, tension, closed);
@@ -3149,48 +3291,62 @@ function parametricFunction(config) {
     }
   }
 
-  const ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingCanvas;
   return {
-    points: points,
-    draw: plot,
-    animate: function (duration = 2000) {
-      var dt = duration / noPoints;
+    points: points[0],
+    dur: args.dur,
+    name: "parametric-plot-" + counter.parametricFunction++,
+    closed: args.closed,
+    tension: args.tension || 1,
+    smoothen: args.smoothen,
+    rateFunction: args.rateFunction,
+    syncWithTime: args.syncWithTime || false,
+    draw: function (duration = 2000) {
+      let dt = duration / noPoints;
 
       for (let i = 0; i < points.length; i++) {
         var p = points[i];
         let j = 0;
 
         if (smoothen) {
-          (0, _settings.loop)(() => {
-            if (j >= p.length - 2) {
-              (0, _settings.noLoop)();
-              ctx.closePath();
-              if (ctx.doFill) this.draw();
-            }
-
-            var recentPoint = j > 0 ? p[j - 1] : closed ? p[p.length - 2] : p[0];
-            var currentPoint = p[j];
-            var nextPoint = p[j + 1];
-            var secondNextPoint = j != p.length - 2 ? p[j + 2] : closed ? p[1] : nextPoint;
-            j++;
-            var cp = (0, _geometry.getBezierControlPoints)(recentPoint, currentPoint, nextPoint, secondNextPoint);
-            ctx.beginPath();
-            ctx.moveTo(currentPoint[0], currentPoint[1]);
-            ctx.bezierCurveTo(cp[0], cp[1], cp[2], cp[3], nextPoint[0], nextPoint[1]);
-            ctx.stroke();
-          }, _main.C.workingCanvas.name, dt);
+          (0, _settings.loop)("parametric-plot-" + counter.parametricFunction++, smoothed(j), _main.C.workingCanvas.name, dt);
         } else {
-          (0, _settings.loop)(() => {
-            if (j >= p.length - 2) {
-              (0, _settings.noLoop)();
-              if (ctx.doFill) this.draw();
-            }
-
-            var p1 = p[j],
-                p2 = p[++j];
-            (0, _geometry.line)(p1[0], p1[1], p2[0], p2[1]);
-          }, dt);
+          (0, _settings.loop)("parametric-plot-" + counter.parametricFunction++, nonSmoothed(j), _main.C.workingCanvas.name, dt);
         }
+      }
+
+      function smoothed(j) {
+        return function () {
+          if (j >= p.length - 2) {
+            (0, _settings.noLoop)();
+            ctx.closePath();
+            if (ctx.doFill) this.draw();
+          }
+
+          let recentPoint = j > 0 ? p[j - 1] : closed ? p[p.length - 2] : p[0],
+              currentPoint = p[j],
+              nextPoint = p[j + 1],
+              secondNextPoint = j != p.length - 2 ? p[j + 2] : closed ? p[1] : nextPoint,
+              cp = (0, _geometry.getBezierControlPoints)(recentPoint, currentPoint, nextPoint, secondNextPoint);
+          j++;
+          ctx.beginPath();
+          ctx.moveTo(currentPoint[0], currentPoint[1]);
+          ctx.bezierCurveTo(cp[0], cp[1], cp[2], cp[3], nextPoint[0], nextPoint[1]);
+          ctx.stroke();
+        };
+      }
+
+      function nonSmoothed(j) {
+        return function () {
+          if (j >= p.length - 2) {
+            (0, _settings.noLoop)();
+            if (ctx.doFill) this.draw();
+          }
+
+          let p1 = p[j],
+              p2 = p[++j];
+          (0, _geometry.line)(p1[0], p1[1], p2[0], p2[1]);
+        };
       }
 
       return animationEventChain;
@@ -3203,33 +3359,33 @@ function parametricFunction(config) {
  */
 
 
-function functionGraph(config) {
-  const paramFunction = config.paramFunction;
+function functionGraph(args) {
+  let paramFunction = args.paramFunction;
 
-  config.paramFunction = x => [x, paramFunction(x)];
+  args.paramFunction = x => [x, paramFunction(x)];
 
-  return parametricFunction(config);
+  return parametricFunction(args);
 }
 /**
  * Draws a heat plot of given function. The function must take atleast 2 arguments and return a number.
  * More precisely f: ℜ² → ℜ
  * All parameters should be enclosed in a object.
- * @param {object} config
+ * @param {object} args
  * Possible parameters are:
  *
- * * min          <array>   ([-4, -4]): minimum point
- * * max          <array>   ([4, 4])  : maximum point
- * * colors       <object>            : object of color map
- * * unitValue    <array>   ([1, 1])  : Value of each unit space
- * * unitLength   <array>   ([1, 1])  : Length of each unit in pixels
- * * resolution   <number>  (1)       : resolution of plot
- * * interpolator <function> (linear) : function to interpolate color.
+ * @param {array} [args.min = [-4, -4]] minimum point
+ * @param {array} [args.max = [4, 4]] maximum point
+ * @param {object} args.colors object of color map
+ * @param {array} [args.unitValue = [1, 1]] Value of each unit space
+ * @param {array} [args.unitLength = [1, 1]] Length of each unit in pixels
+ * @param {number} [args.resolution = 1] resolution of plot
+ * @param {function} [args.interpolator = linear] function to interpolate color.
  * @return {object} metadatas
  */
 
 
-function heatPlot(config) {
-  const defaultConfigs = {
+function heatPlot(args) {
+  let defaultConfigs = {
     min: [-4, -4],
     max: [4, 4],
     colors: {
@@ -3246,30 +3402,30 @@ function heatPlot(config) {
     resolution: 1,
     interpolator: x => x
   };
-  config = (0, _utils.applyDefault)(defaultConfigs, config, false);
-  const {
+  args = (0, _utils.applyDefault)(defaultConfigs, args, false);
+  let {
     min,
     max,
     colors,
     resolution,
     plotFunction,
     interpolator
-  } = config;
-  const ctx = _main.C.workingCanvas,
-        unitSizeX = config.unitLength[0] / config.unitValue[0],
-        unitSizeY = config.unitLength[1] / config.unitValue[1],
-        UVX = config.unitValue[0] / config.unitLength[0],
-        UVY = config.unitValue[1] / config.unitLength[1],
-        stopes = Object.keys(colors).sort(); // converting colors to rgba array
+  } = args,
+      ctx = _main.C.workingCanvas,
+      unitSizeX = args.unitLength[0] / args.unitValue[0],
+      unitSizeY = args.unitLength[1] / args.unitValue[1],
+      UVX = args.unitValue[0] / args.unitLength[0],
+      UVY = args.unitValue[1] / args.unitLength[1],
+      stopes = Object.keys(colors).sort(); // converting colors to rgba array
 
-  for (var stop of stopes) colors[stop] = (0, _color_reader.readColor)(colors[stop], true);
+  for (let stop of stopes) colors[stop] = (0, _color_reader.readColor)(colors[stop], true);
 
-  const minS = Math.min(...stopes);
-  const maxS = Math.max(...stopes);
+  let minS = Math.min(...stopes),
+      maxS = Math.max(...stopes);
   ctx.save();
 
-  for (var x = min[0]; x <= max[0]; x += resolution * UVX) {
-    for (var y = min[1]; y <= max[1]; y += resolution * UVY) {
+  for (let x = min[0]; x <= max[0]; x += resolution * UVX) {
+    for (let y = min[1]; y <= max[1]; y += resolution * UVY) {
       let c = lerpColorArray(plotFunction(x, y));
       ctx.fillStyle = c;
       ctx.fillRect(x * unitSizeX, y * unitSizeY, resolution, resolution);
@@ -3280,7 +3436,7 @@ function heatPlot(config) {
     if (v >= maxS) return "rgba(" + colors[maxS].join() + ")";
     if (v <= minS) return "rgba(" + colors[minS].join() + ")";
 
-    for (var i = 0; i < stopes.length - 1; i++) {
+    for (let i = 0; i < stopes.length - 1; i++) {
       let a = stopes[i],
           b = stopes[i + 1],
           c1 = colors[a],
@@ -3301,7 +3457,7 @@ function heatPlot(config) {
   };
 }
 
-},{"../color/color_reader.js":4,"../main.js":12,"../settings.js":27,"../utils.js":28,"./geometry.js":23}],23:[function(require,module,exports){
+},{"../color/color_reader.js":4,"../main.js":13,"../settings.js":28,"../utils.js":29,"./geometry.js":24}],24:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3354,7 +3510,7 @@ var _utils = require("../utils.js");
  * @param {number} [startAngle=0] The angle at which the arc starts in radians, measured from the positive x-axis.
  */
 function arc(x, y, r, angle = Math.PI / 2, startAngle = 0) {
-  const ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingCanvas;
   if (!ctx.pathStarted) ctx.beginPath();
   ctx.arc(x, y, r, startAngle, startAngle + angle);
   if (!ctx.pathStarted) (0, _utils.doFillAndStroke)(ctx);
@@ -3370,12 +3526,12 @@ function arc(x, y, r, angle = Math.PI / 2, startAngle = 0) {
 
 
 function point(x, y, size = 10, doStroke = false) {
-  const ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingCanvas;
   ctx.beginPath();
   ctx.arc(x, y, size / 2, 0, Math.PI * 2);
   ctx.fill();
   if (doStroke) ctx.stroke();
-  ctx.closePath();
+  ctx.beginPath(); // close path don't work
 }
 /**
  * Draws a circular segment.
@@ -3389,7 +3545,7 @@ function point(x, y, size = 10, doStroke = false) {
 
 
 function circularSegment(x, y, r, angle = Math.PI / 2, startAngle = 0) {
-  const ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingCanvas;
   if (!ctx.pathStarted) ctx.beginPath();
   ctx.arc(x, y, r, startAngle, startAngle + angle);
   if (!ctx.pathStarted) (0, _utils.doFillAndStroke)(ctx);
@@ -3404,7 +3560,7 @@ function circularSegment(x, y, r, angle = Math.PI / 2, startAngle = 0) {
 
 
 function circle(x, y, r) {
-  const ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingCanvas;
   ctx.beginPath();
   ctx.arc(x, y, r, 0, Math.PI * 2);
   (0, _utils.doFillAndStroke)(ctx);
@@ -3424,7 +3580,7 @@ function circle(x, y, r) {
 
 
 function ellipse(x, y, radius1, radius2, rotation = 0, startAngle = 0, angle = Math.PI * 2) {
-  const ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingCanvas;
   if (!ctx.pathStarted) ctx.beginPath();
   ctx.ellipse(x, y, radius1, radius2, rotation, startAngle, startAngle + angle);
   if (!ctx.pathStarted) (0, _utils.doFillAndStroke)(ctx);
@@ -3443,8 +3599,8 @@ function ellipse(x, y, radius1, radius2, rotation = 0, startAngle = 0, angle = M
 
 
 function bezier(cpx1, cpy1, cpx2, cpy2, x3, y3) {
-  const ctx = _main.C.workingCanvas;
-  const pathStarted = ctx.pathStarted;
+  let ctx = _main.C.workingCanvas,
+      pathStarted = ctx.pathStarted;
   if (!pathStarted) ctx.beginPath();
   ctx.bezierCurveTo(cpx1, cpy1, cpx2, cpy2, x3, y3);
   if (!ctx.pathStarted) (0, _utils.doFillAndStroke)(ctx);
@@ -3461,7 +3617,7 @@ function bezier(cpx1, cpy1, cpx2, cpy2, x3, y3) {
 
 
 function sector(x, y, radius, angle = Math.PI / 2, startAngle = 0) {
-  const ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingCanvas;
   ctx.beginPath();
   ctx.moveTo(x, y);
   ctx.arc(x, y, radius, startAngle, startAngle + angle);
@@ -3493,12 +3649,12 @@ function getBezierControlPoints(recentPoint, currentPoint, nextPoint, secondNext
 
 
 function smoothCurveThroughPointsTo(points, tension = 1, closed = true) {
-  for (var i = 0; i < points.length - 1; i++) {
-    var recentPoint = i > 0 ? points[i - 1] : closed ? points[points.length - 2] : points[0];
-    var currentPoint = points[i];
-    var nextPoint = points[i + 1];
-    var secondNextPoint = i != points.length - 2 ? points[i + 2] : closed ? points[1] : nextPoint;
-    var cp = getBezierControlPoints(recentPoint, currentPoint, nextPoint, secondNextPoint, tension);
+  for (let i = 0; i < points.length - 1; i++) {
+    let recentPoint = i > 0 ? points[i - 1] : closed ? points[points.length - 2] : points[0],
+        currentPoint = points[i],
+        nextPoint = points[i + 1],
+        secondNextPoint = i != points.length - 2 ? points[i + 2] : closed ? points[1] : nextPoint,
+        cp = getBezierControlPoints(recentPoint, currentPoint, nextPoint, secondNextPoint, tension);
 
     _main.C.workingCanvas.bezierCurveTo(cp[0], cp[1], cp[2], cp[3], nextPoint[0], nextPoint[1]);
   }
@@ -3512,7 +3668,7 @@ function smoothCurveThroughPointsTo(points, tension = 1, closed = true) {
 
 
 function smoothCurveThroughPoints(points, tension = 1, closed = true) {
-  const ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingCanvas;
   ctx.beginPath();
   ctx.moveTo(points[0][0], points[0][1]);
   smoothCurveThroughPointsTo(points, tension, closed);
@@ -3541,8 +3697,8 @@ function smoothCurveThroughPoints(points, tension = 1, closed = true) {
 
 
 function quadraticCurve() {
-  const ctx = _main.C.workingCanvas,
-        args = arguments;
+  let ctx = _main.C.workingCanvas,
+      args = arguments;
 
   if (args.length == 4) {
     ctx.quadraticCurveTo(args[0], args[1], args[2], args[3]);
@@ -3564,7 +3720,7 @@ function quadraticCurve() {
 
 
 function annulus(x, y, innerRadius, outerRadius) {
-  const ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingCanvas;
   ctx.beginPath();
   ctx.arc(x, y, innerRadius, 0, 2 * Math.PI, false);
   ctx.moveTo(outerRadius, 0);
@@ -3584,7 +3740,7 @@ function annulus(x, y, innerRadius, outerRadius) {
 
 
 function annulusSector(x, y, innerRadius, outerRadius, angle, startAngle) {
-  const ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingCanvas;
   ctx.beginPath();
   ctx.arc(x, y, innerRadius, startAngle, startAngle + angle, false);
   ctx.arc(x, y, outerRadius, startAngle + angle, startAngle, true);
@@ -3606,22 +3762,23 @@ function annulusSector(x, y, innerRadius, outerRadius, angle, startAngle) {
 
 
 function angle(p1, p2, p3, p4, radius = 20, extender = 10, otherAngle = false, angleDir = 1) {
-  const [x, y] = (0, _points.lineIntersection)(p1, p2, p3, p4);
+  let [x, y] = (0, _points.lineIntersection)(p1, p2, p3, p4);
 
   if (!(isNaN(x) || isNaN(y))) {
-    var ang,
+    let ang,
         startAngle,
         a1 = Math.atan2(p1[1] - y, p1[0] - x),
         a2 = Math.atan2(p2[1] - y, p2[0] - x),
         a3 = Math.atan2(p3[1] - y, p3[0] - x),
-        a4 = Math.atan2(p4[1] - y, p4[0] - x);
-    var angleDirs = {
+        a4 = Math.atan2(p4[1] - y, p4[0] - x),
+        angleDirs = {
       1: [a2, a4],
       2: [a4, a1],
       3: [a1, a3],
       4: [a3, a2]
     },
-        dir = angleDirs[angleDir];
+        dir = angleDirs[angleDir],
+        ctx = _main.C.workingCanvas;
 
     if (otherAngle) {
       startAngle = dir[1];
@@ -3630,8 +3787,6 @@ function angle(p1, p2, p3, p4, radius = 20, extender = 10, otherAngle = false, a
       startAngle = dir[0];
       ang = dir[1] - dir[0];
     }
-
-    const ctx = _main.C.workingCanvas;
 
     if (ctx.doFill) {
       ctx.beginPath();
@@ -3675,10 +3830,10 @@ function angle(p1, p2, p3, p4, radius = 20, extender = 10, otherAngle = false, a
 function arcBetweenPoints(x1, y1, x2, y2, radius, otherArc = false) {
   if (x1 == x2 && y1 == y2) // TODO: should it be `throw Error()`?
     console.error("Can't draw a arc between points. Given points are exactly same");
-  var center = (0, _points.circleIntersection)([x1, y1], radius, [x2, y2], radius)[0];
-  const ctx = _main.C.workingCanvas;
-  const angleFromXAxis = Math.atan2(y1 - center[1], x1 - center[0]);
-  const centralAngle = Math.atan2(y2 - center[1], x2 - center[0]) - angleFromXAxis;
+  let center = (0, _points.circleIntersection)([x1, y1], radius, [x2, y2], radius)[0],
+      ctx = _main.C.workingCanvas,
+      angleFromXAxis = Math.atan2(y1 - center[1], x1 - center[0]),
+      centralAngle = Math.atan2(y2 - center[1], x2 - center[0]) - angleFromXAxis;
 
   if (!ctx.pathStarted) {
     ctx.save();
@@ -3705,7 +3860,7 @@ function arcBetweenPoints(x1, y1, x2, y2, radius, otherArc = false) {
 
 
 function line(x1, y1, x2, y2) {
-  const ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingCanvas;
   ctx.beginPath();
   ctx.moveTo(x1, y1);
   ctx.lineTo(x2, y2);
@@ -3723,7 +3878,7 @@ function line(x1, y1, x2, y2) {
 
 
 function rect(x, y, width, height) {
-  const ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingCanvas;
   ctx.beginPath();
   ctx.rect(x, y, width, height);
   if (ctx.doFill) ctx.fill();
@@ -3745,11 +3900,11 @@ function rect(x, y, width, height) {
 
 
 function polygon() {
-  const args = arguments;
+  let args = arguments;
 
   if (args.length > 2) {
-    const ctx = _main.C.workingCanvas;
-    const start = args[0];
+    let ctx = _main.C.workingCanvas,
+        start = args[0];
     ctx.beginPath();
     ctx.moveTo(start[0], start[1]);
 
@@ -3786,7 +3941,7 @@ function square(x, y, sideLength) {
 
 
 function quad(p1, p2, p3, p4) {
-  const ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingCanvas;
   ctx.beginPath();
   ctx.moveTo(p1[0], p1[1]);
   ctx.lineTo(p2[0], p2[1]);
@@ -3807,7 +3962,7 @@ function quad(p1, p2, p3, p4) {
 
 
 function triangle(p1, p2, p3) {
-  const ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingCanvas;
   ctx.beginPath();
   ctx.moveTo(p1[0], p1[1]);
   ctx.lineTo(p2[0], p2[1]);
@@ -3842,7 +3997,7 @@ function equiTriangle(x, y, sideLength, rotation = 0) {
 
 
 function regularPolygon(x, y, sides, sideLength, rotation = 0) {
-  const radius = sideLength / (2 * Math.sin(Math.PI / sides)); // finds ex-radius
+  let radius = sideLength / (2 * Math.sin(Math.PI / sides)); // finds ex-radius
 
   regularPolygonWithRadius(x, y, sides, radius, rotation);
 }
@@ -3858,11 +4013,11 @@ function regularPolygon(x, y, sides, sideLength, rotation = 0) {
 
 
 function regularPolygonWithRadius(x, y, sides, radius, rotation = 0) {
-  let i = 0;
-  const e = Math.PI * 2 / sides;
-  const ctx = _main.C.workingCanvas;
+  let i = 0,
+      e = Math.PI * 2 / sides,
+      ctx = _main.C.workingCanvas;
   rotation += e / 2;
-  const initial = [Math.cos(rotation) * radius + x, Math.sin(rotation) * radius + y];
+  let initial = [Math.cos(rotation) * radius + x, Math.sin(rotation) * radius + y];
   ctx.beginPath();
   ctx.moveTo(initial[0], initial[1]);
 
@@ -3888,9 +4043,9 @@ function regularPolygonWithRadius(x, y, sides, radius, rotation = 0) {
 
 function polygonWithRatioOfCentralAngles(x, y, radius, ratios, rotation = 0) {
   if (!Array.isArray(ratios)) console.error("ratio provided is not array");
-  const sumOfRatio = ratios.reduce((a, b) => a + b, 0);
-  const baseAngle = Math.PI * 2 / sumOfRatio;
-  const ctx = _main.C.workingCanvas;
+  let sumOfRatio = ratios.reduce((a, b) => a + b, 0),
+      baseAngle = Math.PI * 2 / sumOfRatio,
+      ctx = _main.C.workingCanvas;
   ctx.save();
   ctx.translate(x, y);
   ctx.rotate(rotation);
@@ -3908,7 +4063,7 @@ function polygonWithRatioOfCentralAngles(x, y, radius, ratios, rotation = 0) {
   ctx.restore();
 }
 
-},{"../main.js":12,"../math/points.js":15,"../utils.js":28}],24:[function(require,module,exports){
+},{"../main.js":13,"../math/points.js":16,"../utils.js":29}],25:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3944,12 +4099,12 @@ function drawImage() {
 
 
 function pixel(x, y, color) {
-  const ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingCanvas;
   ctx.fillStyle = color == undefined ? ctx.fillStyle : (0, _color_reader.readColor)(color);
   ctx.fillRect(x, y, 1, 1);
 }
 
-},{"../color/color_reader.js":4,"../main.js":12}],25:[function(require,module,exports){
+},{"../color/color_reader.js":4,"../main.js":13}],26:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3970,20 +4125,19 @@ var _main = require("../main.js");
  */
 function getImageFromTex(input) {
   if (typeof window.MathJax == "object" && typeof window.MathJax.tex2svg == "function") {
-    const ctx = _main.C.workingCanvas; // eslint-disable-next-line no-undef
-
-    const svgOutput = MathJax.tex2svg(input).getElementsByTagName("svg")[0];
-    const g = svgOutput.getElementsByTagName("g")[0];
+    let ctx = _main.C.workingCanvas,
+        svgOutput = window.MathJax.tex2svg(input).getElementsByTagName("svg")[0],
+        g = svgOutput.getElementsByTagName("g")[0];
     svgOutput.style.verticalAlign = "1ex";
     g.setAttribute("stroke", ctx.strokeStyle);
     g.setAttribute("fill", ctx.fillStyle);
     let outerHTML = svgOutput.outerHTML,
         blob = new Blob([outerHTML], {
       type: "image/svg+xml;charset=utf-8"
-    });
-    let URL = window.URL || window.webkitURL || window;
-    let blobURL = URL.createObjectURL(blob);
-    let image = new Image();
+    }),
+        URL = window.URL || window.webkitURL || window,
+        blobURL = URL.createObjectURL(blob),
+        image = new Image();
     image.src = blobURL;
     return image;
   } else {
@@ -4001,14 +4155,14 @@ function getImageFromTex(input) {
 
 
 function tex(input, x = 0, y = 0) {
-  const image = getImageFromTex(input);
-  const ctx = _main.C.workingCanvas;
-  const text_align = ctx.textAlign,
-        text_baseline = ctx.textBaseline;
+  let image = getImageFromTex(input),
+      ctx = _main.C.workingCanvas,
+      text_align = ctx.textAlign,
+      text_baseline = ctx.textBaseline;
 
   image.onload = function () {
     ctx.save();
-    const {
+    let {
       width,
       height
     } = image; // translating the image according to text-align and text-baseline
@@ -4052,7 +4206,7 @@ function tex(input, x = 0, y = 0) {
   return image;
 }
 
-},{"../constants/drawing.js":9,"../main.js":12}],26:[function(require,module,exports){
+},{"../constants/drawing.js":9,"../main.js":13}],27:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4080,7 +4234,7 @@ var _settings = require("../settings.js");
  * @param {number} [maxwidth=undefined] maximum width
  */
 function text(text, x = 0, y = 0, maxwidth = undefined) {
-  const ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingCanvas;
 
   if (ctx.yAxisInverted) {
     // if inverted reverse it and invert y component
@@ -4102,7 +4256,7 @@ function text(text, x = 0, y = 0, maxwidth = undefined) {
 
 
 function fillText(text, x = 0, y = 0, maxwidth = undefined) {
-  const ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingCanvas;
 
   if (ctx.yAxisInverted) {
     (0, _settings.scale)(1, -1);
@@ -4123,7 +4277,7 @@ function fillText(text, x = 0, y = 0, maxwidth = undefined) {
 
 
 function strokeText(text, x = 0, y = 0, maxwidth = undefined) {
-  const ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingCanvas;
 
   if (ctx.yAxisInverted) {
     (0, _settings.scale)(1, -1);
@@ -4134,7 +4288,7 @@ function strokeText(text, x = 0, y = 0, maxwidth = undefined) {
   if (ctx.yAxisInverted) (0, _settings.scale)(1, -1);
 }
 
-},{"../main.js":12,"../settings.js":27}],27:[function(require,module,exports){
+},{"../main.js":13,"../settings.js":28}],28:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4190,7 +4344,9 @@ exports.invertYAxis = invertYAxis;
 exports.initBlackboardCanvas = initBlackboardCanvas;
 exports.wait = wait;
 exports.getStrokeWidth = getStrokeWidth;
-exports.debugAnimations = debugAnimations;
+exports.showCreation = showCreation;
+
+var _create = require("./animations/create.js");
 
 var _color_reader = require("./color/color_reader.js");
 
@@ -4198,17 +4354,34 @@ var _named_colors = require("./constants/named_colors.js");
 
 var _main = require("./main.js");
 
+var _rate_functions = require("./math/rate_functions.js");
+
+var _geometry = require("./objects/geometry.js");
+
+var _utils = require("./utils.js");
+
 /**
  * This module contains functions to manipulate the canvas.
  * @module settings
  */
-
+let counter = {
+  wait: 1,
+  loop: 1
+};
+let logStyles = {
+  number: "color: #9afcad;",
+  keyword: "color: #adacdf;",
+  running: "color: yellow;",
+  delayed: "color: orange;",
+  finished: "color: #3aff5f;"
+};
 /**
  * Begins a new shape at the point specified by the given (x, y) coordinates.
  *
  * @param {number} x
  * @param {number} y
  */
+
 function moveTo(x, y) {
   _main.C.workingCanvas.moveTo(x, y);
 }
@@ -4234,8 +4407,8 @@ function lineTo(x, y) {
 
 
 function background() {
-  const col = (0, _color_reader.readColor)(...arguments),
-        ctx = _main.C.workingCanvas;
+  let col = (0, _color_reader.readColor)(...arguments),
+      ctx = _main.C.workingCanvas;
   ctx.background = col;
   ctx.save();
   rest();
@@ -4255,7 +4428,7 @@ function background() {
 
 
 function clear(x, y, width, height) {
-  const ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingCanvas;
   x = x || 0;
   y = y || 0;
   width = width || ctx.width;
@@ -4269,22 +4442,22 @@ function clear(x, y, width, height) {
 
 
 function clearAll() {
-  const ctx = _main.C.workingCanvas;
-  const d = ctx.dpr;
+  let ctx = _main.C.workingCanvas,
+      d = ctx.dpr;
   ctx.save();
   ctx.setTransform(d, 0, 0, d, 0, 0);
   ctx.clearRect(0, 0, ctx.width, ctx.height);
   ctx.restore();
 }
 /**
- * Captures the current drawings in canvas and set it to
+ * sets the curre
  * css background
  *
  */
 
 
 function permaBackground() {
-  const canvasStyle = _main.C.workingCanvas.canvas.style;
+  let canvasStyle = _main.C.workingCanvas.canvas.style;
   canvasStyle.background = "url('" + getCanvasData() + "')";
   canvasStyle.backgroundPosition = "center";
   canvasStyle.backgroundSize = "cover";
@@ -4306,7 +4479,7 @@ function permaBackground() {
 
 
 function setTransform(a, b, c, d, e, f) {
-  const ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingCanvas;
   if (a instanceof DOMMatrix) ctx.setTransform(a);else ctx.setTransform(a, b, c, d, e, f);
   ctx.scale(ctx.dpr, ctx.dpr);
 }
@@ -4337,7 +4510,7 @@ function getTransform() {
 
 
 function transform(a, b, c, d, e, f) {
-  const ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingCanvas;
   if (a instanceof DOMMatrix) ctx.transform(a);else ctx.transform(a, b, c, d, e, f);
 }
 /**
@@ -4410,7 +4583,7 @@ function scale(x, y = x) {
 
 
 function rotate(angle) {
-  const ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingCanvas;
   ctx.rotate(angle);
   ctx.netRotation = (ctx.netRotation + angle) % Math.PI * 2;
 }
@@ -4495,7 +4668,7 @@ function getStrokeWidth() {
 
 
 function rest() {
-  const ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingCanvas;
   ctx.setTransform(ctx.dpr, 0, 0, ctx.dpr, 0, 0);
 }
 /**
@@ -4511,7 +4684,7 @@ function rest() {
 
 
 function stroke() {
-  const ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingCanvas;
 
   if (arguments.length > 0) {
     ctx.strokeStyle = (0, _color_reader.readColor)(...arguments);
@@ -4533,7 +4706,7 @@ function stroke() {
 
 
 function fill() {
-  const ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingCanvas;
 
   if (arguments.length !== 0) {
     ctx.fillStyle = (0, _color_reader.readColor)(...arguments);
@@ -4551,7 +4724,7 @@ function fill() {
 
 
 function getContextStates(canvasName) {
-  const ctx = _main.C.canvasList[canvasName] || _main.C.workingCanvas;
+  let ctx = _main.C.canvasList[canvasName] || _main.C.workingCanvas;
   return {
     background: ctx.background,
     colorMode: ctx.colorMode,
@@ -4623,8 +4796,18 @@ function getContextStates(canvasName) {
  */
 
 
-function loop(name, functionToRun, canvasName, timeDelay, timeDelaysToRemember = 100, settings = {}) {
-  let ctx; // if canvasName isn't given it will assume the drawing context to be the current working canvas
+function loop(name, functionToRun, canvasName, timeDelay, timeDelaysToRemember = 100, settings = {}, dur) {
+  let ctx; // if name isn't given it will shift the arguments to right
+
+  if (typeof name != "string") {
+    // shift arguments
+    name = counter.loop++;
+    functionToRun = arguments[0];
+    canvasName = arguments[1];
+    timeDelay = arguments[2];
+    settings = arguments[3];
+    dur = arguments[4];
+  }
 
   if (!canvasName) {
     ctx = _main.C.workingCanvas;
@@ -4633,31 +4816,60 @@ function loop(name, functionToRun, canvasName, timeDelay, timeDelaysToRemember =
 
   ctx.timeDelayList = [];
   ctx.totalTimeCaptured = 0;
-
-  const _settings = Object.assign(getContextStates(canvasName), settings); // debugger;
-
+  let assignedSettings = Object.assign(getContextStates(canvasName), settings); // debugger;
 
   if (ctx.currentLoop != undefined) {
     // already a animation is running
-    if (_main.C.debugAnimations) console.log(canvasName + ": " + name + " %cdelayed", "color: orange;");
+    if (_main.C.debugAnimations) {
+      console.log(canvasName + ": " + name + " %cdelayed", logStyles.delayed);
+
+      _main.C._ANIMATIONLOG_.push({
+        canvas: ctx,
+        animationName: name,
+        state: "delayed",
+        settings: assignedSettings
+      });
+    }
+
     ctx.delayedAnimations.push({
       name: name,
-      settings: _settings,
+      settings: assignedSettings,
       functionToRun: functionToRun,
       canvasName: canvasName,
       timeDelay: timeDelay,
-      timeDelaysToRemember: timeDelaysToRemember
+      timeDelaysToRemember: timeDelaysToRemember,
+      dur: dur
     });
   } else {
-    if (_main.C.debugAnimations) console.log(canvasName + ": " + name + " %crunning", "color: yellow;");
+    if (_main.C.debugAnimations) {
+      let toLog = `${canvasName}: ${name} %crunning`,
+          styles = [logStyles.running];
+
+      if (dur != undefined) {
+        toLog += `%c for %c${dur}ms`;
+        styles.push(logStyles.keyword, logStyles.number);
+      }
+
+      _main.C._ANIMATIONLOG_.push({
+        canvas: ctx,
+        animationName: name,
+        state: "running",
+        settings: assignedSettings,
+        dur: dur
+      });
+
+      console.log(toLog, ...styles);
+    }
+
     ctx.recentTimeStamp = window.performance.now();
     ctx.timeStart = window.performance.now();
 
     if (!isNaN(timeDelay)) {
+      ctx.currentLoopName = name;
       ctx.currentLoop = setInterval(function () {
         _main.C.workingCanvas = ctx;
-        const S = getContextStates(canvasName);
-        Object.assign(_main.C.workingCanvas, _settings);
+        let S = getContextStates(canvasName);
+        Object.assign(_main.C.workingCanvas, assignedSettings);
         functionToRun(window.performance.now() - ctx.timeStart, getFPS());
         Object.assign(_main.C.workingCanvas, S);
       }, timeDelay);
@@ -4669,15 +4881,15 @@ function loop(name, functionToRun, canvasName, timeDelay, timeDelaysToRemember =
   function run() {
     ctx.currentLoop = window.requestAnimationFrame(run);
     _main.C.workingCanvas = ctx;
-    const S = getContextStates(canvasName);
-    if (settings) Object.assign(_main.C.workingCanvas, _settings);
+    let S = getContextStates(canvasName);
+    if (settings) Object.assign(_main.C.workingCanvas, assignedSettings);
     functionToRun(window.performance.now() - ctx.timeStart, getFPS());
     if (settings) Object.assign(_main.C.workingCanvas, S);
   }
 
   function getFPS() {
-    const now = window.performance.now(),
-          timeDelay = now - ctx.recentTimeStamp; // time delays between frames
+    let now = window.performance.now(),
+        timeDelay = now - ctx.recentTimeStamp; // time delays between frames
 
     ctx.recentTimeStamp = now;
     ctx.timeDelayList.push(timeDelay);
@@ -4693,16 +4905,35 @@ function loop(name, functionToRun, canvasName, timeDelay, timeDelaysToRemember =
  */
 
 
-function noLoop(canvasName) {
+function noLoop(canvasName, time) {
   let ctx = _main.C.workingCanvas;
   if (!canvasName) canvasName = ctx.name;else ctx = _main.C.canvasList[canvasName];
   clearInterval(ctx.currentLoop);
   window.cancelAnimationFrame(ctx.currentLoop);
   ctx.currentLoop = undefined;
 
+  if (_main.C.debugAnimations) {
+    let toLog = `${canvasName}: ${ctx.currentLoopName} %cfinished`,
+        formatter = [logStyles.finished];
+
+    if (time != undefined) {
+      toLog += `%c in %c${time.toFixed(3)}ms`;
+      formatter.push(logStyles.keyword, logStyles.number);
+    }
+
+    console.log(toLog, ...formatter);
+
+    _main.C._ANIMATIONLOG_.push({
+      canvas: ctx,
+      animationName: ctx.currentLoopName,
+      state: "finished",
+      endTime: time
+    });
+  }
+
   if (ctx.delayedAnimations.length > 0) {
     let toWork = ctx.delayedAnimations.shift();
-    loop(toWork.name, toWork.functionToRun, toWork.canvasName, toWork.timeDelay, toWork.timeDelaysToRememberm, toWork.settings);
+    loop(toWork.name, toWork.functionToRun, toWork.canvasName, toWork.timeDelay, toWork.timeDelaysToRememberm, toWork.settings, toWork.dur);
   }
 }
 /**
@@ -4712,7 +4943,7 @@ function noLoop(canvasName) {
 
 
 function startShape() {
-  const ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingCanvas;
   ctx.beginPath();
   ctx.pathStarted = true;
 }
@@ -4723,7 +4954,7 @@ function startShape() {
 
 
 function endShape() {
-  const ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingCanvas;
   ctx.closePath();
   ctx.pathStarted = false;
 }
@@ -4736,10 +4967,10 @@ function endShape() {
 
 
 function getFont(detailed = false) {
-  const ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingCanvas;
 
   if (detailed) {
-    const {
+    let {
       fontStyle,
       fontVariant,
       fontWeight,
@@ -4783,7 +5014,7 @@ function measureText(text) {
 
 
 function fontSize(size) {
-  const ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingCanvas;
   size = typeof size === "number" ? size + "px" : size;
   ctx.fontSize = size;
   ctx.font = getFont(true);
@@ -4796,7 +5027,7 @@ function fontSize(size) {
 
 
 function fontFamily(family) {
-  const ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingCanvas;
   ctx.fontFamily = family;
   ctx.font = getFont(true);
 }
@@ -4812,7 +5043,7 @@ function fontFamily(family) {
 
 
 function fontStyle(style) {
-  const ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingCanvas;
   ctx.fontStyle = style;
   ctx.font = getFont(true);
 }
@@ -4825,7 +5056,7 @@ function fontStyle(style) {
 
 
 function fontVariant(variant) {
-  const ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingCanvas;
   ctx.fontVariant = variant;
   ctx.font = getFont(true);
 }
@@ -4837,7 +5068,7 @@ function fontVariant(variant) {
 
 
 function fontWeight(weight) {
-  const ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingCanvas;
   ctx.fontWeight = weight;
   ctx.font = getFont(true);
 }
@@ -4862,7 +5093,7 @@ function fontWeight(weight) {
 
 
 function fontStretch(stretch) {
-  const ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingCanvas;
   ctx.fontStretch = stretch;
   ctx.font = getFont(true);
 }
@@ -4875,12 +5106,12 @@ function fontStretch(stretch) {
 
 
 function lineHeight(height) {
-  const ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingCanvas;
   ctx.lineHeight = height;
   ctx.font = getFont(true);
 }
 /**
- * Returns canvas image data
+ * Returns canvas image data as string
  *
  * @param {string} datURL
  * @returns {string}
@@ -4899,8 +5130,8 @@ function getCanvasData(datURL = "image/png") {
 
 
 function saveCanvas(name = "drawing", datURL = "image/png") {
-  const link = getCanvasData().replace(datURL, "image/octet-stream");
-  const a = document.createElement("a");
+  let link = getCanvasData().replace(datURL, "image/octet-stream"),
+      a = document.createElement("a");
   a.download = name + ".png";
   a.href = link;
   a.click();
@@ -4968,7 +5199,7 @@ function centerdText() {
 
 
 function initCenteredCanvas() {
-  const ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingCanvas;
   ctx.translate(ctx.width / 2, ctx.height / 2);
 }
 /**
@@ -4977,7 +5208,7 @@ function initCenteredCanvas() {
 
 
 function invertYAxis() {
-  const ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingCanvas;
   ctx.scale(1, -1);
   ctx.yAxisInverted = !ctx.yAxisInverted;
 }
@@ -5000,45 +5231,121 @@ function initBlackboardCanvas() {
  */
 
 
-function wait(time, canvasName) {
+function wait(time, canvasName, name) {
   canvasName = _main.C.workingCanvas.name || canvasName;
-  loop("waiter", elapsed => {
-    if (elapsed >= time) {
-      noLoop(canvasName);
+  loop(name || "wait-" + counter.wait++, elapsed => {
+    if (elapsed >= time) noLoop(canvasName, elapsed);
+  }, canvasName, time, 500, {}, time);
+}
+
+function showCreation() {
+  let animations = Array.prototype.slice.call(arguments);
+
+  for (let i = 0; i < animations.length; i++) {
+    let animation = animations[i];
+
+    if ((0, _utils.getType)(animation) == "Object") {
+      let dur = animation.dur || 2000,
+          ctx = animation.canvas || _main.C.workingCanvas,
+          next = animation.next || null,
+          name = animation.name,
+          dTime = animation.dTime || 14,
+          points = animation.points,
+          closed = animation.closed || false,
+          tension = animation.tension || 1,
+          smoothen = animation.smoothen == undefined ? true : animation.smoothen,
+          rateFunction = animation.rateFunction || _rate_functions.smooth,
+          syncWithTime = animation.syncWithTime || false,
+          t = 0,
+          dt = dTime / dur,
+          len = points.length;
+
+      if (ctx.lineWidth > 0 && ctx.doStroke) {
+        if (typeof animation.draw != "function") {
+          if (smoothen) {
+            loop(name, elapsed => {
+              if (t > 1) {
+                noLoop(ctx.name, elapsed);
+              }
+
+              let i = Math.round(len * rateFunction(t)),
+                  ip1 = Math.round(len * rateFunction(t + dt)),
+                  ip2 = Math.round(len * rateFunction(t + dt * 2));
+
+              if (closed) {
+                i %= len;
+                ip1 %= len;
+                ip2 %= len;
+              }
+
+              let recentPoint = points[Math.round(len * rateFunction(t - dt))] || points[len - Math.abs(Math.round(len * rateFunction(t - dt)))],
+                  currentPoint = points[i],
+                  nextPoint = points[ip1],
+                  secondNextPoint = points[ip2],
+                  cp = (0, _geometry.getBezierControlPoints)(recentPoint, currentPoint, nextPoint, secondNextPoint, tension);
+              ctx.beginPath();
+              if (closed) ctx.moveTo(...points[Math.abs(Math.round(len * rateFunction(t)) % len)]);else ctx.moveTo(...points[Math.round(len * rateFunction(t))]);
+              ctx.bezierCurveTo(cp[0], cp[1], cp[2], cp[3], nextPoint[0], nextPoint[1]);
+              if (ctx.doStroke) ctx.stroke();
+              ctx.closePath();
+              if (!syncWithTime) t += dt;else t = elapsed / dur;
+            }, ctx.name, dTime, 50, {}, dur);
+          } else {
+            loop(name, elapsed => {
+              if (t > 1) {
+                noLoop(ctx.name, elapsed);
+              } else if (t == 0) {
+                ctx.beginPath();
+                ctx.moveTo(...points[Math.abs(Math.round(len * rateFunction(0)))]);
+              }
+
+              let currentPoint = points[Math.round(len * rateFunction(t)) % len];
+              ctx.lineTo(currentPoint[0], currentPoint[1]);
+              if (ctx.doStroke) ctx.stroke();
+              if (!syncWithTime) t += dt;else t = elapsed / dur;
+            }, ctx.name, dTime, 50, {}, dur);
+          }
+        } else {
+          animation.draw();
+        }
+      }
+
+      if (closed && animation.fill) {
+        (0, _create.animateFill)(name, ctx.name, animation.fill, animation.filler, animation.fillTime, 10, next);
+      }
+    } else {
+      throw new Error(i + 1 + (i == 0 ? "st" : i == 1 ? "nd" : i == 2 ? "rd" : "th") + " argument provided is not a object.");
     }
-  }, canvasName, time);
-}
-/**
- * Whehter to debug animations
- *
- * @param {boolean} bool boolean
- */
-
-
-function debugAnimations(bool) {
-  if (typeof bool !== "boolean") _main.C.debugAnimations = true;else _main.C.debugAnimations = bool;
+  }
 }
 
-},{"./color/color_reader.js":4,"./constants/named_colors.js":11,"./main.js":12}],28:[function(require,module,exports){
+},{"./animations/create.js":1,"./color/color_reader.js":4,"./constants/named_colors.js":11,"./main.js":13,"./math/rate_functions.js":18,"./objects/geometry.js":24,"./utils.js":29}],29:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.getType = getType;
 exports.defineProperties = defineProperties;
 exports.arange = arange;
 exports.applyDefault = applyDefault;
 exports.doFillAndStroke = doFillAndStroke;
 exports.approximateIndexInArray = approximateIndexInArray;
 
-Object.getType = function (obj) {
-  return Object.prototype.toString.call(obj).substr(8).replace("]", "");
-};
+/**
+ * Returns the type of object
+ *
+ * @param {*} stuff
+ * @return {string}
+ */
+function getType(stuff) {
+  return Object.prototype.toString.call(stuff).slice(8, -1);
+}
 
 Object.clone = Object.clone || function (toClone) {
-  var newObj = {};
+  let newObj = {};
 
-  for (var i = 0, keys = Object.keys(toClone); i < keys.length; i++) {
+  for (let i = 0, keys = Object.keys(toClone); i < keys.length; i++) {
     let a = toClone[keys[i]];
     newObj[keys[i]] = a;
   }
@@ -5091,7 +5398,7 @@ function defineProperties(obj, toAssign, specific, message) {
 }
 
 function arange(start, end, step, rev = false) {
-  const arr = [];
+  let arr = [];
   if (rev) for (let i = end; i >= start; i -= step) arr.push(i);else for (let i = start; i <= end; i += step) arr.push(i);
   return arr;
 }
@@ -5111,11 +5418,11 @@ function applyDefault(_default, target = {}, deepApply = true) {
   target = Object.clone(target);
 
   for (let i = 0, keys = Object.keys(_default); i < keys.length; i++) {
-    const prop = keys[i],
-          defaultProp = _default[prop],
-          targetProp = target[prop];
-    const defaultType = Object.getType(defaultProp);
-    const targetType = Object.getType(targetProp);
+    let prop = keys[i],
+        defaultProp = _default[prop],
+        targetProp = target[prop],
+        defaultType = getType(defaultProp),
+        targetType = getType(targetProp);
 
     if (defaultType == "Object" && deepApply) {
       target[prop] = applyDefault(defaultProp, targetProp, deepApply);
@@ -5140,7 +5447,7 @@ function doFillAndStroke(ctx) {
 
 function approximateIndexInArray(val, array, epsilon = 1e-6) {
   for (let i = 0; i < array.length; i++) {
-    var k = array[i];
+    let k = array[i];
 
     if (Math.abs(k - val) <= epsilon) {
       return i;
