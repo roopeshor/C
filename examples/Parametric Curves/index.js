@@ -4,7 +4,14 @@ import { C } from "../../src/main.js";
 import { lcm } from "../../src/math/aritmetics.js";
 import { abs, cos, sgn, sin } from "../../src/math/basic.js";
 import { axes } from "../../src/objects/coordinate_systems.js";
-import { initBlackboardCanvas, noFill, stroke, strokeWidth } from "../../src/settings.js";
+import {
+	background,
+	initBlackboardCanvas,
+	noFill,
+	permaBackground,
+	stroke,
+	strokeWidth,
+} from "../../src/settings.js";
 
 const W = 300;
 const H = 300;
@@ -17,6 +24,8 @@ function drawAxis(min = -4, max = 4, dx = 1) {
 	strokeWidth(2);
 	stroke(GREEN);
 	noFill();
+	background(25);
+	permaBackground();
 	return axes({
 		xAxis: {
 			lineWidth: 1,
@@ -41,13 +50,14 @@ C(
 		function ft(t) {
 			return [3 * sin(10 * t), 3 * sin(9 * t)];
 		}
-		drawAxis().getParametricFunction({
-			paramFunction: ft,
-			range: [0, TAU, TAU / 400],
-			closed: true,
-			draw: false,
-		}).draw(5000);
-
+		drawAxis()
+			.getParametricFunction({
+				paramFunction: ft,
+				range: [0, TAU, TAU / 400],
+				closed: true,
+				draw: false,
+			})
+			.draw(5000);
 	},
 	".lissajous",
 	CFG
@@ -56,19 +66,22 @@ C(
 	() => {
 		const R = 5,
 			r = 3,
-			d = 5,limit = (TAU * lcm(r, R)) / R;
+			d = 5,
+			limit = (TAU * lcm(r, R)) / R;
 		function ft(t) {
 			return [
 				(R - r) * cos(t) + d * cos(((R - r) * t) / r),
 				(R - r) * sin(t) - d * sin(((R - r) * t) / r),
 			];
 		}
-		drawAxis(-8, 8, 1).getParametricFunction({
-			paramFunction: ft,
-			range: [0, limit, limit / 100],
-			closed: true,
-			draw: false
-		}).draw(2000);
+		drawAxis(-8, 8, 1)
+			.getParametricFunction({
+				paramFunction: ft,
+				range: [0, limit, limit / 100],
+				closed: true,
+				draw: false,
+			})
+			.draw(2000);
 	},
 	".hypotrochoid",
 	CFG
@@ -82,14 +95,16 @@ C(
 				abs(sin(t)) ** (2 / n) * 3 * sgn(sin(t)),
 			];
 		}
-		drawAxis(-5, 5, 1).getParametricFunction({
-			paramFunction: ft,
-			range: [0, TAU, PI / 40],
+		drawAxis(-5, 5, 1)
+			.getParametricFunction({
+				paramFunction: ft,
+				range: [0, TAU, PI / 40],
 
-			closed: true,
-			draw: false,
-			smoothen: true
-		}).draw(2000);
+				closed: true,
+				draw: false,
+				smoothen: true,
+			})
+			.draw(2000);
 	},
 	".superellipse",
 	CFG
@@ -102,12 +117,14 @@ C(
 				cos(t) * (E ** cos(t) - 2 * cos(4 * t) - cos(t / 12) ** 5),
 			];
 		}
-		drawAxis(-4, 4, 1).getParametricFunction({
-			paramFunction: ft,
-			range: [-TAU*2, TAU*2, 0.1],
-			closed: false,
-			draw: false
-		}).draw(5000);
+		drawAxis(-4, 4, 1)
+			.getParametricFunction({
+				paramFunction: ft,
+				range: [-TAU * 2, TAU * 2, 0.1],
+				closed: false,
+				draw: false,
+			})
+			.draw(5000);
 	},
 	".butterfly-curve",
 	CFG

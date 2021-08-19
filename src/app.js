@@ -11,7 +11,10 @@ import * as Gradients from "./color/gradients.js";
 import * as Color_Random from "./color/random.js";
 import * as Interpolation from "./color/interpolation.js";
 
-import * as Image from "./objects/image.js";
+import * as ImageFunctions from "./image/imageData.js";
+
+import * as ImageDrawings from "./objects/image.js";
+
 import * as Geometry from "./objects/geometry.js";
 import * as Settings from "./settings.js";
 import * as Text from "./objects/text.js";
@@ -39,7 +42,9 @@ defineProperties(Gradients);
 defineProperties(Color_Random);
 defineProperties(Interpolation);
 
-defineProperties(Image);
+defineProperties(ImageFunctions);
+
+defineProperties(ImageDrawings);
 defineProperties(Geometry);
 defineProperties(Settings);
 defineProperties(Text);

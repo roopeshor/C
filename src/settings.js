@@ -94,7 +94,7 @@ function clearAll() {
 }
 
 /**
- * Captures the current drawings in canvas and set it to
+ * sets the curre
  * css background
  *
  */
@@ -731,7 +731,7 @@ function lineHeight(height) {
 }
 
 /**
- * Returns canvas image data
+ * Returns canvas image data as string
  *
  * @param {string} datURL
  * @returns {string}

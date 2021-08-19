@@ -19,9 +19,10 @@ function gcd(a, b) {
  *
  * @return {number}
  */
-function gcdArray() {
-	let n = 0;
-	for (let i = 0; i < arguments.length; ++i) n = gcd(arguments[i], n);
+function gcdArray(list) {
+	let array = Array.isArray(list) ? list : arguments,
+		n = array[0];
+	for (let i = 1; i < array.length; ++i) n = gcd(array[i], n);
 	return n;
 }
 
@@ -37,13 +38,13 @@ function lcm(a, b) {
 }
 
 /**
- * Returns least common multiple of a list of integers.
- *
+ * Returns least common multiple of a list of integers given explictly or as array.
  * @return {number}
  */
-function lcmArray() {
-	let n = 1;
-	for (let i = 0; i < arguments.length; ++i) n = lcm(arguments[i], n);
+function lcmArray(list) {
+	let n = 1,
+		array = Array.isArray(list) ? list : arguments;
+	for (let i = 0; i < array.length; ++i) n = lcm(array[i], n);
 	return n;
 }
 
