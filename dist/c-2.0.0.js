@@ -256,58 +256,60 @@ function Circle(args) {
   };
 }
 
-},{"../color/color_reader.js":4,"../main.js":13,"../math/rate_functions.js":18,"../objects/geometry.js":24,"../settings.js":28,"../utils.js":29}],2:[function(require,module,exports){
+},{"../color/color_reader.js":4,"../main.js":14,"../math/rate_functions.js":19,"../objects/geometry.js":25,"../settings.js":29,"../utils.js":30}],2:[function(require,module,exports){
 "use strict";
 
 var _utils = require("./utils.js");
 
 var _main = require("./main.js");
 
+var MathConsts = _interopRequireWildcard(require("./constants/math.js"));
+
 var COLORLIST = _interopRequireWildcard(require("./constants/colors.js"));
 
 var DrawingConstants = _interopRequireWildcard(require("./constants/drawing.js"));
 
-var MathConsts = _interopRequireWildcard(require("./constants/math.js"));
-
-var Color_Converters = _interopRequireWildcard(require("./color/color_converters.js"));
-
-var Color_Reader = _interopRequireWildcard(require("./color/color_reader.js"));
+var ColorPalettes = _interopRequireWildcard(require("./constants/color_palettes.js"));
 
 var Gradients = _interopRequireWildcard(require("./color/gradients.js"));
 
 var Color_Random = _interopRequireWildcard(require("./color/random.js"));
 
+var Color_Reader = _interopRequireWildcard(require("./color/color_reader.js"));
+
 var Interpolation = _interopRequireWildcard(require("./color/interpolation.js"));
+
+var Color_Converters = _interopRequireWildcard(require("./color/color_converters.js"));
 
 var ImageFunctions = _interopRequireWildcard(require("./image/imageData.js"));
 
 var ImageDrawings = _interopRequireWildcard(require("./objects/image.js"));
 
-var Geometry = _interopRequireWildcard(require("./objects/geometry.js"));
+var Tex = _interopRequireWildcard(require("./objects/tex.js"));
 
 var Settings = _interopRequireWildcard(require("./settings.js"));
 
 var Text = _interopRequireWildcard(require("./objects/text.js"));
 
-var Tex = _interopRequireWildcard(require("./objects/tex.js"));
-
-var CoordinateSystems = _interopRequireWildcard(require("./objects/coordinate_systems.js"));
-
 var Braces = _interopRequireWildcard(require("./objects/braces.js"));
 
 var Arrows = _interopRequireWildcard(require("./objects/arrows.js"));
 
+var Geometry = _interopRequireWildcard(require("./objects/geometry.js"));
+
 var Functions = _interopRequireWildcard(require("./objects/functions.js"));
 
-var CreateAnimation = _interopRequireWildcard(require("./animations/create.js"));
+var CoordinateSystems = _interopRequireWildcard(require("./objects/coordinate_systems.js"));
 
-var Arithmeics = _interopRequireWildcard(require("./math/aritmetics.js"));
+var CreateAnimation = _interopRequireWildcard(require("./animations/create.js"));
 
 var Basic = _interopRequireWildcard(require("./math/basic.js"));
 
 var Points = _interopRequireWildcard(require("./math/points.js"));
 
 var Math_Random = _interopRequireWildcard(require("./math/random.js"));
+
+var Arithmeics = _interopRequireWildcard(require("./math/aritmetics.js"));
 
 var RateFunctions = _interopRequireWildcard(require("./math/rate_functions.js"));
 
@@ -318,6 +320,7 @@ function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && 
 (0, _utils.defineProperties)(COLORLIST, window, false);
 (0, _utils.defineProperties)(DrawingConstants, window, false);
 (0, _utils.defineProperties)(MathConsts, window, false);
+(0, _utils.defineProperties)(ColorPalettes, window, false);
 (0, _utils.defineProperties)(Color_Converters);
 (0, _utils.defineProperties)(Color_Reader);
 (0, _utils.defineProperties)(Gradients);
@@ -343,7 +346,7 @@ function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && 
 (0, _utils.defineProperties)(_utils.defineProperties, _main.C);
 (0, _utils.defineProperties)(COLORLIST, _main.C);
 
-},{"./animations/create.js":1,"./color/color_converters.js":3,"./color/color_reader.js":4,"./color/gradients.js":5,"./color/interpolation.js":6,"./color/random.js":7,"./constants/colors.js":8,"./constants/drawing.js":9,"./constants/math.js":10,"./image/imageData.js":12,"./main.js":13,"./math/aritmetics.js":14,"./math/basic.js":15,"./math/points.js":16,"./math/random.js":17,"./math/rate_functions.js":18,"./objects/arrows.js":20,"./objects/braces.js":21,"./objects/coordinate_systems.js":22,"./objects/functions.js":23,"./objects/geometry.js":24,"./objects/image.js":25,"./objects/tex.js":26,"./objects/text.js":27,"./settings.js":28,"./utils.js":29}],3:[function(require,module,exports){
+},{"./animations/create.js":1,"./color/color_converters.js":3,"./color/color_reader.js":4,"./color/gradients.js":5,"./color/interpolation.js":6,"./color/random.js":7,"./constants/color_palettes.js":8,"./constants/colors.js":9,"./constants/drawing.js":10,"./constants/math.js":11,"./image/imageData.js":13,"./main.js":14,"./math/aritmetics.js":15,"./math/basic.js":16,"./math/points.js":17,"./math/random.js":18,"./math/rate_functions.js":19,"./objects/arrows.js":21,"./objects/braces.js":22,"./objects/coordinate_systems.js":23,"./objects/functions.js":24,"./objects/geometry.js":25,"./objects/image.js":26,"./objects/tex.js":27,"./objects/text.js":28,"./settings.js":29,"./utils.js":30}],3:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -539,6 +542,7 @@ function readColor() {
       toArray,
       lastArg = args[args.length - 1],
       result;
+  if (Array.isArray(args[0])) args = args[0];
 
   if (typeof lastArg == "boolean") {
     toArray = lastArg;
@@ -583,6 +587,7 @@ function readColor() {
         return parseInt(color);
       });
     } else {
+      console.log(str);
       throw new Error("Given color is not valid");
     }
   } else {
@@ -596,13 +601,31 @@ function readColor() {
       result = `rgba(${result[0]}, ${result[1]}, ${result[2]}, ${result[3]})`;
     } else if (mode === "hsl" || mode === "rgb") {
       result = mode + `(${result[0]}, ${result[1]}, ${result[2]})`;
+    } else if (mode == "hex6") {
+      let r = "#";
+      result.map((color, i) => {
+        if (i < 3) {
+          let hex = Math.round(color).toString(16);
+          r += hex.length == 1 ? "0" + hex : hex;
+        }
+      });
+      result = r;
+    } else if (mode == "hex8") {
+      let r = "#";
+      result.map((color, i) => {
+        if (i < 4) {
+          let hex = Math.round(color).toString(16);
+          r += hex.length == 1 ? "0" + hex : hex;
+        }
+      });
+      result = r;
     }
   }
 
   return result;
 }
 
-},{"../constants/named_colors.js":11,"../main.js":13}],5:[function(require,module,exports){
+},{"../constants/named_colors.js":12,"../main.js":14}],5:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -663,15 +686,16 @@ function linearGradient(initialPoint, finalPoint, colorStops) {
   return gradient;
 }
 
-},{"../main.js":13}],6:[function(require,module,exports){
+},{"../main.js":14}],6:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.lerpColor = lerpColor;
-exports.lerpColorArray = lerpColorArray;
+exports.lerpColorObject = lerpColorObject;
 exports.getInterpolatedColorList = getInterpolatedColorList;
+exports.lerpColorArray = lerpColorArray;
 
 var _color_reader = require("./color_reader.js");
 
@@ -685,25 +709,53 @@ var _color_reader = require("./color_reader.js");
 function lerpColor(color1, color2, v) {
   const c1 = (0, _color_reader.readColor)(color1, true);
   const c2 = (0, _color_reader.readColor)(color2, true);
-  return (0, _color_reader.readColor)((c2[0] - c1[0]) * v + c1[0], (c2[1] - c1[1]) * v + c1[1], (c2[2] - c1[2]) * v + c1[2], (c2[3] - c1[3]) * v + c1[3]);
+  return (0, _color_reader.readColor)(Math.min(Math.max(0, (c2[0] - c1[0]) * v + c1[0]), 255), Math.min(Math.max(0, (c2[1] - c1[1]) * v + c1[1]), 255), Math.min(Math.max(0, (c2[2] - c1[2]) * v + c1[2]), 255), Math.min(Math.max(0, (c2[3] - c1[3]) * v + c1[3]), 255));
 }
+/**
+ * Lerps across a color Object
+ *
+ * @param {object} colorObj
+ * @param {number} v
+ * @return {string}
+ */
 
-function lerpColorArray(colorArr, v) {
-  const stopes = Object.keys(colorArr).sort();
+
+function lerpColorObject(colorObj, v) {
+  const stopes = Object.keys(colorObj).sort();
   const min = Math.min(...stopes);
   const max = Math.max(...stopes);
-  if (v >= max) return colorArr[max];
-  if (v <= min) return colorArr[min];
+  if (v >= max) return colorObj[max];
+  if (v <= min) return colorObj[min];
 
   for (let i = 0; i < stopes.length - 1; i++) {
     let a = stopes[i];
 
     if (v > a) {
-      return lerpColor(colorArr[a], colorArr[stopes[i + 1]], (v - a) / (stopes[i + 1] - a));
+      return lerpColor(colorObj[a], colorObj[stopes[i + 1]], (v - a) / (stopes[i + 1] - a));
     } else if (v == a) {
-      return colorArr[a];
+      return colorObj[a];
     }
   }
+}
+/**
+ * Lerps across a color Array
+ * From <https://github.com/yuki-koyama/tinycolormap/blob/fe597277c782c583eb40362de98a08df62efc628/include/tinycolormap.hpp#L159>
+ * @param {array} colorArr
+ * @param {number} v
+ * @return {string}
+ */
+
+
+function lerpColorArray(colorArr, v, min = 0, max = 1) {
+  let len = colorArr.length - 1;
+  if (v >= max) return colorArr[len];
+  if (v <= min) return colorArr[0]; // map to [0, 1]
+
+  v = (v - min) / (max - min);
+  let a = v * len,
+      // between 0 and len
+  b = Math.floor(a);
+  return lerpColor(colorArr[b], colorArr[b + 1], a - b);
 }
 
 function getInterpolatedColorList(colorPalatte, min = 0, max = 5, step = 1, alpha = 1) {
@@ -775,7 +827,60 @@ function randomDefinedColor() {
   return COLORLIST[definedColorList[(0, _random.randomInt)(definedColorList.length - 1)]];
 }
 
-},{"../constants/colors.js":8,"../math/random.js":17}],8:[function(require,module,exports){
+},{"../constants/colors.js":9,"../math/random.js":18}],8:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.ColorPalettes = void 0;
+// This product includes color specifications and designs developed by Cynthia Brewer (http://colorbrewer.org/).
+// Please see license at http://colorbrewer.org/export/LICENSE.txt
+const ColorPalettes = {
+  YlGn: "#ffffe5 #f7fcb9 #d9f0a3 #addd8e #78c679 #41ab5d #238443 #006837 #004529".split(" "),
+  GnBu: "#f7fcf0 #e0f3db #ccebc5 #a8ddb5 #7bccc4 #4eb3d3 #2b8cbe #0868ac #084081".split(" "),
+  BuGn: "#f7fcfd #e5f5f9 #ccece6 #99d8c9 #66c2a4 #41ae76 #238b45 #006d2c #00441b".split(" "),
+  PuBu: "#fff7fb #ece7f2 #d0d1e6 #a6bddb #74a9cf #3690c0 #0570b0 #045a8d #023858".split(" "),
+  BuPu: "#f7fcfd #e0ecf4 #bfd3e6 #9ebcda #8c96c6 #8c6bb1 #88419d #810f7c #4d004b".split(" "),
+  RdPu: "#fff7f3 #fde0dd #fcc5c0 #fa9fb5 #f768a1 #dd3497 #ae017e #7a0177 #49006a".split(" "),
+  PuRd: "#f7f4f9 #e7e1ef #d4b9da #c994c7 #df65b0 #e7298a #ce1256 #980043 #67001f".split(" "),
+  OrRd: "#fff7ec #fee8c8 #fdd49e #fdbb84 #fc8d59 #ef6548 #d7301f #b30000 #7f0000".split(" "),
+  Reds: "#fff5f0 #fee0d2 #fcbba1 #fc9272 #fb6a4a #ef3b2c #cb181d #a50f15 #67000d".split(" "),
+  Blues: "#f7fbff #deebf7 #c6dbef #9ecae1 #6baed6 #4292c6 #2171b5 #08519c #08306b".split(" "),
+  Greys: "#ffffff #f0f0f0 #d9d9d9 #bdbdbd #969696 #737373 #525252 #252525 #000000".split(" "),
+  YlGnBu: "#ffffd9 #edf8b1 #c7e9b4 #7fcdbb #41b6c4 #1d91c0 #225ea8 #253494 #081d58".split(" "),
+  PuBuGn: "#fff7fb #ece2f0 #d0d1e6 #a6bddb #67a9cf #3690c0 #02818a #016c59 #014636".split(" "),
+  YlOrRd: "#ffffcc #ffeda0 #fed976 #feb24c #fd8d3c #fc4e2a #e31a1c #bd0026 #800026".split(" "),
+  YlOrBr: "#ffffe5 #fff7bc #fee391 #fec44f #fe9929 #ec7014 #cc4c02 #993404 #662506".split(" "),
+  Greens: "#f7fcf5 #e5f5e0 #c7e9c0 #a1d99b #74c476 #41ab5d #238b45 #006d2c #00441b".split(" "),
+  Purples: "#fcfbfd #efedf5 #dadaeb #bcbddc #9e9ac8 #807dba #6a51a3 #54278f #3f007d".split(" "),
+  Oranges: "#fff5eb #fee6ce #fdd0a2 #fdae6b #fd8d3c #f16913 #d94801 #a63603 #7f2704".split(" "),
+  PuOr: "#7f3b08 #b35806 #e08214 #fdb863 #fee0b6 #f7f7f7 #d8daeb #b2abd2 #8073ac #542788 #2d004b".split(" "),
+  BrBG: "#543005 #8c510a #bf812d #dfc27d #f6e8c3 #f5f5f5 #c7eae5 #80cdc1 #35978f #01665e #003c30".split(" "),
+  PRGn: "#40004b #762a83 #9970ab #c2a5cf #e7d4e8 #f7f7f7 #d9f0d3 #a6dba0 #5aae61 #1b7837 #00441b".split(" "),
+  PiYG: "#8e0152 #c51b7d #de77ae #f1b6da #fde0ef #f7f7f7 #e6f5d0 #b8e186 #7fbc41 #4d9221 #276419".split(" "),
+  RdBu: "#67001f #b2182b #d6604d #f4a582 #fddbc7 #f7f7f7 #d1e5f0 #92c5de #4393c3 #2166ac #053061".split(" "),
+  RdGy: "#67001f #b2182b #d6604d #f4a582 #fddbc7 #ffffff #e0e0e0 #bababa #878787 #4d4d4d #1a1a1a".split(" "),
+  RdYlBu: "#a50026 #d73027 #f46d43 #fdae61 #fee090 #ffffbf #e0f3f8 #abd9e9 #74add1 #4575b4 #313695".split(" "),
+  RdYlGn: "#a50026 #d73027 #f46d43 #fdae61 #fee08b #ffffbf #d9ef8b #a6d96a #66bd63 #1a9850 #006837".split(" "),
+  Spectral: "#9e0142 #d53e4f #f46d43 #fdae61 #fee08b #ffffbf #e6f598 #abdda4 #66c2a5 #3288bd #5e4fa2".split(" "),
+  // From Matlab
+  Heat: "#0000ff #00ffff #00ff00 #ffff00 #ff0000".split(" "),
+  Jet: "#000080 #0000ff #0080ff #00ffff #80ff80 #ffff00 #ff8000 #ff0000 #800000".split(" "),
+  Parula: "#352a87 #2450d0 #0a72de #128ad2 #06a4ca #1ab2b1 #51bd90 #92bf72 #c6bc5e #f6ba46 #f9d528 #f9fb0e".split(" "),
+  // From Matplotlib
+  Magma: "#000004 #120d31 #331067 #5a167e #7e2482 #a3307e #c83e73 #e95462 #f97b5d #fea973 #fed395 #fcfdbf".split(" "),
+  Inferno: "#000004 #140b34 #390963 #61136e #85216b #a92e5e #cb4149 #e65d2f #f78212 #fcae12 #f5db4c #fcffa4".split(" "),
+  Plasma: "#0d0887 #3e049c #6300a7 #8707a6 #a62098 #c03a83 #d5546e #e76f5a #f58c46 #fdae32 #fcd225 #f0f921".split(" "),
+  Viridis: "#440154 #482173 #433e85 #38598c #2d708e #25858e #1e9b8a #2ab07f #50c46a #86d549 #c2df23 #fde725".split(" "),
+  Cividis: "#00204d #00306f #2a406c #48526b #5e626e #727374 #878479 #9e9677 #b6a971 #d0be67 #ead357 #ffea46".split(" "),
+  // Other
+  GitHub: "#eeeeee #c6e48b #7bc96f #239a3b #196127".split(" "),
+  Turbo: "#30123b #4454c3 #448ffe #1fc9dd #2aefa1 #7dff56 #c1f334 #f1cb3a #fe932a #ea4e0d #be2102 #7a0403".split(" ")
+};
+exports.ColorPalettes = ColorPalettes;
+
+},{}],9:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -922,7 +1027,7 @@ exports.LIGHT_BROWN = LIGHT_BROWN;
 exports.DARK_BROWN = DARK_BROWN;
 exports.DARK_BLUE = DARK_BLUE;
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1018,13 +1123,13 @@ exports.ROUND = ROUND;
 exports.SQUARE = SQUARE;
 exports.BUTT = BUTT;
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.RAD = exports.DEG = exports.SQRT2 = exports.TWO_PI = exports.TAU = exports.QUATER_PI = exports.TIERCE_PI = exports.HALF_PI = exports.PI = exports.LN10 = exports.LN2 = exports.E = void 0;
+exports.RAD = exports.DEG = exports.PHI = exports.SQRT2 = exports.TWO_PI = exports.TAU = exports.QUATER_PI = exports.TIERCE_PI = exports.HALF_PI = exports.PI = exports.LN10 = exports.LN2 = exports.E = void 0;
 const E = 2.71828182845904523,
       LN2 = 0.6931471805599453,
       LN10 = 2.30258509299404568,
@@ -1035,6 +1140,7 @@ const E = 2.71828182845904523,
       TAU = 6.28318530717958647,
       TWO_PI = 6.28318530717958647,
       SQRT2 = 1.41421356237309504,
+      PHI = 1.618033988749894,
       // conversion factors
 DEG = Math.PI / 180,
       // degree to radian
@@ -1042,6 +1148,7 @@ RAD = 180 / Math.PI; // radian to degree
 
 exports.RAD = RAD;
 exports.DEG = DEG;
+exports.PHI = PHI;
 exports.SQRT2 = SQRT2;
 exports.TWO_PI = TWO_PI;
 exports.TAU = TAU;
@@ -1053,7 +1160,7 @@ exports.LN10 = LN10;
 exports.LN2 = LN2;
 exports.E = E;
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1359,7 +1466,7 @@ exports.aqua = aqua;
 exports.antiquewhite = antiquewhite;
 exports.aliceblue = aliceblue;
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1463,7 +1570,7 @@ function hasNeighbourColor(color, pixels, x, y) {
 // 	return ans;
 // }
 
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1716,7 +1823,7 @@ C._ANIMATIONLOG_ = []; // register to window
 
 window.C = C;
 
-},{"./utils.js":29}],14:[function(require,module,exports){
+},{"./utils.js":30}],15:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1785,7 +1892,7 @@ function lcmArray(list) {
   return n;
 }
 
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1843,7 +1950,7 @@ exports.asin = asin;
 exports.acos = acos;
 exports.abs = abs;
 
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1937,7 +2044,7 @@ function circleIntersection(c1, r1, c2, r2) {
   return [[p2[0] + h * (c2[1] - c1[1]) / d, p2[1] - h * (c2[0] - c1[0]) / d], [p2[0] - h * (c2[1] - c1[1]) / d, p2[1] + h * (c2[0] - c1[0]) / d]];
 }
 
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1956,7 +2063,7 @@ function randomInt(max = 10, min = 0) {
   return Math.round(Math.random() * (max - min) + min);
 }
 
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2200,7 +2307,7 @@ function exponentialDecay(t, halfLife = 0.1) {
 // 	return bezier([0, 0, pullFactor, pullFactor, 1, 1, 1])(t);
 // }
 
-},{"./simple_functions.js":19}],19:[function(require,module,exports){
+},{"./simple_functions.js":20}],20:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2212,7 +2319,7 @@ function sigmoid(t) {
   return 1.0 / (1 + Math.exp(-t));
 }
 
-},{}],20:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2560,7 +2667,7 @@ function curvedDoubleArrowBetweenPoints(p1, p2, radius, tipWidth = DEFAULT_TIP_W
   return center;
 }
 
-},{"../constants/colors.js":8,"../constants/drawing.js":9,"../main.js":13,"../math/points.js":16,"../settings.js":28,"../utils.js":29,"./text.js":27}],21:[function(require,module,exports){
+},{"../constants/colors.js":9,"../constants/drawing.js":10,"../main.js":14,"../math/points.js":17,"../settings.js":29,"../utils.js":30,"./text.js":28}],22:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2646,7 +2753,7 @@ function arcBrace(x, y, radius = 100, angle = Math.PI / 2, startAngle = 0, small
   return [(largerRadius + extender) * Math.cos(angle / 2 + startAngle) + x, (largerRadius + extender) * Math.sin(angle / 2 + startAngle) + y];
 }
 
-},{"../main.js":13}],22:[function(require,module,exports){
+},{"../main.js":14}],23:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3162,7 +3269,7 @@ function numberPlane(args = {}) {
   return Object.assign(ret, getPlotterList(unitLength, unitValue, ret));
 }
 
-},{"../constants/colors.js":8,"../main.js":13,"../settings.js":28,"../utils.js":29,"./arrows.js":20,"./functions.js":23,"./geometry.js":24,"./text.js":27}],23:[function(require,module,exports){
+},{"../constants/colors.js":9,"../main.js":14,"../settings.js":29,"../utils.js":30,"./arrows.js":21,"./functions.js":24,"./geometry.js":25,"./text.js":28}],24:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3457,7 +3564,7 @@ function heatPlot(args) {
   };
 }
 
-},{"../color/color_reader.js":4,"../main.js":13,"../settings.js":28,"../utils.js":29,"./geometry.js":24}],24:[function(require,module,exports){
+},{"../color/color_reader.js":4,"../main.js":14,"../settings.js":29,"../utils.js":30,"./geometry.js":25}],25:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4063,7 +4170,7 @@ function polygonWithRatioOfCentralAngles(x, y, radius, ratios, rotation = 0) {
   ctx.restore();
 }
 
-},{"../main.js":13,"../math/points.js":16,"../utils.js":29}],25:[function(require,module,exports){
+},{"../main.js":14,"../math/points.js":17,"../utils.js":30}],26:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4099,12 +4206,13 @@ function drawImage() {
 
 
 function pixel(x, y, color) {
-  let ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingCanvas,
+      dpr = 1 / ctx.dpr;
   ctx.fillStyle = color == undefined ? ctx.fillStyle : (0, _color_reader.readColor)(color);
-  ctx.fillRect(x, y, 1, 1);
+  ctx.fillRect(x, y, dpr, dpr);
 }
 
-},{"../color/color_reader.js":4,"../main.js":13}],26:[function(require,module,exports){
+},{"../color/color_reader.js":4,"../main.js":14}],27:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4206,7 +4314,7 @@ function tex(input, x = 0, y = 0) {
   return image;
 }
 
-},{"../constants/drawing.js":9,"../main.js":13}],27:[function(require,module,exports){
+},{"../constants/drawing.js":10,"../main.js":14}],28:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4288,7 +4396,7 @@ function strokeText(text, x = 0, y = 0, maxwidth = undefined) {
   if (ctx.yAxisInverted) (0, _settings.scale)(1, -1);
 }
 
-},{"../main.js":13,"../settings.js":28}],28:[function(require,module,exports){
+},{"../main.js":14,"../settings.js":29}],29:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5319,7 +5427,7 @@ function showCreation() {
   }
 }
 
-},{"./animations/create.js":1,"./color/color_reader.js":4,"./constants/named_colors.js":11,"./main.js":13,"./math/rate_functions.js":18,"./objects/geometry.js":24,"./utils.js":29}],29:[function(require,module,exports){
+},{"./animations/create.js":1,"./color/color_reader.js":4,"./constants/named_colors.js":12,"./main.js":14,"./math/rate_functions.js":19,"./objects/geometry.js":25,"./utils.js":30}],30:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {

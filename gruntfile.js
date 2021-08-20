@@ -35,16 +35,6 @@ module.exports = function (grunt) {
 				dest: minRelease,
 			},
 		},
-		jshint: {
-			options: {
-				trailing: true,
-				eqeqeq: false,
-				esversion: 12
-			},
-			target: {
-				src: ["src/**.js", "src/**/**.js"],
-			},
-		},
 		copy: {
 			development: {
 				// copy non-minified release file
@@ -72,16 +62,14 @@ module.exports = function (grunt) {
     },
 	});
 
-	grunt.loadNpmTasks("grunt-contrib-jshint");
 	grunt.loadNpmTasks("grunt-contrib-concat");
 	grunt.loadNpmTasks("grunt-contrib-copy");
 	grunt.loadNpmTasks("grunt-contrib-uglify");
 	grunt.loadNpmTasks("grunt-browserify");
 	grunt.loadNpmTasks('grunt-jsdoc');
 
-	grunt.registerTask("default", ["jshint", "browserify", "uglify", "copy"]);
+	grunt.registerTask("default", ["browserify", "uglify", "copy"]);
 
-	grunt.registerTask("lint", ["jshint"]);
 	grunt.registerTask("minify", ["browserify", "uglify"]);
 	grunt.registerTask("doc", ["jsdoc"]);
 };

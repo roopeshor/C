@@ -41,6 +41,7 @@ function readColor() {
 		toArray,
 		lastArg = args[args.length - 1],
 		result;
+	if (Array.isArray(args[0])) args = args[0];
 	if (typeof lastArg == "boolean") {
 		toArray = lastArg;
 		color = args.slice(0, args.length - 1);
@@ -95,6 +96,7 @@ function readColor() {
 					return parseInt(color);
 				});
 		} else {
+			console.log(str);
 			throw new Error("Given color is not valid");
 		}
 	} else {
@@ -106,6 +108,24 @@ function readColor() {
 			result = `rgba(${result[0]}, ${result[1]}, ${result[2]}, ${result[3]})`;
 		} else if (mode === "hsl" || mode === "rgb") {
 			result = mode + `(${result[0]}, ${result[1]}, ${result[2]})`;
+		} else if (mode == "hex6") {
+			let r = "#";
+			result.map((color, i) => {
+				if (i < 3) {
+					let hex = Math.round(color).toString(16);
+					r += hex.length == 1 ? "0" + hex : hex;
+				}
+			});
+			result = r;
+		} else if (mode == "hex8") {
+			let r = "#";
+			result.map((color, i) => {
+				if (i < 4) {
+					let hex = Math.round(color).toString(16);
+					r += hex.length == 1 ? "0" + hex : hex;
+				}
+			});
+			result = r;
 		}
 	}
 	return result;
