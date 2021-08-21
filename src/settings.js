@@ -94,13 +94,13 @@ function clearAll() {
 }
 
 /**
- * sets the curre
- * css background
+ * sets the given image data as css background. If not given it will set current canvas drawing as the background
  *
  */
-function permaBackground() {
+function permaBackground(data) {
+	if (typeof data != "string") data = getCanvasData();
 	let canvasStyle = C.workingCanvas.canvas.style;
-	canvasStyle.background = "url('" + getCanvasData() + "')";
+	canvasStyle.background = "url('" + data + "')";
 	canvasStyle.backgroundPosition = "center";
 	canvasStyle.backgroundSize = "cover";
 }

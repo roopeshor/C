@@ -1,3 +1,5 @@
+import { C } from "./main.js";
+
 /**
  * Returns the type of object
  *
@@ -22,48 +24,12 @@ Object.clone =
 /**
  * defines new properties to a given Object
  *
- * @param {object} obj source object
- * @param {object} [toAssign=window] target object
- * @param {boolean} [specific=true] whether to define properties special
- * @param {function} [message] message given on redefining value. Only works if `specific === true`
+ * @param {object} target source object
+ * @param {object} [target=window] target object
  */
-function defineProperties(obj, toAssign, specific, message) {
-	toAssign = toAssign || window;
-	specific = specific === undefined || specific === null ? window : specific;
-	toAssign = toAssign || window;
-	message =
-		typeof message === "function"
-			? message
-			: function (k) {
-					console.warn(
-						"You changed value of '" + k + "' which C uses. Be careful"
-					);
-				};
-	for (let i = 0, props = Object.keys(obj); i < props.length; i++) {
-		// definer in IIFE to avoid assigning same values to all properties
-		if (specific) {
-			(function (name, value, toAssign, message) {
-				Object.defineProperty(toAssign, name, {
-					configurable: true,
-					enumerable: true,
-					get: function get() {
-						return value;
-					},
-					set: function set(value) {
-						Object.defineProperty(toAssign, name, {
-							configurable: true,
-							enumerable: true,
-							value: value,
-							writable: true,
-						});
-						message(name);
-					},
-				});
-			})(props[i], obj[props[i]], toAssign, message);
-		} else {
-			window[props[i]] = obj[props[i]];
-		}
-	}
+function defineProperties(source, target = window, assignToC = true) {
+	Object.assign(target, source);
+	if (assignToC) Object.assign(C.functions, source);
 }
 
 function arange(start, end, step, rev = false) {
@@ -76,7 +42,6 @@ function arange(start, end, step, rev = false) {
 /**
  * Applies default configurations to a given target object
  * Must be in the form of
- * <prop>: [<defaultValue>, <type>]
  *
  * @param {object} _default default configurations
  * @param {object} [target={}] target object
@@ -100,7 +65,7 @@ function applyDefault(_default, target = {}, deepApply = true) {
 }
 
 /**
- * fills and strokes inside the current shape if to and closes the shape.
+ * fills and strokes inside the current shape if to do so.
  *
  * @param {CanvasRenderingContext2D} ctx
  */

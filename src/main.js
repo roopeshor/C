@@ -212,15 +212,10 @@ C.makeCanvas = function (configs) {
  * @param {Object} extObj
  * @param {boolean} editable warn the edit of functions
  */
-C.addExtension = function (extObj, editable) {
-	defineProperties(extObj, window, !editable);
-	defineProperties(extObj, C.extensions, !editable);
+C.addExtension = function (extObj) {
+	defineProperties(extObj, window);
+	defineProperties(extObj, C.extensions, false);
 };
-
-/**
- * @type {object}
- */
-C.defineProperties = defineProperties;
 
 /**
  * @type {boolean}
@@ -237,8 +232,17 @@ C.debug = function (bool) {
 	else C.debugAnimations = bool;
 };
 
-
+/**
+ * Log of animations
+ * @type {array}
+*/
 C._ANIMATIONLOG_ = [];
+
+/**
+ * Set of functions
+ * @type {object}
+*/
+C.functions = {};
 // register to window
 window.C = C;
 

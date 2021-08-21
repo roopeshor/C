@@ -1,5 +1,4 @@
 import { defineProperties } from "./utils.js";
-import { C } from "./main.js";
 
 import * as MathConsts from "./constants/math.js";
 import * as COLORLIST from "./constants/colors.js";
@@ -33,11 +32,10 @@ import * as Math_Random from "./math/random.js";
 import * as Arithmeics from "./math/aritmetics.js";
 import * as RateFunctions from "./math/rate_functions.js";
 
-defineProperties(COLORLIST, window, false);
-defineProperties(DrawingConstants, window, false);
-defineProperties(MathConsts, window, false);
-defineProperties(ColorPalettes, window, false);
-
+defineProperties(COLORLIST);
+defineProperties(DrawingConstants);
+defineProperties(MathConsts);
+defineProperties(ColorPalettes);
 
 defineProperties(Color_Converters);
 defineProperties(Color_Reader);
@@ -65,7 +63,7 @@ defineProperties(Points);
 defineProperties(Math_Random);
 defineProperties(RateFunctions);
 
-defineProperties(MathConsts, window, false);
+defineProperties(MathConsts);
 
-defineProperties(defineProperties, C);
-defineProperties(COLORLIST, C);
+defineProperties(defineProperties);
+defineProperties(COLORLIST);
