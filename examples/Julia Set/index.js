@@ -1,11 +1,6 @@
-import { lerpColorArray } from "../../src/color/interpolation.js";
-import { Cividis } from "../../src/constants/color_palettes.js";
-import { PHI } from "../../src/constants/math.js";
-import { sqrt } from "../../src/math/basic.js";
-import { loop, noLoop } from "../../src/settings.js";
-
 /* eslint-disable no-undef */
 let coeffs = [
+		[0, 0],
 		[1 - PHI, 0],
 		[PHI - 2, PHI - 1],
 		[0.285, 0],
@@ -16,45 +11,79 @@ let coeffs = [
 		[-0.8, 0.156],
 		[-0.7269, 0.1889],
 		[0, -0.8],
-		[],
-		[],
+		[0, -PHI / 2],
+		[-0.1, 0.651],
+		[-0.512511498387847167, 0.521295573094847167],
 	],
-	coeff = coeffs[6];
-const W = 1920 * 2,
-	H = 1080 * 2,
-	maxIterations = 100,
+	coeff = coeffs[2],
+	s = 1/4,
+	W = 400,
+	H = 400,
+	// W = 1980 * s,
+	// H = 1080 * s,
+	maxIterations = 200,
 	cx = coeff[0],
 	cy = coeff[1],
-	R = sqrt(cx ** 2 + cy ** 2) + 1,
+	R = sqrt(cx ** 2 + cy ** 2) + 90 ** 2,
 	R2 = R ** 2,
-	unit = H / 2;
+	unit = H ,
+	pat = ColorPalettes.Inferno,
+	iterCount = 0;
 C(
 	() => {
 		initBlackboardCanvas();
 		let ctx = C.workingCanvas,
-			pat = Cividis,
-			dpr = 1 / ctx.dpr,
-			x = -W / 2;
-		loop(() => {
-			if (x > W / 2) {
-				noLoop();
-			}
-			for (var y = -H / 2; y < H / 2; y += dpr) {
-				let zx = (x / unit),
-					zy = (y / unit),
-					iteration = 0;
-				while (iteration++ < maxIterations && zx ** 2 + zy ** 2 < R2) {
-					let _zx = zx ** 2 - zy ** 2 + cx;
-					zy = 2 * zx * zy + cy;
-					zx = _zx;
+			px = 1 / ctx.dpr,
+			x = -W / 2,
+			time = window.performance.now(),
+			n = 2;
+		loop(
+			() => {
+				if (x > W / 2) {
+					time = window.performance.now() - time;
+					console.log(
+						`Rendered in ${time.toFixed(3)}ms on ${W}x${H} canvas
+total iteration: ${iterCount}
+total rendered points: ${W * H}
+iterations/s: ${Math.round((iterCount / time) * 1000)}
+iterations/px: ${Math.round(iterCount / (W * H))}`
+					);
+					noLoop();
 				}
-				iteration = iteration / maxIterations;
-				let c = lerpColorArray(pat, iteration);
-				ctx.fillStyle = c;
-				ctx.fillRect(x, y, dpr, dpr);
-			}
-			x += dpr;
-		}, "main", 0);
+
+				for (var y = -H / 2; y < H / 2; y += px) {
+					let zx = x / unit,
+						zy = y / unit,
+						iteration = 0,
+						x2 = zx ** 2,
+						y2 = zy ** 2,
+						c = Math.exp(-Math.sqrt(x2 + y2));
+					while (iteration++ < maxIterations && x2 + y2 < R2) {
+						/*
+						// for multi julia set
+						let r = (x2 + y2) ** (n / 2),
+							t = n * atan2(zy, zx);
+						zy = r * sin(t) + cy;
+						zx = r * cos(t) + cx;
+						*/
+						zy = zx * zy * 2 + cy;
+						zx = x2 - y2 + cx;
+
+						x2 = zx * zx;
+						y2 = zy * zy;
+
+						// for smooth coloring
+						// c += Math.exp(-Math.sqrt(x2 + y2));
+					}
+					iterCount += iteration;
+					ctx.fillStyle = lerpColorArray(pat, iteration / maxIterations);
+					ctx.fillRect(x, y, px, px);
+				}
+				x += px;
+			},
+			"main",
+			0
+		);
 	},
 	".container",
 	{

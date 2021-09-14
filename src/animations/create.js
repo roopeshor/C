@@ -28,10 +28,8 @@ function Line(args) {
 		next: null,
 		rateFunction: smooth,
 	};
-	let { p1, p2, name, dur, canvas, dTime, rateFunction, next, syncWithTime } = applyDefault(
-		defaults,
-		args
-	);
+	let { p1, p2, name, dur, canvas, dTime, rateFunction, next, syncWithTime } =
+		applyDefault(defaults, args);
 	canvas = canvas || C.workingCanvas.name;
 	let ctx = C.canvasList[canvas];
 
@@ -57,7 +55,7 @@ function Line(args) {
 		smoothen: false,
 		fill: false,
 		next: next,
-		syncWithTime: syncWithTime
+		syncWithTime: syncWithTime,
 	};
 }
 
@@ -76,6 +74,7 @@ function Arc(args) {
 		closed: false,
 		startAngle: 0,
 		angle: Math.PI / 2,
+		clockwise: false,
 	};
 	let {
 		name,
@@ -92,6 +91,7 @@ function Arc(args) {
 		angle,
 		radiusX,
 		radiusY,
+		clockwise,
 	} = Object.assign(defaults, args);
 	canvas = canvas || C.workingCanvas.name;
 	let ctx = C.canvasList[canvas];
@@ -102,17 +102,23 @@ function Arc(args) {
 		radiusY = args.radius;
 	}
 	let dt = 2 / (ctx.dpr * (radiusX + radiusY));
-	for (let t = startAngle; t <= angle + startAngle + 1e-6; t += dt) {
+	let start = startAngle;
+	let end = angle + startAngle + 1e-6;
+
+	function pushPoint(t) {
 		const x1 = Math.cos(t) * radiusX + center[0];
 		const y1 = Math.sin(t) * radiusY + center[1];
 		points.push([x1, y1]);
 	}
+	if (clockwise) for (let t = end; t >= start; t -= dt) pushPoint(t);
+	else for (let t = start; t <= end; t += dt) pushPoint(t);
 	let rx = radiusX;
 	let ry = radiusY;
 	if (ctx.doStroke) {
 		rx -= getStrokeWidth() / 2;
 		ry -= getStrokeWidth() / 2;
 	}
+	console.log(points);
 	return {
 		points: points, // list of computed points
 		dur: dur,

@@ -559,35 +559,6 @@ function regularPolygonWithRadius(x, y, sides, radius, rotation = 0) {
 	if (ctx.doStroke) ctx.stroke();
 }
 
-/**
- * Draws a polygon with ratio of central angles
- *
- * @param {number} x x coord of centre of polygon
- * @param {number} y y coord of centre of polygon
- * @param {number} radius radius of ex-circle of polygon
- * @param {array} ratios array of ratios of central angles. Must have atleast 3 elements.
- * @param {number} [rotation=0] amound to rotate the entire polygon.
- */
-function polygonWithRatioOfCentralAngles(x, y, radius, ratios, rotation = 0) {
-	if (!Array.isArray(ratios)) console.error("ratio provided is not array");
-	let sumOfRatio = ratios.reduce((a, b) => a + b, 0),
-		baseAngle = (Math.PI * 2) / sumOfRatio,
-		ctx = C.workingCanvas;
-	ctx.save();
-	ctx.translate(x, y);
-	ctx.rotate(rotation);
-	ctx.beginPath();
-	ctx.moveTo(radius, 0);
-	for (let i = 0; i < ratios.length; i++) {
-		ctx.rotate(baseAngle * ratios[i]);
-		ctx.lineTo(radius, 0);
-	}
-	if (ctx.doStroke) ctx.stroke();
-	if (ctx.doFill) ctx.fill();
-	ctx.closePath();
-	ctx.restore();
-}
-
 export {
 	arc,
 	circle,
@@ -611,7 +582,6 @@ export {
 	triangle,
 	equiTriangle,
 	regularPolygon,
-	regularPolygonWithRadius,
-	polygonWithRatioOfCentralAngles,
 	getBezierControlPoints,
+	regularPolygonWithRadius,
 };

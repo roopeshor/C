@@ -23,6 +23,7 @@ import * as Arrows from "./objects/arrows.js";
 import * as Geometry from "./objects/geometry.js";
 import * as Functions from "./objects/functions.js";
 import * as CoordinateSystems from "./objects/coordinate_systems.js";
+import * as MoreShapes from "./objects/more_shapes.js";
 
 import * as CreateAnimation from "./animations/create.js";
 
@@ -54,6 +55,7 @@ defineProperties(CoordinateSystems);
 defineProperties(Braces);
 defineProperties(Arrows);
 defineProperties(Functions);
+defineProperties(MoreShapes);
 
 defineProperties(CreateAnimation);
 

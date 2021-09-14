@@ -6,17 +6,11 @@ import { smooth } from "./math/rate_functions.js";
 import { getBezierControlPoints } from "./objects/geometry.js";
 import { getType } from "./utils.js";
 
-/**
- * This module contains functions to manipulate the canvas.
- * @module settings
- */
-
+// for debuggingF
 let counter = {
 	wait: 1,
 	loop: 1,
-};
-
-let logStyles = {
+}, logStyles = {
 	number: "color: #9afcad;",
 	keyword: "color: #adacdf;",
 	running: "color: yellow;",
@@ -873,7 +867,7 @@ function showCreation() {
 				syncWithTime = animation.syncWithTime || false,
 				t = 0,
 				dt = dTime / dur,
-				len = points.length;
+				len = points.length - 1;
 			if (ctx.lineWidth > 0 && ctx.doStroke) {
 				if (typeof animation.draw != "function") {
 					if (smoothen) {

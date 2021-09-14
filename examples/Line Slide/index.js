@@ -1,11 +1,11 @@
-import { Line } from "../../src/animations/create.js";
+import { Arc, Line } from "../../src/animations/create.js";
 import { BLUE, GREEN, ORANGE, RED } from "../../src/constants/colors.js";
 import { C } from "../../src/main.js";
 import {
 	initBlackboardCanvas,
 	showCreation,
 	stroke,
-	strokeWidth
+	strokeWidth,
 } from "../../src/settings.js";
 
 const W = 400;
@@ -57,6 +57,7 @@ C(
 				(slantLinePoints[1][1] - slantLinePoints[0][1]) /
 				(slantLinePoints[1][0] - slantLinePoints[0][0]);
 		stroke(GREEN);
+		var radius = 80;
 		showCreation(
 			Line({
 				name: "base",
@@ -68,11 +69,15 @@ C(
 		);
 		stroke(RED);
 		showCreation(
-			Line({
-				name: "slant",
-				p1: slantLinePoints[0],
-				p2: slantLinePoints[1],
-				dTime: 14,
+			Arc({
+				startAngle: Math.PI,
+				angle: Math.PI / 2,
+				name: "circle1",
+				center: [-80, 80],
+				radius: radius,
+				dur: 1000,
+				dTime: 10,
+				clockwise: true,
 			})
 		);
 
@@ -81,8 +86,11 @@ C(
 		strokeWidth(1);
 		stroke(BLUE);
 		for (let y = dy; y <= 6 * dy; y += dy) {
-			let p1 = [0, y],
-				p2 = [y / slope + baseLinePoints[1][0], y];
+			// let p1 = [0, y],
+			// 	p2 = [y / slope + baseLinePoints[1][0], y];
+			let p1 = [0, 6 * dy - y],
+				th = Math.asin(y / radius),
+				p2 = [-Math.cos(th) * radius + baseLinePoints[1][0], 6 * dy - y];
 			showCreation(
 				Line({
 					name: "slide" + y / dy,
