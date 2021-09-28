@@ -15,8 +15,8 @@ const counters = {
 /**
  * Animates a line from point p1 to point p2.
  *
- * @param {array} p1 The first point.
- * @param {array} p2 The second point.
+ * @param {array<number>} p1 The first point.
+ * @param {array<number>} p2 The second point.
  * @param {number} [dt=10] The duration of one frame in milliseconds.
  * @param {function} [next=() => {}] The function to call after the animation.
  */
@@ -198,7 +198,7 @@ function animateFill(
  * @param {number} [args.fillTime = 500] time to fill inside circle.
  * @param {funciton} [args.next = null] function to run after animation ends.
  * @param {funciton} [args.rateFunction = smooth] function to use for rate.
- * @param {array} args.center center of the circle
+ * @param {array<number>} args.center center of the circle
  * @param {string} args.canvas name of canvas in which the animation is rendered
  */
 function Circle(args) {

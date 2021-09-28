@@ -3,9 +3,9 @@ import { C } from "../main.js";
 /**
  * creates a linear gradient
  *
- * @param {array} initialPoint initial point as [x, y]
- * @param {array} finalPoint final point as [x, y]
- * @param {Object|array} colorStops color stops
+ * @param {array<number>} initialPoint initial point as [x, y]
+ * @param {array<number>} finalPoint final point as [x, y]
+ * @param {Object|array<any>} colorStops color stops
  @example
  ```js
 let color = linearGradient(

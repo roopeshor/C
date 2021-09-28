@@ -234,7 +234,7 @@ C.debug = function (bool) {
 
 /**
  * Log of animations
- * @type {array}
+ * @type {array<object>}
 */
 C._ANIMATIONLOG_ = [];
 

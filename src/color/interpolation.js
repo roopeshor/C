@@ -48,7 +48,7 @@ function lerpColorObject(colorObj, v) {
 /**
  * Lerps across a color Array
  * From <https://github.com/yuki-koyama/tinycolormap/blob/fe597277c782c583eb40362de98a08df62efc628/include/tinycolormap.hpp#L159>
- * @param {array} colorArr
+ * @param {array<number>} colorArr
  * @param {number} v
  * @return {string}
  */

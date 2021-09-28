@@ -162,7 +162,7 @@ function getBezierControlPoints(
  * Adds a smooth curve passing through given points and tension using bézie curve to the current shape.
  * Taken from {@link https://stackoverflow.com/a/49371349}
  *
- * @param {array} points array of points as [x, y]
+ * @param {array <array<number>>} points array of points as [x, y]
  * @param {number} tension tension of the curve
  */
 function smoothCurveThroughPointsTo(points, tension = 1, closed = true) {
@@ -194,7 +194,7 @@ function smoothCurveThroughPointsTo(points, tension = 1, closed = true) {
 /**
  * Draws smooth curve passing through given points and tension using bézie curve.
  *
- * @param {array} points array of points as [x, y]
+ * @param {array <array<number>>} points array of points as [x, y]
  * @param {number} tension tension of the curve
  */
 function smoothCurveThroughPoints(points, tension = 1, closed = true) {
@@ -276,10 +276,10 @@ function annulusSector(x, y, innerRadius, outerRadius, angle, startAngle) {
 /**
  * Angle between two lines. And returns the coordinate of middle of angle
  *
- * @param {array} p1 start point of first line array of point as [x, y]
- * @param {array} p2 end point of first line array of point as [x, y]
- * @param {array} p3 start point of second line array of point as [x, y]
- * @param {array} p4 end point of second line array of point as [x, y]
+ * @param {array<number>} p1 start point of first line array of point as [x, y]
+ * @param {array<number>} p2 end point of first line array of point as [x, y]
+ * @param {array<number>} p3 start point of second line array of point as [x, y]
+ * @param {array<number>} p4 end point of second line array of point as [x, y]
  * @param {number} radius radius of angle
  * @param {number} extender extender of output point
  * @param {boolean} otherAngle whether to draw the other angle
@@ -464,10 +464,10 @@ function square(x, y, sideLength) {
 /**
  * Draws quadrilateral with four points as array of coordinate as [x, y]
  *
- * @param {array} p1 1st point
- * @param {array} p2 2nd point
- * @param {array} p3 3rd point
- * @param {array} p4 4th point
+ * @param {array<number>} p1 1st point
+ * @param {array<number>} p2 2nd point
+ * @param {array<number>} p3 3rd point
+ * @param {array<number>} p4 4th point
  */
 function quad(p1, p2, p3, p4) {
 	let ctx = C.workingCanvas;
@@ -485,9 +485,9 @@ function quad(p1, p2, p3, p4) {
 /**
  * Draws triangle with three points as array of coordinate as [x, y]
  *
- * @param {array} p1 first point
- * @param {array} p2 second point
- * @param {array} p3 third point
+ * @param {array<number>} p1 first point
+ * @param {array<number>} p2 second point
+ * @param {array<number>} p3 third point
  */
 function triangle(p1, p2, p3) {
 	let ctx = C.workingCanvas;

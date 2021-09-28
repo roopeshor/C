@@ -17,7 +17,7 @@ function hue2RGB(p, q, t) {
  * @param {number} red The red color value
  * @param {number} green The green color value
  * @param {number} blue The blue color value
- * @return {array} The HSL representation
+ * @return {array<number>} The HSL representation
  */
 function RGBToHSL(r, g, b) {
 	let max = Math.max(r, g, b),
@@ -49,7 +49,7 @@ function RGBToHSL(r, g, b) {
  * @param {number} hue The hue
  * @param {number} saturation The saturation
  * @param {number} lightness The lightness
- * @return {array} The RGB representation
+ * @return {array<number>} The RGB representation
  */
 function HSLToRGB(hue, saturation, lightness) {
 	let r, g, b;
@@ -79,7 +79,7 @@ function HSLToRGB(hue, saturation, lightness) {
  * @param {number} red The red color value
  * @param {number} green The green color value
  * @param {number} blue The blue color value
- * @return {array} The HSV representation
+ * @return {array<number>} The HSV representation
  */
 function RGBToHSV(r, g, b) {
 	let max = Math.max(r, g, b), // val
@@ -110,7 +110,7 @@ function RGBToHSV(r, g, b) {
  * @param {number} hue The hue
  * @param {number} saturation The saturation
  * @param {number} value The value
- * @return {array} The RGB representation
+ * @return {array<number>} The RGB representation
  */
 function HSVToRGB(hue, saturation, value) {
 	let r,

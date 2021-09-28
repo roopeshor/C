@@ -1,20 +1,54 @@
 import { C } from "../../src/main.js";
 import { generatePointsInArc } from "../../src/misc/point_generator.js";
 import { TAU } from "../../src/constants/math.js";
-import { point } from "../../src/objects/geometry.js";
-import { fill, initContrastedCanvas } from "../../src/settings.js";
-import { blue, green, orange, red, yellow } from "../../src/constants/named_colors.js";
-const size = 400;
+import { bezier, point } from "../../src/objects/geometry.js";
+import { fill, initContrastedCanvas, noFill } from "../../src/settings.js";
+import {
+	blue,
+	green,
+	orange,
+	purple,
+	red,
+	white,
+	yellow,
+} from "../../src/constants/named_colors.js";
+import { extendFromOrigin } from "../../src/math/points.js";
 
 C(
 	() => {
 		initContrastedCanvas();
-		let pointArr = [], colors = [green, blue, yellow, orange, red],
-			ppc = 40; // points per circle
-		for (let i = 0; i < 5;) {
-			pointArr.push(generatePointsInArc(0, 0, i * 15 + 30, 0, TAU, TAU / ppc));
+		let pointArr = [],
+			colors = [purple, blue, green, yellow, orange, red, white],
+			dAngle = TAU / 50; // points per circle
+		for (let i = 0; i < 7; i++) {
+			pointArr.push(
+				generatePointsInArc(
+					0,
+					0,
+					i * 20 + 40,
+					i * (dAngle / 2),
+					TAU + (i - 1) * (dAngle / 2),
+					dAngle
+				)
+			);
+
+			// draw beziers
+			if (i > 0) {
+				noFill();
+				let arr = pointArr[i],
+					prev = pointArr[i - 1];
+				for (let j = 0; j < arr.length; j++) {
+					let c1 = prev[j];
+					let c2 = prev[(j + 4) % prev.length];
+					let h = extendFromOrigin(arr[(j + 1) % arr.length], 30);
+					bezier(...c1, ...h, ...c2);
+				}
+			}
+		}
+		//draw points
+		for (let i in pointArr) {
 			fill(colors[i]);
-			for (let pt of pointArr[i++]) point(...pt, 3);
+			for (let pt of pointArr[i]) point(...pt, 7);
 		}
 	},
 	".container",

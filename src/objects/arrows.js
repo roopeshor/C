@@ -334,8 +334,8 @@ function curvedDoubleArrow(
 /**
  * Draws a curved arrow between two points that wraps around a circle with a definite radius.
  *
- * @param {array} p1 start point
- * @param {array} p2 end point
+ * @param {array<number>} p1 start point
+ * @param {array<number>} p2 end point
  * @param {number} radius radius of circle
  * @param {number} [tipWidth=DEFAULT_TIP_WIDTH] width of tip
  * @param {number} tipHeight height of tip. Default value is tipWidth / 1.2
@@ -395,8 +395,8 @@ function curvedArrowBetweenPoints(
 /**
  * Draws a double tipped curved arrow between two points that wraps around a circle with a definite radius.
  *
- * @param {array} p1 start point
- * @param {array} p2 end point
+ * @param {array<number>} p1 start point
+ * @param {array<number>} p2 end point
  * @param {number} radius radius of circle
  * @param {number} [tipWidth=DEFAULT_TIP_WIDTH] width of tip
  * @param {number} tipHeight height of tip. Default value is tipWidth / 1.2

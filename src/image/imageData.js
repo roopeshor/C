@@ -4,7 +4,7 @@
  * @param {ImageData} pixels
  * @param {number} x x-coordinate of point
  * @param {number} y y-coordinate of point
- * @return {array} array of color components [r, g, b, a]
+ * @return {array <array<number>>} array of color components [r, g, b, a]
  */
 function getPixelColor(pixels, x, y) {
 	let index = pixels.width * y + x;
@@ -39,7 +39,7 @@ function imageDataToColorArray(pixels) {
 /**
  * Returns if neighbor pixels have the same color as given.
  *
- * @param {array} color color to compare with
+ * @param {array<number>} color color to compare with
  * @param {ImageData} pixels image data
  * @param {number} x x-coordinate of point
  * @param {number} y y-coordinate of point
