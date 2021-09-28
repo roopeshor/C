@@ -6,7 +6,7 @@ import { abs, cos, sgn, sin } from "../../src/math/basic.js";
 import { axes } from "../../src/objects/coordinate_systems.js";
 import {
 	background,
-	initBlackboardCanvas,
+	initContrastedCanvas,
 	noFill,
 	permaBackground,
 	stroke,
@@ -20,7 +20,7 @@ const CFG = {
 	height: H,
 };
 function drawAxis(min = -4, max = 4, dx = 1) {
-	initBlackboardCanvas();
+	initContrastedCanvas();
 	strokeWidth(2);
 	stroke(GREEN);
 	noFill();

@@ -5,7 +5,7 @@ import {
 import { C } from "../../src/main.js";
 import { circleIntersection, lineIntersection } from "../../src/math/points.js";
 import {
-	initBlackboardCanvas,
+	initContrastedCanvas,
 	showCreation,
 	strokeWidth,
 	wait
@@ -17,7 +17,7 @@ const H = 300;
 C.debug(true);
 C(
 	() => {
-		initBlackboardCanvas();
+		initContrastedCanvas();
 		const radius = 80;
 		const c1 = [-radius / 2, radius / 2],
 			c2 = [radius / 2, -radius / 2];
@@ -77,7 +77,7 @@ C(
 );
 C(
 	() => {
-		initBlackboardCanvas();
+		initContrastedCanvas();
 		const p1 = [-80, 80],
 			p2 = [80, -112],
 			p3 = [-128, -80],

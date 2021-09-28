@@ -1,4 +1,4 @@
-const W = C.getContainerWidth(document.querySelector("section"));
+const W = C.getWindowWidth(document.querySelector("section"));
 const H = 450; // innerHeight;
 
 const examples = {

@@ -1,11 +1,11 @@
 import { C } from "../../src/main.js";
 import { line } from "../../src/objects/geometry.js";
-import { initBlackboardCanvas, stroke } from "../../src/settings.js";
+import { initContrastedCanvas, stroke } from "../../src/settings.js";
 
 
 C(
 	function () {
-		initBlackboardCanvas();
+		initContrastedCanvas();
 		line(-200, 0, 200, 0);
 		line(0, 150, 0, -150);
 

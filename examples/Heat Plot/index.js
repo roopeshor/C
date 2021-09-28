@@ -3,7 +3,7 @@ import { Spectral } from "../../src/constants/color_palettes.js";
 import { PI, TAU } from "../../src/constants/math.js";
 import { C } from "../../src/main.js";
 import { axes } from "../../src/objects/coordinate_systems.js";
-import { initBlackboardCanvas } from "../../src/settings.js";
+import { initContrastedCanvas } from "../../src/settings.js";
 
 const container = document.querySelector(".container");
 const W = 300;
@@ -87,7 +87,7 @@ for (var plot of plots) {
 	container.appendChild(cnt);
 	C(
 		() => {
-			initBlackboardCanvas();
+			initContrastedCanvas();
 			axes({
 				xAxis: {
 					range: plot.range?.xAxis,

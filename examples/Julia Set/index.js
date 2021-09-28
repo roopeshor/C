@@ -31,7 +31,7 @@ let coeffs = [
 	iterCount = 0;
 C(
 	() => {
-		initBlackboardCanvas();
+		initContrastedCanvas();
 		let ctx = C.workingCanvas,
 			px = 1 / ctx.dpr,
 			x = -W / 2,

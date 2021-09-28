@@ -165,7 +165,7 @@ C.workingCanvas = {}; // index of current working canvas in `C.canvasList`
  * @param {HTMLElement} [container=document.body]
  * @returns {Number}
  */
-C.getContainerWidth = function (container = document.body) {
+C.getWindowWidth = function (container = document.body) {
 	const cs = window.getComputedStyle(container);
 	return (
 		parseInt(cs.width) - parseInt(cs.paddingRight) - parseInt(cs.paddingLeft)
@@ -243,7 +243,8 @@ C._ANIMATIONLOG_ = [];
  * @type {object}
 */
 C.functions = {};
+C.COLORLIST = {};//list of colors
 // register to window
-window.C = C;
+window["C"] = C;
 
 export { C };

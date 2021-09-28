@@ -1,6 +1,6 @@
 import { animateFill } from "./animations/create.js";
 import { readColor } from "./color/color_reader.js";
-import { white } from "./constants/named_colors.js";
+import { YELLOW } from "./constants/colors.js";
 import { C } from "./main.js";
 import { smooth } from "./math/rate_functions.js";
 import { getBezierControlPoints } from "./objects/geometry.js";
@@ -8,15 +8,16 @@ import { getType } from "./utils.js";
 
 // for debuggingF
 let counter = {
-	wait: 1,
-	loop: 1,
-}, logStyles = {
-	number: "color: #9afcad;",
-	keyword: "color: #adacdf;",
-	running: "color: yellow;",
-	delayed: "color: orange;",
-	finished: "color: #3aff5f;",
-};
+		wait: 1,
+		loop: 1,
+	},
+	logStyles = {
+		number: "color: #9afcad;",
+		keyword: "color: #adacdf;",
+		running: "color: yellow;",
+		delayed: "color: orange;",
+		finished: "color: #3aff5f;",
+	};
 /**
  * Begins a new shape at the point specified by the given (x, y) coordinates.
  *
@@ -431,7 +432,7 @@ function loop(
 	let ctx;
 
 	// if name isn't given it will shift the arguments to right
-	if (typeof name != "string") {
+	if (typeof name == "function") {
 		// shift arguments
 		name = counter.loop++;
 		functionToRun = arguments[0];
@@ -802,9 +803,9 @@ function centerdText() {
 }
 
 /**
- * initializes a canvas translated to center and y-axis inverted
+ * translates canvas to center
  */
-function initCenteredCanvas() {
+function centreCanvas() {
 	let ctx = C.workingCanvas;
 	ctx.translate(ctx.width / 2, ctx.height / 2);
 }
@@ -819,13 +820,14 @@ function invertYAxis() {
 }
 
 /**
- * Init a blackboard like canvas. Centerd to middle, with black background and y axis inverted
+ * Centers canvas to center, with black background, yellow stroke, no fill enabled and y axis inverted
  */
-function initBlackboardCanvas() {
-	initCenteredCanvas();
+function initContrastedCanvas() {
+	centreCanvas();
 	background(0);
 	invertYAxis();
-	stroke(white);
+	stroke(YELLOW);
+	noFill();
 }
 
 /**
@@ -1024,9 +1026,9 @@ export {
 	textAlign,
 	textBaseline,
 	centerdText,
-	initCenteredCanvas,
+	centreCanvas,
 	invertYAxis,
-	initBlackboardCanvas,
+	initContrastedCanvas,
 	wait,
 	getStrokeWidth,
 	showCreation,

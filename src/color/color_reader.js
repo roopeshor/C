@@ -58,7 +58,7 @@ function readColor() {
 		} else if (color.length === 3) {
 			result = [c1, color[1], color[2], 1];
 		} else if (color.length === 4) {
-			result = [c1, color[1], color[2], color[3]];
+			result = [c1, color[1], color[2], color[3]/255];
 		}
 	} else if (typeof c1 == "string") {
 		// Adapted from p5.js
@@ -83,6 +83,7 @@ function readColor() {
 			result = HEX8.exec(str)
 				.slice(1)
 				.map((color) => parseInt(color, 16));
+			result[3] /= 255;
 		} else if (RGB.test(str)) {
 			result = RGB.exec(str)
 				.slice(1)

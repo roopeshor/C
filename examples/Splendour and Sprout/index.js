@@ -58,7 +58,7 @@ import { text } from "../../src/objects/text.js";
 import {
 	clear,
 	fill,
-	initBlackboardCanvas,
+	initContrastedCanvas,
 	loop,
 	noFill,
 	noLoop,
@@ -68,7 +68,7 @@ import {
 let W, H, radius, animatedDrawingCfg, staticDrawingCfg;
 
 function initSize() {
-	W = C.getContainerWidth() / 1.2;
+	W = C.getWindowWidth() / 1.2;
 	// W *= 1.5;
 	H = (W / 16) * 9;
 	radius = round(H / 2.1);
@@ -195,7 +195,7 @@ function linePairs(i) {
 
 function init() {
 	strokeWidth(drawingConfigs.lineWidth);
-	initBlackboardCanvas();
+	initContrastedCanvas();
 	noFill();
 	circle(0, 0, radius);
 }

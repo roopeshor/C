@@ -2,7 +2,7 @@ import { Arc, Line } from "../../src/animations/create.js";
 import { BLUE, GREEN, ORANGE, RED } from "../../src/constants/colors.js";
 import { C } from "../../src/main.js";
 import {
-	initBlackboardCanvas,
+	initContrastedCanvas,
 	showCreation,
 	stroke,
 	strokeWidth,
@@ -32,7 +32,7 @@ function createAxis(canvasID, xAxis, yAxis) {
 
 C(
 	() => {
-		initBlackboardCanvas();
+		initContrastedCanvas();
 		stroke(ORANGE);
 		createAxis(
 			"main",

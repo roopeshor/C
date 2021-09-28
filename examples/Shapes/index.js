@@ -1,27 +1,111 @@
+import { BLUE } from "../../src/constants/colors.js";
+import { PI, TAU } from "../../src/constants/math.js";
 import { C } from "../../src/main.js";
-import { axes } from "../../src/objects/coordinate_systems.js";
-import { lens } from "../../src/objects/more_shapes.js";
-import { initBlackboardCanvas, noFill } from "../../src/settings.js";
+import { cos, min, sin } from "../../src/math/basic.js";
+import { line } from "../../src/objects/geometry.js";
+import {
+	initContrastedCanvas,
+	loop,
+	noFill,
+	noLoop,
+	stroke
+} from "../../src/settings.js";
+
+const WIDTH = min(C.getWindowWidth(), 400);
+const HEIGHT = WIDTH;
 
 C(
 	() => {
-		initBlackboardCanvas();
-		axes();
-		var c1 = [-70, 0],
-			r1 = 70,
-			c2 = [70, 0],
-			r2 = 110;
-		// point(...c1);
-		// point(...c2);
-
+		initContrastedCanvas();
 		noFill();
-		// circle(...c1, r1);
-		// circle(...c2, r2);
-		lens(c1, r1, c2, r2);
+		let points = [], // list of points
+			count = 40, // number of points
+			// offset = 3, // index distance to next point
+			dAngle = TAU / count, // angle between two points
+			radius = WIDTH / 2 - 15; // radius of circle
+
+		// generate points
+		for (let i = 0; i < count; i++) {
+			points.push([cos(dAngle * i) * radius, sin(dAngle * i) * radius]);
+
+			// draw points
+			// point(...points[i], 2);
+		}
+		// draw lines
+		function drawLines(offset) {
+			for (let i = 0; i < count; i++) {
+				let next = (i + offset) % count;
+				line(...points[i], ...points[next]);
+			}
+		}
+
+		let offset = 0;
+		stroke(BLUE + "80");
+		loop(
+			() => {
+				drawLines(offset++);
+				if (offset >= count / 2) noLoop();
+			},
+			"inward",
+			100
+		);
 	},
 	".container",
 	{
-		width: 500,
-		height: 500,
+		name: "inward",
+		width: WIDTH,
+		height: HEIGHT,
 	}
 );
+C(
+	() => {
+		initContrastedCanvas();
+		noFill();
+		let count = 80, // number of points
+			dA = TAU / count, // angle between two points
+			r = WIDTH / 4 - 10, // radius of each circles,
+			points = generatePointsInArc(-r, 0, r, 0, PI * 2, dA, true).concat(
+				generatePointsInArc(r, 0, r, PI, (PI * 6) / 2, dA)
+			),
+			dist = 24;
+
+		// draw points
+		// for (let i = 0; i < points.length; i++) point(...points[i], 2);
+
+		// draw lines
+		stroke("green");
+		for (let i = 0; i < points.length; i++) {
+			let next = (i + dist) % points.length;
+			line(...points[i], ...points[next]);
+		}
+	},
+	".container",
+	{
+		name: "infinite",
+		width: WIDTH,
+		height: HEIGHT,
+	}
+);
+
+function generatePointsInArc(
+	x,
+	y,
+	radius,
+	startAngle = 0,
+	endAngle = PI / 2,
+	dA = 0.01,
+	clockwise = false
+) {
+	let points = [];
+	dA = Math.abs(dA || (endAngle - startAngle) / 10);
+	if (startAngle > endAngle) {
+		for (let t = startAngle; t % TAU >= endAngle + 1e-7; t += dA) {
+			points.push([Math.cos(t) * radius + x, Math.sin(t) * radius + y]);
+		}
+	} else {
+		for (let t = startAngle; t <= endAngle + 1e-7; t += dA) {
+			points.push([Math.cos(t) * radius + x, Math.sin(t) * radius + y]);
+		}
+	}
+	return clockwise ? points.reverse() : points;
+}

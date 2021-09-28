@@ -25,7 +25,7 @@ import {
 import {
 	fill,
 	fontStyle,
-	initBlackboardCanvas,
+	initContrastedCanvas,
 	lineDash,
 	noFill, save,
 	stroke,
@@ -46,7 +46,7 @@ C(
 			padding = 20,
 			leftStart = -radius - padding;
 		const pointOnCircle = rotateAroundOrigin(PI / 6, radius);
-		initBlackboardCanvas();
+		initContrastedCanvas();
 		stroke(WHITE);
 		fill(TEAL_C);
 		translate(0, -30);
@@ -109,7 +109,7 @@ C(
 );
 C(
 	() => {
-		initBlackboardCanvas();
+		initContrastedCanvas();
 		stroke(GREEN_C);
 		fill(RED_C);
 		const line1 = [
@@ -151,7 +151,7 @@ C(
 );
 C(
 	() => {
-		initBlackboardCanvas();
+		initContrastedCanvas();
 		stroke(GREEN_C);
 		var r = 120;
 		const color = linearGradient(
