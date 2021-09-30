@@ -19,7 +19,8 @@ let // Matching format: #XXX
 	RGBA =
 		/^rgba\((\d{1,3}),(\d{1,3}),(\d{1,3}),(?:(\d+(?:\.\d+)?)|(?:\.\d+))\)$/i;
 /**
- * Reads the argument and returns color in the prefered colorMode. If last argument is given true, it will return the colors as array
+ * Reads the argument and returns color in the prefered colorMode.
+ * If last argument is given true, it will return the colors as array.
  * Possible use cases (these assume colorModes to be 'rgba'):
  * Only accept valid css colors
  *

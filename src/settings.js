@@ -736,6 +736,18 @@ function getCanvasData(datURL = "image/png") {
 }
 
 /**
+ * puts a imageData to canvas
+ * @param {ImageData} imageData
+ * @param {number} x
+ * @param {number} y
+ * @param {number} w
+ * @param {number} h
+ */
+function putImageData () {
+	C.workingCanvas.putImageData(...arguments);
+}
+
+/**
  * Save the canvas as image
  *
  * @param {string} [name="drawing"] name of file
@@ -823,9 +835,7 @@ function invertYAxis() {
  * Centers canvas to center, with black background, yellow stroke, no fill enabled and y axis inverted
  */
 function initContrastedCanvas() {
-	centreCanvas();
 	background(0);
-	invertYAxis();
 	stroke(YELLOW);
 	noFill();
 }
@@ -1014,6 +1024,7 @@ export {
 	fontSize,
 	fontFamily,
 	getCanvasData,
+	putImageData,
 	saveCanvas,
 	clearAll,
 	lineDash,

@@ -11,9 +11,8 @@ import * as Color_Reader from "./color/color_reader.js";
 import * as Interpolation from "./color/interpolation.js";
 import * as Color_Converters from "./color/color_converters.js";
 
-import * as ImageFunctions from "./image/imageData.js";
-
-import * as ImageDrawings from "./objects/image.js";
+import * as ImageDrawings from "./image/image.js";
+import * as ImageProcessing from "./image/processing.js";
 
 import * as Tex from "./objects/tex.js";
 import * as Settings from "./settings.js";
@@ -45,7 +44,7 @@ defineProperties(Gradients);
 defineProperties(Color_Random);
 defineProperties(Interpolation);
 
-defineProperties(ImageFunctions);
+defineProperties(ImageProcessing);
 
 defineProperties(ImageDrawings);
 defineProperties(Geometry);
