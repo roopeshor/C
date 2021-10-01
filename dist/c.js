@@ -30,8 +30,8 @@ const counters = {
 /**
  * Animates a line from point p1 to point p2.
  *
- * @param {array} p1 The first point.
- * @param {array} p2 The second point.
+ * @param {array<number>} p1 The first point.
+ * @param {array<number>} p2 The second point.
  * @param {number} [dt=10] The duration of one frame in milliseconds.
  * @param {function} [next=() => {}] The function to call after the animation.
  */
@@ -101,7 +101,8 @@ function Arc(args) {
     rateFunction: _rate_functions.smooth,
     closed: false,
     startAngle: 0,
-    angle: Math.PI / 2
+    angle: Math.PI / 2,
+    clockwise: false
   };
   let {
     name,
@@ -117,7 +118,8 @@ function Arc(args) {
     startAngle,
     angle,
     radiusX,
-    radiusY
+    radiusY,
+    clockwise
   } = Object.assign(defaults, args);
   canvas = canvas || _main.C.workingCanvas.name;
   let ctx = _main.C.canvasList[canvas];
@@ -129,13 +131,16 @@ function Arc(args) {
   }
 
   let dt = 2 / (ctx.dpr * (radiusX + radiusY));
+  let start = startAngle;
+  let end = angle + startAngle + 1e-6;
 
-  for (let t = startAngle; t <= angle + startAngle + 1e-6; t += dt) {
+  function pushPoint(t) {
     const x1 = Math.cos(t) * radiusX + center[0];
     const y1 = Math.sin(t) * radiusY + center[1];
     points.push([x1, y1]);
   }
 
+  if (clockwise) for (let t = end; t >= start; t -= dt) pushPoint(t);else for (let t = start; t <= end; t += dt) pushPoint(t);
   let rx = radiusX;
   let ry = radiusY;
 
@@ -144,6 +149,7 @@ function Arc(args) {
     ry -= (0, _settings.getStrokeWidth)() / 2;
   }
 
+  console.log(points);
   return {
     points: points,
     // list of computed points
@@ -205,7 +211,7 @@ function animateFill(name, canvasName, FILL, f, dur = 1000, dt = 10, next = null
  * @param {number} [args.fillTime = 500] time to fill inside circle.
  * @param {funciton} [args.next = null] function to run after animation ends.
  * @param {funciton} [args.rateFunction = smooth] function to use for rate.
- * @param {array} args.center center of the circle
+ * @param {array<number>} args.center center of the circle
  * @param {string} args.canvas name of canvas in which the animation is rendered
  */
 
@@ -256,12 +262,10 @@ function Circle(args) {
   };
 }
 
-},{"../color/color_reader.js":4,"../main.js":14,"../math/rate_functions.js":19,"../objects/geometry.js":25,"../settings.js":29,"../utils.js":30}],2:[function(require,module,exports){
+},{"../color/color_reader.js":4,"../main.js":15,"../math/rate_functions.js":20,"../objects/geometry.js":26,"../settings.js":30,"../utils.js":31}],2:[function(require,module,exports){
 "use strict";
 
 var _utils = require("./utils.js");
-
-var _main = require("./main.js");
 
 var MathConsts = _interopRequireWildcard(require("./constants/math.js"));
 
@@ -281,9 +285,9 @@ var Interpolation = _interopRequireWildcard(require("./color/interpolation.js"))
 
 var Color_Converters = _interopRequireWildcard(require("./color/color_converters.js"));
 
-var ImageFunctions = _interopRequireWildcard(require("./image/imageData.js"));
+var ImageDrawings = _interopRequireWildcard(require("./image/image.js"));
 
-var ImageDrawings = _interopRequireWildcard(require("./objects/image.js"));
+var ImageProcessing = _interopRequireWildcard(require("./image/processing.js"));
 
 var Tex = _interopRequireWildcard(require("./objects/tex.js"));
 
@@ -301,6 +305,8 @@ var Functions = _interopRequireWildcard(require("./objects/functions.js"));
 
 var CoordinateSystems = _interopRequireWildcard(require("./objects/coordinate_systems.js"));
 
+var MoreShapes = _interopRequireWildcard(require("./objects/more_shapes.js"));
+
 var CreateAnimation = _interopRequireWildcard(require("./animations/create.js"));
 
 var Basic = _interopRequireWildcard(require("./math/basic.js"));
@@ -313,20 +319,22 @@ var Arithmeics = _interopRequireWildcard(require("./math/aritmetics.js"));
 
 var RateFunctions = _interopRequireWildcard(require("./math/rate_functions.js"));
 
+var _main = require("./main.js");
+
 function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
 
 function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
-(0, _utils.defineProperties)(COLORLIST, window, false);
-(0, _utils.defineProperties)(DrawingConstants, window, false);
-(0, _utils.defineProperties)(MathConsts, window, false);
-(0, _utils.defineProperties)(ColorPalettes, window, false);
+(0, _utils.defineProperties)(COLORLIST);
+(0, _utils.defineProperties)(DrawingConstants);
+(0, _utils.defineProperties)(MathConsts);
+(0, _utils.defineProperties)(ColorPalettes);
 (0, _utils.defineProperties)(Color_Converters);
 (0, _utils.defineProperties)(Color_Reader);
 (0, _utils.defineProperties)(Gradients);
 (0, _utils.defineProperties)(Color_Random);
 (0, _utils.defineProperties)(Interpolation);
-(0, _utils.defineProperties)(ImageFunctions);
+(0, _utils.defineProperties)(ImageProcessing);
 (0, _utils.defineProperties)(ImageDrawings);
 (0, _utils.defineProperties)(Geometry);
 (0, _utils.defineProperties)(Settings);
@@ -336,17 +344,18 @@ function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && 
 (0, _utils.defineProperties)(Braces);
 (0, _utils.defineProperties)(Arrows);
 (0, _utils.defineProperties)(Functions);
+(0, _utils.defineProperties)(MoreShapes);
 (0, _utils.defineProperties)(CreateAnimation);
 (0, _utils.defineProperties)(Arithmeics);
 (0, _utils.defineProperties)(Basic);
 (0, _utils.defineProperties)(Points);
 (0, _utils.defineProperties)(Math_Random);
 (0, _utils.defineProperties)(RateFunctions);
-(0, _utils.defineProperties)(MathConsts, window, false);
-(0, _utils.defineProperties)(_utils.defineProperties, _main.C);
-(0, _utils.defineProperties)(COLORLIST, _main.C);
+(0, _utils.defineProperties)(MathConsts);
+(0, _utils.defineProperties)(_utils.defineProperties);
+(0, _utils.defineProperties)(COLORLIST, _main.C.COLORLIST);
 
-},{"./animations/create.js":1,"./color/color_converters.js":3,"./color/color_reader.js":4,"./color/gradients.js":5,"./color/interpolation.js":6,"./color/random.js":7,"./constants/color_palettes.js":8,"./constants/colors.js":9,"./constants/drawing.js":10,"./constants/math.js":11,"./image/imageData.js":13,"./main.js":14,"./math/aritmetics.js":15,"./math/basic.js":16,"./math/points.js":17,"./math/random.js":18,"./math/rate_functions.js":19,"./objects/arrows.js":21,"./objects/braces.js":22,"./objects/coordinate_systems.js":23,"./objects/functions.js":24,"./objects/geometry.js":25,"./objects/image.js":26,"./objects/tex.js":27,"./objects/text.js":28,"./settings.js":29,"./utils.js":30}],3:[function(require,module,exports){
+},{"./animations/create.js":1,"./color/color_converters.js":3,"./color/color_reader.js":4,"./color/gradients.js":5,"./color/interpolation.js":6,"./color/random.js":7,"./constants/color_palettes.js":8,"./constants/colors.js":9,"./constants/drawing.js":10,"./constants/math.js":11,"./image/image.js":13,"./image/processing.js":14,"./main.js":15,"./math/aritmetics.js":16,"./math/basic.js":17,"./math/points.js":18,"./math/random.js":19,"./math/rate_functions.js":20,"./objects/arrows.js":22,"./objects/braces.js":23,"./objects/coordinate_systems.js":24,"./objects/functions.js":25,"./objects/geometry.js":26,"./objects/more_shapes.js":27,"./objects/tex.js":28,"./objects/text.js":29,"./settings.js":30,"./utils.js":31}],3:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -375,7 +384,7 @@ function hue2RGB(p, q, t) {
  * @param {number} red The red color value
  * @param {number} green The green color value
  * @param {number} blue The blue color value
- * @return {array} The HSL representation
+ * @return {array<number>} The HSL representation
  */
 
 
@@ -406,7 +415,7 @@ function RGBToHSL(r, g, b) {
  * @param {number} hue The hue
  * @param {number} saturation The saturation
  * @param {number} lightness The lightness
- * @return {array} The RGB representation
+ * @return {array<number>} The RGB representation
  */
 
 
@@ -435,7 +444,7 @@ function HSLToRGB(hue, saturation, lightness) {
  * @param {number} red The red color value
  * @param {number} green The green color value
  * @param {number} blue The blue color value
- * @return {array} The HSV representation
+ * @return {array<number>} The HSV representation
  */
 
 
@@ -467,7 +476,7 @@ function RGBToHSV(r, g, b) {
  * @param {number} hue The hue
  * @param {number} saturation The saturation
  * @param {number} value The value
- * @return {array} The RGB representation
+ * @return {array<number>} The RGB representation
  */
 
 
@@ -519,7 +528,8 @@ RGB = /^rgb\((\d{1,3}),(\d{1,3}),(\d{1,3})\)$/i,
     // Matching format: rgb(R, G, B, A)
 RGBA = /^rgba\((\d{1,3}),(\d{1,3}),(\d{1,3}),(?:(\d+(?:\.\d+)?)|(?:\.\d+))\)$/i;
 /**
- * Reads the argument and returns color in the prefered colorMode. If last argument is given true, it will return the colors as array
+ * Reads the argument and returns color in the prefered colorMode.
+ * If last argument is given true, it will return the colors as array.
  * Possible use cases (these assume colorModes to be 'rgba'):
  * Only accept valid css colors
  *
@@ -562,7 +572,7 @@ function readColor() {
     } else if (color.length === 3) {
       result = [c1, color[1], color[2], 1];
     } else if (color.length === 4) {
-      result = [c1, color[1], color[2], color[3]];
+      result = [c1, color[1], color[2], color[3] / 255];
     }
   } else if (typeof c1 == "string") {
     // Adapted from p5.js
@@ -578,6 +588,7 @@ function readColor() {
       result = HEX4.exec(str).slice(1).map(color => parseInt(color + color, 16));
     } else if (HEX8.test(str)) {
       result = HEX8.exec(str).slice(1).map(color => parseInt(color, 16));
+      result[3] /= 255;
     } else if (RGB.test(str)) {
       result = RGB.exec(str).slice(1).map(color => parseInt(color));
       result[3] = 1;
@@ -625,7 +636,7 @@ function readColor() {
   return result;
 }
 
-},{"../constants/named_colors.js":12,"../main.js":14}],5:[function(require,module,exports){
+},{"../constants/named_colors.js":12,"../main.js":15}],5:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -638,9 +649,9 @@ var _main = require("../main.js");
 /**
  * creates a linear gradient
  *
- * @param {array} initialPoint initial point as [x, y]
- * @param {array} finalPoint final point as [x, y]
- * @param {Object|array} colorStops color stops
+ * @param {array<number>} initialPoint initial point as [x, y]
+ * @param {array<number>} finalPoint final point as [x, y]
+ * @param {Object|array<any>} colorStops color stops
  @example
  ```js
 let color = linearGradient(
@@ -686,7 +697,7 @@ function linearGradient(initialPoint, finalPoint, colorStops) {
   return gradient;
 }
 
-},{"../main.js":14}],6:[function(require,module,exports){
+},{"../main.js":15}],6:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -740,7 +751,7 @@ function lerpColorObject(colorObj, v) {
 /**
  * Lerps across a color Array
  * From <https://github.com/yuki-koyama/tinycolormap/blob/fe597277c782c583eb40362de98a08df62efc628/include/tinycolormap.hpp#L159>
- * @param {array} colorArr
+ * @param {array<number>} colorArr
  * @param {number} v
  * @return {string}
  */
@@ -827,58 +838,63 @@ function randomDefinedColor() {
   return COLORLIST[definedColorList[(0, _random.randomInt)(definedColorList.length - 1)]];
 }
 
-},{"../constants/colors.js":9,"../math/random.js":18}],8:[function(require,module,exports){
+},{"../constants/colors.js":9,"../math/random.js":19}],8:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.ColorPalettes = void 0;
-// This product includes color specifications and designs developed by Cynthia Brewer (http://colorbrewer.org/).
-// Please see license at http://colorbrewer.org/export/LICENSE.txt
-const ColorPalettes = {
-  YlGn: "#ffffe5 #f7fcb9 #d9f0a3 #addd8e #78c679 #41ab5d #238443 #006837 #004529".split(" "),
-  GnBu: "#f7fcf0 #e0f3db #ccebc5 #a8ddb5 #7bccc4 #4eb3d3 #2b8cbe #0868ac #084081".split(" "),
-  BuGn: "#f7fcfd #e5f5f9 #ccece6 #99d8c9 #66c2a4 #41ae76 #238b45 #006d2c #00441b".split(" "),
-  PuBu: "#fff7fb #ece7f2 #d0d1e6 #a6bddb #74a9cf #3690c0 #0570b0 #045a8d #023858".split(" "),
-  BuPu: "#f7fcfd #e0ecf4 #bfd3e6 #9ebcda #8c96c6 #8c6bb1 #88419d #810f7c #4d004b".split(" "),
-  RdPu: "#fff7f3 #fde0dd #fcc5c0 #fa9fb5 #f768a1 #dd3497 #ae017e #7a0177 #49006a".split(" "),
-  PuRd: "#f7f4f9 #e7e1ef #d4b9da #c994c7 #df65b0 #e7298a #ce1256 #980043 #67001f".split(" "),
-  OrRd: "#fff7ec #fee8c8 #fdd49e #fdbb84 #fc8d59 #ef6548 #d7301f #b30000 #7f0000".split(" "),
-  Reds: "#fff5f0 #fee0d2 #fcbba1 #fc9272 #fb6a4a #ef3b2c #cb181d #a50f15 #67000d".split(" "),
-  Blues: "#f7fbff #deebf7 #c6dbef #9ecae1 #6baed6 #4292c6 #2171b5 #08519c #08306b".split(" "),
-  Greys: "#ffffff #f0f0f0 #d9d9d9 #bdbdbd #969696 #737373 #525252 #252525 #000000".split(" "),
-  YlGnBu: "#ffffd9 #edf8b1 #c7e9b4 #7fcdbb #41b6c4 #1d91c0 #225ea8 #253494 #081d58".split(" "),
-  PuBuGn: "#fff7fb #ece2f0 #d0d1e6 #a6bddb #67a9cf #3690c0 #02818a #016c59 #014636".split(" "),
-  YlOrRd: "#ffffcc #ffeda0 #fed976 #feb24c #fd8d3c #fc4e2a #e31a1c #bd0026 #800026".split(" "),
-  YlOrBr: "#ffffe5 #fff7bc #fee391 #fec44f #fe9929 #ec7014 #cc4c02 #993404 #662506".split(" "),
-  Greens: "#f7fcf5 #e5f5e0 #c7e9c0 #a1d99b #74c476 #41ab5d #238b45 #006d2c #00441b".split(" "),
-  Purples: "#fcfbfd #efedf5 #dadaeb #bcbddc #9e9ac8 #807dba #6a51a3 #54278f #3f007d".split(" "),
-  Oranges: "#fff5eb #fee6ce #fdd0a2 #fdae6b #fd8d3c #f16913 #d94801 #a63603 #7f2704".split(" "),
-  PuOr: "#7f3b08 #b35806 #e08214 #fdb863 #fee0b6 #f7f7f7 #d8daeb #b2abd2 #8073ac #542788 #2d004b".split(" "),
-  BrBG: "#543005 #8c510a #bf812d #dfc27d #f6e8c3 #f5f5f5 #c7eae5 #80cdc1 #35978f #01665e #003c30".split(" "),
-  PRGn: "#40004b #762a83 #9970ab #c2a5cf #e7d4e8 #f7f7f7 #d9f0d3 #a6dba0 #5aae61 #1b7837 #00441b".split(" "),
-  PiYG: "#8e0152 #c51b7d #de77ae #f1b6da #fde0ef #f7f7f7 #e6f5d0 #b8e186 #7fbc41 #4d9221 #276419".split(" "),
-  RdBu: "#67001f #b2182b #d6604d #f4a582 #fddbc7 #f7f7f7 #d1e5f0 #92c5de #4393c3 #2166ac #053061".split(" "),
-  RdGy: "#67001f #b2182b #d6604d #f4a582 #fddbc7 #ffffff #e0e0e0 #bababa #878787 #4d4d4d #1a1a1a".split(" "),
-  RdYlBu: "#a50026 #d73027 #f46d43 #fdae61 #fee090 #ffffbf #e0f3f8 #abd9e9 #74add1 #4575b4 #313695".split(" "),
-  RdYlGn: "#a50026 #d73027 #f46d43 #fdae61 #fee08b #ffffbf #d9ef8b #a6d96a #66bd63 #1a9850 #006837".split(" "),
-  Spectral: "#9e0142 #d53e4f #f46d43 #fdae61 #fee08b #ffffbf #e6f598 #abdda4 #66c2a5 #3288bd #5e4fa2".split(" "),
+let ColorPalettes = {
+  // This product includes color specifications and designs developed by Cynthia Brewer (http://colorbrewer.org/).
+  // Please see license at http://colorbrewer.org/export/LICENSE.txt
+  YlGn: "#ffffe5 #f7fcb9 #d9f0a3 #addd8e #78c679 #41ab5d #238443 #006837 #004529",
+  GnBu: "#f7fcf0 #e0f3db #ccebc5 #a8ddb5 #7bccc4 #4eb3d3 #2b8cbe #0868ac #084081",
+  BuGn: "#f7fcfd #e5f5f9 #ccece6 #99d8c9 #66c2a4 #41ae76 #238b45 #006d2c #00441b",
+  PuBu: "#fff7fb #ece7f2 #d0d1e6 #a6bddb #74a9cf #3690c0 #0570b0 #045a8d #023858",
+  BuPu: "#f7fcfd #e0ecf4 #bfd3e6 #9ebcda #8c96c6 #8c6bb1 #88419d #810f7c #4d004b",
+  RdPu: "#fff7f3 #fde0dd #fcc5c0 #fa9fb5 #f768a1 #dd3497 #ae017e #7a0177 #49006a",
+  PuRd: "#f7f4f9 #e7e1ef #d4b9da #c994c7 #df65b0 #e7298a #ce1256 #980043 #67001f",
+  OrRd: "#fff7ec #fee8c8 #fdd49e #fdbb84 #fc8d59 #ef6548 #d7301f #b30000 #7f0000",
+  Reds: "#fff5f0 #fee0d2 #fcbba1 #fc9272 #fb6a4a #ef3b2c #cb181d #a50f15 #67000d",
+  Blues: "#f7fbff #deebf7 #c6dbef #9ecae1 #6baed6 #4292c6 #2171b5 #08519c #08306b",
+  Greys: "#ffffff #f0f0f0 #d9d9d9 #bdbdbd #969696 #737373 #525252 #252525 #000000",
+  YlGnBu: "#ffffd9 #edf8b1 #c7e9b4 #7fcdbb #41b6c4 #1d91c0 #225ea8 #253494 #081d58",
+  PuBuGn: "#fff7fb #ece2f0 #d0d1e6 #a6bddb #67a9cf #3690c0 #02818a #016c59 #014636",
+  YlOrRd: "#ffffcc #ffeda0 #fed976 #feb24c #fd8d3c #fc4e2a #e31a1c #bd0026 #800026",
+  YlOrBr: "#ffffe5 #fff7bc #fee391 #fec44f #fe9929 #ec7014 #cc4c02 #993404 #662506",
+  Greens: "#f7fcf5 #e5f5e0 #c7e9c0 #a1d99b #74c476 #41ab5d #238b45 #006d2c #00441b",
+  Purples: "#fcfbfd #efedf5 #dadaeb #bcbddc #9e9ac8 #807dba #6a51a3 #54278f #3f007d",
+  Oranges: "#fff5eb #fee6ce #fdd0a2 #fdae6b #fd8d3c #f16913 #d94801 #a63603 #7f2704",
+  PuOr: "#7f3b08 #b35806 #e08214 #fdb863 #fee0b6 #f7f7f7 #d8daeb #b2abd2 #8073ac #542788 #2d004b",
+  BrBG: "#543005 #8c510a #bf812d #dfc27d #f6e8c3 #f5f5f5 #c7eae5 #80cdc1 #35978f #01665e #003c30",
+  PRGn: "#40004b #762a83 #9970ab #c2a5cf #e7d4e8 #f7f7f7 #d9f0d3 #a6dba0 #5aae61 #1b7837 #00441b",
+  PiYG: "#8e0152 #c51b7d #de77ae #f1b6da #fde0ef #f7f7f7 #e6f5d0 #b8e186 #7fbc41 #4d9221 #276419",
+  RdBu: "#67001f #b2182b #d6604d #f4a582 #fddbc7 #f7f7f7 #d1e5f0 #92c5de #4393c3 #2166ac #053061",
+  RdGy: "#67001f #b2182b #d6604d #f4a582 #fddbc7 #ffffff #e0e0e0 #bababa #878787 #4d4d4d #1a1a1a",
+  RdYlBu: "#a50026 #d73027 #f46d43 #fdae61 #fee090 #ffffbf #e0f3f8 #abd9e9 #74add1 #4575b4 #313695",
+  RdYlGn: "#a50026 #d73027 #f46d43 #fdae61 #fee08b #ffffbf #d9ef8b #a6d96a #66bd63 #1a9850 #006837",
+  Spectral: "#9e0142 #d53e4f #f46d43 #fdae61 #fee08b #ffffbf #e6f598 #abdda4 #66c2a5 #3288bd #5e4fa2",
   // From Matlab
-  Heat: "#0000ff #00ffff #00ff00 #ffff00 #ff0000".split(" "),
-  Jet: "#000080 #0000ff #0080ff #00ffff #80ff80 #ffff00 #ff8000 #ff0000 #800000".split(" "),
-  Parula: "#352a87 #2450d0 #0a72de #128ad2 #06a4ca #1ab2b1 #51bd90 #92bf72 #c6bc5e #f6ba46 #f9d528 #f9fb0e".split(" "),
+  Heat: "#0000ff #00ffff #00ff00 #ffff00 #ff0000",
+  Jet: "#000080 #0000ff #0080ff #00ffff #80ff80 #ffff00 #ff8000 #ff0000 #800000",
+  Parula: "#352a87 #2450d0 #0a72de #128ad2 #06a4ca #1ab2b1 #51bd90 #92bf72 #c6bc5e #f6ba46 #f9d528 #f9fb0e",
   // From Matplotlib
-  Magma: "#000004 #120d31 #331067 #5a167e #7e2482 #a3307e #c83e73 #e95462 #f97b5d #fea973 #fed395 #fcfdbf".split(" "),
-  Inferno: "#000004 #140b34 #390963 #61136e #85216b #a92e5e #cb4149 #e65d2f #f78212 #fcae12 #f5db4c #fcffa4".split(" "),
-  Plasma: "#0d0887 #3e049c #6300a7 #8707a6 #a62098 #c03a83 #d5546e #e76f5a #f58c46 #fdae32 #fcd225 #f0f921".split(" "),
-  Viridis: "#440154 #482173 #433e85 #38598c #2d708e #25858e #1e9b8a #2ab07f #50c46a #86d549 #c2df23 #fde725".split(" "),
-  Cividis: "#00204d #00306f #2a406c #48526b #5e626e #727374 #878479 #9e9677 #b6a971 #d0be67 #ead357 #ffea46".split(" "),
+  Magma: "#000004 #120d31 #331067 #5a167e #7e2482 #a3307e #c83e73 #e95462 #f97b5d #fea973 #fed395 #fcfdbf",
+  // very close to CMRmap
+  Inferno: "#000004 #140b34 #390963 #61136e #85216b #a92e5e #cb4149 #e65d2f #f78212 #fcae12 #f5db4c #fcffa4",
+  Plasma: "#0d0887 #3e049c #6300a7 #8707a6 #a62098 #c03a83 #d5546e #e76f5a #f58c46 #fdae32 #fcd225 #f0f921",
+  Viridis: "#440154 #482173 #433e85 #38598c #2d708e #25858e #1e9b8a #2ab07f #50c46a #86d549 #c2df23 #fde725",
+  Cividis: "#00204d #00306f #2a406c #48526b #5e626e #727374 #878479 #9e9677 #b6a971 #d0be67 #ead357 #ffea46",
   // Other
-  GitHub: "#eeeeee #c6e48b #7bc96f #239a3b #196127".split(" "),
-  Turbo: "#30123b #4454c3 #448ffe #1fc9dd #2aefa1 #7dff56 #c1f334 #f1cb3a #fe932a #ea4e0d #be2102 #7a0403".split(" ")
+  GitHub: "#eeeeee #c6e48b #7bc96f #239a3b #196127",
+  Turbo: "#30123b #4454c3 #448ffe #1fc9dd #2aefa1 #7dff56 #c1f334 #f1cb3a #fe932a #ea4e0d #be2102 #7a0403",
+  Grey: "#000000 #ffffff",
+  Gray: "#000000 #ffffff"
 };
 exports.ColorPalettes = ColorPalettes;
+
+for (var p in ColorPalettes) ColorPalettes[p] = ColorPalettes[p].split(" ");
 
 },{}],9:[function(require,module,exports){
 "use strict";
@@ -1472,9 +1488,115 @@ exports.aliceblue = aliceblue;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.drawImage = drawImage;
+exports.pixel = pixel;
+exports.loadImage = loadImage;
+exports.loadImagePromise = loadImagePromise;
+
+var _color_reader = require("../color/color_reader.js");
+
+var _main = require("../main.js");
+
+/**
+ * This module contains function for image manipulation.
+ * @module image
+ */
+
+/**
+ * Draws a given image in canvas.
+ * See more about the parameters : {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/drawImage}
+ * @param {CanvasImageData} image image to draw
+ */
+function drawImage(img) {
+  let ctx = _main.C.workingCanvas,
+      x,
+      y;
+
+  if (arguments.length < 6) {
+    x = arguments[1];
+    y = arguments[2];
+  } else {
+    x = arguments[5];
+    y = arguments[6];
+  }
+
+  if (ctx.yAxisInverted) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.scale(1, -1);
+    ctx.drawImage(img, 0, 0, ...Array.prototype.slice.call(arguments, 3));
+    ctx.restore();
+  } else {
+    ctx.drawImage(img, x, y, ...Array.prototype.slice.call(arguments, 3));
+  }
+}
+/**
+ * Draws a pixel
+ *
+ * @param {number} x x-coordinate of pixel
+ * @param {number} y y-coordinate of pixel
+ * @param {string} color color of pixel
+ */
+
+
+function pixel(x, y, color) {
+  let ctx = _main.C.workingCanvas,
+      dpr = 1 / ctx.dpr;
+  ctx.fillStyle = color == undefined ? ctx.fillStyle : (0, _color_reader.readColor)(color);
+  ctx.fillRect(x, y, dpr, dpr);
+}
+/**
+ * Loads a image from given url. I
+ * @param {string} url url of image
+ * @param {function} [resolver] function to call when image is loaded
+ * @param {function} [fallback] function to call when image fails to loaded
+ * @returns {Image} image. This may not be loaded yet.
+ */
+
+
+function loadImage(url, resolver, fallback) {
+  var img = new Image(); // Create new img element
+
+  img.src = url;
+
+  if (typeof resolver == "function") {
+    img.addEventListener("load", () => resolver(img), false);
+  }
+
+  if (typeof fallback == "function") {
+    img.addEventListener("error", evt => fallback(evt, img), false);
+  }
+
+  return img;
+}
+/**
+ * loads a image from given url and returns a promise.
+ * @param {string} url url of image
+ * @returns {Promise} promise that resolves to image
+ */
+
+
+function loadImagePromise(url) {
+  return new Promise((resolve, reject) => {
+    loadImage(url, resolve, reject);
+  });
+}
+
+},{"../color/color_reader.js":4,"../main.js":15}],14:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 exports.getPixelColor = getPixelColor;
 exports.imageDataToColorArray = imageDataToColorArray;
 exports.hasNeighbourColor = hasNeighbourColor;
+exports.replaceColorInImage = replaceColorInImage;
+exports.imageToData = imageToData;
+
+var _color_reader = require("../color/color_reader.js");
+
+var _main = require("../main.js");
 
 /**
  * returns color at a given point from ImageData
@@ -1482,7 +1604,7 @@ exports.hasNeighbourColor = hasNeighbourColor;
  * @param {ImageData} pixels
  * @param {number} x x-coordinate of point
  * @param {number} y y-coordinate of point
- * @return {array} array of color components [r, g, b, a]
+ * @return {array <array<number>>} array of color components [r, g, b, a]
  */
 function getPixelColor(pixels, x, y) {
   let index = pixels.width * y + x;
@@ -1520,7 +1642,7 @@ function imageDataToColorArray(pixels) {
 /**
  * Returns if neighbor pixels have the same color as given.
  *
- * @param {array} color color to compare with
+ * @param {array<number>} color color to compare with
  * @param {ImageData} pixels image data
  * @param {number} x x-coordinate of point
  * @param {number} y y-coordinate of point
@@ -1547,30 +1669,98 @@ function hasNeighbourColor(color, pixels, x, y) {
 
   return false;
 } // TODO: Under construction
-// function createMapOfLetter(letter) {
-// 	let img = Image.new("RGB", (230, 230), "white"),
-// 		d = ImageDraw.Draw(img),
-// 		font = ImageFont.truetype("arial.ttf", 300);
-// 	d.text((15, -50), letter, (fill = (0, 0, 0)), (font = font));
-// 	let pixels = img.load(),
-// 		ans = [];
-// 	for (let x = 0; x < 230; x++) {
-// 		for (let y = 0; y < 230; y++) {
-// 			if (pixels[(x, y)] == (0, 0, 0)) {
-// 				if (
-// 					hasNeighbourColor((255, 255, 255), pixels, x, y) &&
-// 					!hasNeighbourColor((255, 0, 0), pixels, x, y)
-// 				) {
-// 					pixels[(x, y)] = (255, 0, 0);
-// 					ans.append([x, y]);
-// 				}
-// 			}
-// 		}
-// 	}
-// 	return ans;
-// }
+//function createMapOfLetter(letter) {
+//	let img = Image.new("RGB", (230, 230), "white"),
+//		d = ImageDraw.Draw(img),
+//		font = ImageFont.truetype("arial.ttf", 300);
+//	d.text((15, -50), letter, (fill = (0, 0, 0)), (font = font));
+//
+//	let pixels = img.load(),
+//		ans = [];
+//
+//	for (let x = 0; x < 230; x++) {
+//		for (let y = 0; y < 230; y++) {
+//			if (pixels[(x, y)] == (0, 0, 0)) {
+//				if (
+//					hasNeighbourColor((255, 255, 255), pixels, x, y) &&
+//					!hasNeighbourColor((255, 0, 0), pixels, x, y)
+//				) {
+//					pixels[(x, y)] = (255, 0, 0);
+//					ans.append([x, y]);
+//				}
+//			}
+//		}
+//	}
+//
+//	return ans;
+//}
 
-},{}],14:[function(require,module,exports){
+/**
+ * Replaces a color by another color in given image.
+ * @param {ImageData} image image to be processed
+ * @param {*} toReplace color to be replaced
+ * @param {*} replaced replaced color
+ * @param {boolean} [matchAlpha = false] whether to check if alpha channel is same as that of toReplace.
+ * @param {number} [tolerance = 0] minimum difference between each color channel
+ */
+
+
+function replaceColorInImage(image, toReplace, replaced, matchAlpha = false, tolerance = 0) {
+  let data = image.data,
+      newData = _main.C.workingCanvas.createImageData(image.width, image.height);
+
+  const [r1, g1, b1, a1] = (0, _color_reader.readColor)(toReplace, true);
+  const [r2, g2, b2, a2] = (0, _color_reader.readColor)(replaced, true);
+  let nonOccurances = 0;
+
+  for (let i = 0; i < data.length; i += 4) {
+    let r = data[i],
+        g = data[i + 1],
+        b = data[i + 2],
+        a = data[i + 3];
+
+    if (Math.abs(r - r1) <= tolerance && Math.abs(g - g1) <= tolerance && Math.abs(b - b1) <= tolerance && (matchAlpha ? Math.abs(a - a1) <= tolerance : true)) {
+      newData.data[i] = r2;
+      newData.data[i + 1] = g2;
+      newData.data[i + 2] = b2;
+      if (matchAlpha) newData.data[i + 3] = a2;else newData.data[i + 3] = 255;
+    } else {
+      newData.data[i] = r;
+      newData.data[i + 1] = g;
+      newData.data[i + 2] = b;
+      if (matchAlpha) newData.data[i + 3] = a;else newData.data[i + 3] = 255;
+      nonOccurances++;
+    }
+  }
+
+  console.log(nonOccurances);
+  return newData;
+}
+/**
+ * Converts a image to ImageData.
+ * @param {CanvasImageData} image image
+ * @param {number} x x-coordinate of starting point in image
+ * @param {number} y y-coordinate of starting point in image
+ * @param {number} [width = image.width] width of area to be covered
+ * @param {number} [height = image.height] height of area to be covered
+ * @param {boolean} [smoothen = false] whether to capture a smoothened the image
+ */
+
+
+function imageToData(image, x, y, width, height, smoothen = false) {
+  let cvs = document.createElement("canvas");
+  let ctx = cvs.getContext("2d");
+  let dpr = _main.C.workingCanvas.dpr;
+  x = x * dpr || 0;
+  y = y * dpr || 0;
+  cvs.width = width = (isNaN(width) ? image.width : width) * dpr;
+  cvs.height = height = (isNaN(height) ? image.height : height) * dpr;
+  ctx.imageSmoothingEnabled = smoothen;
+  ctx.drawImage(image, 0, 0, width, height);
+  return ctx.getImageData(x, y, width, height);
+}
+
+},{"../color/color_reader.js":4,"../main.js":15}],15:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1745,7 +1935,7 @@ C.workingCanvas = {}; // index of current working canvas in `C.canvasList`
  * @returns {Number}
  */
 
-C.getContainerWidth = function (container = document.body) {
+C.getWindowWidth = function (container = document.body) {
   const cs = window.getComputedStyle(container);
   return parseInt(cs.width) - parseInt(cs.paddingRight) - parseInt(cs.paddingLeft);
 };
@@ -1793,19 +1983,14 @@ C.makeCanvas = function (configs) {
  */
 
 
-C.addExtension = function (extObj, editable) {
-  (0, _utils.defineProperties)(extObj, window, !editable);
-  (0, _utils.defineProperties)(extObj, C.extensions, !editable);
+C.addExtension = function (extObj) {
+  (0, _utils.defineProperties)(extObj, window);
+  (0, _utils.defineProperties)(extObj, C.extensions, false);
 };
-/**
- * @type {object}
- */
-
-
-C.defineProperties = _utils.defineProperties;
 /**
  * @type {boolean}
  */
+
 
 C.debugAnimations = false; // whther to debug animations
 
@@ -1818,12 +2003,25 @@ C.debugAnimations = false; // whther to debug animations
 C.debug = function (bool) {
   if (typeof bool !== "boolean") C.debugAnimations = true;else C.debugAnimations = bool;
 };
+/**
+ * Log of animations
+ * @type {array<object>}
+*/
 
-C._ANIMATIONLOG_ = []; // register to window
 
-window.C = C;
+C._ANIMATIONLOG_ = [];
+/**
+ * Set of functions
+ * @type {object}
+*/
 
-},{"./utils.js":30}],15:[function(require,module,exports){
+C.functions = {};
+C.COLORLIST = {}; //list of colors
+// register to window
+
+window["C"] = C;
+
+},{"./utils.js":31}],16:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1892,7 +2090,7 @@ function lcmArray(list) {
   return n;
 }
 
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1950,7 +2148,7 @@ exports.asin = asin;
 exports.acos = acos;
 exports.abs = abs;
 
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1961,12 +2159,14 @@ exports.rotateAroundOrigin = rotateAroundOrigin;
 exports.rotateAroundPoint = rotateAroundPoint;
 exports.lineIntersection = lineIntersection;
 exports.circleIntersection = circleIntersection;
+exports.extendFromPoint = extendFromPoint;
+exports.extendFromOrigin = extendFromOrigin;
 
 /**
  * return distance between two points
  *
- * @param {array} p1
- * @param {array} p2
+ * @param {array<number>} p1
+ * @param {array<number>} p2
  * @return {number} distance between p1 and p2
  */
 function dist(p1, p2) {
@@ -1975,11 +2175,11 @@ function dist(p1, p2) {
 /**
  * Returns a point rotated around a point by certain angle, exetened by a certain length
  *
- * @param {number|array} x center x or center as array of coords [x, y]
+ * @param {number|array<number>} x center x or center as array of coords [x, y]
  * @param {number} y center y
  * @param {number} angle angle of rotation
  * @param {number} len length to extend the point
- * @returns {array} array of two points
+ * @returns {array<number>} array of two points
  */
 
 
@@ -1996,7 +2196,7 @@ function rotateAroundPoint(x, y, angle, len = 10) {
  *
  * @param {number} angle angle of rotation
  * @param {number} len length to extend the point
- * @returns {array} array of two points
+ * @returns {array<number>} array of two points
  */
 
 
@@ -2006,11 +2206,11 @@ function rotateAroundOrigin(angle, len = 10) {
 /**
  * Returns the point of intersection of two lines.
  *
- * @param {array} p1 start point of first line as [x, y]
- * @param {array} p2 end point of first line as [x, y]
- * @param {array} p3 start point of second line as [x, y]
- * @param {array} p4 end point of second line as [x, y]
- * @return {array} intersection point of lines as [x, y]
+ * @param {array<number>} p1 start point of first line as [x, y]
+ * @param {array<number>} p2 end point of first line as [x, y]
+ * @param {array<number>} p3 start point of second line as [x, y]
+ * @param {array<number>} p4 end point of second line as [x, y]
+ * @return {array<number>} intersection point of lines as [x, y]
  */
 
 
@@ -2027,11 +2227,11 @@ function lineIntersection(p1, p2, p3, p4) {
  * Finds intersection of two circles.
  * Adapted from {@link https://stackoverflow.com/a/14146166}
  *
- * @param {array} c1 center of first circle as [x, y]
+ * @param {array<number>} c1 center of first circle as [x, y]
  * @param {number} r1 radius of first circle
- * @param {array} c2 center of second circle as [x, y]
+ * @param {array<number>} c2 center of second circle as [x, y]
  * @param {number} r2 radius of second circle
- * @return {array} array of two points as [x, y]
+ * @return {array<number>} array of two points as [x, y]
  */
 
 
@@ -2043,8 +2243,36 @@ function circleIntersection(c1, r1, c2, r2) {
   const p2 = [(c2[0] - c1[0]) * s + c1[0], (c2[1] - c1[1]) * s + c1[1]];
   return [[p2[0] + h * (c2[1] - c1[1]) / d, p2[1] - h * (c2[0] - c1[0]) / d], [p2[0] - h * (c2[1] - c1[1]) / d, p2[1] + h * (c2[0] - c1[0]) / d]];
 }
+/**
+ * Extend a point by given length from a given center
+ * @param {array<number>} center center from the point to be extended
+ * @param {array<number>} point point to be extended
+ * @param {number} len length to extend the point
+ * @returns {array<number>}
+ */
 
-},{}],18:[function(require,module,exports){
+
+function extendFromPoint(center, point, len = 10) {
+  let dx = point[0] - center[0],
+      dy = point[1] - center[1],
+      angle = Math.atan2(dy, dx),
+      distance = Math.sqrt(dx * dx + dy * dy) + len; // total extended length
+
+  return [center[0] + Math.cos(angle) * distance, center[1] + Math.sin(angle) * distance];
+}
+/**
+ * Extend a point by given length from origin (0, 0)
+ * @param {array<number>} point point to be extended
+ * @param {number} len length to extend the point
+ * @returns {array<number>}
+ */
+
+
+function extendFromOrigin(point, len = 10) {
+  return extendFromPoint([0, 0], point, len);
+}
+
+},{}],19:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2063,7 +2291,7 @@ function randomInt(max = 10, min = 0) {
   return Math.round(Math.random() * (max - min) + min);
 }
 
-},{}],19:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2307,7 +2535,7 @@ function exponentialDecay(t, halfLife = 0.1) {
 // 	return bezier([0, 0, pullFactor, pullFactor, 1, 1, 1])(t);
 // }
 
-},{"./simple_functions.js":20}],20:[function(require,module,exports){
+},{"./simple_functions.js":21}],21:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2319,7 +2547,7 @@ function sigmoid(t) {
   return 1.0 / (1 + Math.exp(-t));
 }
 
-},{}],21:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2582,8 +2810,8 @@ function curvedDoubleArrow(x, y, radius, angle = Math.PI / 2, startAngle = 0, ti
 /**
  * Draws a curved arrow between two points that wraps around a circle with a definite radius.
  *
- * @param {array} p1 start point
- * @param {array} p2 end point
+ * @param {array<number>} p1 start point
+ * @param {array<number>} p2 end point
  * @param {number} radius radius of circle
  * @param {number} [tipWidth=DEFAULT_TIP_WIDTH] width of tip
  * @param {number} tipHeight height of tip. Default value is tipWidth / 1.2
@@ -2625,8 +2853,8 @@ function curvedArrowBetweenPoints(p1, p2, radius, tipWidth = DEFAULT_TIP_WIDTH, 
 /**
  * Draws a double tipped curved arrow between two points that wraps around a circle with a definite radius.
  *
- * @param {array} p1 start point
- * @param {array} p2 end point
+ * @param {array<number>} p1 start point
+ * @param {array<number>} p2 end point
  * @param {number} radius radius of circle
  * @param {number} [tipWidth=DEFAULT_TIP_WIDTH] width of tip
  * @param {number} tipHeight height of tip. Default value is tipWidth / 1.2
@@ -2667,7 +2895,7 @@ function curvedDoubleArrowBetweenPoints(p1, p2, radius, tipWidth = DEFAULT_TIP_W
   return center;
 }
 
-},{"../constants/colors.js":9,"../constants/drawing.js":10,"../main.js":14,"../math/points.js":17,"../settings.js":29,"../utils.js":30,"./text.js":28}],22:[function(require,module,exports){
+},{"../constants/colors.js":9,"../constants/drawing.js":10,"../main.js":15,"../math/points.js":18,"../settings.js":30,"../utils.js":31,"./text.js":29}],23:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2753,7 +2981,7 @@ function arcBrace(x, y, radius = 100, angle = Math.PI / 2, startAngle = 0, small
   return [(largerRadius + extender) * Math.cos(angle / 2 + startAngle) + x, (largerRadius + extender) * Math.sin(angle / 2 + startAngle) + y];
 }
 
-},{"../main.js":14}],23:[function(require,module,exports){
+},{"../main.js":15}],24:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3269,7 +3497,7 @@ function numberPlane(args = {}) {
   return Object.assign(ret, getPlotterList(unitLength, unitValue, ret));
 }
 
-},{"../constants/colors.js":9,"../main.js":14,"../settings.js":29,"../utils.js":30,"./arrows.js":21,"./functions.js":24,"./geometry.js":25,"./text.js":28}],24:[function(require,module,exports){
+},{"../constants/colors.js":9,"../main.js":15,"../settings.js":30,"../utils.js":31,"./arrows.js":22,"./functions.js":25,"./geometry.js":26,"./text.js":29}],25:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3564,7 +3792,7 @@ function heatPlot(args) {
   };
 }
 
-},{"../color/color_reader.js":4,"../main.js":14,"../settings.js":29,"../utils.js":30,"./geometry.js":25}],25:[function(require,module,exports){
+},{"../color/color_reader.js":4,"../main.js":15,"../settings.js":30,"../utils.js":31,"./geometry.js":26}],26:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3592,9 +3820,8 @@ exports.quad = quad;
 exports.triangle = triangle;
 exports.equiTriangle = equiTriangle;
 exports.regularPolygon = regularPolygon;
-exports.regularPolygonWithRadius = regularPolygonWithRadius;
-exports.polygonWithRatioOfCentralAngles = polygonWithRatioOfCentralAngles;
 exports.getBezierControlPoints = getBezierControlPoints;
+exports.regularPolygonWithRadius = regularPolygonWithRadius;
 
 var _main = require("../main.js");
 
@@ -3750,7 +3977,7 @@ function getBezierControlPoints(recentPoint, currentPoint, nextPoint, secondNext
  * Adds a smooth curve passing through given points and tension using bézie curve to the current shape.
  * Taken from {@link https://stackoverflow.com/a/49371349}
  *
- * @param {array} points array of points as [x, y]
+ * @param {array <array<number>>} points array of points as [x, y]
  * @param {number} tension tension of the curve
  */
 
@@ -3769,7 +3996,7 @@ function smoothCurveThroughPointsTo(points, tension = 1, closed = true) {
 /**
  * Draws smooth curve passing through given points and tension using bézie curve.
  *
- * @param {array} points array of points as [x, y]
+ * @param {array <array<number>>} points array of points as [x, y]
  * @param {number} tension tension of the curve
  */
 
@@ -3856,10 +4083,10 @@ function annulusSector(x, y, innerRadius, outerRadius, angle, startAngle) {
 /**
  * Angle between two lines. And returns the coordinate of middle of angle
  *
- * @param {array} p1 start point of first line array of point as [x, y]
- * @param {array} p2 end point of first line array of point as [x, y]
- * @param {array} p3 start point of second line array of point as [x, y]
- * @param {array} p4 end point of second line array of point as [x, y]
+ * @param {array<number>} p1 start point of first line array of point as [x, y]
+ * @param {array<number>} p2 end point of first line array of point as [x, y]
+ * @param {array<number>} p3 start point of second line array of point as [x, y]
+ * @param {array<number>} p4 end point of second line array of point as [x, y]
  * @param {number} radius radius of angle
  * @param {number} extender extender of output point
  * @param {boolean} otherAngle whether to draw the other angle
@@ -4040,10 +4267,10 @@ function square(x, y, sideLength) {
 /**
  * Draws quadrilateral with four points as array of coordinate as [x, y]
  *
- * @param {array} p1 1st point
- * @param {array} p2 2nd point
- * @param {array} p3 3rd point
- * @param {array} p4 4th point
+ * @param {array<number>} p1 1st point
+ * @param {array<number>} p2 2nd point
+ * @param {array<number>} p3 3rd point
+ * @param {array<number>} p4 4th point
  */
 
 
@@ -4062,9 +4289,9 @@ function quad(p1, p2, p3, p4) {
 /**
  * Draws triangle with three points as array of coordinate as [x, y]
  *
- * @param {array} p1 first point
- * @param {array} p2 second point
- * @param {array} p3 third point
+ * @param {array<number>} p1 first point
+ * @param {array<number>} p2 second point
+ * @param {array<number>} p3 third point
  */
 
 
@@ -4137,6 +4364,20 @@ function regularPolygonWithRadius(x, y, sides, radius, rotation = 0) {
   if (ctx.doFill) ctx.fill();
   if (ctx.doStroke) ctx.stroke();
 }
+
+},{"../main.js":15,"../math/points.js":18,"../utils.js":31}],27:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.polygonWithRatioOfCentralAngles = polygonWithRatioOfCentralAngles;
+exports.lens = lens;
+
+var _main = require("../main.js");
+
+var _points = require("../math/points.js");
+
 /**
  * Draws a polygon with ratio of central angles
  *
@@ -4146,8 +4387,6 @@ function regularPolygonWithRadius(x, y, sides, radius, rotation = 0) {
  * @param {array} ratios array of ratios of central angles. Must have atleast 3 elements.
  * @param {number} [rotation=0] amound to rotate the entire polygon.
  */
-
-
 function polygonWithRatioOfCentralAngles(x, y, radius, ratios, rotation = 0) {
   if (!Array.isArray(ratios)) console.error("ratio provided is not array");
   let sumOfRatio = ratios.reduce((a, b) => a + b, 0),
@@ -4169,50 +4408,33 @@ function polygonWithRatioOfCentralAngles(x, y, radius, ratios, rotation = 0) {
   ctx.closePath();
   ctx.restore();
 }
-
-},{"../main.js":14,"../math/points.js":17,"../utils.js":30}],26:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.drawImage = drawImage;
-exports.pixel = pixel;
-
-var _main = require("../main.js");
-
-var _color_reader = require("../color/color_reader.js");
-
 /**
- * This module contains function for image manipulation.
- * @module image
- */
-
-/**
- * Draws a given image in canvas.
- * See more about the parameters : {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/drawImage}
- *
- */
-function drawImage() {
-  _main.C.workingCanvas.drawImage(...arguments);
-}
-/**
- * Draws a pixel
- *
- * @param {number} x x-coordinate of pixel
- * @param {number} y y-coordinate of pixel
- * @param {string} color color of pixel
+ * Creates a lens.
+ * @param {array} c1 center coordinate as array [x, y]
+ * @param {number} r1
+ * @param {array} c2 center coordinate as array [x, y]
+ * @param {number} r2
  */
 
 
-function pixel(x, y, color) {
-  let ctx = _main.C.workingCanvas,
-      dpr = 1 / ctx.dpr;
-  ctx.fillStyle = color == undefined ? ctx.fillStyle : (0, _color_reader.readColor)(color);
-  ctx.fillRect(x, y, dpr, dpr);
+function lens(c1, r1, c2, r2) {
+  // find intersectionPoint
+  let [pa, pb] = (0, _points.circleIntersection)(c1, r1, c2, r2); // angles to the points
+
+  let c1a1 = Math.atan2(pa[1] - c1[1], pa[0] - c1[0]),
+      c1a2 = Math.atan2(pb[1] - c1[1], pb[0] - c1[0]),
+      c2a1 = Math.atan2(pa[1] - c2[1], pa[0] - c2[0]),
+      c2a2 = Math.atan2(pb[1] - c2[1], pb[0] - c2[0]),
+      ctx = _main.C.workingCanvas;
+  ctx.beginPath();
+  ctx.arc(c1[0], c1[1], r1, c1a1, c1a2);
+  ctx.arc(c2[0], c2[1], r2, c2a2, c2a1);
+  if (ctx.doStroke) ctx.stroke();
+  if (ctx.doFill) ctx.fill();
+  ctx.closePath();
 }
 
-},{"../color/color_reader.js":4,"../main.js":14}],27:[function(require,module,exports){
+},{"../main.js":15,"../math/points.js":18}],28:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4314,7 +4536,7 @@ function tex(input, x = 0, y = 0) {
   return image;
 }
 
-},{"../constants/drawing.js":10,"../main.js":14}],28:[function(require,module,exports){
+},{"../constants/drawing.js":10,"../main.js":15}],29:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4396,7 +4618,7 @@ function strokeText(text, x = 0, y = 0, maxwidth = undefined) {
   if (ctx.yAxisInverted) (0, _settings.scale)(1, -1);
 }
 
-},{"../main.js":14,"../settings.js":29}],29:[function(require,module,exports){
+},{"../main.js":15,"../settings.js":30}],30:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4435,6 +4657,7 @@ exports.measureText = measureText;
 exports.fontSize = fontSize;
 exports.fontFamily = fontFamily;
 exports.getCanvasData = getCanvasData;
+exports.putImageData = putImageData;
 exports.saveCanvas = saveCanvas;
 exports.clearAll = clearAll;
 exports.lineDash = lineDash;
@@ -4447,9 +4670,9 @@ exports.getTransform = getTransform;
 exports.textAlign = textAlign;
 exports.textBaseline = textBaseline;
 exports.centerdText = centerdText;
-exports.initCenteredCanvas = initCenteredCanvas;
+exports.centreCanvas = centreCanvas;
 exports.invertYAxis = invertYAxis;
-exports.initBlackboardCanvas = initBlackboardCanvas;
+exports.initContrastedCanvas = initContrastedCanvas;
 exports.wait = wait;
 exports.getStrokeWidth = getStrokeWidth;
 exports.showCreation = showCreation;
@@ -4458,7 +4681,7 @@ var _create = require("./animations/create.js");
 
 var _color_reader = require("./color/color_reader.js");
 
-var _named_colors = require("./constants/named_colors.js");
+var _colors = require("./constants/colors.js");
 
 var _main = require("./main.js");
 
@@ -4468,15 +4691,12 @@ var _geometry = require("./objects/geometry.js");
 
 var _utils = require("./utils.js");
 
-/**
- * This module contains functions to manipulate the canvas.
- * @module settings
- */
+// for debuggingF
 let counter = {
   wait: 1,
   loop: 1
-};
-let logStyles = {
+},
+    logStyles = {
   number: "color: #9afcad;",
   keyword: "color: #adacdf;",
   running: "color: yellow;",
@@ -4558,15 +4778,15 @@ function clearAll() {
   ctx.restore();
 }
 /**
- * sets the curre
- * css background
+ * sets the given image data as css background. If not given it will set current canvas drawing as the background
  *
  */
 
 
-function permaBackground() {
+function permaBackground(data) {
+  if (typeof data != "string") data = getCanvasData();
   let canvasStyle = _main.C.workingCanvas.canvas.style;
-  canvasStyle.background = "url('" + getCanvasData() + "')";
+  canvasStyle.background = "url('" + data + "')";
   canvasStyle.backgroundPosition = "center";
   canvasStyle.backgroundSize = "cover";
 }
@@ -4907,7 +5127,7 @@ function getContextStates(canvasName) {
 function loop(name, functionToRun, canvasName, timeDelay, timeDelaysToRemember = 100, settings = {}, dur) {
   let ctx; // if name isn't given it will shift the arguments to right
 
-  if (typeof name != "string") {
+  if (typeof name == "function") {
     // shift arguments
     name = counter.loop++;
     functionToRun = arguments[0];
@@ -5230,6 +5450,19 @@ function getCanvasData(datURL = "image/png") {
   return _main.C.workingCanvas.canvas.toDataURL(datURL);
 }
 /**
+ * puts a imageData to canvas
+ * @param {ImageData} imageData
+ * @param {number} x
+ * @param {number} y
+ * @param {number} w
+ * @param {number} h
+ */
+
+
+function putImageData() {
+  _main.C.workingCanvas.putImageData(...arguments);
+}
+/**
  * Save the canvas as image
  *
  * @param {string} [name="drawing"] name of file
@@ -5302,11 +5535,11 @@ function centerdText() {
   textBaseline("middle");
 }
 /**
- * initializes a canvas translated to center and y-axis inverted
+ * translates canvas to center
  */
 
 
-function initCenteredCanvas() {
+function centreCanvas() {
   let ctx = _main.C.workingCanvas;
   ctx.translate(ctx.width / 2, ctx.height / 2);
 }
@@ -5321,15 +5554,14 @@ function invertYAxis() {
   ctx.yAxisInverted = !ctx.yAxisInverted;
 }
 /**
- * Init a blackboard like canvas. Centerd to middle, with black background and y axis inverted
+ * Centers canvas to center, with black background, yellow stroke, no fill enabled and y axis inverted
  */
 
 
-function initBlackboardCanvas() {
-  initCenteredCanvas();
+function initContrastedCanvas() {
   background(0);
-  invertYAxis();
-  stroke(_named_colors.white);
+  stroke(_colors.YELLOW);
+  noFill();
 }
 /**
  * Wait for a given time in milliseconds.
@@ -5366,7 +5598,7 @@ function showCreation() {
           syncWithTime = animation.syncWithTime || false,
           t = 0,
           dt = dTime / dur,
-          len = points.length;
+          len = points.length - 1;
 
       if (ctx.lineWidth > 0 && ctx.doStroke) {
         if (typeof animation.draw != "function") {
@@ -5427,7 +5659,7 @@ function showCreation() {
   }
 }
 
-},{"./animations/create.js":1,"./color/color_reader.js":4,"./constants/named_colors.js":12,"./main.js":14,"./math/rate_functions.js":19,"./objects/geometry.js":25,"./utils.js":30}],30:[function(require,module,exports){
+},{"./animations/create.js":1,"./color/color_reader.js":4,"./constants/colors.js":9,"./main.js":15,"./math/rate_functions.js":20,"./objects/geometry.js":26,"./utils.js":31}],31:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5439,6 +5671,8 @@ exports.arange = arange;
 exports.applyDefault = applyDefault;
 exports.doFillAndStroke = doFillAndStroke;
 exports.approximateIndexInArray = approximateIndexInArray;
+
+var _main = require("./main.js");
 
 /**
  * Returns the type of object
@@ -5463,46 +5697,14 @@ Object.clone = Object.clone || function (toClone) {
 /**
  * defines new properties to a given Object
  *
- * @param {object} obj source object
- * @param {object} [toAssign=window] target object
- * @param {boolean} [specific=true] whether to define properties special
- * @param {function} [message] message given on redefining value. Only works if `specific === true`
+ * @param {object} target source object
+ * @param {object} [target=window] target object
  */
 
 
-function defineProperties(obj, toAssign, specific, message) {
-  toAssign = toAssign || window;
-  specific = specific === undefined || specific === null ? window : specific;
-  toAssign = toAssign || window;
-  message = typeof message === "function" ? message : function (k) {
-    console.warn("You changed value of '" + k + "' which C uses. Be careful");
-  };
-
-  for (let i = 0, props = Object.keys(obj); i < props.length; i++) {
-    // definer in IIFE to avoid assigning same values to all properties
-    if (specific) {
-      (function (name, value, toAssign, message) {
-        Object.defineProperty(toAssign, name, {
-          configurable: true,
-          enumerable: true,
-          get: function get() {
-            return value;
-          },
-          set: function set(value) {
-            Object.defineProperty(toAssign, name, {
-              configurable: true,
-              enumerable: true,
-              value: value,
-              writable: true
-            });
-            message(name);
-          }
-        });
-      })(props[i], obj[props[i]], toAssign, message);
-    } else {
-      window[props[i]] = obj[props[i]];
-    }
-  }
+function defineProperties(source, target = window, assignToC = true) {
+  Object.assign(target, source);
+  if (assignToC) Object.assign(_main.C.functions, source);
 }
 
 function arange(start, end, step, rev = false) {
@@ -5513,7 +5715,6 @@ function arange(start, end, step, rev = false) {
 /**
  * Applies default configurations to a given target object
  * Must be in the form of
- * <prop>: [<defaultValue>, <type>]
  *
  * @param {object} _default default configurations
  * @param {object} [target={}] target object
@@ -5542,7 +5743,7 @@ function applyDefault(_default, target = {}, deepApply = true) {
   return target;
 }
 /**
- * fills and strokes inside the current shape if to and closes the shape.
+ * fills and strokes inside the current shape if to do so.
  *
  * @param {CanvasRenderingContext2D} ctx
  */
@@ -5567,4 +5768,4 @@ function approximateIndexInArray(val, array, epsilon = 1e-6) {
 
 window.applyDefault = applyDefault;
 
-},{}]},{},[2]);
+},{"./main.js":15}]},{},[2]);
