@@ -341,7 +341,6 @@ function numberLine(args = {}) {
  * @param {object} args.yAxis Configurations for y axis. See {@link numberLine} for possible configurations.
  * @param {array} args.center Center of number plane as [x, y] in px.
  * @param {object} args.grid Set of styles to draw grid & subgrids. This can have following properties:
- *
  *   @param {number} [args.grid.lineWidth = 1]  stroke width of grid lines
  *   @param {number} [args.grid.subgrids = 0]  number of sub-grid division to draw
  *   @param {number} [args.grid.subgridLineWidth = 0.7]  stroke width of sub-grid
@@ -366,7 +365,7 @@ function numberPlane(args = {}) {
 			length: ctx.width,
 
 			range: [-5, 5, 1],
-			textDirection: [-0.2, 1.3],
+			textDirection: [-0.3, -.8],
 
 			includeTick: true,
 			includeNumbers: true,
@@ -379,7 +378,7 @@ function numberPlane(args = {}) {
 			textRotation: -Math.PI / 2,
 
 			range: [-5, 5, 1],
-			textDirection: [1.1, 0.6],
+			textDirection: [.7, 0.4],
 
 			includeTick: true,
 			includeNumbers: true,

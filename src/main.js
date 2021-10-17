@@ -233,17 +233,27 @@ C.debug = function (bool) {
 };
 
 /**
+ * Returns the current working canvas or the canvas with given name.
+ * With this you can access native JS canvas functions for better performance
+ * @param {string} name Name of canvas
+ * @returns {CanvasRenderingContext2D} Canvas context
+ */
+C.getCanvas = function (name) {
+	return C.canvasList[name] || C.workingCanvas;
+};
+
+/**
  * Log of animations
  * @type {array<object>}
-*/
+ */
 C._ANIMATIONLOG_ = [];
 
 /**
  * Set of functions
  * @type {object}
-*/
+ */
 C.functions = {};
-C.COLORLIST = {};//list of colors
+C.COLORLIST = {}; //list of colors
 // register to window
 window["C"] = C;
 

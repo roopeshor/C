@@ -1,4 +1,3 @@
-import { readColor } from "../color/color_reader.js";
 import { C } from "../main.js";
 /**
  * This module contains function for image manipulation.
@@ -40,10 +39,9 @@ function drawImage(img) {
  * @param {string} color color of pixel
  */
 function pixel(x, y, color) {
-	let ctx = C.workingCanvas,
-		dpr = 1 / ctx.dpr;
-	ctx.fillStyle = color == undefined ? ctx.fillStyle : readColor(color);
-	ctx.fillRect(x, y, dpr, dpr);
+	let ctx = C.workingCanvas, d = 1/ctx.dpr;
+	if (color) ctx.fillStyle = color;
+	ctx.fillRect(x, y, d, d);
 }
 
 /**
