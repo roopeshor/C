@@ -69,3 +69,8 @@ defineProperties(MathConsts);
 
 defineProperties(defineProperties);
 defineProperties(COLORLIST, C.COLORLIST);
+
+
+//! Experimental features
+import * as WebGL from "./WebGL/webgl.js";
+defineProperties(WebGL);

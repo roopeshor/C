@@ -124,6 +124,7 @@ function C(fx, container, cfgs = {}) {
 		canvas.context = Object.assign(canvas.getContext("2d"), configs);
 		canvas.context.setTransform(configs.dpr, 0, 0, configs.dpr, 0, 0);
 		C.workingCanvas = canvas.context;
+		C.workingCanvas.container = container;
 		C.workingCanvas.savedStates = defaultConfigs;
 		C.workingCanvas.delayedAnimations = [];
 	}
@@ -158,6 +159,12 @@ C.nameID = 0;
 C.workingCanvas = {}; // index of current working canvas in `C.canvasList`
 
 /**
+ * Current working canvas
+ * @type {HTMLElement}
+ */
+C.workingCanvas.container = {}; //container of canvas
+
+/**
  * Default configurations
  */
 /**
@@ -177,12 +184,10 @@ C.getWindowWidth = function (container = document.body) {
  * and scales CSS width and height to DPR
  *
  * @param {HTMLCanvasElement} cvs
- * @param {Object} configs
- * values needed in `configs`:
- *
- * dpr    <Number>: Device pixel ratio
- * width  <Number>: Width in pixels
- * height <Number>: Height in pixels
+ * @param {Object} configs configurations. Values needed :
+ * @param {number} configs.dpr Device pixel ratio
+ * @param {number} configs.width Width in pixels
+ * @param {number} configs.height Height in pixels
  */
 C.resizeCanvas = function (cvs, configs) {
 	const width = configs.width;

@@ -5,3 +5,4 @@ dist/**
 *.min.js
 
 gruntfile.js
+examples/**/*
