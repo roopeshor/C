@@ -39,7 +39,8 @@ function drawImage(img) {
  * @param {string} color color of pixel
  */
 function pixel(x, y, color) {
-	let ctx = C.workingCanvas, d = 1/ctx.dpr;
+	let ctx = C.workingCanvas,
+		d = 1 / ctx.dpr;
 	if (color) ctx.fillStyle = color;
 	ctx.fillRect(x, y, d, d);
 }
@@ -58,7 +59,7 @@ function loadImage(url, resolver, fallback) {
 		img.addEventListener("load", () => resolver(img), false);
 	}
 	if (typeof fallback == "function") {
-		img.addEventListener("error", (evt) => fallback(evt,img), false);
+		img.addEventListener("error", (evt) => fallback(evt, img), false);
 	}
 	return img;
 }
@@ -69,10 +70,9 @@ function loadImage(url, resolver, fallback) {
  * @returns {Promise} promise that resolves to image
  */
 function loadImagePromise(url) {
-  return new Promise((resolve, reject) => {
-    loadImage(url, resolve, reject);
-  });
+	return new Promise((resolve, reject) => {
+		loadImage(url, resolve, reject);
+	});
 }
-
 
 export { drawImage, pixel, loadImage, loadImagePromise };
