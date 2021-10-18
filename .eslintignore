@@ -1,8 +1,0 @@
-node_modules/**
-
-# don't lint minified files and dist files
-dist/**
-*.min.js
-
-gruntfile.js
-examples/**/*

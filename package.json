@@ -22,8 +22,6 @@
   },
   "homepage": "https://github.com/Roopesh2/C#readme",
   "devDependencies": {
-    "eslint": "^7.30.0",
-    "esmify": "^2.1.1",
     "google-closure-compiler": "^20210601.0.0",
     "grunt-browserify": "^6.0.0",
     "grunt-contrib-concat": "^1.0.1",
