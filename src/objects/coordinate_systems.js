@@ -3,7 +3,7 @@ import { C } from "../main.js";
 import { applyDefault, arange } from "../utils.js";
 import { arrowTip } from "./arrows.js";
 import { functionGraph, heatPlot, parametricFunction } from "./functions.js";
-import { line } from "./geometry.js";
+import { line, point } from "./geometry.js";
 import {
 	fill,
 	fontSize,
@@ -16,22 +16,25 @@ import {
 } from "../settings.js";
 import { fillText } from "./text.js";
 
+function isArray(o) {
+	return Array.isArray(o);
+}
 
 // list of plotters
-function getPlotterList(unitLength, unitValue, cfgs = {}) {
+function getPlotterList(unitSpace, unitValue, cfgs = {}) {
 	return {
 		getParametricFunction: function (configs) {
-			configs.unitLength = unitLength;
+			configs.unitSpace = unitSpace;
 			configs.unitValue = unitValue;
 			return parametricFunction(configs);
 		},
 		getFunctionGraph: function (configs) {
-			configs.unitLength = unitLength;
+			configs.unitSpace = unitSpace;
 			configs.unitValue = unitValue;
 			return functionGraph(configs);
 		},
 		getHeatPlot: function (configs) {
-			configs.unitLength = unitLength;
+			configs.unitSpace = unitSpace;
 			configs.unitValue = unitValue;
 			configs.min = configs.min || [cfgs.xAxis.range[0], cfgs.yAxis.range[0]];
 			configs.max = configs.max || [cfgs.xAxis.range[1], cfgs.yAxis.range[1]];
@@ -53,7 +56,7 @@ function getPlotterList(unitLength, unitValue, cfgs = {}) {
  * * xAxis                 <object>   : x axis confiurations from numberLine (See {@link numberLine} for those configurations).
  * * yAxis                 <object>   : y axis confiurations from numberLine (See {@link numberLine} for those configurations).
  * * unitValue             <array>    : How much a unit is in its value in x and y directions.
- * * unitLength            <array>    : How much a unit is in px in x and y directions.
+ * * unitSpace            <array>    : How much a unit is in px in x and y directions.
  * * getParametricFunction <function> : Draws a parametric function whose unit sizing are predefined by the axes. see {@link parametricFunction} to see possible configurations.
  * * getFunctionGraph      <function> : Draws a function graph whose unit sizing are predefined by the axes. see {@link functionGraph} to see possible configurations.
  */
@@ -63,32 +66,30 @@ function axes(args = {}) {
 	const defaultConfigs = {
 		xAxis: {
 			length: ctx.width,
-			textDirection: [-0.3, -1],
 			includeTick: true,
 			includeLeftTip: true,
 			includeRightTip: true,
 			excludeOriginTick: true,
 			includeNumbers: false,
-			range: [-10, 10, 1],
 		},
 		yAxis: {
 			length: ctx.height,
 			rotation: Math.PI / 2,
 			textRotation: -Math.PI / 2,
-			textDirection: [-0.3, 0.5],
+			textDirection: [0, 0.4],
 			includeTick: true,
 			includeLeftTip: true,
 			includeRightTip: true,
 			excludeOriginTick: true,
 			includeNumbers: false,
-			range: [-10, 10, 1],
 		},
+		center: [0, 0],
 	};
 	// configurations
 	args = applyDefault(defaultConfigs, args);
 	const { xAxis, yAxis } = args;
 	// other configurations
-	const center = args.center || [0, 0];
+	const center = args.center;
 	// range of ticks in each axis
 	const xRange = xAxis.range;
 	const yRange = yAxis.range;
@@ -118,7 +119,7 @@ function axes(args = {}) {
 	// y-axis
 	const yAxisLine = numberLine(yAxis); // draw y axis
 	// size of a unit cell
-	const unitLength = [xAxisLine.unitLength, yAxisLine.unitLength];
+	const unitSpace = [xAxisLine.unitSpace, yAxisLine.unitSpace];
 	const unitValue = [xAxisLine.unitValue, yAxisLine.unitValue];
 
 	// reverse the effect of overall shift
@@ -130,9 +131,9 @@ function axes(args = {}) {
 		xAxis: xAxisLine, // x axis confiurations from numberLine
 		yAxis: yAxisLine, // y axis confiurations from numberLine
 		unitValue: unitValue, // how much a unit is as [x, y] in its value
-		unitLength: unitLength, // how much a unit is as [x, y] in px
+		unitSpace: unitSpace, // how much a unit is as [x, y] in px
 	};
-	return Object.assign(ret, getPlotterList(unitLength, unitValue, ret));
+	return Object.assign(ret, getPlotterList(unitSpace, unitValue, ret));
 }
 
 /**
@@ -169,7 +170,7 @@ function axes(args = {}) {
  * * center     {array} Center of the number line in px
  * * tickList   {array} List of tick inervals
  * * unitValue  {array} How much a unit is in its value in x and y directions.
- * * unitLength {array} How much a unit is in px in x and y directions.
+ * * unitSpace {array} How much a unit is in px in x and y directions.
  */
 function numberLine(args = {}) {
 	const ctx = C.workingCanvas;
@@ -188,7 +189,7 @@ function numberLine(args = {}) {
 		range: [-5, 5, 1],
 		numbersToInclude: [],
 		numbersToExclude: [],
-		textDirection: [-0.3, -1],
+		textDirection: [-0.3, -.0],
 		numbersWithElongatedTicks: [],
 
 		includeTick: true,
@@ -242,7 +243,7 @@ function numberLine(args = {}) {
 	const list = getTickList();
 	ctx.beginPath();
 	save();
-	translate(center[0], center[1]);
+	translate(center[0] * ds, center[1] * ds);
 	rotate(rotation);
 	translate(-lineLength / 2, 0);
 	if (args.includeTick) drawTicks();
@@ -303,7 +304,10 @@ function numberLine(args = {}) {
 			i < to && numbersToExclude.indexOf(numbers[i]) < 0;
 			i++
 		) {
-			const tick = typeof numbers[i] == "number" ? numbers[i].toFixed(decimalPlaces) : numbers[i];
+			const tick =
+				typeof numbers[i] == "number"
+					? numbers[i].toFixed(decimalPlaces)
+					: numbers[i];
 			if (Number(tick) === 0 && excludeOriginTick) continue;
 			const width = ctx.measureText(tick).width;
 			const xShift =
@@ -328,7 +332,7 @@ function numberLine(args = {}) {
 		center: center,
 		tickList: list,
 		unitValue: step,
-		unitLength: ds,
+		unitSpace: ds,
 	};
 }
 
@@ -350,7 +354,7 @@ function numberLine(args = {}) {
  *
  * * center                <array>   : Center of number plane as [x, y] in px.
  * * unitValue             <array>   : How much a unit is in its value in x and y directions.
- * * unitLength            <array>   : How much a unit is in px in x and y directions.
+ * * unitSpace            <array>   : How much a unit is in px in x and y directions.
  * * subgridUnit           <array>   : How much a sub-grid is in px in x and y directions.
  * * xAxis                 <object>  : x axis confiurations from numberLine (See {@link numberLine} for those configurations).
  * * yAxis                 <object>  : y axis confiurations from numberLine (See {@link numberLine} for those configurations).
@@ -364,21 +368,18 @@ function numberPlane(args = {}) {
 		xAxis: {
 			length: ctx.width,
 
-			range: [-5, 5, 1],
-			textDirection: [-0.3, -.8],
-
 			includeTick: true,
 			includeNumbers: true,
 			includeLeftTip: false,
 			includeRightTip: false,
 			excludeOriginTick: true,
+			unitSpace: 50,
 		},
 		yAxis: {
 			length: ctx.height,
 			textRotation: -Math.PI / 2,
 
-			range: [-5, 5, 1],
-			textDirection: [.7, 0.4],
+			unitSpace: 50,
 
 			includeTick: true,
 			includeNumbers: true,
@@ -403,44 +404,66 @@ function numberPlane(args = {}) {
 	// other configurations
 	const subgrids = grid.subgrids;
 	const center = args.center;
+
+	if (!isArray(xAxis.range)) {
+		// find range from unitSpace
+		let extrema = xAxis.length / xAxis.unitSpace / 2;
+		xAxis.range = [-extrema, extrema, 1];
+	} else {
+		if (isNaN(xAxis.range[2])) xAxis.range[2] = 1;
+		xAxis.unitSpace =
+			xAxis.length / ((xAxis.range[1] - xAxis.range[0]) / xAxis.range[2]);
+	}
+
+	if (!isArray(yAxis.range)) {
+		// find range from unitSpace
+		let extrema = yAxis.length / yAxis.unitSpace / 2;
+		yAxis.range = [-extrema, extrema, 1];
+	} else {
+		if (isNaN(yAxis.range[2])) yAxis.range[2] = 1;
+		yAxis.unitSpace =
+			yAxis.length / ((yAxis.range[1] - yAxis.range[0]) / yAxis.range[2]);
+	}
+
 	// range of ticks in each axis
 	const xRange = xAxis.range;
 	const yRange = yAxis.range;
+
 	// number of ticks in each
 	const xNums = (xRange[1] - xRange[0]) / xRange[2];
 	const yNums = (yRange[1] - yRange[0]) / yRange[2];
+
 	// unit length of each axis
-	const xDX = xAxis.length / xNums;
-	const yDX = yAxis.length / yNums;
+	const xDX = xAxis.unitSpace;
+	const yDX = yAxis.unitSpace;
+
 	// coordinates of bounding rectangle of the graph
 	const xMin = (xRange[0] / xRange[2]) * xDX;
 	const xMax = (xRange[1] / xRange[2]) * xDX;
 	const yMin = (yRange[0] / yRange[2]) * yDX;
 	const yMax = (yRange[1] / yRange[2]) * yDX;
-	// variables to shift 0 ticks of axes to center
-	const xShift = xAxis.length / 2 + xMin;
-	const yShift = yAxis.length / 2 + yMin;
+
 	// size of a subgrid unit cell
 	const subgridUnit = [xDX / subgrids, yDX / subgrids];
-
 	save();
 	// translate to center
-	translate(center[0] + xShift, center[1]);
+	center[0] *= xDX;
+	center[1] *= yDX;
+	translate(center[0], center[1]);
 
 	// draw grids
-	drawGridLines();
 
 	// draws axes
 	const axesLines = axes({
 		xAxis: xAxis,
 		yAxis: yAxis,
 	});
-	// size of a unit cell
-	const unitLength = axesLines.unitLength;
-	const unitValue = axesLines.unitValue;
 
-	// reverse the effect of overall shift
-	translate(-(center[0] + xShift), -center[1] - yShift);
+	drawGridLines();
+
+	// size of a unit cell
+	const unitSpace = axesLines.unitSpace;
+	const unitValue = axesLines.unitValue;
 
 	function drawGridLines() {
 		// major grid lines
@@ -450,6 +473,7 @@ function numberPlane(args = {}) {
 
 		// horizontal grid lines
 		for (let i = 0; i <= xNums; i++) {
+			if (i == (xAxis.center - xAxis.range[0])) continue;
 			// draw major grid lines
 			drawMajor(
 				i * xDX, // x - shift
@@ -469,6 +493,7 @@ function numberPlane(args = {}) {
 		translate(-xMin, yMin);
 		// vertical grid lines
 		for (let i = 0; i <= yNums; i++) {
+			if (i == (yAxis.center - yAxis.range[0])) continue;
 			// draw major grid lines
 			drawMajor(
 				0, // x - shift
@@ -504,12 +529,12 @@ function numberPlane(args = {}) {
 	const ret = {
 		center: center, // center of number plane
 		unitValue: unitValue, // how much a unit is in its value
-		unitLength: unitLength, // how much a unit is in px
+		unitSpace: unitSpace, // how much a unit is in px
 		xAxis: axesLines.xAxis, // x axis confiurations from numberLine
 		yAxis: axesLines.yAxis, // y axis confiurations from numberLine
 		subgridUnit: subgridUnit, // subgrid unit size
 	};
-	return Object.assign(ret, getPlotterList(unitLength, unitValue, ret));
+	return Object.assign(ret, getPlotterList(unitSpace, unitValue, ret));
 }
 
 export { axes, numberLine, numberPlane };
