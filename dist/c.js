@@ -4,10 +4,382 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.Line = Line;
+exports.m3 = void 0;
+const m3 = {
+  multiply: function (a, b) {
+    return [b[0] * a[0] + b[1] * a[3] + b[2] * a[6], b[0] * a[1] + b[1] * a[4] + b[2] * a[7], b[0] * a[2] + b[1] * a[5] + b[2] * a[8], b[3] * a[0] + b[4] * a[3] + b[5] * a[6], b[3] * a[1] + b[4] * a[4] + b[5] * a[7], b[3] * a[2] + b[4] * a[5] + b[5] * a[8], b[6] * a[0] + b[7] * a[3] + b[8] * a[6], b[6] * a[1] + b[7] * a[4] + b[8] * a[7], b[6] * a[2] + b[7] * a[5] + b[8] * a[8]];
+  },
+  translation: function (tx, ty) {
+    // prettier-ignore
+    return [1, 0, 0, 0, 1, 0, tx, ty, 1];
+  },
+  translate: function (m, tx, ty) {
+    let mat = this.multiply(m, this.translation(tx, ty));
+
+    for (let i = 0; i < mat.length; i++) m[i] = mat[i];
+  },
+  rotation: function (ang) {
+    var c = Math.cos(ang);
+    var s = Math.sin(ang); // prettier-ignore
+
+    return [c, -s, 0, s, c, 0, 0, 0, 1];
+  },
+  rotate: function (m, ang) {
+    let mat = this.multiply(m, this.rotation(ang));
+
+    for (let i = 0; i < mat.length; i++) m[i] = mat[i];
+  },
+  scaling: function (sx, sy) {
+    // prettier-ignore
+    return [sx, 0, 0, 0, sy, 0, 0, 0, 1];
+  },
+  scale: function (m, sx, sy) {
+    let mat = this.multiply(m, this.scaling(sx, sy));
+
+    for (let i = 0; i < mat.length; i++) m[i] = mat[i];
+  }
+};
+exports.m3 = m3;
+
+},{}],2:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.WebGL = void 0;
+exports.createWebGL = createWebGL;
+
+var _main = require("../main.js");
+
+var _utils = require("../utils.js");
+
+var _m = require("./m3.js");
+
+/**
+ * Creates a WebGL instance thati include useful methods to work with WebGL.
+ * @param	{object} configs configuration for canvas. Follwoing properties are accepted:
+ * @param	{boolean} [configs.deleteOld=false] whether to delete old canvas.
+ * @returns {WebGL} WebGL instance
+ */
+function createWebGL(configs) {
+  let c = _main.C.workingCanvas;
+  configs = (0, _utils.applyDefault)({
+    deleteOld: true,
+    dpr: c.dpr,
+    width: c.width,
+    height: c.height
+  }, configs);
+  let container = c.container;
+  if (configs.deleteOld) container.removeChild(c.canvas);
+
+  let cvs = _main.C.makeCanvas(configs);
+
+  container.append(cvs);
+  return new WebGL(cvs);
+}
+/**
+ * Creates a new instance for drawing in webgl
+ */
+
+
+class WebGL {
+  constructor(canvas) {
+    let gl = canvas.getContext("webgl");
+
+    if (!gl) {
+      gl = canvas.getContext("experimental-webgl");
+    }
+
+    if (!gl) {
+      console.error("WebGL is not supported");
+      return null;
+    }
+
+    gl.viewport(0, 0, canvas.width, canvas.height); // make it transparent so that standard canvas can be seen
+
+    /** @type {WebGLRenderingContext} */
+
+    this.gl = gl;
+    /** @type {HTMLCanvasElement} */
+
+    this.canvas = canvas;
+    /** @type {number} */
+
+    this.width = canvas.width;
+    /** @type {number} */
+
+    this.height = canvas.height;
+    /** @type {number} */
+
+    this.dpr = canvas.dpr;
+    const sources = {
+      default: {
+        vertex: `attribute vec2 a_position;
+
+uniform vec2 u_resolution;
+uniform mat3 u_matrix;
+
+void main() {
+  // Multiply the position by the matrix.
+  vec2 position = (u_matrix * vec3(a_position, 1)).xy;
+
+  // convert from pixels to -1->+1 (clipspace)
+  vec2 clipSpace = position / u_resolution * 2.0 - 1.0;
+
+  gl_Position = vec4(clipSpace * vec2(1, -1), 0, 1);
+}`,
+        fragment: `precision mediump float;
+uniform vec4 u_color;
+void main() {
+   gl_FragColor = u_color;
+}`,
+        uniforms: {
+          resolution: "u_resolution",
+          matrix: "u_matrix",
+          color: "u_color"
+        },
+        attribs: {
+          position: "a_position"
+        }
+      }
+    };
+
+    for (let source in sources) {
+      let src = sources[source];
+      src.program = this.createProgramFromSource(src.vertex, src.fragment);
+      let obj = {};
+
+      for (let attr in src.attribs) {
+        let nameInProgram = src.attribs[attr];
+        obj[attr] = this.gl.getAttribLocation(src.program, nameInProgram); // enable vertex attrib array
+
+        this.gl.enableVertexAttribArray(obj[attr]);
+      }
+
+      src.attribs = obj;
+      obj = {};
+
+      for (let uniform in src.uniforms) {
+        let nameInProgram = src.uniforms[uniform];
+        obj[uniform] = this.gl.getUniformLocation(src.program, nameInProgram);
+      }
+
+      src.uniforms = obj;
+    }
+    /**
+     * Current using program
+     * @type {WebGLProgram}
+     */
+
+
+    this.program = sources.default;
+    gl.useProgram(this.program.program);
+    /**
+     * Projection matrix used for drawing
+     * @type {number[]}
+     */
+    // prettier-ignore
+
+    this.projectionMatrix = [1, 0, 0, 0, 1, 0, 0, 0, 1];
+    /**
+     * Color to fill inside the shape
+     * @type {number[]}
+     */
+
+    this.fillColor = [0, 0, 0, 1]; // set the resolution
+
+    this.gl.uniform2f(this.program.uniforms.resolution, canvas.width, canvas.height);
+  }
+  /**
+   * Returns a shader from given source and type
+   * @param {number} type either gl.VERTEX_SHADER or gl.FRAGMENT_SHADER
+   * @param {string} source source code of shader
+   * @returns {WebGLShader} shader
+   */
+
+
+  createShader(type, source) {
+    const shader = this.gl.createShader(type);
+    this.gl.shaderSource(shader, source);
+    this.gl.compileShader(shader);
+
+    if (!this.gl.getShaderParameter(shader, this.gl.COMPILE_STATUS)) {
+      console.error(this.gl.getShaderInfoLog(shader));
+      this.gl.deleteShader(shader);
+      return null;
+    }
+
+    return shader;
+  }
+  /**
+   * creates a program from given shaders
+   * @param {WebGLShader} vertexShader
+   * @param {WebGLShader} fragmentShader
+   * @returns {WebGLProgram}
+   */
+
+
+  createProgram(vertexShader, fragmentShader) {
+    const program = this.gl.createProgram();
+    this.gl.attachShader(program, vertexShader);
+    this.gl.attachShader(program, fragmentShader);
+    this.gl.linkProgram(program);
+
+    if (!this.gl.getProgramParameter(program, this.gl.LINK_STATUS)) {
+      console.error(this.gl.getProgramInfoLog(program));
+      this.gl.deleteProgram(program);
+      return null;
+    }
+
+    return program;
+  }
+  /**
+   * Creates program from given vertex and fragment shader source
+   * @param {string} vertexShaderSource
+   * @param {string} fragmentShaderSource
+   * @returns {WebGLProgram}
+   */
+
+
+  createProgramFromSource(vertexShaderSource, fragmentShaderSource) {
+    const vertexShader = this.createShader(this.gl.VERTEX_SHADER, vertexShaderSource);
+    const fragmentShader = this.createShader(this.gl.FRAGMENT_SHADER, fragmentShaderSource);
+    return this.createProgram(vertexShader, fragmentShader);
+  }
+
+  resizeCanvas(width = 300, height = 300) {
+    // Lookup the size the browser is displaying the canvas in CSS pixels.
+    const dpr = window.devicePixelRatio;
+    const displayWidth = Math.round(width * dpr);
+    const displayHeight = Math.round(height * dpr); // Make the canvas the same size
+
+    this.canvas.style.width = width + "px";
+    this.canvas.style.height = height + "px";
+    this.canvas.width = displayWidth;
+    this.canvas.height = displayHeight;
+  }
+
+}
+/**
+ * clears the canvas using given color
+ * @param {number} r red value
+ * @param {number} g green value
+ * @param {number} b blue value
+ * @param {number} a alpha value
+ */
+
+
+exports.WebGL = WebGL;
+
+WebGL.prototype.background = function (r, g, b, a) {
+  this.gl.clearColor(r, g, b, a);
+  this.gl.clear(this.gl.COLOR_BUFFER_BIT);
+  return this;
+};
+/**
+ * clears canvas
+ * @returns {this}
+ */
+
+
+WebGL.prototype.clear = function () {
+  this.background(0, 0, 0, 0);
+  return this;
+};
+
+WebGL.prototype.bindNewBuffer = function (type = this.gl.ARRAY_BUFFER) {
+  // Create a buffer to put stuffs in
+  var buffer = this.gl.createBuffer();
+  this.gl.bindBuffer(type, buffer);
+  return buffer;
+};
+/**
+ * sets geometry of a objevt in buffer
+ * @param {number[]} data data of positions to set
+ * @param {*} target
+ * @param {*} usage
+ * @returns {this}
+ */
+
+
+WebGL.prototype.setGeometry = function (data, target = this.gl.ARRAY_BUFFER, usage = this.gl.STATIC_DRAW) {
+  let gl = this.gl,
+      program = this.program; // Create and bind a buffer to put positions of points in
+
+  this.bindNewBuffer();
+  gl.bufferData(target, new Float32Array(data), usage); // Set the matrix.
+
+  gl.uniformMatrix3fv(program.uniforms.matrix, false, this.projectionMatrix); // set the color
+
+  gl.uniform4fv(program.uniforms.color, this.fillColor); // Tell the attribute how to get data out of positionBuffer (ARRAY_BUFFER)
+
+  gl.vertexAttribPointer(program.attribs.position, // position of position attribute
+  2, // pull 2 components per iteration
+  gl.FLOAT, // type of the data is 32bit floats
+  false, // don't normalize the data
+  0, // 0 = move forward size * sizeof(type) each iteration to get the next position
+  0 // start at the beginning of the buffer
+  ); // Draw the geometry.
+
+  var primitiveType = gl.TRIANGLES;
+  var offset = 0;
+  var count = 18; // 6 triangles in the 'F', 3 points per triangle
+
+  gl.drawArrays(primitiveType, offset, count);
+  return this;
+};
+/**
+ * rotates canvas by a given angle.
+ * Multiplies current matrix by a rotation matrix
+ * @param {number} angle angle to rotate by
+ * @returns {this}
+ */
+
+
+WebGL.prototype.rotate = function (angle) {
+  _m.m3.rotate(this.projectionMatrix, angle);
+
+  return this;
+};
+/**
+ * Translate canvas by a given vector by multiplying current matrix by a translation matrix
+ * @param {number} x x value of vector
+ * @param {number} y y value of vector
+ * @returns {this}
+ */
+
+
+WebGL.prototype.translate = function (x, y) {
+  _m.m3.translate(this.projectionMatrix, x, y);
+
+  return this;
+};
+/**
+ * Scales canvas by given x, y factors
+ */
+
+
+WebGL.prototype.scale = function (x, y) {
+  _m.m3.scale(this.projectionMatrix, x, y);
+
+  return this;
+};
+
+WebGL.prototype.fill = function (r, g, b, a) {
+  this.fillColor = [r, g, b, a];
+};
+
+},{"../main.js":17,"../utils.js":33,"./m3.js":1}],3:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 exports.Arc = Arc;
-exports.animateFill = animateFill;
 exports.Circle = Circle;
+exports.Line = Line;
+exports.animateFill = animateFill;
 
 var _color_reader = require("../color/color_reader.js");
 
@@ -262,7 +634,7 @@ function Circle(args) {
   };
 }
 
-},{"../color/color_reader.js":4,"../main.js":15,"../math/rate_functions.js":20,"../objects/geometry.js":26,"../settings.js":30,"../utils.js":31}],2:[function(require,module,exports){
+},{"../color/color_reader.js":6,"../main.js":17,"../math/rate_functions.js":22,"../objects/geometry.js":28,"../settings.js":32,"../utils.js":33}],4:[function(require,module,exports){
 "use strict";
 
 var _utils = require("./utils.js");
@@ -321,6 +693,8 @@ var RateFunctions = _interopRequireWildcard(require("./math/rate_functions.js"))
 
 var _main = require("./main.js");
 
+var WebGL = _interopRequireWildcard(require("./WebGL/webgl.js"));
+
 function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
 
 function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
@@ -353,18 +727,20 @@ function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && 
 (0, _utils.defineProperties)(RateFunctions);
 (0, _utils.defineProperties)(MathConsts);
 (0, _utils.defineProperties)(_utils.defineProperties);
-(0, _utils.defineProperties)(COLORLIST, _main.C.COLORLIST);
+(0, _utils.defineProperties)(COLORLIST, _main.C.COLORLIST); //! Experimental features
 
-},{"./animations/create.js":1,"./color/color_converters.js":3,"./color/color_reader.js":4,"./color/gradients.js":5,"./color/interpolation.js":6,"./color/random.js":7,"./constants/color_palettes.js":8,"./constants/colors.js":9,"./constants/drawing.js":10,"./constants/math.js":11,"./image/image.js":13,"./image/processing.js":14,"./main.js":15,"./math/aritmetics.js":16,"./math/basic.js":17,"./math/points.js":18,"./math/random.js":19,"./math/rate_functions.js":20,"./objects/arrows.js":22,"./objects/braces.js":23,"./objects/coordinate_systems.js":24,"./objects/functions.js":25,"./objects/geometry.js":26,"./objects/more_shapes.js":27,"./objects/tex.js":28,"./objects/text.js":29,"./settings.js":30,"./utils.js":31}],3:[function(require,module,exports){
+(0, _utils.defineProperties)(WebGL);
+
+},{"./WebGL/webgl.js":2,"./animations/create.js":3,"./color/color_converters.js":5,"./color/color_reader.js":6,"./color/gradients.js":7,"./color/interpolation.js":8,"./color/random.js":9,"./constants/color_palettes.js":10,"./constants/colors.js":11,"./constants/drawing.js":12,"./constants/math.js":13,"./image/image.js":15,"./image/processing.js":16,"./main.js":17,"./math/aritmetics.js":18,"./math/basic.js":19,"./math/points.js":20,"./math/random.js":21,"./math/rate_functions.js":22,"./objects/arrows.js":24,"./objects/braces.js":25,"./objects/coordinate_systems.js":26,"./objects/functions.js":27,"./objects/geometry.js":28,"./objects/more_shapes.js":29,"./objects/tex.js":30,"./objects/text.js":31,"./settings.js":32,"./utils.js":33}],5:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.RGBToHSL = RGBToHSL;
 exports.HSLToRGB = HSLToRGB;
-exports.RGBToHSV = RGBToHSV;
 exports.HSVToRGB = HSVToRGB;
+exports.RGBToHSL = RGBToHSL;
+exports.RGBToHSV = RGBToHSV;
 
 function hue2RGB(p, q, t) {
   if (t < 0) t += 1;
@@ -494,7 +870,7 @@ function HSVToRGB(hue, saturation, value) {
   return [r, g, b];
 }
 
-},{}],4:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -502,9 +878,9 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.readColor = readColor;
 
-var _main = require("../main.js");
-
 var namedColors = _interopRequireWildcard(require("../constants/named_colors.js"));
+
+var _main = require("../main.js");
 
 function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
 
@@ -636,7 +1012,7 @@ function readColor() {
   return result;
 }
 
-},{"../constants/named_colors.js":12,"../main.js":15}],5:[function(require,module,exports){
+},{"../constants/named_colors.js":14,"../main.js":17}],7:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -697,16 +1073,16 @@ function linearGradient(initialPoint, finalPoint, colorStops) {
   return gradient;
 }
 
-},{"../main.js":15}],6:[function(require,module,exports){
+},{"../main.js":17}],8:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.lerpColor = lerpColor;
-exports.lerpColorObject = lerpColorObject;
 exports.getInterpolatedColorList = getInterpolatedColorList;
+exports.lerpColor = lerpColor;
 exports.lerpColorArray = lerpColorArray;
+exports.lerpColorObject = lerpColorObject;
 
 var _color_reader = require("./color_reader.js");
 
@@ -751,9 +1127,11 @@ function lerpColorObject(colorObj, v) {
 /**
  * Lerps across a color Array
  * From <https://github.com/yuki-koyama/tinycolormap/blob/fe597277c782c583eb40362de98a08df62efc628/include/tinycolormap.hpp#L159>
- * @param {array<number>} colorArr
- * @param {number} v
- * @return {string}
+ * @param {array<string>} colorArr array that contains color as string
+ * @param {number} v value to interpolate
+ * @param {number} [min = 0] minimum value of the range
+ * @param {number} [max = 1] maximum value of the range
+ * @return {string} lerped color
  */
 
 
@@ -792,7 +1170,7 @@ function getInterpolatedColorList(colorPalatte, min = 0, max = 5, step = 1, alph
   return colorObj;
 }
 
-},{"./color_reader.js":4}],7:[function(require,module,exports){
+},{"./color_reader.js":6}],9:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -801,9 +1179,9 @@ Object.defineProperty(exports, "__esModule", {
 exports.randomColor = randomColor;
 exports.randomDefinedColor = randomDefinedColor;
 
-var _random = require("../math/random.js");
-
 var COLORLIST = _interopRequireWildcard(require("../constants/colors.js"));
+
+var _random = require("../math/random.js");
 
 function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
 
@@ -838,13 +1216,16 @@ function randomDefinedColor() {
   return COLORLIST[definedColorList[(0, _random.randomInt)(definedColorList.length - 1)]];
 }
 
-},{"../constants/colors.js":9,"../math/random.js":19}],8:[function(require,module,exports){
+},{"../constants/colors.js":11,"../math/random.js":21}],10:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.ColorPalettes = void 0;
+// prettier-ignore
+
+/** @type {Object.<string, string[]>} ColorPalette */
 let ColorPalettes = {
   // This product includes color specifications and designs developed by Cynthia Brewer (http://colorbrewer.org/).
   // Please see license at http://colorbrewer.org/export/LICENSE.txt
@@ -896,13 +1277,13 @@ exports.ColorPalettes = ColorPalettes;
 
 for (var p in ColorPalettes) ColorPalettes[p] = ColorPalettes[p].split(" ");
 
-},{}],9:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.TRANSPARENT = exports.ORANGE = exports.GREEN_SCREEN = exports.LIGHT_PINK = exports.PINK = exports.GREY_BROWN = exports.DARKER_GRAY = exports.DARKER_GREY = exports.DARK_GRAY = exports.DARK_GREY = exports.GREY = exports.GRAY = exports.LIGHT_GREY = exports.LIGHT_GRAY = exports.BLACK = exports.WHITE = exports.PURPLE = exports.PURPLE_E = exports.PURPLE_D = exports.PURPLE_C = exports.PURPLE_B = exports.PURPLE_A = exports.MAROON = exports.MAROON_E = exports.MAROON_D = exports.MAROON_C = exports.MAROON_B = exports.MAROON_A = exports.RED = exports.RED_E = exports.RED_D = exports.RED_C = exports.RED_B = exports.RED_A = exports.GOLD = exports.GOLD_E = exports.GOLD_D = exports.GOLD_C = exports.GOLD_B = exports.GOLD_A = exports.YELLOW = exports.YELLOW_E = exports.YELLOW_D = exports.YELLOW_C = exports.YELLOW_B = exports.YELLOW_A = exports.GREEN = exports.GREEN_E = exports.GREEN_D = exports.GREEN_C = exports.GREEN_B = exports.GREEN_A = exports.TEAL = exports.TEAL_E = exports.TEAL_D = exports.TEAL_C = exports.TEAL_B = exports.TEAL_A = exports.BLUE = exports.BLUE_E = exports.BLUE_D = exports.BLUE_C = exports.BLUE_B = exports.BLUE_A = exports.LIGHT_BROWN = exports.DARK_BROWN = exports.DARK_BLUE = void 0;
+exports.YELLOW_E = exports.YELLOW_D = exports.YELLOW_C = exports.YELLOW_B = exports.YELLOW_A = exports.YELLOW = exports.WHITE = exports.TRANSPARENT = exports.TEAL_E = exports.TEAL_D = exports.TEAL_C = exports.TEAL_B = exports.TEAL_A = exports.TEAL = exports.RED_E = exports.RED_D = exports.RED_C = exports.RED_B = exports.RED_A = exports.RED = exports.PURPLE_E = exports.PURPLE_D = exports.PURPLE_C = exports.PURPLE_B = exports.PURPLE_A = exports.PURPLE = exports.PINK = exports.ORANGE = exports.MAROON_E = exports.MAROON_D = exports.MAROON_C = exports.MAROON_B = exports.MAROON_A = exports.MAROON = exports.LIGHT_PINK = exports.LIGHT_GREY = exports.LIGHT_GRAY = exports.LIGHT_BROWN = exports.GREY_BROWN = exports.GREY = exports.GREEN_SCREEN = exports.GREEN_E = exports.GREEN_D = exports.GREEN_C = exports.GREEN_B = exports.GREEN_A = exports.GREEN = exports.GRAY = exports.GOLD_E = exports.GOLD_D = exports.GOLD_C = exports.GOLD_B = exports.GOLD_A = exports.GOLD = exports.DARK_GREY = exports.DARK_GRAY = exports.DARK_BROWN = exports.DARK_BLUE = exports.DARKER_GREY = exports.DARKER_GRAY = exports.BLUE_E = exports.BLUE_D = exports.BLUE_C = exports.BLUE_B = exports.BLUE_A = exports.BLUE = exports.BLACK = void 0;
 
 /**
  * List of colors
@@ -1043,13 +1424,13 @@ exports.LIGHT_BROWN = LIGHT_BROWN;
 exports.DARK_BROWN = DARK_BROWN;
 exports.DARK_BLUE = DARK_BLUE;
 
-},{}],10:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.OBLIQUE = exports.ITALIC = exports.SMALLER = exports.LARGER = exports.XXX_LARGE = exports.XX_LARGE = exports.X_LARGE = exports.LARGE = exports.MEDIUM = exports.SMALL = exports.X_SMALL = exports.XX_SMALL = exports.ULTRA_EXPANDED = exports.EXTRA_EXPANDED = exports.EXPANDED = exports.SEMI_EXPANDED = exports.NORMAL = exports.SEMI_CONDENSED = exports.CONDENSED = exports.EXTRA_CONDENSED = exports.ULTRA_CONDENSED = exports.BOTTOM = exports.IDEOGRAPHIC = exports.ALPHABETIC = exports.MIDDLE = exports.HANGING = exports.TOP = exports.END = exports.START = exports.CENTER = exports.RIGHT = exports.LEFT = exports.MITER = exports.BEVEL = exports.MILTER = exports.ROUND = exports.SQUARE = exports.BUTT = void 0;
+exports.X_SMALL = exports.X_LARGE = exports.XX_SMALL = exports.XX_LARGE = exports.XXX_LARGE = exports.ULTRA_EXPANDED = exports.ULTRA_CONDENSED = exports.TOP = exports.START = exports.SQUARE = exports.SMALLER = exports.SMALL = exports.SEMI_EXPANDED = exports.SEMI_CONDENSED = exports.ROUND = exports.RIGHT = exports.OBLIQUE = exports.NORMAL = exports.MITER = exports.MILTER = exports.MIDDLE = exports.MEDIUM = exports.LEFT = exports.LARGER = exports.LARGE = exports.ITALIC = exports.IDEOGRAPHIC = exports.HANGING = exports.EXTRA_EXPANDED = exports.EXTRA_CONDENSED = exports.EXPANDED = exports.END = exports.CONDENSED = exports.CENTER = exports.BUTT = exports.BOTTOM = exports.BEVEL = exports.ALPHABETIC = void 0;
 const BUTT = "butt",
       SQUARE = "square",
       ROUND = "round",
@@ -1139,13 +1520,13 @@ exports.ROUND = ROUND;
 exports.SQUARE = SQUARE;
 exports.BUTT = BUTT;
 
-},{}],11:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.RAD = exports.DEG = exports.PHI = exports.SQRT2 = exports.TWO_PI = exports.TAU = exports.QUATER_PI = exports.TIERCE_PI = exports.HALF_PI = exports.PI = exports.LN10 = exports.LN2 = exports.E = void 0;
+exports.TWO_PI = exports.TIERCE_PI = exports.TAU = exports.SQRT2 = exports.RAD = exports.QUATER_PI = exports.PI = exports.PHI = exports.LN2 = exports.LN10 = exports.HALF_PI = exports.E = exports.DEG = void 0;
 const E = 2.71828182845904523,
       LN2 = 0.6931471805599453,
       LN10 = 2.30258509299404568,
@@ -1176,14 +1557,14 @@ exports.LN10 = LN10;
 exports.LN2 = LN2;
 exports.E = E;
 
-},{}],12:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.moccasin = exports.mistyrose = exports.mintcream = exports.midnightblue = exports.mediumvioletred = exports.mediumturquoise = exports.mediumspringgreen = exports.mediumslateblue = exports.mediumseagreen = exports.mediumpurple = exports.mediumorchid = exports.mediumblue = exports.mediumaquamarine = exports.maroon = exports.magenta = exports.linen = exports.limegreen = exports.lime = exports.lightyellow = exports.lightsteelblue = exports.lightslategrey = exports.lightslategray = exports.lightskyblue = exports.lightseagreen = exports.lightsalmon = exports.lightpink = exports.lightgrey = exports.lightgreen = exports.lightgray = exports.lightgoldenrodyellow = exports.lightcyan = exports.lightcoral = exports.lightblue = exports.lemonchiffon = exports.lawngreen = exports.lavenderblush = exports.lavender = exports.khaki = exports.ivory = exports.indigo = exports.indianred = exports.hotpink = exports.honeydew = exports.grey = exports.greenyellow = exports.green = exports.gray = exports.goldenrod = exports.gold = exports.ghostwhite = exports.gainsboro = exports.fuchsia = exports.forestgreen = exports.floralwhite = exports.firebrick = exports.dodgerblue = exports.dimgrey = exports.dimgray = exports.deepskyblue = exports.deeppink = exports.darkviolet = exports.darkturquoise = exports.darkslategrey = exports.darkslategray = exports.darkslateblue = exports.darkseagreen = exports.darksalmon = exports.darkred = exports.darkorchid = exports.darkorange = exports.darkolivegreen = exports.darkmagenta = exports.darkkhaki = exports.darkgrey = exports.darkgreen = exports.darkgray = exports.darkgoldenrod = exports.darkcyan = exports.darkblue = exports.cyan = exports.crimson = exports.cornsilk = exports.cornflowerblue = exports.coral = exports.chocolate = exports.chartreuse = exports.cadetblue = exports.burlywood = exports.brown = exports.blueviolet = exports.blue = exports.blanchedalmond = exports.black = exports.bisque = exports.beige = exports.azure = exports.aquamarine = exports.aqua = exports.antiquewhite = exports.aliceblue = void 0;
-exports.yellowgreen = exports.yellow = exports.whitesmoke = exports.white = exports.wheat = exports.violet = exports.turquoise = exports.tomato = exports.thistle = exports.teal = exports.tan = exports.steelblue = exports.springgreen = exports.snow = exports.slategrey = exports.slategray = exports.slateblue = exports.skyblue = exports.silver = exports.sienna = exports.seashell = exports.seagreen = exports.sandybrown = exports.salmon = exports.saddlebrown = exports.royalblue = exports.rosybrown = exports.red = exports.rebeccapurple = exports.purple = exports.powderblue = exports.plum = exports.pink = exports.peru = exports.peachpuff = exports.papayawhip = exports.palevioletred = exports.paleturquoise = exports.palegreen = exports.palegoldenrod = exports.orchid = exports.orangered = exports.orange = exports.olivedrab = exports.olive = exports.oldlace = exports.navy = exports.navajowhite = void 0;
+exports.yellowgreen = exports.yellow = exports.whitesmoke = exports.white = exports.wheat = exports.violet = exports.turquoise = exports.tomato = exports.thistle = exports.teal = exports.tan = exports.steelblue = exports.springgreen = exports.snow = exports.slategrey = exports.slategray = exports.slateblue = exports.skyblue = exports.silver = exports.sienna = exports.seashell = exports.seagreen = exports.sandybrown = exports.salmon = exports.saddlebrown = exports.royalblue = exports.rosybrown = exports.red = exports.rebeccapurple = exports.purple = exports.powderblue = exports.plum = exports.pink = exports.peru = exports.peachpuff = exports.papayawhip = exports.palevioletred = exports.paleturquoise = exports.palegreen = exports.palegoldenrod = exports.orchid = exports.orangered = exports.orange = exports.olivedrab = exports.olive = exports.oldlace = exports.navy = exports.navajowhite = exports.moccasin = exports.mistyrose = exports.mintcream = exports.midnightblue = exports.mediumvioletred = exports.mediumturquoise = exports.mediumspringgreen = exports.mediumslateblue = exports.mediumseagreen = exports.mediumpurple = exports.mediumorchid = exports.mediumblue = exports.mediumaquamarine = exports.maroon = exports.magenta = exports.linen = exports.limegreen = exports.lime = exports.lightyellow = exports.lightsteelblue = exports.lightslategrey = exports.lightslategray = exports.lightskyblue = exports.lightseagreen = exports.lightsalmon = exports.lightpink = exports.lightgrey = exports.lightgreen = exports.lightgray = exports.lightgoldenrodyellow = exports.lightcyan = exports.lightcoral = exports.lightblue = exports.lemonchiffon = exports.lawngreen = exports.lavenderblush = exports.lavender = exports.khaki = exports.ivory = exports.indigo = exports.indianred = exports.hotpink = exports.honeydew = exports.grey = exports.greenyellow = exports.green = exports.gray = exports.goldenrod = exports.gold = exports.ghostwhite = exports.gainsboro = exports.fuchsia = exports.forestgreen = exports.floralwhite = exports.firebrick = exports.dodgerblue = exports.dimgrey = exports.dimgray = exports.deepskyblue = exports.deeppink = exports.darkviolet = exports.darkturquoise = exports.darkslategrey = exports.darkslategray = exports.darkslateblue = exports.darkseagreen = exports.darksalmon = exports.darkred = exports.darkorchid = exports.darkorange = exports.darkolivegreen = exports.darkmagenta = exports.darkkhaki = exports.darkgrey = exports.darkgreen = exports.darkgray = exports.darkgoldenrod = exports.darkcyan = exports.darkblue = exports.cyan = exports.crimson = exports.cornsilk = exports.cornflowerblue = exports.coral = exports.chocolate = exports.chartreuse = exports.cadetblue = exports.burlywood = exports.brown = exports.blueviolet = exports.blue = exports.blanchedalmond = exports.black = exports.bisque = exports.beige = exports.azure = exports.aquamarine = exports.aqua = exports.antiquewhite = exports.aliceblue = void 0;
 // Named css colors
 const aliceblue = "#f0f8ff",
       antiquewhite = "#faebd7",
@@ -1482,18 +1863,16 @@ exports.aqua = aqua;
 exports.antiquewhite = antiquewhite;
 exports.aliceblue = aliceblue;
 
-},{}],13:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.drawImage = drawImage;
-exports.pixel = pixel;
 exports.loadImage = loadImage;
 exports.loadImagePromise = loadImagePromise;
-
-var _color_reader = require("../color/color_reader.js");
+exports.pixel = pixel;
 
 var _main = require("../main.js");
 
@@ -1539,11 +1918,11 @@ function drawImage(img) {
  */
 
 
-function pixel(x, y, color) {
-  let ctx = _main.C.workingCanvas,
-      dpr = 1 / ctx.dpr;
-  ctx.fillStyle = color == undefined ? ctx.fillStyle : (0, _color_reader.readColor)(color);
-  ctx.fillRect(x, y, dpr, dpr);
+function pixel(x, y, color, size) {
+  let ctx = _main.C.workingCanvas;
+  if (color) ctx.fillStyle = color;
+  if (!size) size = 1 / ctx.dpr;
+  ctx.fillRect(x, y, size, size);
 }
 /**
  * Loads a image from given url. I
@@ -1582,17 +1961,17 @@ function loadImagePromise(url) {
   });
 }
 
-},{"../color/color_reader.js":4,"../main.js":15}],14:[function(require,module,exports){
+},{"../main.js":17}],16:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.getPixelColor = getPixelColor;
-exports.imageDataToColorArray = imageDataToColorArray;
 exports.hasNeighbourColor = hasNeighbourColor;
-exports.replaceColorInImage = replaceColorInImage;
+exports.imageDataToColorArray = imageDataToColorArray;
 exports.imageToData = imageToData;
+exports.replaceColorInImage = replaceColorInImage;
 
 var _color_reader = require("../color/color_reader.js");
 
@@ -1760,7 +2139,7 @@ function imageToData(image, x, y, width, height, smoothen = false) {
   return ctx.getImageData(x, y, width, height);
 }
 
-},{"../color/color_reader.js":4,"../main.js":15}],15:[function(require,module,exports){
+},{"../color/color_reader.js":6,"../main.js":17}],17:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1891,6 +2270,7 @@ function C(fx, container, cfgs = {}) {
     canvas.context = Object.assign(canvas.getContext("2d"), configs);
     canvas.context.setTransform(configs.dpr, 0, 0, configs.dpr, 0, 0);
     C.workingCanvas = canvas.context;
+    C.workingCanvas.container = container;
     C.workingCanvas.savedStates = defaultConfigs;
     C.workingCanvas.delayedAnimations = [];
   } // set canvas's id and class to its name
@@ -1926,6 +2306,13 @@ C.nameID = 0;
 C.workingCanvas = {}; // index of current working canvas in `C.canvasList`
 
 /**
+ * Current working canvas
+ * @type {HTMLElement}
+ */
+
+C.workingCanvas.container = {}; //container of canvas
+
+/**
  * Default configurations
  */
 
@@ -1944,12 +2331,10 @@ C.getWindowWidth = function (container = document.body) {
  * and scales CSS width and height to DPR
  *
  * @param {HTMLCanvasElement} cvs
- * @param {Object} configs
- * values needed in `configs`:
- *
- * dpr    <Number>: Device pixel ratio
- * width  <Number>: Width in pixels
- * height <Number>: Height in pixels
+ * @param {Object} configs configurations. Values needed :
+ * @param {number} configs.dpr Device pixel ratio
+ * @param {number} configs.width Width in pixels
+ * @param {number} configs.height Height in pixels
  */
 
 
@@ -2004,16 +2389,27 @@ C.debug = function (bool) {
   if (typeof bool !== "boolean") C.debugAnimations = true;else C.debugAnimations = bool;
 };
 /**
+ * Returns the current working canvas or the canvas with given name.
+ * With this you can access native JS canvas functions for better performance
+ * @param {string} name Name of canvas
+ * @returns {CanvasRenderingContext2D} Canvas context
+ */
+
+
+C.getCanvas = function (name) {
+  return C.canvasList[name] || C.workingCanvas;
+};
+/**
  * Log of animations
  * @type {array<object>}
-*/
+ */
 
 
 C._ANIMATIONLOG_ = [];
 /**
  * Set of functions
  * @type {object}
-*/
+ */
 
 C.functions = {};
 C.COLORLIST = {}; //list of colors
@@ -2021,7 +2417,7 @@ C.COLORLIST = {}; //list of colors
 
 window["C"] = C;
 
-},{"./utils.js":31}],16:[function(require,module,exports){
+},{"./utils.js":33}],18:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2090,13 +2486,13 @@ function lcmArray(list) {
   return n;
 }
 
-},{}],17:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.tanh = exports.tan = exports.sqrt = exports.sin = exports.sgn = exports.round = exports.random = exports.pow = exports.min = exports.max = exports.log10 = exports.log2 = exports.log = exports.floor = exports.exp = exports.cosh = exports.cos = exports.ceil = exports.cbrt = exports.atan2 = exports.atan = exports.asin = exports.acos = exports.abs = void 0;
+exports.tanh = exports.tan = exports.sqrt = exports.sin = exports.sgn = exports.round = exports.random = exports.pow = exports.min = exports.max = exports.log2 = exports.log10 = exports.log = exports.floor = exports.exp = exports.cosh = exports.cos = exports.ceil = exports.cbrt = exports.atan2 = exports.atan = exports.asin = exports.acos = exports.abs = void 0;
 const {
   abs,
   acos,
@@ -2148,19 +2544,19 @@ exports.asin = asin;
 exports.acos = acos;
 exports.abs = abs;
 
-},{}],18:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.circleIntersection = circleIntersection;
 exports.dist = dist;
+exports.extendFromOrigin = extendFromOrigin;
+exports.extendFromPoint = extendFromPoint;
+exports.lineIntersection = lineIntersection;
 exports.rotateAroundOrigin = rotateAroundOrigin;
 exports.rotateAroundPoint = rotateAroundPoint;
-exports.lineIntersection = lineIntersection;
-exports.circleIntersection = circleIntersection;
-exports.extendFromPoint = extendFromPoint;
-exports.extendFromOrigin = extendFromOrigin;
 
 /**
  * return distance between two points
@@ -2272,7 +2668,7 @@ function extendFromOrigin(point, len = 10) {
   return extendFromPoint([0, 0], point, len);
 }
 
-},{}],19:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2291,55 +2687,55 @@ function randomInt(max = 10, min = 0) {
   return Math.round(Math.random() * (max - min) + min);
 }
 
-},{}],20:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.easeOutBounce = easeOutBounce;
-exports.linear = linear;
-exports.easeInQuad = easeInQuad;
-exports.easeOutQuad = easeOutQuad;
-exports.easeInOutQuad = easeInOutQuad;
-exports.easeInCubic = easeInCubic;
-exports.easeOutCubic = easeOutCubic;
-exports.easeInOutCubic = easeInOutCubic;
-exports.easeInQuart = easeInQuart;
-exports.easeOutQuart = easeOutQuart;
-exports.easeInOutQuart = easeInOutQuart;
-exports.easeInQuint = easeInQuint;
-exports.easeOutQuint = easeOutQuint;
-exports.easeInOutQuint = easeInOutQuint;
-exports.easeInSine = easeInSine;
-exports.easeOutSine = easeOutSine;
-exports.easeInOutSine = easeInOutSine;
-exports.easeInExpo = easeInExpo;
-exports.easeOutExpo = easeOutExpo;
-exports.easeInOutExpo = easeInOutExpo;
-exports.easeInCirc = easeInCirc;
-exports.easeOutCirc = easeOutCirc;
-exports.easeInOutCirc = easeInOutCirc;
-exports.easeInBack = easeInBack;
-exports.easeOutBack = easeOutBack;
-exports.easeInOutBack = easeInOutBack;
-exports.easeInElastic = easeInElastic;
-exports.easeOutElastic = easeOutElastic;
-exports.easeInOutElastic = easeInOutElastic;
-exports.easeInBounce = easeInBounce;
-exports.easeInOutBounce = easeInOutBounce;
-exports.smooth = smooth;
-exports.rushInto = rushInto;
-exports.rushFrom = rushFrom;
-exports.slowInto = slowInto;
 exports.doubleSmooth = doubleSmooth;
+exports.easeInBack = easeInBack;
+exports.easeInBounce = easeInBounce;
+exports.easeInCirc = easeInCirc;
+exports.easeInCubic = easeInCubic;
+exports.easeInElastic = easeInElastic;
+exports.easeInExpo = easeInExpo;
+exports.easeInOutBack = easeInOutBack;
+exports.easeInOutBounce = easeInOutBounce;
+exports.easeInOutCirc = easeInOutCirc;
+exports.easeInOutCubic = easeInOutCubic;
+exports.easeInOutElastic = easeInOutElastic;
+exports.easeInOutExpo = easeInOutExpo;
+exports.easeInOutQuad = easeInOutQuad;
+exports.easeInOutQuart = easeInOutQuart;
+exports.easeInOutQuint = easeInOutQuint;
+exports.easeInOutSine = easeInOutSine;
+exports.easeInQuad = easeInQuad;
+exports.easeInQuart = easeInQuart;
+exports.easeInQuint = easeInQuint;
+exports.easeInSine = easeInSine;
+exports.easeOutBack = easeOutBack;
+exports.easeOutBounce = easeOutBounce;
+exports.easeOutCirc = easeOutCirc;
+exports.easeOutCubic = easeOutCubic;
+exports.easeOutElastic = easeOutElastic;
+exports.easeOutExpo = easeOutExpo;
+exports.easeOutQuad = easeOutQuad;
+exports.easeOutQuart = easeOutQuart;
+exports.easeOutQuint = easeOutQuint;
+exports.easeOutSine = easeOutSine;
+exports.exponentialDecay = exponentialDecay;
+exports.linear = linear;
+exports.lingering = lingering;
+exports.notQuiteThere = notQuiteThere;
+exports.rushFrom = rushFrom;
+exports.rushInto = rushInto;
+exports.slowInto = slowInto;
+exports.smooth = smooth;
+exports.squishRateFunc = squishRateFunc;
 exports.thereAndBack = thereAndBack;
 exports.thereAndBackWithPause = thereAndBackWithPause;
-exports.notQuiteThere = notQuiteThere;
 exports.wiggle = wiggle;
-exports.squishRateFunc = squishRateFunc;
-exports.lingering = lingering;
-exports.exponentialDecay = exponentialDecay;
 
 var _simple_functions = require("./simple_functions.js");
 
@@ -2535,7 +2931,7 @@ function exponentialDecay(t, halfLife = 0.1) {
 // 	return bezier([0, 0, pullFactor, pullFactor, 1, 1, 1])(t);
 // }
 
-},{"./simple_functions.js":21}],21:[function(require,module,exports){
+},{"./simple_functions.js":23}],23:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2547,7 +2943,7 @@ function sigmoid(t) {
   return 1.0 / (1 + Math.exp(-t));
 }
 
-},{}],22:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2555,12 +2951,12 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.arrow = arrow;
 exports.arrowTip = arrowTip;
+exports.curvedArrow = curvedArrow;
+exports.curvedArrowBetweenPoints = curvedArrowBetweenPoints;
+exports.curvedDoubleArrow = curvedDoubleArrow;
+exports.curvedDoubleArrowBetweenPoints = curvedDoubleArrowBetweenPoints;
 exports.doubleArrow = doubleArrow;
 exports.measurement = measurement;
-exports.curvedArrow = curvedArrow;
-exports.curvedDoubleArrow = curvedDoubleArrow;
-exports.curvedArrowBetweenPoints = curvedArrowBetweenPoints;
-exports.curvedDoubleArrowBetweenPoints = curvedDoubleArrowBetweenPoints;
 
 var _colors = require("../constants/colors.js");
 
@@ -2570,9 +2966,9 @@ var _main = require("../main.js");
 
 var _points = require("../math/points.js");
 
-var _utils = require("../utils.js");
-
 var _settings = require("../settings.js");
+
+var _utils = require("../utils.js");
 
 var _text = require("./text.js");
 
@@ -2895,14 +3291,14 @@ function curvedDoubleArrowBetweenPoints(p1, p2, radius, tipWidth = DEFAULT_TIP_W
   return center;
 }
 
-},{"../constants/colors.js":9,"../constants/drawing.js":10,"../main.js":15,"../math/points.js":18,"../settings.js":30,"../utils.js":31,"./text.js":29}],23:[function(require,module,exports){
+},{"../constants/colors.js":11,"../constants/drawing.js":12,"../main.js":17,"../math/points.js":20,"../settings.js":32,"../utils.js":33,"./text.js":31}],25:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.curlyBrace = curlyBrace;
 exports.arcBrace = arcBrace;
+exports.curlyBrace = curlyBrace;
 
 var _main = require("../main.js");
 
@@ -2981,7 +3377,7 @@ function arcBrace(x, y, radius = 100, angle = Math.PI / 2, startAngle = 0, small
   return [(largerRadius + extender) * Math.cos(angle / 2 + startAngle) + x, (largerRadius + extender) * Math.sin(angle / 2 + startAngle) + y];
 }
 
-},{"../main.js":15}],24:[function(require,module,exports){
+},{"../main.js":17}],26:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2995,6 +3391,8 @@ var _colors = require("../constants/colors.js");
 
 var _main = require("../main.js");
 
+var _settings = require("../settings.js");
+
 var _utils = require("../utils.js");
 
 var _arrows = require("./arrows.js");
@@ -3003,25 +3401,27 @@ var _functions = require("./functions.js");
 
 var _geometry = require("./geometry.js");
 
-var _settings = require("../settings.js");
-
 var _text = require("./text.js");
 
-// list of plotters
-function getPlotterList(unitLength, unitValue, cfgs = {}) {
+function isArray(o) {
+  return Array.isArray(o);
+} // list of plotters
+
+
+function getPlotterList(unitSpace, unitValue, cfgs = {}) {
   return {
     getParametricFunction: function (configs) {
-      configs.unitLength = unitLength;
+      configs.unitSpace = unitSpace;
       configs.unitValue = unitValue;
       return (0, _functions.parametricFunction)(configs);
     },
     getFunctionGraph: function (configs) {
-      configs.unitLength = unitLength;
+      configs.unitSpace = unitSpace;
       configs.unitValue = unitValue;
       return (0, _functions.functionGraph)(configs);
     },
     getHeatPlot: function (configs) {
-      configs.unitLength = unitLength;
+      configs.unitSpace = unitSpace;
       configs.unitValue = unitValue;
       configs.min = configs.min || [cfgs.xAxis.range[0], cfgs.yAxis.range[0]];
       configs.max = configs.max || [cfgs.xAxis.range[1], cfgs.yAxis.range[1]];
@@ -3042,7 +3442,7 @@ function getPlotterList(unitLength, unitValue, cfgs = {}) {
  * * xAxis                 <object>   : x axis confiurations from numberLine (See {@link numberLine} for those configurations).
  * * yAxis                 <object>   : y axis confiurations from numberLine (See {@link numberLine} for those configurations).
  * * unitValue             <array>    : How much a unit is in its value in x and y directions.
- * * unitLength            <array>    : How much a unit is in px in x and y directions.
+ * * unitSpace            <array>    : How much a unit is in px in x and y directions.
  * * getParametricFunction <function> : Draws a parametric function whose unit sizing are predefined by the axes. see {@link parametricFunction} to see possible configurations.
  * * getFunctionGraph      <function> : Draws a function graph whose unit sizing are predefined by the axes. see {@link functionGraph} to see possible configurations.
  */
@@ -3054,26 +3454,24 @@ function axes(args = {}) {
   const defaultConfigs = {
     xAxis: {
       length: ctx.width,
-      textDirection: [-0.3, -1],
       includeTick: true,
       includeLeftTip: true,
       includeRightTip: true,
       excludeOriginTick: true,
-      includeNumbers: false,
-      range: [-10, 10, 1]
+      includeNumbers: false
     },
     yAxis: {
       length: ctx.height,
       rotation: Math.PI / 2,
       textRotation: -Math.PI / 2,
-      textDirection: [-0.3, 0.5],
+      textDirection: [0, 0.4],
       includeTick: true,
       includeLeftTip: true,
       includeRightTip: true,
       excludeOriginTick: true,
-      includeNumbers: false,
-      range: [-10, 10, 1]
-    }
+      includeNumbers: false
+    },
+    center: [0, 0]
   }; // configurations
 
   args = (0, _utils.applyDefault)(defaultConfigs, args);
@@ -3082,7 +3480,7 @@ function axes(args = {}) {
     yAxis
   } = args; // other configurations
 
-  const center = args.center || [0, 0]; // range of ticks in each axis
+  const center = args.center; // range of ticks in each axis
 
   const xRange = xAxis.range;
   const yRange = yAxis.range; // unit length of each axis
@@ -3111,7 +3509,7 @@ function axes(args = {}) {
   const yAxisLine = numberLine(yAxis); // draw y axis
   // size of a unit cell
 
-  const unitLength = [xAxisLine.unitLength, yAxisLine.unitLength];
+  const unitSpace = [xAxisLine.unitSpace, yAxisLine.unitSpace];
   const unitValue = [xAxisLine.unitValue, yAxisLine.unitValue]; // reverse the effect of overall shift
 
   ctx.translate(-center[0], -center[1] - yShift);
@@ -3126,10 +3524,10 @@ function axes(args = {}) {
     // y axis confiurations from numberLine
     unitValue: unitValue,
     // how much a unit is as [x, y] in its value
-    unitLength: unitLength // how much a unit is as [x, y] in px
+    unitSpace: unitSpace // how much a unit is as [x, y] in px
 
   };
-  return Object.assign(ret, getPlotterList(unitLength, unitValue, ret));
+  return Object.assign(ret, getPlotterList(unitSpace, unitValue, ret));
 }
 /**
  * Creates a numberLine with parameters in a object
@@ -3165,7 +3563,7 @@ function axes(args = {}) {
  * * center     {array} Center of the number line in px
  * * tickList   {array} List of tick inervals
  * * unitValue  {array} How much a unit is in its value in x and y directions.
- * * unitLength {array} How much a unit is in px in x and y directions.
+ * * unitSpace {array} How much a unit is in px in x and y directions.
  */
 
 
@@ -3185,7 +3583,7 @@ function numberLine(args = {}) {
     range: [-5, 5, 1],
     numbersToInclude: [],
     numbersToExclude: [],
-    textDirection: [-0.3, -1],
+    textDirection: [-0.3, -0.0],
     numbersWithElongatedTicks: [],
     includeTick: true,
     includeNumbers: true,
@@ -3239,7 +3637,7 @@ function numberLine(args = {}) {
   const list = getTickList();
   ctx.beginPath();
   (0, _settings.save)();
-  (0, _settings.translate)(center[0], center[1]);
+  (0, _settings.translate)(center[0] * ds, center[1] * ds);
   (0, _settings.rotate)(rotation);
   (0, _settings.translate)(-lineLength / 2, 0);
   if (args.includeTick) drawTicks();
@@ -3319,7 +3717,7 @@ function numberLine(args = {}) {
     center: center,
     tickList: list,
     unitValue: step,
-    unitLength: ds
+    unitSpace: ds
   };
 }
 /**
@@ -3331,7 +3729,6 @@ function numberLine(args = {}) {
  * @param {object} args.yAxis Configurations for y axis. See {@link numberLine} for possible configurations.
  * @param {array} args.center Center of number plane as [x, y] in px.
  * @param {object} args.grid Set of styles to draw grid & subgrids. This can have following properties:
- *
  *   @param {number} [args.grid.lineWidth = 1]  stroke width of grid lines
  *   @param {number} [args.grid.subgrids = 0]  number of sub-grid division to draw
  *   @param {number} [args.grid.subgridLineWidth = 0.7]  stroke width of sub-grid
@@ -3341,7 +3738,7 @@ function numberLine(args = {}) {
  *
  * * center                <array>   : Center of number plane as [x, y] in px.
  * * unitValue             <array>   : How much a unit is in its value in x and y directions.
- * * unitLength            <array>   : How much a unit is in px in x and y directions.
+ * * unitSpace            <array>   : How much a unit is in px in x and y directions.
  * * subgridUnit           <array>   : How much a sub-grid is in px in x and y directions.
  * * xAxis                 <object>  : x axis confiurations from numberLine (See {@link numberLine} for those configurations).
  * * yAxis                 <object>  : y axis confiurations from numberLine (See {@link numberLine} for those configurations).
@@ -3356,19 +3753,17 @@ function numberPlane(args = {}) {
   const defaultConfigs = {
     xAxis: {
       length: ctx.width,
-      range: [-5, 5, 1],
-      textDirection: [-0.2, 1.3],
       includeTick: true,
       includeNumbers: true,
       includeLeftTip: false,
       includeRightTip: false,
-      excludeOriginTick: true
+      excludeOriginTick: true,
+      unitSpace: 50
     },
     yAxis: {
       length: ctx.height,
       textRotation: -Math.PI / 2,
-      range: [-5, 5, 1],
-      textDirection: [1.1, 0.6],
+      unitSpace: 50,
       includeTick: true,
       includeNumbers: true,
       includeLeftTip: false,
@@ -3393,7 +3788,26 @@ function numberPlane(args = {}) {
   } = args; // other configurations
 
   const subgrids = grid.subgrids;
-  const center = args.center; // range of ticks in each axis
+  const center = args.center;
+
+  if (!isArray(xAxis.range)) {
+    // find range from unitSpace
+    let extrema = xAxis.length / xAxis.unitSpace / 2;
+    xAxis.range = [-extrema, extrema, 1];
+  } else {
+    if (isNaN(xAxis.range[2])) xAxis.range[2] = 1;
+    xAxis.unitSpace = xAxis.length / ((xAxis.range[1] - xAxis.range[0]) / xAxis.range[2]);
+  }
+
+  if (!isArray(yAxis.range)) {
+    // find range from unitSpace
+    let extrema = yAxis.length / yAxis.unitSpace / 2;
+    yAxis.range = [-extrema, extrema, 1];
+  } else {
+    if (isNaN(yAxis.range[2])) yAxis.range[2] = 1;
+    yAxis.unitSpace = yAxis.length / ((yAxis.range[1] - yAxis.range[0]) / yAxis.range[2]);
+  } // range of ticks in each axis
+
 
   const xRange = xAxis.range;
   const yRange = yAxis.range; // number of ticks in each
@@ -3401,33 +3815,30 @@ function numberPlane(args = {}) {
   const xNums = (xRange[1] - xRange[0]) / xRange[2];
   const yNums = (yRange[1] - yRange[0]) / yRange[2]; // unit length of each axis
 
-  const xDX = xAxis.length / xNums;
-  const yDX = yAxis.length / yNums; // coordinates of bounding rectangle of the graph
+  const xDX = xAxis.unitSpace;
+  const yDX = yAxis.unitSpace; // coordinates of bounding rectangle of the graph
 
   const xMin = xRange[0] / xRange[2] * xDX;
   const xMax = xRange[1] / xRange[2] * xDX;
   const yMin = yRange[0] / yRange[2] * yDX;
-  const yMax = yRange[1] / yRange[2] * yDX; // variables to shift 0 ticks of axes to center
-
-  const xShift = xAxis.length / 2 + xMin;
-  const yShift = yAxis.length / 2 + yMin; // size of a subgrid unit cell
+  const yMax = yRange[1] / yRange[2] * yDX; // size of a subgrid unit cell
 
   const subgridUnit = [xDX / subgrids, yDX / subgrids];
   (0, _settings.save)(); // translate to center
 
-  (0, _settings.translate)(center[0] + xShift, center[1]); // draw grids
-
-  drawGridLines(); // draws axes
+  center[0] *= xDX;
+  center[1] *= yDX;
+  (0, _settings.translate)(center[0], center[1]); // draw grids
+  // draws axes
 
   const axesLines = axes({
     xAxis: xAxis,
     yAxis: yAxis
-  }); // size of a unit cell
+  });
+  drawGridLines(); // size of a unit cell
 
-  const unitLength = axesLines.unitLength;
-  const unitValue = axesLines.unitValue; // reverse the effect of overall shift
-
-  (0, _settings.translate)(-(center[0] + xShift), -center[1] - yShift);
+  const unitSpace = axesLines.unitSpace;
+  const unitValue = axesLines.unitValue;
 
   function drawGridLines() {
     // major grid lines
@@ -3436,7 +3847,8 @@ function numberPlane(args = {}) {
     const subgridyDX = subgridUnit[1]; // horizontal grid lines
 
     for (let i = 0; i <= xNums; i++) {
-      // draw major grid lines
+      if (i == xAxis.center - xAxis.range[0]) continue; // draw major grid lines
+
       drawMajor(i * xDX, // x - shift
       0, // y - shift
       0, yMin, 0, yMax); // draw subgrid grid lines
@@ -3451,7 +3863,8 @@ function numberPlane(args = {}) {
     (0, _settings.translate)(-xMin, yMin); // vertical grid lines
 
     for (let i = 0; i <= yNums; i++) {
-      // draw major grid lines
+      if (i == yAxis.center - yAxis.range[0]) continue; // draw major grid lines
+
       drawMajor(0, // x - shift
       i * yDX, // y - shift
       xMin, 0, xMax, 0); // draw subgrid grid lines
@@ -3485,7 +3898,7 @@ function numberPlane(args = {}) {
     // center of number plane
     unitValue: unitValue,
     // how much a unit is in its value
-    unitLength: unitLength,
+    unitSpace: unitSpace,
     // how much a unit is in px
     xAxis: axesLines.xAxis,
     // x axis confiurations from numberLine
@@ -3494,18 +3907,18 @@ function numberPlane(args = {}) {
     subgridUnit: subgridUnit // subgrid unit size
 
   };
-  return Object.assign(ret, getPlotterList(unitLength, unitValue, ret));
+  return Object.assign(ret, getPlotterList(unitSpace, unitValue, ret));
 }
 
-},{"../constants/colors.js":9,"../main.js":15,"../settings.js":30,"../utils.js":31,"./arrows.js":22,"./functions.js":25,"./geometry.js":26,"./text.js":29}],25:[function(require,module,exports){
+},{"../constants/colors.js":11,"../main.js":17,"../settings.js":32,"../utils.js":33,"./arrows.js":24,"./functions.js":27,"./geometry.js":28,"./text.js":31}],27:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.parametricFunction = parametricFunction;
 exports.functionGraph = functionGraph;
 exports.heatPlot = heatPlot;
+exports.parametricFunction = parametricFunction;
 
 var _color_reader = require("../color/color_reader.js");
 
@@ -3792,36 +4205,36 @@ function heatPlot(args) {
   };
 }
 
-},{"../color/color_reader.js":4,"../main.js":15,"../settings.js":30,"../utils.js":31,"./geometry.js":26}],26:[function(require,module,exports){
+},{"../color/color_reader.js":6,"../main.js":17,"../settings.js":32,"../utils.js":33,"./geometry.js":28}],28:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.arc = arc;
-exports.circle = circle;
-exports.ellipse = ellipse;
-exports.bezier = bezier;
-exports.point = point;
-exports.sector = sector;
-exports.circularSegment = circularSegment;
-exports.smoothCurveThroughPointsTo = smoothCurveThroughPointsTo;
-exports.smoothCurveThroughPoints = smoothCurveThroughPoints;
-exports.quadraticCurve = quadraticCurve;
+exports.angle = angle;
 exports.annulus = annulus;
 exports.annulusSector = annulusSector;
-exports.angle = angle;
+exports.arc = arc;
 exports.arcBetweenPoints = arcBetweenPoints;
-exports.line = line;
-exports.rect = rect;
-exports.polygon = polygon;
-exports.square = square;
-exports.quad = quad;
-exports.triangle = triangle;
+exports.bezier = bezier;
+exports.circle = circle;
+exports.circularSegment = circularSegment;
+exports.ellipse = ellipse;
 exports.equiTriangle = equiTriangle;
-exports.regularPolygon = regularPolygon;
 exports.getBezierControlPoints = getBezierControlPoints;
+exports.line = line;
+exports.point = point;
+exports.polygon = polygon;
+exports.quad = quad;
+exports.quadraticCurve = quadraticCurve;
+exports.rect = rect;
+exports.regularPolygon = regularPolygon;
 exports.regularPolygonWithRadius = regularPolygonWithRadius;
+exports.sector = sector;
+exports.smoothCurveThroughPoints = smoothCurveThroughPoints;
+exports.smoothCurveThroughPointsTo = smoothCurveThroughPointsTo;
+exports.square = square;
+exports.triangle = triangle;
 
 var _main = require("../main.js");
 
@@ -4365,14 +4778,14 @@ function regularPolygonWithRadius(x, y, sides, radius, rotation = 0) {
   if (ctx.doStroke) ctx.stroke();
 }
 
-},{"../main.js":15,"../math/points.js":18,"../utils.js":31}],27:[function(require,module,exports){
+},{"../main.js":17,"../math/points.js":20,"../utils.js":33}],29:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.polygonWithRatioOfCentralAngles = polygonWithRatioOfCentralAngles;
 exports.lens = lens;
+exports.polygonWithRatioOfCentralAngles = polygonWithRatioOfCentralAngles;
 
 var _main = require("../main.js");
 
@@ -4434,14 +4847,14 @@ function lens(c1, r1, c2, r2) {
   ctx.closePath();
 }
 
-},{"../main.js":15,"../math/points.js":18}],28:[function(require,module,exports){
+},{"../main.js":17,"../math/points.js":20}],30:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.tex = tex;
 exports.getImageFromTex = getImageFromTex;
+exports.tex = tex;
 
 var _drawing = require("../constants/drawing.js");
 
@@ -4536,15 +4949,15 @@ function tex(input, x = 0, y = 0) {
   return image;
 }
 
-},{"../constants/drawing.js":10,"../main.js":15}],29:[function(require,module,exports){
+},{"../constants/drawing.js":12,"../main.js":17}],31:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.text = text;
 exports.fillText = fillText;
 exports.strokeText = strokeText;
+exports.text = text;
 
 var _main = require("../main.js");
 
@@ -4618,64 +5031,65 @@ function strokeText(text, x = 0, y = 0, maxwidth = undefined) {
   if (ctx.yAxisInverted) (0, _settings.scale)(1, -1);
 }
 
-},{"../main.js":15,"../settings.js":30}],30:[function(require,module,exports){
+},{"../main.js":17,"../settings.js":32}],32:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.moveTo = moveTo;
-exports.lineTo = lineTo;
 exports.background = background;
+exports.cartasianPlain = cartasianPlain;
+exports.centerdText = centerdText;
+exports.centreCanvas = centreCanvas;
 exports.clear = clear;
-exports.permaBackground = permaBackground;
-exports.setTransform = setTransform;
-exports.transform = transform;
-exports.noFill = noFill;
-exports.noStroke = noStroke;
-exports.translate = translate;
-exports.setImageSmoothing = setImageSmoothing;
-exports.strokeWidth = strokeWidth;
-exports.scale = scale;
-exports.rotate = rotate;
-exports.save = save;
-exports.lineCap = lineCap;
-exports.lineJoin = lineJoin;
-exports.restore = restore;
-exports.getFill = getFill;
-exports.getStroke = getStroke;
-exports.rest = rest;
-exports.stroke = stroke;
-exports.fill = fill;
-exports.getContextStates = getContextStates;
-exports.loop = loop;
-exports.noLoop = noLoop;
-exports.startShape = startShape;
-exports.endShape = endShape;
-exports.getFont = getFont;
-exports.measureText = measureText;
-exports.fontSize = fontSize;
-exports.fontFamily = fontFamily;
-exports.getCanvasData = getCanvasData;
-exports.putImageData = putImageData;
-exports.saveCanvas = saveCanvas;
 exports.clearAll = clearAll;
-exports.lineDash = lineDash;
+exports.endShape = endShape;
+exports.fill = fill;
+exports.fontFamily = fontFamily;
+exports.fontSize = fontSize;
+exports.fontStretch = fontStretch;
 exports.fontStyle = fontStyle;
 exports.fontVariant = fontVariant;
 exports.fontWeight = fontWeight;
-exports.fontStretch = fontStretch;
-exports.lineHeight = lineHeight;
+exports.getCanvasData = getCanvasData;
+exports.getContextStates = getContextStates;
+exports.getFill = getFill;
+exports.getFont = getFont;
+exports.getStroke = getStroke;
+exports.getStrokeWidth = getStrokeWidth;
 exports.getTransform = getTransform;
+exports.initContrastedCanvas = initContrastedCanvas;
+exports.invertYAxis = invertYAxis;
+exports.lineCap = lineCap;
+exports.lineDash = lineDash;
+exports.lineHeight = lineHeight;
+exports.lineJoin = lineJoin;
+exports.lineTo = lineTo;
+exports.loop = loop;
+exports.measureText = measureText;
+exports.moveTo = moveTo;
+exports.noFill = noFill;
+exports.noLoop = noLoop;
+exports.noStroke = noStroke;
+exports.permaBackground = permaBackground;
+exports.putImageData = putImageData;
+exports.rest = rest;
+exports.restore = restore;
+exports.rotate = rotate;
+exports.save = save;
+exports.saveCanvas = saveCanvas;
+exports.scale = scale;
+exports.setImageSmoothing = setImageSmoothing;
+exports.setTransform = setTransform;
+exports.showCreation = showCreation;
+exports.startShape = startShape;
+exports.stroke = stroke;
+exports.strokeWidth = strokeWidth;
 exports.textAlign = textAlign;
 exports.textBaseline = textBaseline;
-exports.centerdText = centerdText;
-exports.centreCanvas = centreCanvas;
-exports.invertYAxis = invertYAxis;
-exports.initContrastedCanvas = initContrastedCanvas;
+exports.transform = transform;
+exports.translate = translate;
 exports.wait = wait;
-exports.getStrokeWidth = getStrokeWidth;
-exports.showCreation = showCreation;
 
 var _create = require("./animations/create.js");
 
@@ -4686,6 +5100,8 @@ var _colors = require("./constants/colors.js");
 var _main = require("./main.js");
 
 var _rate_functions = require("./math/rate_functions.js");
+
+var _coordinate_systems = require("./objects/coordinate_systems.js");
 
 var _geometry = require("./objects/geometry.js");
 
@@ -5658,19 +6074,31 @@ function showCreation() {
     }
   }
 }
+/**
+ * Draws a cartasian plain and moves canvas to center and inverts y-axis.
+ * TODO: find a new name for this function
+ * @param {object} cfg configurations for the plain.
+ */
 
-},{"./animations/create.js":1,"./color/color_reader.js":4,"./constants/colors.js":9,"./main.js":15,"./math/rate_functions.js":20,"./objects/geometry.js":26,"./utils.js":31}],31:[function(require,module,exports){
+
+function cartasianPlain(cfg) {
+  centreCanvas();
+  invertYAxis();
+  (0, _coordinate_systems.numberPlane)(cfg);
+}
+
+},{"./animations/create.js":3,"./color/color_reader.js":6,"./constants/colors.js":11,"./main.js":17,"./math/rate_functions.js":22,"./objects/coordinate_systems.js":26,"./objects/geometry.js":28,"./utils.js":33}],33:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.getType = getType;
-exports.defineProperties = defineProperties;
-exports.arange = arange;
 exports.applyDefault = applyDefault;
-exports.doFillAndStroke = doFillAndStroke;
 exports.approximateIndexInArray = approximateIndexInArray;
+exports.arange = arange;
+exports.defineProperties = defineProperties;
+exports.doFillAndStroke = doFillAndStroke;
+exports.getType = getType;
 
 var _main = require("./main.js");
 
@@ -5768,4 +6196,4 @@ function approximateIndexInArray(val, array, epsilon = 1e-6) {
 
 window.applyDefault = applyDefault;
 
-},{"./main.js":15}]},{},[2]);
+},{"./main.js":17}]},{},[4]);

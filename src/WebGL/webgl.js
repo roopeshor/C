@@ -28,47 +28,8 @@ function createWebGL(configs) {
 
 /**
  * Creates a new instance for drawing in webgl
- * @param {HTMLCanvasElement} canvas canvas element
- * @class
  */
 class WebGL {
-	/** @type {WebGLRenderingContext} */
-	gl;
-	/** @type {HTMLCanvasElement} */
-	canvas;
-	/** @type {number} */
-	width;
-	/** @type {number} */
-	height;
-	/** @type {number} */
-	dpr;
-	/**
-	 * Current using program
-	 * @type {WebGLProgram} */
-	program;
-
-	/**
-	 * Projection matrix used for drawing
-	 * @type {number[]}
-	 */
-	// prettier-ignore
-	projectionMatrix = [
-    1, 0, 0,
-    0, 1, 0,
-    0, 0, 1
-  ];
-
-	/**
-	 * Color to fill inside the shape
-	 * @type {number[]}
-	 */
-	fillColor = [0, 0, 0, 1];
-
-	/**
-	 *
-	 * @param {HTMLCanvasElement} canvas
-	 * @returns {this}
-	 */
 	constructor(canvas) {
 		let gl = canvas.getContext("webgl");
 		if (!gl) {
@@ -82,11 +43,17 @@ class WebGL {
 
 		// make it transparent so that standard canvas can be seen
 
+		/** @type {WebGLRenderingContext} */
 		this.gl = gl;
+		/** @type {HTMLCanvasElement} */
 		this.canvas = canvas;
+		/** @type {number} */
 		this.width = canvas.width;
+		/** @type {number} */
 		this.height = canvas.height;
+		/** @type {number} */
 		this.dpr = canvas.dpr;
+
 		const sources = {
 			default: {
 				vertex: `attribute vec2 a_position;
@@ -139,8 +106,29 @@ void main() {
 			src.uniforms = obj;
 		}
 
+		/**
+		 * Current using program
+		 * @type {WebGLProgram}
+		 */
 		this.program = sources.default;
 		gl.useProgram(this.program.program);
+
+		/**
+		 * Projection matrix used for drawing
+		 * @type {number[]}
+		 */
+		// prettier-ignore
+		this.projectionMatrix = [
+			1, 0, 0,
+			0, 1, 0,
+			0, 0, 1
+		];
+
+		/**
+		 * Color to fill inside the shape
+		 * @type {number[]}
+		 */
+		this.fillColor = [0, 0, 0, 1];
 
 		// set the resolution
 		this.gl.uniform2f(this.program.uniforms.resolution, canvas.width, canvas.height);

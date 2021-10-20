@@ -3,9 +3,6 @@
   "version": "2.0.0",
   "description": "JavaScript library for drawing figures & diagrams and also animation.",
   "main": "src/app.js",
-  "directories": {
-    "example": "examples"
-  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "gcc": "echo Running google-closure-compiler && npx google-closure-compiler --flagfile gcc.conf && echo File saved at dist/c.gcc.js",
@@ -22,6 +19,7 @@
   },
   "homepage": "https://github.com/Roopesh2/C#readme",
   "devDependencies": {
+    "esmify": "^2.1.1",
     "google-closure-compiler": "^20210601.0.0",
     "grunt-browserify": "^6.0.0",
     "grunt-contrib-concat": "^1.0.1",
