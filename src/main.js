@@ -174,9 +174,7 @@ C.workingCanvas.container = {}; //container of canvas
  */
 C.getWindowWidth = function (container = document.body) {
 	const cs = window.getComputedStyle(container);
-	return (
-		parseInt(cs.width) - parseInt(cs.paddingRight) - parseInt(cs.paddingLeft)
-	);
+	return parseInt(cs.width) - parseInt(cs.paddingRight) - parseInt(cs.paddingLeft);
 };
 
 /**

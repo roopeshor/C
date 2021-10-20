@@ -1,16 +1,8 @@
 import { readColor } from "../color/color_reader.js";
 import { C } from "../main.js";
 import { loop, noLoop } from "../settings.js";
-import {
-	applyDefault,
-	approximateIndexInArray,
-	doFillAndStroke,
-} from "../utils.js";
-import {
-	getBezierControlPoints,
-	line,
-	smoothCurveThroughPoints,
-} from "./geometry.js";
+import { applyDefault, approximateIndexInArray, doFillAndStroke } from "../utils.js";
+import { getBezierControlPoints, line, smoothCurveThroughPoints } from "./geometry.js";
 
 const animationEventChain = {
 	then: function (f) {
@@ -62,10 +54,8 @@ function parametricFunction(args) {
 		dur: 4000,
 	};
 	args = applyDefault(defaultConfigs, args);
-	let { paramFunction, range, smoothen, tension, discontinuities, closed } =
-		args;
-	if (Array.isArray(range) && range.length == 2)
-		range.push((range[1] - range[0]) / 20);
+	let { paramFunction, range, smoothen, tension, discontinuities, closed } = args;
+	if (Array.isArray(range) && range.length == 2) range.push((range[1] - range[0]) / 20);
 	let points = [[]],
 		min = range[0],
 		max = range[1],
@@ -153,25 +143,12 @@ function parametricFunction(args) {
 					let recentPoint = j > 0 ? p[j - 1] : closed ? p[p.length - 2] : p[0],
 						currentPoint = p[j],
 						nextPoint = p[j + 1],
-						secondNextPoint =
-							j != p.length - 2 ? p[j + 2] : closed ? p[1] : nextPoint,
-						cp = getBezierControlPoints(
-							recentPoint,
-							currentPoint,
-							nextPoint,
-							secondNextPoint
-						);
+						secondNextPoint = j != p.length - 2 ? p[j + 2] : closed ? p[1] : nextPoint,
+						cp = getBezierControlPoints(recentPoint, currentPoint, nextPoint, secondNextPoint);
 					j++;
 					ctx.beginPath();
 					ctx.moveTo(currentPoint[0], currentPoint[1]);
-					ctx.bezierCurveTo(
-						cp[0],
-						cp[1],
-						cp[2],
-						cp[3],
-						nextPoint[0],
-						nextPoint[1]
-					);
+					ctx.bezierCurveTo(cp[0], cp[1], cp[2], cp[3], nextPoint[0], nextPoint[1]);
 					ctx.stroke();
 				};
 			}

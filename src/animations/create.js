@@ -28,8 +28,10 @@ function Line(args) {
 		next: null,
 		rateFunction: smooth,
 	};
-	let { p1, p2, name, dur, canvas, dTime, rateFunction, next, syncWithTime } =
-		applyDefault(defaults, args);
+	let { p1, p2, name, dur, canvas, dTime, rateFunction, next, syncWithTime } = applyDefault(
+		defaults,
+		args
+	);
 	canvas = canvas || C.workingCanvas.name;
 	let ctx = C.canvasList[canvas];
 
@@ -150,15 +152,7 @@ function Arc(args) {
  * @param {number} [dt=10] dur for each frame
  * @param {function} [next=null] function to run after filling
  */
-function animateFill(
-	name,
-	canvasName,
-	FILL,
-	f,
-	dur = 1000,
-	dt = 10,
-	next = null
-) {
+function animateFill(name, canvasName, FILL, f, dur = 1000, dt = 10, next = null) {
 	let _fill = readColor(FILL, true);
 	const ctx = C.canvasList[canvasName];
 	let previousT = -dur / dt;
@@ -169,12 +163,7 @@ function animateFill(
 				noLoop(canvasName, t);
 				if (typeof next == "function") next();
 			}
-			ctx.fillStyle = readColor(
-				_fill[0],
-				_fill[1],
-				_fill[2],
-				_fill[3] / (t - previousT)
-			);
+			ctx.fillStyle = readColor(_fill[0], _fill[1], _fill[2], _fill[3] / (t - previousT));
 			f();
 			previousT = t;
 		},
@@ -216,17 +205,7 @@ function Circle(args) {
 	};
 	args = Object.assign(defaults, args);
 	let center = args.center,
-		{
-			points,
-			dur,
-			dTime,
-			canvas,
-			rateFunction,
-			fill: fillColor,
-			fillTime,
-			next,
-			rx,
-		} = Arc(args);
+		{ points, dur, dTime, canvas, rateFunction, fill: fillColor, fillTime, next, rx } = Arc(args);
 	return {
 		points: points, // list of computed points
 		dur: dur,

@@ -1,5 +1,5 @@
-import { C } from "../main.js";
 import * as namedColors from "../constants/named_colors.js";
+import { C } from "../main.js";
 
 // adapeted from p5.js
 /**
@@ -16,8 +16,7 @@ let // Matching format: #XXX
 	// Matching format: rgb(R, G, B)
 	RGB = /^rgb\((\d{1,3}),(\d{1,3}),(\d{1,3})\)$/i,
 	// Matching format: rgb(R, G, B, A)
-	RGBA =
-		/^rgba\((\d{1,3}),(\d{1,3}),(\d{1,3}),(?:(\d+(?:\.\d+)?)|(?:\.\d+))\)$/i;
+	RGBA = /^rgba\((\d{1,3}),(\d{1,3}),(\d{1,3}),(?:(\d+(?:\.\d+)?)|(?:\.\d+))\)$/i;
 /**
  * Reads the argument and returns color in the prefered colorMode.
  * If last argument is given true, it will return the colors as array.
@@ -59,7 +58,7 @@ function readColor() {
 		} else if (color.length === 3) {
 			result = [c1, color[1], color[2], 1];
 		} else if (color.length === 4) {
-			result = [c1, color[1], color[2], color[3]/255];
+			result = [c1, color[1], color[2], color[3] / 255];
 		}
 	} else if (typeof c1 == "string") {
 		// Adapted from p5.js

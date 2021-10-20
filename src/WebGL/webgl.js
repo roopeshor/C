@@ -143,11 +143,7 @@ void main() {
 		gl.useProgram(this.program.program);
 
 		// set the resolution
-		this.gl.uniform2f(
-			this.program.uniforms.resolution,
-			canvas.width,
-			canvas.height
-		);
+		this.gl.uniform2f(this.program.uniforms.resolution, canvas.width, canvas.height);
 	}
 
 	/**
@@ -192,14 +188,8 @@ void main() {
 	 * @returns {WebGLProgram}
 	 */
 	createProgramFromSource(vertexShaderSource, fragmentShaderSource) {
-		const vertexShader = this.createShader(
-			this.gl.VERTEX_SHADER,
-			vertexShaderSource
-		);
-		const fragmentShader = this.createShader(
-			this.gl.FRAGMENT_SHADER,
-			fragmentShaderSource
-		);
+		const vertexShader = this.createShader(this.gl.VERTEX_SHADER, vertexShaderSource);
+		const fragmentShader = this.createShader(this.gl.FRAGMENT_SHADER, fragmentShaderSource);
 		return this.createProgram(vertexShader, fragmentShader);
 	}
 	resizeCanvas(width = 300, height = 300) {

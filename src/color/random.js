@@ -1,11 +1,9 @@
-import { randomInt } from "../math/random.js";
 import * as COLORLIST from "../constants/colors.js";
+import { randomInt } from "../math/random.js";
 
 let definedColorList = Object.keys(COLORLIST);
 const TR_INDEX = definedColorList.indexOf("TRANSPARENT");
-definedColorList = definedColorList
-	.slice(0, TR_INDEX)
-	.concat(definedColorList.slice(TR_INDEX + 1));
+definedColorList = definedColorList.slice(0, TR_INDEX).concat(definedColorList.slice(TR_INDEX + 1));
 
 /**
  * returns a random hex color

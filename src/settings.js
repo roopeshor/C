@@ -593,15 +593,7 @@ function endShape() {
 function getFont(detailed = false) {
 	let ctx = C.workingCanvas;
 	if (detailed) {
-		let {
-			fontStyle,
-			fontVariant,
-			fontWeight,
-			fontStretch,
-			fontSize,
-			lineHeight,
-			fontFamily,
-		} = ctx;
+		let { fontStyle, fontVariant, fontWeight, fontStretch, fontSize, lineHeight, fontFamily } = ctx;
 		return `${fontStyle} ${fontVariant} ${fontWeight} ${fontStretch} ${fontSize}/${lineHeight} ${fontFamily}`;
 	} else {
 		return ctx.font;
@@ -744,7 +736,7 @@ function getCanvasData(datURL = "image/png") {
  * @param {number} w
  * @param {number} h
  */
-function putImageData () {
+function putImageData() {
 	C.workingCanvas.putImageData(...arguments);
 }
 
@@ -900,9 +892,7 @@ function showCreation() {
 								}
 								let recentPoint =
 										points[Math.round(len * rateFunction(t - dt))] ||
-										points[
-											len - Math.abs(Math.round(len * rateFunction(t - dt)))
-										],
+										points[len - Math.abs(Math.round(len * rateFunction(t - dt)))],
 									currentPoint = points[i],
 									nextPoint = points[ip1],
 									secondNextPoint = points[ip2],
@@ -915,19 +905,10 @@ function showCreation() {
 									);
 								ctx.beginPath();
 								if (closed)
-									ctx.moveTo(
-										...points[Math.abs(Math.round(len * rateFunction(t)) % len)]
-									);
+									ctx.moveTo(...points[Math.abs(Math.round(len * rateFunction(t)) % len)]);
 								else ctx.moveTo(...points[Math.round(len * rateFunction(t))]);
 
-								ctx.bezierCurveTo(
-									cp[0],
-									cp[1],
-									cp[2],
-									cp[3],
-									nextPoint[0],
-									nextPoint[1]
-								);
+								ctx.bezierCurveTo(cp[0], cp[1], cp[2], cp[3], nextPoint[0], nextPoint[1]);
 								if (ctx.doStroke) ctx.stroke();
 								ctx.closePath();
 								if (!syncWithTime) t += dt;
@@ -947,12 +928,9 @@ function showCreation() {
 									noLoop(ctx.name, elapsed);
 								} else if (t == 0) {
 									ctx.beginPath();
-									ctx.moveTo(
-										...points[Math.abs(Math.round(len * rateFunction(0)))]
-									);
+									ctx.moveTo(...points[Math.abs(Math.round(len * rateFunction(0)))]);
 								}
-								let currentPoint =
-									points[Math.round(len * rateFunction(t)) % len];
+								let currentPoint = points[Math.round(len * rateFunction(t)) % len];
 								ctx.lineTo(currentPoint[0], currentPoint[1]);
 								if (ctx.doStroke) ctx.stroke();
 								if (!syncWithTime) t += dt;
@@ -970,15 +948,7 @@ function showCreation() {
 				}
 			}
 			if (closed && animation.fill) {
-				animateFill(
-					name,
-					ctx.name,
-					animation.fill,
-					animation.filler,
-					animation.fillTime,
-					10,
-					next
-				);
+				animateFill(name, ctx.name, animation.fill, animation.filler, animation.fillTime, 10, next);
 			}
 		} else {
 			throw new Error(

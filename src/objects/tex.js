@@ -8,10 +8,7 @@ import { C } from "../main.js";
  * @return {HTMLImageElement}
  */
 function getImageFromTex(input) {
-	if (
-		typeof window.MathJax == "object" &&
-		typeof window.MathJax.tex2svg == "function"
-	) {
+	if (typeof window.MathJax == "object" && typeof window.MathJax.tex2svg == "function") {
 		let ctx = C.workingCanvas,
 			svgOutput = window.MathJax.tex2svg(input).getElementsByTagName("svg")[0],
 			g = svgOutput.getElementsByTagName("g")[0];

@@ -1,9 +1,5 @@
 import { BLUE, GREY, WHITE } from "../constants/colors.js";
 import { C } from "../main.js";
-import { applyDefault, arange } from "../utils.js";
-import { arrowTip } from "./arrows.js";
-import { functionGraph, heatPlot, parametricFunction } from "./functions.js";
-import { line, point } from "./geometry.js";
 import {
 	fill,
 	fontSize,
@@ -12,8 +8,12 @@ import {
 	save,
 	stroke,
 	strokeWidth,
-	translate,
+	translate
 } from "../settings.js";
+import { applyDefault, arange } from "../utils.js";
+import { arrowTip } from "./arrows.js";
+import { functionGraph, heatPlot, parametricFunction } from "./functions.js";
+import { line } from "./geometry.js";
 import { fillText } from "./text.js";
 
 function isArray(o) {
@@ -189,7 +189,7 @@ function numberLine(args = {}) {
 		range: [-5, 5, 1],
 		numbersToInclude: [],
 		numbersToExclude: [],
-		textDirection: [-0.3, -.0],
+		textDirection: [-0.3, -0.0],
 		numbersWithElongatedTicks: [],
 
 		includeTick: true,
@@ -275,11 +275,7 @@ function numberLine(args = {}) {
 		ctx.lineWidth = lineWidth;
 		const from = includeLeftTip ? 1 : 0;
 		const to = includeRightTip ? list.length - 1 : list.length;
-		for (
-			let i = from;
-			i < to && numbersToExclude.indexOf(list[0][i]) < 0;
-			i++
-		) {
+		for (let i = from; i < to && numbersToExclude.indexOf(list[0][i]) < 0; i++) {
 			const tick = list[i];
 			if (Number(tick) === 0 && excludeOriginTick) continue;
 			let TH = tickHeight;
@@ -294,20 +290,12 @@ function numberLine(args = {}) {
 		const numbers = numbersToInclude.length > 0 ? numbersToInclude : list;
 		fill(args.textColor);
 		fontSize(textSize);
-		const yShift =
-			(-textSize / 3) * Math.cos(textRotation) + textDirection[1] * textSize;
+		const yShift = (-textSize / 3) * Math.cos(textRotation) + textDirection[1] * textSize;
 		const from = includeLeftTip ? 1 : 0;
 		const to = includeRightTip ? numbers.length - 1 : numbers.length;
 
-		for (
-			let i = from;
-			i < to && numbersToExclude.indexOf(numbers[i]) < 0;
-			i++
-		) {
-			const tick =
-				typeof numbers[i] == "number"
-					? numbers[i].toFixed(decimalPlaces)
-					: numbers[i];
+		for (let i = from; i < to && numbersToExclude.indexOf(numbers[i]) < 0; i++) {
+			const tick = typeof numbers[i] == "number" ? numbers[i].toFixed(decimalPlaces) : numbers[i];
 			if (Number(tick) === 0 && excludeOriginTick) continue;
 			const width = ctx.measureText(tick).width;
 			const xShift =
@@ -411,8 +399,7 @@ function numberPlane(args = {}) {
 		xAxis.range = [-extrema, extrema, 1];
 	} else {
 		if (isNaN(xAxis.range[2])) xAxis.range[2] = 1;
-		xAxis.unitSpace =
-			xAxis.length / ((xAxis.range[1] - xAxis.range[0]) / xAxis.range[2]);
+		xAxis.unitSpace = xAxis.length / ((xAxis.range[1] - xAxis.range[0]) / xAxis.range[2]);
 	}
 
 	if (!isArray(yAxis.range)) {
@@ -421,8 +408,7 @@ function numberPlane(args = {}) {
 		yAxis.range = [-extrema, extrema, 1];
 	} else {
 		if (isNaN(yAxis.range[2])) yAxis.range[2] = 1;
-		yAxis.unitSpace =
-			yAxis.length / ((yAxis.range[1] - yAxis.range[0]) / yAxis.range[2]);
+		yAxis.unitSpace = yAxis.length / ((yAxis.range[1] - yAxis.range[0]) / yAxis.range[2]);
 	}
 
 	// range of ticks in each axis
@@ -473,7 +459,7 @@ function numberPlane(args = {}) {
 
 		// horizontal grid lines
 		for (let i = 0; i <= xNums; i++) {
-			if (i == (xAxis.center - xAxis.range[0])) continue;
+			if (i == xAxis.center - xAxis.range[0]) continue;
 			// draw major grid lines
 			drawMajor(
 				i * xDX, // x - shift
@@ -493,7 +479,7 @@ function numberPlane(args = {}) {
 		translate(-xMin, yMin);
 		// vertical grid lines
 		for (let i = 0; i <= yNums; i++) {
-			if (i == (yAxis.center - yAxis.range[0])) continue;
+			if (i == yAxis.center - yAxis.range[0]) continue;
 			// draw major grid lines
 			drawMajor(
 				0, // x - shift

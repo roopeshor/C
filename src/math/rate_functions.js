@@ -112,12 +112,8 @@ function easeOutElastic(t) {
 function easeInOutElastic(t) {
 	if (t == 0) return 0;
 	else if (t == 1) return 1;
-	else if (t < 0.5)
-		return -(Math.pow(2, 20 * t - 10) * Math.sin((20 * t - 11.125) * c5)) / 2;
-	else
-		return (
-			(Math.pow(2, -20 * t + 10) * Math.sin((20 * t - 11.125) * c5)) / 2 + 1
-		);
+	else if (t < 0.5) return -(Math.pow(2, 20 * t - 10) * Math.sin((20 * t - 11.125) * c5)) / 2;
+	else return (Math.pow(2, -20 * t + 10) * Math.sin((20 * t - 11.125) * c5)) / 2 + 1;
 }
 function easeInBounce(t) {
 	return 1 - easeOutBounce(1 - t);
@@ -130,10 +126,7 @@ function easeInOutBounce(t) {
 // manim rate funcitons
 function smooth(t, inflection = 10.0) {
 	let error = sigmoid(-inflection / 2);
-	return Math.min(
-		Math.max((sigmoid(inflection * (t - 0.5)) - error) / (1 - 2 * error), 0),
-		1
-	);
+	return Math.min(Math.max((sigmoid(inflection * (t - 0.5)) - error) / (1 - 2 * error), 0), 1);
 }
 function rushInto(t, inflection = 10.0) {
 	return 2 * smooth(t / 2.0, inflection);

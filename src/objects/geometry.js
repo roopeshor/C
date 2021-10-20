@@ -81,15 +81,7 @@ function circle(x, y, r) {
  * @param {number} [startAngle=0] The angle at which the ellipse starts, measured clockwise from the positive x-axis and expressed in radians.
  * @param {number} [angle=Math.PI * 2] central angle of ellipse. Use negative values to rotate it anticlockwise
  */
-function ellipse(
-	x,
-	y,
-	radius1,
-	radius2,
-	rotation = 0,
-	startAngle = 0,
-	angle = Math.PI * 2
-) {
+function ellipse(x, y, radius1, radius2, rotation = 0, startAngle = 0, angle = Math.PI * 2) {
 	let ctx = C.workingCanvas;
 	if (!ctx.pathStarted) ctx.beginPath();
 	ctx.ellipse(x, y, radius1, radius2, rotation, startAngle, startAngle + angle);
@@ -167,27 +159,12 @@ function getBezierControlPoints(
  */
 function smoothCurveThroughPointsTo(points, tension = 1, closed = true) {
 	for (let i = 0; i < points.length - 1; i++) {
-		let recentPoint =
-				i > 0 ? points[i - 1] : closed ? points[points.length - 2] : points[0],
+		let recentPoint = i > 0 ? points[i - 1] : closed ? points[points.length - 2] : points[0],
 			currentPoint = points[i],
 			nextPoint = points[i + 1],
-			secondNextPoint =
-				i != points.length - 2 ? points[i + 2] : closed ? points[1] : nextPoint,
-			cp = getBezierControlPoints(
-				recentPoint,
-				currentPoint,
-				nextPoint,
-				secondNextPoint,
-				tension
-			);
-		C.workingCanvas.bezierCurveTo(
-			cp[0],
-			cp[1],
-			cp[2],
-			cp[3],
-			nextPoint[0],
-			nextPoint[1]
-		);
+			secondNextPoint = i != points.length - 2 ? points[i + 2] : closed ? points[1] : nextPoint,
+			cp = getBezierControlPoints(recentPoint, currentPoint, nextPoint, secondNextPoint, tension);
+		C.workingCanvas.bezierCurveTo(cp[0], cp[1], cp[2], cp[3], nextPoint[0], nextPoint[1]);
 	}
 }
 
@@ -286,16 +263,7 @@ function annulusSector(x, y, innerRadius, outerRadius, angle, startAngle) {
  * @param {number} angleDir there can be four angle in a line intersection. Choose a number from 1 to 4.
  * @returns {array} coordinate of point in the middle of angle as array of point as [x, y]
  */
-function angle(
-	p1,
-	p2,
-	p3,
-	p4,
-	radius = 20,
-	extender = 10,
-	otherAngle = false,
-	angleDir = 1
-) {
+function angle(p1, p2, p3, p4, radius = 20, extender = 10, otherAngle = false, angleDir = 1) {
 	let [x, y] = lineIntersection(p1, p2, p3, p4);
 	if (!(isNaN(x) || isNaN(y))) {
 		let ang,
@@ -361,9 +329,7 @@ function angle(
 function arcBetweenPoints(x1, y1, x2, y2, radius, otherArc = false) {
 	if (x1 == x2 && y1 == y2)
 		// TODO: should it be `throw Error()`?
-		console.error(
-			"Can't draw a arc between points. Given points are exactly same"
-		);
+		console.error("Can't draw a arc between points. Given points are exactly same");
 	let center = circleIntersection([x1, y1], radius, [x2, y2], radius)[0],
 		ctx = C.workingCanvas,
 		angleFromXAxis = Math.atan2(y1 - center[1], x1 - center[0]),
@@ -372,14 +338,7 @@ function arcBetweenPoints(x1, y1, x2, y2, radius, otherArc = false) {
 		ctx.save();
 		ctx.beginPath();
 	}
-	ctx.arc(
-		center[0],
-		center[1],
-		radius,
-		angleFromXAxis,
-		centralAngle + angleFromXAxis,
-		!otherArc
-	);
+	ctx.arc(center[0], center[1], radius, angleFromXAxis, centralAngle + angleFromXAxis, !otherArc);
 	if (!ctx.pathStarted) {
 		doFillAndStroke(ctx);
 		ctx.restore();
@@ -541,17 +500,11 @@ function regularPolygonWithRadius(x, y, sides, radius, rotation = 0) {
 		e = (Math.PI * 2) / sides,
 		ctx = C.workingCanvas;
 	rotation += e / 2;
-	let initial = [
-		Math.cos(rotation) * radius + x,
-		Math.sin(rotation) * radius + y,
-	];
+	let initial = [Math.cos(rotation) * radius + x, Math.sin(rotation) * radius + y];
 	ctx.beginPath();
 	ctx.moveTo(initial[0], initial[1]);
 	while (i++ < sides) {
-		ctx.lineTo(
-			Math.cos(i * e + rotation) * radius + x,
-			Math.sin(i * e + rotation) * radius + y
-		);
+		ctx.lineTo(Math.cos(i * e + rotation) * radius + x, Math.sin(i * e + rotation) * radius + y);
 	}
 	ctx.lineTo(initial[0], initial[1]);
 	ctx.closePath();

@@ -12,15 +12,7 @@ import { C } from "../main.js";
  * @param {number} [curviness=0.6] curviness of brace. '0' doesn't make flat brace
  * @param {number} [taleLength=0.8] length of tale proportional to size \ length
  */
-function curlyBrace(
-	x1,
-	y1,
-	x2,
-	y2,
-	size = 20,
-	curviness = 0.6,
-	taleLength = 0.8
-) {
+function curlyBrace(x1, y1, x2, y2, size = 20, curviness = 0.6, taleLength = 0.8) {
 	//Calculate unit vector
 	let dx = x1 - x2;
 	let dy = y1 - y2;
@@ -97,10 +89,7 @@ function arcBrace(
 
 	// tip line
 	ctx.moveTo(radius * Math.cos(angle / 2), radius * Math.sin(angle / 2));
-	ctx.lineTo(
-		largerRadius * Math.cos(angle / 2),
-		largerRadius * Math.sin(angle / 2)
-	);
+	ctx.lineTo(largerRadius * Math.cos(angle / 2), largerRadius * Math.sin(angle / 2));
 
 	ctx.stroke();
 	ctx.closePath();
