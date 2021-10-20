@@ -48,9 +48,11 @@ function lerpColorObject(colorObj, v) {
 /**
  * Lerps across a color Array
  * From <https://github.com/yuki-koyama/tinycolormap/blob/fe597277c782c583eb40362de98a08df62efc628/include/tinycolormap.hpp#L159>
- * @param {array<number>} colorArr
- * @param {number} v
- * @return {string}
+ * @param {array<string>} colorArr array that contains color as string
+ * @param {number} v value to interpolate
+ * @param {number} [min = 0] minimum value of the range
+ * @param {number} [max = 1] maximum value of the range
+ * @return {string} lerped color
  */
 function lerpColorArray(colorArr, v, min = 0, max = 1) {
 	let len = colorArr.length - 1;

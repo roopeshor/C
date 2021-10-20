@@ -1,3 +1,5 @@
+// prettier-ignore
+/** @type {Object.<string, string[]>} ColorPalette */
 let ColorPalettes = {
 	// This product includes color specifications and designs developed by Cynthia Brewer (http://colorbrewer.org/).
 	// Please see license at http://colorbrewer.org/export/LICENSE.txt
@@ -28,21 +30,25 @@ let ColorPalettes = {
 	RdYlBu  : "#a50026 #d73027 #f46d43 #fdae61 #fee090 #ffffbf #e0f3f8 #abd9e9 #74add1 #4575b4 #313695",
 	RdYlGn  : "#a50026 #d73027 #f46d43 #fdae61 #fee08b #ffffbf #d9ef8b #a6d96a #66bd63 #1a9850 #006837",
 	Spectral: "#9e0142 #d53e4f #f46d43 #fdae61 #fee08b #ffffbf #e6f598 #abdda4 #66c2a5 #3288bd #5e4fa2",
+
 	// From Matlab
 	Heat    : "#0000ff #00ffff #00ff00 #ffff00 #ff0000",
 	Jet     : "#000080 #0000ff #0080ff #00ffff #80ff80 #ffff00 #ff8000 #ff0000 #800000",
 	Parula  : "#352a87 #2450d0 #0a72de #128ad2 #06a4ca #1ab2b1 #51bd90 #92bf72 #c6bc5e #f6ba46 #f9d528 #f9fb0e",
+
 	// From Matplotlib
 	Magma   : "#000004 #120d31 #331067 #5a167e #7e2482 #a3307e #c83e73 #e95462 #f97b5d #fea973 #fed395 #fcfdbf",// very close to CMRmap
 	Inferno : "#000004 #140b34 #390963 #61136e #85216b #a92e5e #cb4149 #e65d2f #f78212 #fcae12 #f5db4c #fcffa4",
 	Plasma  : "#0d0887 #3e049c #6300a7 #8707a6 #a62098 #c03a83 #d5546e #e76f5a #f58c46 #fdae32 #fcd225 #f0f921",
 	Viridis : "#440154 #482173 #433e85 #38598c #2d708e #25858e #1e9b8a #2ab07f #50c46a #86d549 #c2df23 #fde725",
 	Cividis : "#00204d #00306f #2a406c #48526b #5e626e #727374 #878479 #9e9677 #b6a971 #d0be67 #ead357 #ffea46",
+
 	// Other
 	GitHub  : "#eeeeee #c6e48b #7bc96f #239a3b #196127",
 	Turbo   : "#30123b #4454c3 #448ffe #1fc9dd #2aefa1 #7dff56 #c1f334 #f1cb3a #fe932a #ea4e0d #be2102 #7a0403",
 	Grey    : "#000000 #ffffff",
 	Gray    : "#000000 #ffffff",
 };
+
 for (var p in ColorPalettes) ColorPalettes[p] = ColorPalettes[p].split(" ");
-export {ColorPalettes};
+export { ColorPalettes };

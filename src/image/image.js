@@ -38,11 +38,11 @@ function drawImage(img) {
  * @param {number} y y-coordinate of pixel
  * @param {string} color color of pixel
  */
-function pixel(x, y, color) {
-	let ctx = C.workingCanvas,
-		d = 1 / ctx.dpr;
+function pixel(x, y, color, size) {
+	let ctx = C.workingCanvas;
 	if (color) ctx.fillStyle = color;
-	ctx.fillRect(x, y, d, d);
+	if (!size) size = 1 / ctx.dpr;
+	ctx.fillRect(x, y, size, size);
 }
 
 /**

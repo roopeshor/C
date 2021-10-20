@@ -3,6 +3,7 @@ import { readColor } from "./color/color_reader.js";
 import { YELLOW } from "./constants/colors.js";
 import { C } from "./main.js";
 import { smooth } from "./math/rate_functions.js";
+import { numberPlane } from "./objects/coordinate_systems.js";
 import { getBezierControlPoints } from "./objects/geometry.js";
 import { getType } from "./utils.js";
 
@@ -990,7 +991,18 @@ function showCreation() {
 	}
 }
 
+/**
+ * Draws a cartasian plain and moves canvas to center and inverts y-axis.
+ * TODO: find a new name for this function
+ * @param {object} cfg configurations for the plain.
+ */
+function cartasianPlain(cfg) {
+	centreCanvas();
+	invertYAxis();
+	numberPlane(cfg);
+}
 export {
+	cartasianPlain,
 	moveTo,
 	lineTo,
 	background,
