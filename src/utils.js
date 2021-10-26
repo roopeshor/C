@@ -59,7 +59,13 @@ function applyDefault(_default, target = {}, deepApply = true) {
 		if (defaultType == "Object" && deepApply) {
 			target[prop] = applyDefault(defaultProp, targetProp, deepApply);
 		}
-		if (targetType !== defaultType) target[prop] = _default[prop];
+		if (defaultType == "Undefined" || defaultType == "Null") {
+			// let the value in target as it is. Since the type is not defined in default configs
+			continue;
+		}
+		if (targetType !== defaultType) {
+			target[prop] = _default[prop];
+		}
 	}
 	return target;
 }

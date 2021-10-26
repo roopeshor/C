@@ -60,7 +60,6 @@ function background() {
 
 /**
  * Erases the pixels in a rectangular area by setting them to transparent black
- * See {@link https://developer.mozilla.org/en-US/docs/Web/CSS/font-stretch} for more info
  *
  * @param {number} x x-axis coordinate of the rectangle's starting point.
  * @param {number} y y-axis coordinate of the rectangle's starting point.
@@ -68,12 +67,16 @@ function background() {
  * @param {number} height Rectangle's height. positive values are down, and negative are up.
  */
 function clear(x, y, width, height) {
-	let ctx = C.workingCanvas;
+	let ctx = C.workingCanvas,
+		d = ctx.dpr;
 	x = x || 0;
 	y = y || 0;
 	width = width || ctx.width;
 	height = height || ctx.height;
-	ctx.clearRect(x, y, width, height);
+	ctx.save();
+	ctx.setTransform(d, 0, 0, d, 0, 0);
+	ctx.clearRect(0, 0, ctx.width, ctx.height);
+	ctx.restore();
 }
 
 /**
@@ -1008,7 +1011,6 @@ export {
 	getCanvasData,
 	putImageData,
 	saveCanvas,
-	clearAll,
 	lineDash,
 	fontStyle,
 	fontVariant,

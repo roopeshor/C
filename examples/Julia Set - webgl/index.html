@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Shapes</title>
+	<script defer src="../../src/app.js" type="module"></script>
+	<script id="vertex" type="x-shader/x-vertex">
+	precision highp float;
+	attribute vec2 position;
+	varying lowp vec3 color;
+	uniform vec2 c;
+	uniform lowp float shift;
+	uniform bool smoothen;
+	void main () {
+		vec2 pos = position;
+		float iteration = 0.0;
+		float re = pos.x;
+		float im = pos.y;
+		for (int i = 1; i < 200; i++) {
+			float re_temp = re * re - im * im + c.x;
+			im = 2.0 * re * im + c.y;
+			re = re_temp;
+			if (re * re + im * im > 4.0) {
+				iteration = float(i);
+				break;
+			}
+		}
+
+		if (iteration < 200.0 && smoothen) {
+			float log2 = log(2.0);
+			iteration = iteration + 1.0
+					- log(log(re * re + im * im) / log2 / 2.0) / log2;
+		}
+
+		float col = iteration / 200.0 + shift;
+		if (iteration > 0.0) color = vec3(col, 1.0, 0.5);
+		else color = vec3(col, 0, 0);
+		gl_Position = vec4(pos / 2.0, 0, 1);
+		gl_PointSize = 1.0;
+	}
+	</script>
+
+	<script id="fragment" type="x-shader/x-fragment">
+	precision highp float;
+	float hue2rgb(float f1, float f2, float hue) {
+		if (hue < 0.0)
+			hue += 1.0;
+		else if (hue > 1.0)
+			hue -= 1.0;
+		float res;
+		if ((6.0 * hue) < 1.0)
+			res = f1 + (f2 - f1) * 6.0 * hue;
+		else if ((2.0 * hue) < 1.0)
+			res = f2;
+		else if ((3.0 * hue) < 2.0)
+			res = f1 + (f2 - f1) * ((2.0 / 3.0) - hue) * 6.0;
+		else
+			res = f1;
+		return res;
+	}
+
+	vec3 hsl2rgb(vec3 hsl) {
+		vec3 rgb;
+		if (hsl.y == 0.0) {
+			rgb = vec3(hsl.z); // Luminance
+		} else {
+			float f2;
+			if (hsl.z < 0.5) f2 = hsl.z * (1.0 + hsl.y);
+			else f2 = hsl.z + hsl.y - hsl.y * hsl.z;
+			float f1 = 2.0 * hsl.z - f2;
+
+			rgb.r = hue2rgb(f1, f2, hsl.x + (1.0/3.0));
+			rgb.g = hue2rgb(f1, f2, hsl.x);
+			rgb.b = hue2rgb(f1, f2, hsl.x - (1.0/3.0));
+		}
+		return rgb;
+	}
+
+	vec3 hsl2rgb(float h, float s, float l) {
+			return hsl2rgb(vec3(h, s, l));
+	}
+	varying lowp vec3 color;
+	void main () {
+		gl_FragColor = vec4(hsl2rgb(color), .5);
+	}
+	</script>
+
+	<style>
+		body, html {
+			margin: 0;
+			padding: 5px;
+		}
+
+		.inputbox div{
+			display: flex;
+			flex-direction: row;
+			align-content: center;
+		}
+	</style>
+</head>
+<body>
+	<div class="inputbox">
+		<div class="shift">
+			<span>Hue shift:</span>
+			<input type="range" name="shift" id="shift" min="0" max="360" value="0">
+			<output id="shift-out">0</output>
+		</div>
+		<div class="smoothen">
+			<input type="checkbox" name="smoothening" id="smoothen" value="false">
+			<span>Smoothen</span>
+		</div>
+	</div>
+	<div class="container"></div>
+	<script defer src="./index.js" type="module"></script>
+</html>

@@ -44,77 +44,28 @@ function C(fx, container, cfgs = {}) {
 		font: "20px serif",
 
 		// event listeners
-
-		// mouse
-		onclick: undefined,
-		onmousemove: undefined,
-		onmouseout: undefined,
-		onmousedown: undefined,
-		onmouseup: undefined,
-		onmousewheel: undefined,
-
-		// key
-		onkeydown: undefined,
-		onkeyup: undefined,
-		onkeypress: undefined,
-		oncopy: undefined,
-		onpaste: undefined,
-		oncut: undefined,
-
-		// touch
-		ontouchstart: undefined,
-		ontouchmove: undefined,
-		ontouchend: undefined,
-		ontouchcancel: undefined,
-
-		// scale
-		onresize: undefined,
-
-		// dom
-		onblur: undefined,
-		onfocus: undefined,
-		onchange: undefined,
-		oninput: undefined,
-		onload: undefined,
-		onscroll: undefined,
-		onwheel: undefined,
-
-		onpointerdown: undefined,
-		onpointermove: undefined,
-		onpointerup: undefined,
-		onpointercancel: undefined,
-		onpointerover: undefined,
-		onpointerout: undefined,
-		onpointerenter: undefined,
-		onpointerleave: undefined,
-		onfullscreenchange: undefined,
+		events: {},
 	};
 	// assign configs
-	const configs = applyDefault(defaultConfigs, cfgs);
-	// initialize canvas
-	let canvas = C.makeCanvas(configs);
+	let configs = applyDefault(defaultConfigs, cfgs),
+		canvas;
+
 	if (typeof container === "string") {
 		container = document.querySelector(container);
 	} else if (!(container instanceof HTMLElement)) {
 		container = document.body;
 	}
 
-	if (typeof container.CID !== "number") {
-		container.CID = 1;
-	}
+	// initialize canvas
+	let c = container.querySelector("canvas");
+	if (c) canvas = c;
+	else canvas = C.makeCanvas(configs);
+
+	if (typeof container.CID !== "number") container.CID = 1;
 	let parentCID = container.CID,
 		parentName = container.id || container.classList.item(0),
-		canvasName = configs.name;
-	if (typeof canvasName == "string") {
-		const cvs = container.querySelector("#" + canvasName);
-		if (cvs instanceof HTMLElement) {
-			// if already exist
-			canvas = cvs;
-			prepareCanvas();
-			fx();
-			return;
-		}
-	} else {
+		canvasName = configs.name || canvas.name;
+	if (typeof canvasName != "string") {
 		canvasName = parentName + "-C-" + parentCID;
 		configs.name = canvasName;
 	}
@@ -133,8 +84,21 @@ function C(fx, container, cfgs = {}) {
 	canvas.classList.add(canvasName);
 	// add canvas to container
 	container.appendChild(canvas);
-	prepareCanvas();
+	if (c) C.workingCanvas = canvas.context;
+	else prepareCanvas();
 	C.canvasList[canvasName] = canvas.context;
+
+	// attach event listeners
+	let active = {};
+	for (let event in configs.events) {
+		let listener = configs.events[event];
+		if (listener) {
+			canvas.addEventListener(event, listener);
+			active[event] = listener;
+		}
+	}
+	// attach list of active listeners to canvas for other uses
+	canvas.events = active;
 	fx();
 }
 

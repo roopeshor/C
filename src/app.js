@@ -72,4 +72,6 @@ defineProperties(COLORLIST, C.COLORLIST);
 
 //! Experimental features
 import * as WebGL from "./WebGL/webgl.js";
+import * as WebGLSettings from "./WebGL/settings.js";
 defineProperties(WebGL);
+defineProperties(WebGLSettings);
