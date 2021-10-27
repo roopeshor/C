@@ -101,7 +101,7 @@ function arrow(
  *
  * @param {number} x1
  * @param {number} y1
- * @param {number} x20]
+ * @param {number} x2
  * @param {number} y2
  * @param {number} [tipWidth=DEFAULT_TIP_WIDTH] width of tip
  * @param {number} tipHeight height of tip. Default value is tipWidth / 1.2
@@ -139,11 +139,11 @@ function doubleArrow(
 /**
  * Draws a double tipped arrow with text in the middle
  *
- * @param {object} args parameters.
+ * @param {Object} args parameters.
  * Possible values:
  * @param {string} args.text text
- * @param {array} args.p1 first point
- * @param {array} args.p2 second point
+ * @param {Array<number>} args.p1 first point
+ * @param {Array<number>} args.p2 second point
  * @param {number} [args.tipWidth = 15] tip width
  * @param {number} [args.tipHeight = 12.5] tip height
  * @param {number} [args.spacing = 0] spacing
@@ -211,7 +211,7 @@ function measurement(args) {
  * @param {number} x x position of circle
  * @param {number} y y position of circle
  * @param {number} radius radius of circle
- * @param {number} [angle=Math.PI / 2] central angle of arc
+ * @param {number} [angle=1.5707963267948966] central angle of arc
  * @param {number} [startAngle=0] starting angle
  * @param {number} [tipWidth=DEFAULT_TIP_WIDTH] width of tip
  * @param {number} tipHeight height of tip. Default value is tipWidth / 1.2
@@ -275,7 +275,7 @@ function curvedArrow(
  * @param {number} x x position of circle
  * @param {number} y y position of circle
  * @param {number} radius radius of circle
- * @param {number} [angle=Math.PI / 2] central angle of arrow in radians
+ * @param {number} [angle=1.5707963267948966] central angle of arrow in radians
  * @param {number} [startAngle=0] start angle of arrow in radians
  * @param {number} [tipWidth=DEFAULT_TIP_WIDTH] width of arrow tip
  * @param {number} tipHeight height of tip. Default value is tipWidth / 1.2
@@ -328,8 +328,8 @@ function curvedDoubleArrow(
 /**
  * Draws a curved arrow between two points that wraps around a circle with a definite radius.
  *
- * @param {array<number>} p1 start point
- * @param {array<number>} p2 end point
+ * @param {Array<number>} p1 start point
+ * @param {Array<number>} p2 end point
  * @param {number} radius radius of circle
  * @param {number} [tipWidth=DEFAULT_TIP_WIDTH] width of tip
  * @param {number} tipHeight height of tip. Default value is tipWidth / 1.2
@@ -337,7 +337,7 @@ function curvedDoubleArrow(
  * @param {number} [tipOffset=0] offset (padding) of tip from it's defined end. Expressed in radians
  * @param {boolean} [otherArc=false] whether to use other arc
  * @param {boolean} [reverse=false] whether to reverse the direction of arrow.
- * @return {array} coordiante of the center of arc as [x, y]
+ * @return {Array<number>} coordiante of the center of arc as [x, y]
  */
 function curvedArrowBetweenPoints(
 	p1,
@@ -389,15 +389,15 @@ function curvedArrowBetweenPoints(
 /**
  * Draws a double tipped curved arrow between two points that wraps around a circle with a definite radius.
  *
- * @param {array<number>} p1 start point
- * @param {array<number>} p2 end point
+ * @param {Array<number>} p1 start point
+ * @param {Array<number>} p2 end point
  * @param {number} radius radius of circle
  * @param {number} [tipWidth=DEFAULT_TIP_WIDTH] width of tip
  * @param {number} tipHeight height of tip. Default value is tipWidth / 1.2
  * @param {number} [arrowCurving=0] arrow curving const. Expressed in pixels
  * @param {number} [tipOffset=0] offset (padding) of tip from it's defined. Expressed in radians
  * @param {boolean} [otherArc=false] whether to use other arc
- * @return {array} coordiante of the center of arc as [x, y]
+ * @return {Array<number>} coordiante of the center of arc as [x, y]
  */
 function curvedDoubleArrowBetweenPoints(
 	p1,

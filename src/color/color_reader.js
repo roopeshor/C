@@ -1,11 +1,9 @@
 import * as namedColors from "../constants/named_colors.js";
-import { C } from "../main.js";
 
 // adapeted from p5.js
-/**
- * Full color string patterns. The capture groups are necessary.
- */
-let // Matching format: #XXX
+// Full color string patterns. The capture groups are necessary.
+let
+	// Matching format: #XXX
 	HEX3 = /^#([a-f0-9])([a-f0-9])([a-f0-9])$/i,
 	// Matching format: #XXXX
 	HEX4 = /^#([a-f0-9])([a-f0-9])([a-f0-9])([a-f0-9])$/i,
@@ -33,22 +31,11 @@ let // Matching format: #XXX
  * * readColor(255, 200, 100, true) // [255, 200, 100, 1]
  * * readColor("#f3da", true)       // [255, 51, 221, 0.0392156862745098]
  *
- * @return {string|array} color string/array
+ * @return {Object} color string/array
  */
-function readColor() {
-	let args = Array.prototype.slice.call(arguments),
-		color,
-		toArray,
-		lastArg = args[args.length - 1],
-		result;
-	if (Array.isArray(args[0])) args = args[0];
-	if (typeof lastArg == "boolean") {
-		toArray = lastArg;
-		color = args.slice(0, args.length - 1);
-	} else {
-		toArray = false;
-		color = args.slice(0, args.length);
-	}
+function readColor(...color) {
+	let result;
+	if (Array.isArray(color[0])) color = color[0];
 	let c1 = color[0];
 	if (typeof c1 === "number") {
 		if (color.length === 1) {
@@ -58,13 +45,14 @@ function readColor() {
 		} else if (color.length === 3) {
 			result = [c1, color[1], color[2], 1];
 		} else if (color.length === 4) {
-			result = [c1, color[1], color[2], color[3] / 255];
+			result = [c1, color[1], color[2], color[3]];
 		}
 	} else if (typeof c1 == "string") {
 		// Adapted from p5.js
 		let str = c1.replace(/\s/g, "").toLowerCase();
 		// convert string to array if it is a named colour.
-		if (namedColors[str]) result = readColor(namedColors[str], true);
+
+		if (namedColors[str]) result = readColor(namedColors[str]).rgbaA;
 		else if (HEX3.test(str)) {
 			result = HEX3.exec(str)
 				.slice(1)
@@ -83,52 +71,60 @@ function readColor() {
 			result = HEX8.exec(str)
 				.slice(1)
 				.map((color) => parseInt(color, 16));
-			result[3] /= 255;
 		} else if (RGB.test(str)) {
 			result = RGB.exec(str)
 				.slice(1)
-				.map((color) => parseInt(color));
+				.map((color) => parseInt(color, 10));
 			result[3] = 1;
 		} else if (RGBA.test(str)) {
 			result = RGBA.exec(str)
 				.slice(1)
 				.map((color, index) => {
 					if (index == 3) return parseFloat(color);
-					return parseInt(color);
+					return parseInt(color, 10);
 				});
 		} else {
 			console.log(str);
 			throw new Error("Given color is not valid");
 		}
 	} else {
-		return c1;
+		result = c1;
+		return {
+			rgbaA: result,
+			rgba: result,
+			hex6: result,
+			hex8: result,
+			hex: result,
+			hsl: result,
+		};
 	}
-	if (!toArray) {
-		let mode = (C.workingCanvas || {}).colorMode || "rgba";
-		if (mode === "rgba") {
-			result = `rgba(${result[0]}, ${result[1]}, ${result[2]}, ${result[3]})`;
-		} else if (mode === "hsl" || mode === "rgb") {
-			result = mode + `(${result[0]}, ${result[1]}, ${result[2]})`;
-		} else if (mode == "hex6") {
-			let r = "#";
-			result.map((color, i) => {
-				if (i < 3) {
-					let hex = Math.round(color).toString(16);
-					r += hex.length == 1 ? "0" + hex : hex;
-				}
-			});
-			result = r;
-		} else if (mode == "hex8") {
-			let r = "#";
-			result.map((color, i) => {
-				if (i < 4) {
-					let hex = Math.round(color).toString(16);
-					r += hex.length == 1 ? "0" + hex : hex;
-				}
-			});
-			result = r;
+
+	let a = result[3];
+	result[3] *= 255;
+	let hex6 = "#",
+		r = result;
+	r.map((color, i) => {
+		if (i < 3) {
+			let hex = Math.round(color).toString(16);
+			hex6 += hex.length == 1 ? "0" + hex : hex;
 		}
-	}
-	return result;
+	});
+	let hex8 = "#";
+	r = result;
+	r.map((color, i) => {
+		if (i < 4) {
+			let hex = Math.round(color).toString(16);
+			hex8 += hex.length == 1 ? "0" + hex : hex;
+		}
+	});
+	result[3] = a;
+	return {
+		rgbaA: result,
+		rgba: `rgba(${result[0]}, ${result[1]}, ${result[2]}, ${result[3]})`,
+		hex6: hex6,
+		hex8: hex8,
+		hex: hex8,
+		hsl: `hsl(${result[0]}, ${result[1]}, ${result[2]})`,
+	};
 }
 export { readColor };

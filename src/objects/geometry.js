@@ -45,7 +45,7 @@ function point(x, y, size = 10, doStroke = false) {
  * @param {number} x x-axis coordinate of center of circular sector
  * @param {number} y y-axis coordinate of center of circular sector
  * @param {number} r radius of the circular sector
- * @param {number} [angle=Math.PI / 2] central angle
+ * @param {number} [angle=1.5707963267948966] central angle
  * @param {number} [startAngle=0] The angle at which the arc starts in radians, measured from the positive x-axis.
  */
 function circularSegment(x, y, r, angle = Math.PI / 2, startAngle = 0) {
@@ -79,7 +79,7 @@ function circle(x, y, r) {
  * @param {number} radius2 ellipse's minor-axis radius. Must be non-negative.
  * @param {number} [rotation=0] The rotation of the ellipse, expressed in radians.
  * @param {number} [startAngle=0] The angle at which the ellipse starts, measured clockwise from the positive x-axis and expressed in radians.
- * @param {number} [angle=Math.PI * 2] central angle of ellipse. Use negative values to rotate it anticlockwise
+ * @param {number} [angle=6.28318530717958] central angle of ellipse. Use negative values to rotate it anticlockwise
  */
 function ellipse(x, y, radius1, radius2, rotation = 0, startAngle = 0, angle = Math.PI * 2) {
 	let ctx = C.workingCanvas;
@@ -128,12 +128,12 @@ function sector(x, y, radius, angle = Math.PI / 2, startAngle = 0) {
 /**
  * Returns bēzier control points that passes smoothly through given points.
  *
- * @param {array} recentPoint previous point
- * @param {array} currentPoint
- * @param {array} nextPoint
- * @param {array} secondNextPoint
+ * @param {Array<number>} recentPoint previous point
+ * @param {Array<number>} currentPoint
+ * @param {Array<number>} nextPoint
+ * @param {Array<number>} secondNextPoint
  * @param {number} [tension=1]
- * @return {array} two control points as [cp1x, cp1y, cp2x, cp2y]
+ * @return {Array<number>} two control points as [cp1x, cp1y, cp2x, cp2y]
  */
 function getBezierControlPoints(
 	recentPoint,
@@ -154,7 +154,7 @@ function getBezierControlPoints(
  * Adds a smooth curve passing through given points and tension using bézie curve to the current shape.
  * Taken from {@link https://stackoverflow.com/a/49371349}
  *
- * @param {array <array<number>>} points array of points as [x, y]
+ * @param {Array<Array<number>>} points array of points as [x, y]
  * @param {number} tension tension of the curve
  */
 function smoothCurveThroughPointsTo(points, tension = 1, closed = true) {
@@ -171,7 +171,7 @@ function smoothCurveThroughPointsTo(points, tension = 1, closed = true) {
 /**
  * Draws smooth curve passing through given points and tension using bézie curve.
  *
- * @param {array <array<number>>} points array of points as [x, y]
+ * @param {Array<Array<number>>} points array of points as [x, y]
  * @param {number} tension tension of the curve
  */
 function smoothCurveThroughPoints(points, tension = 1, closed = true) {
@@ -253,18 +253,21 @@ function annulusSector(x, y, innerRadius, outerRadius, angle, startAngle) {
 /**
  * Angle between two lines. And returns the coordinate of middle of angle
  *
- * @param {array<number>} p1 start point of first line array of point as [x, y]
- * @param {array<number>} p2 end point of first line array of point as [x, y]
- * @param {array<number>} p3 start point of second line array of point as [x, y]
- * @param {array<number>} p4 end point of second line array of point as [x, y]
+ * @param {Array<number>} p1 start point of first line array of point as [x, y]
+ * @param {Array<number>} p2 end point of first line array of point as [x, y]
+ * @param {Array<number>} p3 start point of second line array of point as [x, y]
+ * @param {Array<number>} p4 end point of second line array of point as [x, y]
  * @param {number} radius radius of angle
  * @param {number} extender extender of output point
  * @param {boolean} otherAngle whether to draw the other angle
  * @param {number} angleDir there can be four angle in a line intersection. Choose a number from 1 to 4.
- * @returns {array} coordinate of point in the middle of angle as array of point as [x, y]
+ * @returns {Object} coordinate of point in the middle of angle as array of point as [x, y] and angle between them
  */
 function angle(p1, p2, p3, p4, radius = 20, extender = 10, otherAngle = false, angleDir = 1) {
-	let [x, y] = lineIntersection(p1, p2, p3, p4);
+	let p = lineIntersection(p1, p2, p3, p4),
+		x = p[0],
+		y = p[1],
+		info = {};
 	if (!(isNaN(x) || isNaN(y))) {
 		let ang,
 			startAngle,
@@ -300,7 +303,7 @@ function angle(p1, p2, p3, p4, radius = 20, extender = 10, otherAngle = false, a
 			ctx.stroke();
 			ctx.closePath();
 		}
-		return {
+		info = {
 			center: [
 				x + (radius + extender) * Math.cos(startAngle + ang / 2),
 				y + (radius + extender) * Math.sin(startAngle + ang / 2),
@@ -308,9 +311,10 @@ function angle(p1, p2, p3, p4, radius = 20, extender = 10, otherAngle = false, a
 			ang: ang,
 		};
 	} else {
-		// TODO: should it be `throw Error()`?
-		console.error("No intersection point");
+		throw new Error("No intersection point");
 	}
+
+	return info;
 }
 
 /**
@@ -324,7 +328,7 @@ function angle(p1, p2, p3, p4, radius = 20, extender = 10, otherAngle = false, a
  * @param {number} y2 y-coord of second point
  * @param {number} radius radius of arc
  * @param {boolean} otherArc specifies whether to use other arc of the circle.
- * @returns {array} returns the coordinate of center of the arc as [x, y]
+ * @returns {Array<number>} returns the coordinate of center of the arc as [x, y]
  */
 function arcBetweenPoints(x1, y1, x2, y2, radius, otherArc = false) {
 	if (x1 == x2 && y1 == y2)
@@ -423,10 +427,10 @@ function square(x, y, sideLength) {
 /**
  * Draws quadrilateral with four points as array of coordinate as [x, y]
  *
- * @param {array<number>} p1 1st point
- * @param {array<number>} p2 2nd point
- * @param {array<number>} p3 3rd point
- * @param {array<number>} p4 4th point
+ * @param {Array<number>} p1 1st point
+ * @param {Array<number>} p2 2nd point
+ * @param {Array<number>} p3 3rd point
+ * @param {Array<number>} p4 4th point
  */
 function quad(p1, p2, p3, p4) {
 	let ctx = C.workingCanvas;
@@ -444,9 +448,9 @@ function quad(p1, p2, p3, p4) {
 /**
  * Draws triangle with three points as array of coordinate as [x, y]
  *
- * @param {array<number>} p1 first point
- * @param {array<number>} p2 second point
- * @param {array<number>} p3 third point
+ * @param {Array<number>} p1 first point
+ * @param {Array<number>} p2 second point
+ * @param {Array<number>} p3 third point
  */
 function triangle(p1, p2, p3) {
 	let ctx = C.workingCanvas;

@@ -3,7 +3,7 @@
  *
  * @param {number} a
  * @param {number} b
- * @return {number}
+ * @return number
  */
 function gcd(a, b) {
 	while (b != 0) {
@@ -17,7 +17,7 @@ function gcd(a, b) {
 /**
  * Returns greatest common divisor of a list of integers.
  *
- * @return {number}
+ * @return number
  */
 function gcdArray(list) {
 	let array = Array.isArray(list) ? list : arguments,
@@ -31,7 +31,7 @@ function gcdArray(list) {
  *
  * @param {number} a
  * @param {number} b
- * @return {number}
+ * @return number
  */
 function lcm(a, b) {
 	return (a * b) / gcd(a, b);
@@ -39,7 +39,7 @@ function lcm(a, b) {
 
 /**
  * Returns least common multiple of a list of integers given explictly or as array.
- * @return {number}
+ * @return number
  */
 function lcmArray(list) {
 	let n = 1,

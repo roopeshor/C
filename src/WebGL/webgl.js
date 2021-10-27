@@ -3,7 +3,7 @@ import { applyDefault } from "../utils.js";
 import { m4 } from "./m4.js";
 /**
  * Creates a WebGL instance thati include usefullkj methods to work with WebGL.
- * @param	{object} configs configuration for canvas. Follwoing properties are accepted:
+ * @param {Object} [configs] configuration for canvas. Follwoing properties are accepted:
  * @param	{boolean} [configs.deleteOld=false] whether to delete old canvas.
  * @returns {WebGL} WebGL instance
  */
@@ -12,13 +12,13 @@ function createWebGL(configs) {
 	configs = applyDefault(
 		{
 			deleteOld: false,
-			dpr: c.dpr,
-			width: c.width,
-			height: c.height,
+			dpr: Math.ceil(window.devicePixelRatio),
+			width: c.canvas.width,
+			height: c.canvas.height,
 		},
 		configs
 	);
-	let container = c.container;
+	let container = c.canvas.parentElement;
 	let cvs = C.makeCanvas(configs);
 	if (configs.deleteOld) {
 		container.removeChild(c.canvas);
@@ -33,7 +33,7 @@ function createWebGL(configs) {
 	for (let event in c.canvas.events) {
 		cvs.addEventListener(event, c.canvas.events[event]);
 	}
-	container.append(cvs);
+	container.appendChild(cvs);
 	return new WebGL(cvs);
 }
 /**
@@ -46,8 +46,7 @@ class WebGL {
 			gl = canvas.getContext("experimental-webgl");
 		}
 		if (!gl) {
-			console.error("WebGL is not supported");
-			return null;
+			throw new Error("WebGL is not supported");
 		}
 		gl.viewport(0, 0, canvas.width, canvas.height);
 		// make it transparent so that standard canvas can be seen
@@ -55,11 +54,11 @@ class WebGL {
 		this.gl = gl;
 		/** @type {HTMLCanvasElement} */
 		this.canvas = canvas;
-		/** @type {number} */
+		/** @type number */
 		this.width = canvas.width;
-		/** @type {number} */
+		/** @type number */
 		this.height = canvas.height;
-		/** @type {number} */
+		/** @type number */
 		this.dpr = canvas.dpr || Math.ceil(window.devicePixelRatio);
 		this.canvas = canvas;
 		this.sources = {
@@ -272,7 +271,7 @@ class WebGL {
 
 	/**
 	 * Creates a custom program from sources and retuns program and variables
-	 * @param {object} program program that contains shader sources and variables of shaders
+	 * @param {Object} program program that contains shader sources and variables of shaders
 	 * @param {string|HTMLScriptElement} program.vertex vertex shader program
 	 * @param {string|HTMLScriptElement} program.fragment fragment shader program
 	 * @param {Object.<string,string>} program.uniforms uniform variables of program. format: {uniformName: name_in_shader}

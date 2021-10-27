@@ -3,9 +3,9 @@ import { applyDefault, defineProperties } from "./utils.js";
 /**
  * Main Function
  *
- * @param {function} fx codes to exeecute
- * @param {HTMLElement} [container=document.body] container for the drawings
- * @param {object} [cfgs={}] configurations
+ * @param {Function} fx codes to exeecute
+ * @param {Element|string} [container=document.body] container for the drawings as an element or css selector
+ * @param {Object} [cfgs] configurations
  */
 function C(fx, container, cfgs = {}) {
 	const defaultConfigs = {
@@ -47,8 +47,9 @@ function C(fx, container, cfgs = {}) {
 		events: {},
 	};
 	// assign configs
-	let configs = applyDefault(defaultConfigs, cfgs),
-		canvas;
+	let configs = applyDefault(defaultConfigs, cfgs);
+	/** @type {HTMLCanvasElement} */
+	let canvas;
 
 	if (typeof container === "string") {
 		container = document.querySelector(container);
@@ -72,10 +73,12 @@ function C(fx, container, cfgs = {}) {
 	function prepareCanvas() {
 		// add additional information to rendererContext
 		C.resizeCanvas(canvas, configs);
-		canvas.context = Object.assign(canvas.getContext("2d"), configs);
+		/** @type {CanvasRenderingContext2D} */
+		let crc2d = canvas.getContext("2d");
+		defineProperties(configs, crc2d);
+		canvas.context = crc2d;
 		canvas.context.setTransform(configs.dpr, 0, 0, configs.dpr, 0, 0);
 		C.workingCanvas = canvas.context;
-		C.workingCanvas.container = container;
 		C.workingCanvas.savedStates = defaultConfigs;
 		C.workingCanvas.delayedAnimations = [];
 	}
@@ -99,6 +102,7 @@ function C(fx, container, cfgs = {}) {
 	}
 	// attach list of active listeners to canvas for other uses
 	canvas.events = active;
+	C.dpr = configs.dpr;
 	fx();
 }
 
@@ -112,7 +116,7 @@ C.canvasList = {};
 
 /**
  * Number of canvases
- * @type {Number}
+ * @type number
  */
 C.nameID = 0;
 
@@ -120,13 +124,14 @@ C.nameID = 0;
  * Current working canvas
  * @type {CanvasRenderingContext2D}
  */
-C.workingCanvas = {}; // index of current working canvas in `C.canvasList`
+C.workingCanvas; // index of current working canvas in `C.canvasList`
 
 /**
- * Current working canvas
- * @type {HTMLElement}
+ * device pixel ratio applied to current working canvas.
+ ** Note: this property is not explictly defined in C.workingCanvas for the sake of GCC
+ * @type {number}
  */
-C.workingCanvas.container = {}; //container of canvas
+C.dpr;
 
 /**
  * Default configurations
@@ -134,11 +139,11 @@ C.workingCanvas.container = {}; //container of canvas
 /**
  * return inner width of container tag
  * @param {HTMLElement} [container=document.body]
- * @returns {Number}
+ * @returns number
  */
 C.getWindowWidth = function (container = document.body) {
 	const cs = window.getComputedStyle(container);
-	return parseInt(cs.width) - parseInt(cs.paddingRight) - parseInt(cs.paddingLeft);
+	return parseInt(cs.width, 10) - parseInt(cs.paddingRight, 10) - parseInt(cs.paddingLeft, 10);
 };
 
 /**
@@ -165,11 +170,11 @@ C.resizeCanvas = function (cvs, configs) {
  * Returns a canvas element with given params
  *
  * @param {Object} configs
- * @returns {HTMLCanvasElement}
+ * @returns {HTMLCanvasElement|Element}
  */
 C.makeCanvas = function (configs) {
 	const cvs = document.createElement("canvas");
-	this.resizeCanvas(cvs, configs);
+	C.resizeCanvas(cvs, configs);
 	return cvs;
 };
 
@@ -177,7 +182,6 @@ C.makeCanvas = function (configs) {
  * Add extension to window and C extension list
  *
  * @param {Object} extObj
- * @param {boolean} editable warn the edit of functions
  */
 C.addExtension = function (extObj) {
 	defineProperties(extObj, window);
@@ -188,6 +192,12 @@ C.addExtension = function (extObj) {
  * @type {boolean}
  */
 C.debugAnimations = false; // whther to debug animations
+
+/**
+ * List of extensions
+ * @type {Object}
+ */
+C.extensions = {};
 
 /**
  * Whehter to debug animations
@@ -211,15 +221,16 @@ C.getCanvas = function (name) {
 
 /**
  * Log of animations
- * @type {array<object>}
+ * @type {Array<Object>}
  */
 C._ANIMATIONLOG_ = [];
 
 /**
  * Set of functions
- * @type {object}
+ * @type {Object}
  */
 C.functions = {};
+
 C.COLORLIST = {}; //list of colors
 // register to window
 window["C"] = C;

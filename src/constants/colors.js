@@ -1,7 +1,4 @@
-/**
- * List of colors
- */
-
+/* List of colors */
 // from Manim
 export const DARK_BLUE = "#236b8e",
 	DARK_BROWN = "#8b4513",

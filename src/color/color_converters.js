@@ -12,12 +12,12 @@ function hue2RGB(p, q, t) {
  * adapted from http://en.wikipedia.org/wiki/HSL_color_space.
  * Assumes values of red, green, and blue are between 0 & 1 and
  * returns hue, saturation and lightness in range 0 to 1
- * @method RGBToHSL
+
  * @global
- * @param {number} red The red color value
- * @param {number} green The green color value
- * @param {number} blue The blue color value
- * @return {array<number>} The HSL representation
+ * @param {number} r The red color value
+ * @param {number} g The green color value
+ * @param {number} b The blue color value
+ * @return {Array<number>} The HSL representation
  */
 function RGBToHSL(r, g, b) {
 	let max = Math.max(r, g, b),
@@ -49,7 +49,7 @@ function RGBToHSL(r, g, b) {
  * @param {number} hue The hue
  * @param {number} saturation The saturation
  * @param {number} lightness The lightness
- * @return {array<number>} The RGB representation
+ * @return {Array<number>} The RGB representation
  */
 function HSLToRGB(hue, saturation, lightness) {
 	let r, g, b;
@@ -76,10 +76,11 @@ function HSLToRGB(hue, saturation, lightness) {
  * Assumes values of red, green, and blue are between 0 & 1 and
  * returns hue, saturation and value in range 0 to 1
  *
- * @param {number} red The red color value
- * @param {number} green The green color value
- * @param {number} blue The blue color value
- * @return {array<number>} The HSV representation
+ * @global
+ * @param {number} r The red color value
+ * @param {number} g The green color value
+ * @param {number} b The blue color value
+ * @return {Array<number>} The HSV representation
  */
 function RGBToHSV(r, g, b) {
 	let max = Math.max(r, g, b), // val
@@ -110,7 +111,7 @@ function RGBToHSV(r, g, b) {
  * @param {number} hue The hue
  * @param {number} saturation The saturation
  * @param {number} value The value
- * @return {array<number>} The RGB representation
+ * @return {Array<number>} The RGB representation
  */
 function HSVToRGB(hue, saturation, value) {
 	let r,

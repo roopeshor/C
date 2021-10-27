@@ -7,7 +7,7 @@ import { C } from "../main.js";
  * @param {ImageData} pixels
  * @param {number} x x-coordinate of point
  * @param {number} y y-coordinate of point
- * @return {array <array<number>>} array of color components [r, g, b, a]
+ * @return {Uint8ClampedArray} array of color components [r, g, b, a]
  */
 function getPixelColor(pixels, x, y) {
 	let index = pixels.width * y + x;
@@ -18,7 +18,7 @@ function getPixelColor(pixels, x, y) {
  * Convert image data to 2d array of colors.
  *
  * @param {ImageData} pixels
- * @returns {array<array>} 2d array of colors
+ * @returns {Array<Array<number>>} 2d array of colors
  */
 function imageDataToColorArray(pixels) {
 	let w = pixels.width,
@@ -42,7 +42,7 @@ function imageDataToColorArray(pixels) {
 /**
  * Returns if neighbor pixels have the same color as given.
  *
- * @param {array<number>} color color to compare with
+ * @param {Array<number>} color color to compare with
  * @param {ImageData} pixels image data
  * @param {number} x x-coordinate of point
  * @param {number} y y-coordinate of point
@@ -108,8 +108,8 @@ function hasNeighbourColor(color, pixels, x, y) {
 function replaceColorInImage(image, toReplace, replaced, matchAlpha = false, tolerance = 0) {
 	let data = image.data,
 		newData = C.workingCanvas.createImageData(image.width, image.height);
-	const [r1, g1, b1, a1] = readColor(toReplace, true);
-	const [r2, g2, b2, a2] = readColor(replaced, true);
+	const [r1, g1, b1, a1] = readColor(toReplace).rgbaA;
+	const [r2, g2, b2, a2] = readColor(replaced).rgbaA;
 	let nonOccurances = 0;
 	for (let i = 0; i < data.length; i += 4) {
 		let r = data[i],
@@ -142,7 +142,7 @@ function replaceColorInImage(image, toReplace, replaced, matchAlpha = false, tol
 
 /**
  * Converts a image to ImageData.
- * @param {CanvasImageData} image image
+ * @param {HTMLCanvasElement|HTMLImageElement|HTMLVideoElement|ImageBitmap|OffscreenCanvas} image image
  * @param {number} x x-coordinate of starting point in image
  * @param {number} y y-coordinate of starting point in image
  * @param {number} [width = image.width] width of area to be covered
@@ -152,7 +152,7 @@ function replaceColorInImage(image, toReplace, replaced, matchAlpha = false, tol
 function imageToData(image, x, y, width, height, smoothen = false) {
 	let cvs = document.createElement("canvas");
 	let ctx = cvs.getContext("2d");
-	let dpr = C.workingCanvas.dpr;
+	let dpr = C.dpr;
 	x = x * dpr || 0;
 	y = y * dpr || 0;
 	cvs.width = width = (isNaN(width) ? image.width : width) * dpr;

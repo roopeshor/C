@@ -32,7 +32,7 @@ WebGL.prototype.background = function (r, g, b, a) {
 
 /**
  * clears canvas
- * @returns {this}
+ * @returns {WebGL}
  */
 WebGL.prototype.clear = function () {
 	this.background(0, 0, 0, 0);
@@ -53,13 +53,13 @@ WebGL.prototype.putBufferData = function (
 
 /**
  * sets geometry of a objevt in buffer
- * @param {number[]} data data of positions to set
+ * @param {Array<number>} data data of positions to set
  * @param {number} [count=3] number of vertices to set
  * @param {number} [offset=0] offset of data to set
- * @param {} [primitiveType=TRIANGLES] type of primitive to draw
- * @param {*} [bufferTarget=ARRAY_BUFFER] target buffer to set data to
- * @param {*} [bufferUsage=STATIC_DRAW] usage type of buffer
- * @returns {this}
+ * @param {number} [primitiveType=WebGLRenderingContext.TRIANGLES] type of primitive to draw
+ * @param {number} [bufferTarget=WebGLRenderingContext.ARRAY_BUFFER] target buffer to set data to
+ * @param {number} [bufferUsage=WebGLRenderingContext.STATIC_DRAW] usage type of buffer
+ * @returns {WebGL}
  */
 WebGL.prototype.setGeometry = function (
 	data,
@@ -153,7 +153,7 @@ WebGL.prototype.line = function () {
 /**
  * rotates canvas by a given angle around x-axis.
  * @param {number} angle angle to rotate by
- * @returns {this}
+ * @returns {WebGL}
  */
 WebGL.prototype.rotateX = function (angle) {
 	this.worldMatrix.rotateX(angle);
@@ -163,7 +163,7 @@ WebGL.prototype.rotateX = function (angle) {
 /**
  * rotates canvas by a given angle around y-axis.
  * @param {number} angle angle to rotate by
- * @returns {this}
+ * @returns {WebGL}
  */
 WebGL.prototype.rotateY = function (angle) {
 	this.worldMatrix.rotateY(angle);
@@ -173,7 +173,7 @@ WebGL.prototype.rotateY = function (angle) {
 /**
  * rotates canvas by a given angle around z-axis.
  * @param {number} angle angle to rotate by
- * @returns {this}
+ * @returns {WebGL}
  */
 WebGL.prototype.rotateZ = function (angle) {
 	this.worldMatrix.rotateZ(angle);
@@ -184,7 +184,7 @@ WebGL.prototype.rotateZ = function (angle) {
  * Translate canvas by a given vector by multiplying current matrix by a translation matrix
  * @param {number} x x value of vector
  * @param {number} [y=0] y value of vector
- * @returns {this}
+ * @returns {WebGL}
  */
 WebGL.prototype.translate = function (x, y = 0, z = 0) {
 	this.worldMatrix.translate(x, y, z);
@@ -199,17 +199,17 @@ WebGL.prototype.scale = function (x, y = x, z = 1) {
 	return this;
 };
 
-WebGL.prototype.fill = function () {
-	let c = readColor(...arguments, true);
+/**
+ *
+ * @param  {...number|string|Array<number>} color
+ */
+WebGL.prototype.fill = function (...color) {
+	let c = readColor(color).rgbaA;
 	this.styles.fillColor = [c[0] / 255, c[1] / 255, c[2] / 255, c[3]];
 };
 
 /**
  * Draws a rectangle
- * @param {number} x
- * @param {number} y
- * @param {number} w
- * @param {number} h
  */
 WebGL.prototype.fillRect = function () {
 	let x,
@@ -239,16 +239,20 @@ WebGL.prototype.fillRect = function () {
 /**
  * Draws a triangle
  */
-WebGL.prototype.triangle = function () {
-	this.setGeometry(arguments, 3);
+WebGL.prototype.triangle = function (...points) {
+	this.setGeometry(points, 3);
 };
 
 WebGL.prototype.lineWidth = function (w) {
 	this.styles.lineWidth = w;
 };
 
-WebGL.prototype.stroke = function () {
-	let c = readColor(...arguments, true);
+/**
+ *
+ * @param  {...number|string|Array<number>} color
+ */
+WebGL.prototype.stroke = function (...color) {
+	let c = readColor(color).rgbA;
 	this.styles.strokeColor = [c[0] / 255, c[1] / 255, c[2] / 255, c[3]];
 };
 
@@ -399,7 +403,7 @@ WebGL.prototype.cube = function (size = 200) {
 };
 
 WebGL.prototype.lookAt = function (eye, center = [0, 0, 0], up = [0, 1, 0]) {
-	m4.lookAt(this.viewMatrix, eye, center, up);
+	this.viewMatrix = m4.lookAt(eye, center, up);
 };
 
 WebGL.prototype.perspective = function (fov, aspect, near, far) {

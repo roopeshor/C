@@ -14,11 +14,11 @@ const counters = {
 
 /**
  * Animates a line from point p1 to point p2.
- *
- * @param {array<number>} p1 The first point.
- * @param {array<number>} p2 The second point.
- * @param {number} [dt=10] The duration of one frame in milliseconds.
- * @param {function} [next=() => {}] The function to call after the animation.
+ * @param {Object} args
+ * @param {Array<number>} args.p1 The first point.
+ * @param {Array<number>} args.p2 The second point.
+ * @param {number} [args.dt=10] The duration of one frame in milliseconds.
+ * @param {Function} [args.next] The function to call after the animation.
  */
 function Line(args) {
 	let defaults = {
@@ -103,7 +103,7 @@ function Arc(args) {
 		radiusX = args.radius;
 		radiusY = args.radius;
 	}
-	let dt = 2 / (ctx.dpr * (radiusX + radiusY));
+	let dt = 2 / (C.dpr * (radiusX + radiusY));
 	let start = startAngle;
 	let end = angle + startAngle + 1e-6;
 
@@ -145,15 +145,16 @@ function Arc(args) {
 /**
  * animate filling of a given shape
  * ! Has some flaws !
- * @param {string} id ID of canvas
- * @param {string} FILL color of canvas
- * @param {function} f funciton that draws the shape
+ * @param {string} name name of animation. Optional
+ * @param {string} canvasName ID of canvas
+ * @param {string|Array<number>} FILL color of canvas
+ * @param {Function} f funciton that draws the shape
  * @param {number} [dur=1000] dur to run
  * @param {number} [dt=10] dur for each frame
- * @param {function} [next=null] function to run after filling
+ * @param {Function} [next=null] function to run after filling
  */
 function animateFill(name, canvasName, FILL, f, dur = 1000, dt = 10, next = null) {
-	let _fill = readColor(FILL, true);
+	let _fill = readColor(FILL).rgbaA;
 	const ctx = C.canvasList[canvasName];
 	let previousT = -dur / dt;
 	loop(
@@ -163,7 +164,7 @@ function animateFill(name, canvasName, FILL, f, dur = 1000, dt = 10, next = null
 				noLoop(canvasName, t);
 				if (typeof next == "function") next();
 			}
-			ctx.fillStyle = readColor(_fill[0], _fill[1], _fill[2], _fill[3] / (t - previousT));
+			ctx.fillStyle = readColor(_fill[0], _fill[1], _fill[2], _fill[3] / (t - previousT)).hex8;
 			f();
 			previousT = t;
 		},
@@ -177,9 +178,9 @@ function animateFill(name, canvasName, FILL, f, dur = 1000, dt = 10, next = null
 
 /**
  * Animates drawing of a point.
- * @param {object} args object containing configs
+ * @param {Object} args object containing configs
  *
- * @param {string} [args.name = "point-" + counters.Circle] Name of the animation
+ * @param {string} [args.name] Name of the animation. Default: "point-" + counters.Circle
  * @param {number} [args.radius = 3] radius of circle
  * @param {number} [args.dur = 1000] duration of animation
  * @param {number} [args.dTime = 1] duration of each frame
@@ -187,7 +188,7 @@ function animateFill(name, canvasName, FILL, f, dur = 1000, dt = 10, next = null
  * @param {number} [args.fillTime = 500] time to fill inside circle.
  * @param {funciton} [args.next = null] function to run after animation ends.
  * @param {funciton} [args.rateFunction = smooth] function to use for rate.
- * @param {array<number>} args.center center of the circle
+ * @param {Array<number>} args.center center of the circle
  * @param {string} args.canvas name of canvas in which the animation is rendered
  */
 function Circle(args) {

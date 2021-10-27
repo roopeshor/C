@@ -1,11 +1,12 @@
 import { C } from "../main.js";
+import { type } from "../utils.js";
 
 /**
  * creates a linear gradient
  *
- * @param {array<number>} initialPoint initial point as [x, y]
- * @param {array<number>} finalPoint final point as [x, y]
- * @param {Object|array<any>} colorStops color stops
+ * @param {Array<number>} initialPoint initial point as [x, y]
+ * @param {Array<number>} finalPoint final point as [x, y]
+ * @param {Object|Array<*>} colStops color stops
  @example
  ```js
 let color = linearGradient(
@@ -28,7 +29,7 @@ let color = linearGradient(
 );
 ```
  */
-function linearGradient(initialPoint, finalPoint, colorStops) {
+function linearGradient(initialPoint, finalPoint, colStops) {
 	const ctx = C.workingCanvas;
 	const gradient = ctx.createLinearGradient(
 		initialPoint[0],
@@ -36,17 +37,21 @@ function linearGradient(initialPoint, finalPoint, colorStops) {
 		finalPoint[0],
 		finalPoint[1]
 	);
-	if (Array.isArray(colorStops)) {
+	if (type(colStops) == "Array") {
 		const stops = {};
-		const step = 1 / colorStops.length;
-		for (let i = 0; i < colorStops.length; i++) {
-			stops[step * i] = colorStops[i];
+		const step = 1 / colStops.length;
+		for (let i = 0; i < colStops.length; i++) {
+			stops[step * i] = colStops[i];
 		}
-		colorStops = stops;
+		colStops = stops;
+	} else if (type(colStops) == "Object") {
+		colStops = colStops;
+	} else {
+		throw new Error("Color Stops must be an Array or an Object");
 	}
-	for (let stops = Object.keys(colorStops), i = 0; i < stops.length; i++) {
-		const stop = stops[i];
-		gradient.addColorStop(stop, colorStops[stop]);
+	for (let stops = Object.keys(colStops || {}), i = 0; i < stops.length; i++) {
+		const stop = Number(stops[i]);
+		gradient.addColorStop(stop, colStops[stop]);
 	}
 	return gradient;
 }

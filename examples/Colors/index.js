@@ -20,7 +20,7 @@ import {
 const W = 780;
 C(
 	function () {
-		background(BLACK);
+		background(0);
 		let w = 120;
 		const h = 50;
 		let paddingX = 10;
@@ -31,6 +31,7 @@ C(
 		fontSize("19px");
 		// fontFamily("CMU Serif")
 		translate((W - boxW) / 2, 20);
+		// debugger;
 		function box(name, k) {
 			// background
 			if (name === "BLACK") stroke(WHITE);
@@ -95,6 +96,7 @@ C(
 				translate(0, h);
 				// name of set
 				const name = stopNames[i];
+				// debugger;
 				fill(linearGradient([0, 0], [measureText(name).width, 0], col));
 				text(name, 0, -h / 2 + 5);
 			}

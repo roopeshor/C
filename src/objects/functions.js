@@ -15,23 +15,25 @@ let counter = {
 	parametricFunction: 1,
 };
 
+const RANGE = [0, 10, 0.1];
+const UNIT_VEC = [1, 1];
 /**
  * Draws a parametric functions
  * This accept parameters as object.
- * @param {object} args configuration object
+ * @param {Object} args configuration object
  * It can have following properties:
  *
- * @param {function} args.paramFunction function to plot. Must recieve one argument and return a array of point as [x, y]
+ * @param {Function} args.paramFunction function to plot. Must recieve one argument and return a array of point as [x, y]
  * @param {number} [args.tension = 1] Smoothness tension.
- * @param {array} [args.range = [0, 10, 0.1]] Range as [min, max, dt]
- * @param {array} [args.discontinuities = []] Array of t where the curve discontinues.
- * @param {array} [args.unitValue = [1, 1]] Value of each unit space
- * @param {array} [args.unitLength = [1, 1]] Length of each unit in pixels
+ * @param {Array<number>} [args.range = RANGE] Range as [min, max, dt]
+ * @param {Array<number>} [args.discontinuities] Array of t where the curve discontinues.
+ * @param {Array<number>} [args.unitValue = UNIT_VEC] Value of each unit space
+ * @param {Array<number>} [args.unitSpace = UNIT_VEC] Length of each unit in pixels
  * @param {boolean} [args.smoothen = true] Whether to smoothen the shape.
  * @param {boolean} [args.closed = false] Whether the function draws a closed shape.
  * @param {boolean} [args.draw = true] Wheteher to draw the function graph right now.
  *
- * @returns {object} object that contains following properties:
+ * @returns {Object} object that contains following properties:
  *
  * * points  <array>    : Array of computed points in the function
  * * draw    <function> : Function that draws the plot
@@ -41,9 +43,9 @@ function parametricFunction(args) {
 	let defaultConfigs = {
 		tension: 1,
 
-		unitValue: [1, 1],
-		unitLength: [1, 1], // length of each unit in pixels
-		range: [0, 10, 0.1],
+		unitValue: UNIT_VEC,
+		unitSpace: UNIT_VEC, // length of each unit in pixels
+		range: RANGE,
 		discontinuities: [],
 
 		smoothen: true,
@@ -66,8 +68,8 @@ function parametricFunction(args) {
 	let epsilon = 1e-6,
 		row = 0,
 		noPoints = 0,
-		unitX = args.unitLength[0] / args.unitValue[0],
-		unitY = args.unitLength[1] / args.unitValue[1];
+		unitX = args.unitSpace[0] / args.unitValue[0],
+		unitY = args.unitSpace[1] / args.unitValue[1];
 	if (step < epsilon) epsilon = step / 2;
 	for (let t = min; t <= max + epsilon; t += step) {
 		if (approximateIndexInArray(t, discontinuities, epsilon) > -1) {
@@ -182,17 +184,17 @@ function functionGraph(args) {
  * Draws a heat plot of given function. The function must take atleast 2 arguments and return a number.
  * More precisely f: ℜ² → ℜ
  * All parameters should be enclosed in a object.
- * @param {object} args
+ * @param {Object} args
  * Possible parameters are:
  *
- * @param {array} [args.min = [-4, -4]] minimum point
- * @param {array} [args.max = [4, 4]] maximum point
- * @param {object} args.colors object of color map
- * @param {array} [args.unitValue = [1, 1]] Value of each unit space
- * @param {array} [args.unitLength = [1, 1]] Length of each unit in pixels
+ * @param {Array<number>} [args.min] minimum point. Default: [-4, -4]
+ * @param {Array<number>} [args.max] maximum point. Default: [4, 4]
+ * @param {Object} args.colors object of color map
+ * @param {Array<number>} [args.unitValue = UNIT_VEC] Value of each unit space
+ * @param {Array<number>} [args.unitSpace = UNIT_VEC] Length of each unit in pixels
  * @param {number} [args.resolution = 1] resolution of plot
- * @param {function} [args.interpolator = linear] function to interpolate color.
- * @return {object} metadatas
+ * @param {Function} [args.interpolator = linear] function to interpolate color.
+ * @return {Object} metadatas
  */
 function heatPlot(args) {
 	let defaultConfigs = {
@@ -207,31 +209,31 @@ function heatPlot(args) {
 			3: "#3d96dab0",
 			5: "#2b6b99b0",
 		},
-		unitLength: [1, 1],
-		unitValue: [1, 1],
+		unitSpace: UNIT_VEC,
+		unitValue: UNIT_VEC,
 		resolution: 1,
 		interpolator: (x) => x,
 	};
 	args = applyDefault(defaultConfigs, args, false);
 	let { min, max, colors, resolution, plotFunction, interpolator } = args,
 		ctx = C.workingCanvas,
-		unitSizeX = args.unitLength[0] / args.unitValue[0],
-		unitSizeY = args.unitLength[1] / args.unitValue[1],
-		UVX = args.unitValue[0] / args.unitLength[0],
-		UVY = args.unitValue[1] / args.unitLength[1],
+		unitSizeX = args.unitSpace[0] / args.unitValue[0],
+		unitSizeY = args.unitSpace[1] / args.unitValue[1],
+		UVX = args.unitValue[0] / args.unitSpace[0],
+		UVY = args.unitValue[1] / args.unitSpace[1],
 		stopes = Object.keys(colors).sort();
 
 	// converting colors to rgba array
 
-	for (let stop of stopes) colors[stop] = readColor(colors[stop], true);
-
+	for (let stop of stopes) {
+		colors[stop] = readColor(colors[stop]).rgbaA;
+	}
 	let minS = Math.min(...stopes),
 		maxS = Math.max(...stopes);
 	ctx.save();
 	for (let x = min[0]; x <= max[0]; x += resolution * UVX) {
 		for (let y = min[1]; y <= max[1]; y += resolution * UVY) {
-			let c = lerpColorArray(plotFunction(x, y));
-			ctx.fillStyle = c;
+			ctx.fillStyle = lerpColorArray(plotFunction(x, y));
 			ctx.fillRect(x * unitSizeX, y * unitSizeY, resolution, resolution);
 		}
 	}

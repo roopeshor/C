@@ -52,11 +52,11 @@ function curlyBrace(x1, y1, x2, y2, size = 20, curviness = 0.6, taleLength = 0.8
  * @param {number} y y-axis coord
  * @param {number} [radius=100] radius of circle
  * @param {number} [startAngle=0] starting angle
- * @param {number} [angle=Math.PI / 2] central angle
+ * @param {number} [angle=1.5707963267948966] central angle
  * @param {number} [smallerLineLength=10] length of small tips at the ends of brace
  * @param {number} [tipLineLength=smallerLineLength] length of middle tip
  * @param {number} [extender=5] how much the coordinate of middle tip should be extended.
- * @return {array} array of two numbers that are the coordinate of middle tip extended by a certain value.
+ * @return {Array<number>} array of two numbers that are the coordinate of middle tip extended by a certain value.
  */
 function arcBrace(
 	x,

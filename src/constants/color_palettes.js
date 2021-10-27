@@ -1,6 +1,5 @@
 // prettier-ignore
-/** @type {Object.<string, string[]>} ColorPalette */
-let ColorPalettes = {
+let colorPalettes = {
 	// This product includes color specifications and designs developed by Cynthia Brewer (http://colorbrewer.org/).
 	// Please see license at http://colorbrewer.org/export/LICENSE.txt
 	YlGn    : "#ffffe5 #f7fcb9 #d9f0a3 #addd8e #78c679 #41ab5d #238443 #006837 #004529",
@@ -50,5 +49,8 @@ let ColorPalettes = {
 	Gray    : "#000000 #ffffff",
 };
 
-for (var p in ColorPalettes) ColorPalettes[p] = ColorPalettes[p].split(" ");
+for (var p in colorPalettes) colorPalettes[p] = colorPalettes[p].split(" ");
+
+/** @type {Object.<string, Array<string>>} ColorPalette */
+const ColorPalettes = colorPalettes;
 export { ColorPalettes };

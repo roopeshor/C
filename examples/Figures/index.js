@@ -1,3 +1,4 @@
+import { linearGradient } from "../../src/color/gradients.js";
 import {
 	BLUE_C,
 	DARK_BROWN,
@@ -11,9 +12,9 @@ import {
 import { CENTER, MIDDLE } from "../../src/constants/drawing.js";
 import { PI, RAD, TWO_PI } from "../../src/constants/math.js";
 import { C } from "../../src/main.js";
+import { rotateAroundOrigin } from "../../src/math/points.js";
 import { doubleArrow, measurement } from "../../src/objects/arrows.js";
 import { arcBrace } from "../../src/objects/braces.js";
-import { linearGradient } from "../../src/color/gradients.js";
 import {
 	angle,
 	circle,
@@ -22,11 +23,12 @@ import {
 	point,
 	sector
 } from "../../src/objects/geometry.js";
+import { fillText, text } from "../../src/objects/text.js";
 import {
+	background,
+	centreCanvas,
 	fill,
-	fontStyle,
-	initContrastedCanvas,
-	lineDash,
+	fontStyle, lineDash,
 	noFill, save,
 	stroke,
 	strokeWidth,
@@ -34,8 +36,6 @@ import {
 	textBaseline,
 	translate
 } from "../../src/settings.js";
-import { fillText, text } from "../../src/objects/text.js";
-import { rotateAroundOrigin } from "../../src/math/points.js";
 
 const W = 300;
 const H = 300;
@@ -46,7 +46,8 @@ C(
 			padding = 20,
 			leftStart = -radius - padding;
 		const pointOnCircle = rotateAroundOrigin(PI / 6, radius);
-		initContrastedCanvas();
+		background(0);
+		centreCanvas();
 		stroke(WHITE);
 		fill(TEAL_C);
 		translate(0, -30);
@@ -109,7 +110,8 @@ C(
 );
 C(
 	() => {
-		initContrastedCanvas();
+		background(0);
+		centreCanvas();
 		stroke(GREEN_C);
 		fill(RED_C);
 		const line1 = [
@@ -151,7 +153,8 @@ C(
 );
 C(
 	() => {
-		initContrastedCanvas();
+		background(0);
+		centreCanvas();
 		stroke(GREEN_C);
 		var r = 120;
 		const color = linearGradient(

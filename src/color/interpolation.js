@@ -8,43 +8,47 @@ import { readColor } from "./color_reader.js";
  * @param {number} v should be between 0 and 1.
  */
 function lerpColor(color1, color2, v) {
-	const c1 = readColor(color1, true);
-	const c2 = readColor(color2, true);
+	const c1 = readColor(color1).rgbaA;
+	const c2 = readColor(color2).rgbaA;
 	return readColor(
 		Math.min(Math.max(0, (c2[0] - c1[0]) * v + c1[0]), 255),
 		Math.min(Math.max(0, (c2[1] - c1[1]) * v + c1[1]), 255),
 		Math.min(Math.max(0, (c2[2] - c1[2]) * v + c1[2]), 255),
 		Math.min(Math.max(0, (c2[3] - c1[3]) * v + c1[3]), 255)
-	);
+	).hex8;
 }
 
 /**
  * Lerps across a color Object
  *
- * @param {object} colorObj
+ * @param {Object} colorObj
  * @param {number} v
  * @return {string}
  */
 function lerpColorObject(colorObj, v) {
-	const stopes = Object.keys(colorObj).sort();
+	const stopes = Object.keys(colorObj || {}).sort();
 	const min = Math.min(...stopes);
 	const max = Math.max(...stopes);
+	let color = "#000000";
 	if (v >= max) return colorObj[max];
 	if (v <= min) return colorObj[min];
 	for (let i = 0; i < stopes.length - 1; i++) {
 		let a = stopes[i];
 		if (v > a) {
-			return lerpColor(colorObj[a], colorObj[stopes[i + 1]], (v - a) / (stopes[i + 1] - a));
+			color = lerpColor(colorObj[a], colorObj[stopes[i + 1]], (v - a) / (stopes[i + 1] - a));
+			break;
 		} else if (v == a) {
-			return colorObj[a];
+			color = colorObj[a];
+			break;
 		}
 	}
+	return color;
 }
 
 /**
  * Lerps across a color Array
  * From <https://github.com/yuki-koyama/tinycolormap/blob/fe597277c782c583eb40362de98a08df62efc628/include/tinycolormap.hpp#L159>
- * @param {array<string>} colorArr array that contains color as string
+ * @param {Array<string>} colorArr array that contains color as string
  * @param {number} v value to interpolate
  * @param {number} [min = 0] minimum value of the range
  * @param {number} [max = 1] maximum value of the range
@@ -64,20 +68,18 @@ function lerpColorArray(colorArr, v, min = 0, max = 1) {
 
 function getInterpolatedColorList(colorPalatte, min = 0, max = 5, step = 1, alpha = 1) {
 	const len = Math.round((max - min) / step) + 1;
-	const list = Object.keys(colorPalatte),
-		listMax = Math.max(...list);
-	if (len > listMax) {
+	if (len > colorPalatte.length) {
 		// not implemented
 	} else if (len < 3) {
 		throw new Error("Number of colors to compute is less than 3");
 	}
 	const colorObj = {};
-	const cp = colorPalatte[len];
+	const cp = colorPalatte;
 	let k = 0;
 	for (let i = min; i <= max; i += step) {
-		const c = readColor(cp[k++], true);
+		const c = readColor(cp[k++]).rgbaA;
 		c[3] = alpha;
-		colorObj[i] = readColor(...c);
+		colorObj[i] = readColor(c).rgbaA;
 	}
 	return colorObj;
 }

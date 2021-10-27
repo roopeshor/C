@@ -2,13 +2,9 @@ import { C } from "./main.js";
 
 /**
  * Returns the type of object
- *
- * @param {*} stuff
  * @return {string}
  */
-function getType(stuff) {
-	return Object.prototype.toString.call(stuff).slice(8, -1);
-}
+export const type = (stuff) => Object.prototype.toString.call(stuff).slice(8, -1);
 
 Object.clone =
 	Object.clone ||
@@ -24,15 +20,16 @@ Object.clone =
 /**
  * defines new properties to a given Object
  *
- * @param {object} target source object
- * @param {object} [target=window] target object
+ * @param {*} source source object
+ * @param {*} [target=window] target object
+ * @param {boolean} [assignToC=true] whether apply properties to C.
  */
-function defineProperties(source, target = window, assignToC = true) {
+export function defineProperties(source, target = window, assignToC = false) {
 	Object.assign(target, source);
 	if (assignToC) Object.assign(C.functions, source);
 }
 
-function arange(start, end, step, rev = false) {
+export function arange(start, end, step, rev = false) {
 	let arr = [];
 	if (rev) for (let i = end; i >= start; i -= step) arr.push(i);
 	else for (let i = start; i <= end; i += step) arr.push(i);
@@ -43,19 +40,19 @@ function arange(start, end, step, rev = false) {
  * Applies default configurations to a given target object
  * Must be in the form of
  *
- * @param {object} _default default configurations
- * @param {object} [target={}] target object
+ * @param {Object} _default default configurations
+ * @param {Object} [target] target object. Default = {}.
  * @param {boolean} [deepApply=true] whether to apply defaults to deep nested objects
- * @return {object} applied object
+ * @return {Object} applied object
  */
-function applyDefault(_default, target = {}, deepApply = true) {
+export function applyDefault(_default, target = {}, deepApply = true) {
 	target = Object.clone(target);
 	for (let i = 0, keys = Object.keys(_default); i < keys.length; i++) {
 		let prop = keys[i],
 			defaultProp = _default[prop],
 			targetProp = target[prop],
-			defaultType = getType(defaultProp),
-			targetType = getType(targetProp);
+			defaultType = type(defaultProp),
+			targetType = type(targetProp);
 		if (defaultType == "Object" && deepApply) {
 			target[prop] = applyDefault(defaultProp, targetProp, deepApply);
 		}
@@ -75,12 +72,12 @@ function applyDefault(_default, target = {}, deepApply = true) {
  *
  * @param {CanvasRenderingContext2D} ctx
  */
-function doFillAndStroke(ctx) {
+export function doFillAndStroke(ctx) {
 	if (ctx.doFill) ctx.fill();
 	if (ctx.doStroke) ctx.stroke();
 }
 
-function approximateIndexInArray(val, array, epsilon = 1e-6) {
+export function approximateIndexInArray(val, array, epsilon = 1e-6) {
 	for (let i = 0; i < array.length; i++) {
 		let k = array[i];
 		if (Math.abs(k - val) <= epsilon) {
@@ -90,12 +87,4 @@ function approximateIndexInArray(val, array, epsilon = 1e-6) {
 	return -1;
 }
 
-window.applyDefault = applyDefault;
-export {
-	getType,
-	defineProperties,
-	arange,
-	applyDefault,
-	doFillAndStroke,
-	approximateIndexInArray,
-};
+window["applyDefault"] = applyDefault;

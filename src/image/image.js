@@ -7,9 +7,9 @@ import { C } from "../main.js";
 /**
  * Draws a given image in canvas.
  * See more about the parameters : {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/drawImage}
- * @param {CanvasImageData} image image to draw
+ * @param {HTMLCanvasElement|HTMLImageElement|HTMLVideoElement|ImageBitmap|OffscreenCanvas} image image to draw
  */
-function drawImage(img) {
+function drawImage(image) {
 	let ctx = C.workingCanvas,
 		x,
 		y;
@@ -24,10 +24,10 @@ function drawImage(img) {
 		ctx.save();
 		ctx.translate(x, y);
 		ctx.scale(1, -1);
-		ctx.drawImage(img, 0, 0, ...Array.prototype.slice.call(arguments, 3));
+		ctx.drawImage(image, 0, 0, ...Array.prototype.slice.call(arguments, 3));
 		ctx.restore();
 	} else {
-		ctx.drawImage(img, x, y, ...Array.prototype.slice.call(arguments, 3));
+		ctx.drawImage(image, x, y, ...Array.prototype.slice.call(arguments, 3));
 	}
 }
 
@@ -41,15 +41,15 @@ function drawImage(img) {
 function pixel(x, y, color, size) {
 	let ctx = C.workingCanvas;
 	if (color) ctx.fillStyle = color;
-	if (!size) size = 1 / ctx.dpr;
+	if (!size) size = 1 / C.dpr;
 	ctx.fillRect(x, y, size, size);
 }
 
 /**
  * Loads a image from given url. I
  * @param {string} url url of image
- * @param {function} [resolver] function to call when image is loaded
- * @param {function} [fallback] function to call when image fails to loaded
+ * @param {Function} [resolver] function to call when image is loaded
+ * @param {Function} [fallback] function to call when image fails to loaded
  * @returns {Image} image. This may not be loaded yet.
  */
 function loadImage(url, resolver, fallback) {

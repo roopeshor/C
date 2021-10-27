@@ -1,13 +1,14 @@
 import { getInterpolatedColorList } from "../../src/color/interpolation.js";
-import { Spectral } from "../../src/constants/color_palettes.js";
+import { ColorPalettes } from "../../src/constants/color_palettes.js";
 import { PI, TAU } from "../../src/constants/math.js";
 import { C } from "../../src/main.js";
 import { axes } from "../../src/objects/coordinate_systems.js";
-import { initContrastedCanvas } from "../../src/settings.js";
+import { background, centreCanvas } from "../../src/settings.js";
 
 const container = document.querySelector(".container");
 const W = 300;
 const H = 300;
+const Spectral = ColorPalettes.Parula;
 const plots = [
 	{
 		name: "sin__cos",
@@ -87,7 +88,8 @@ for (var plot of plots) {
 	container.appendChild(cnt);
 	C(
 		() => {
-			initContrastedCanvas();
+			background(0);
+			centreCanvas();
 			axes({
 				xAxis: {
 					range: plot.range?.xAxis,

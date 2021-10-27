@@ -8,23 +8,24 @@ import { C } from "../main.js";
  * @return {HTMLImageElement}
  */
 function getImageFromTex(input) {
-	if (typeof window.MathJax == "object" && typeof window.MathJax.tex2svg == "function") {
-		let ctx = C.workingCanvas,
-			svgOutput = window.MathJax.tex2svg(input).getElementsByTagName("svg")[0],
-			g = svgOutput.getElementsByTagName("g")[0];
-		svgOutput.style.verticalAlign = "1ex";
-		g.setAttribute("stroke", ctx.strokeStyle);
-		g.setAttribute("fill", ctx.fillStyle);
-		let outerHTML = svgOutput.outerHTML,
-			blob = new Blob([outerHTML], { type: "image/svg+xml;charset=utf-8" }),
-			URL = window.URL || window.webkitURL || window,
-			blobURL = URL.createObjectURL(blob),
-			image = new Image();
-		image.src = blobURL;
-		return image;
-	} else {
-		console.error("MathJax is not found. Please include it.");
+	if (
+		!(typeof window["MathJax"] == "object" && typeof window["MathJax"]["tex2svg"] == "function")
+	) {
+		throw new Error("MathJax is not found. Please include it.");
 	}
+	let ctx = C.workingCanvas,
+		svgOutput = window['MathJax'].tex2svg(input).getElementsByTagName("svg")[0],
+		g = svgOutput.getElementsByTagName("g")[0];
+	svgOutput.style.verticalAlign = "1ex";
+	g.setAttribute("stroke", ctx.strokeStyle);
+	g.setAttribute("fill", ctx.fillStyle);
+	let outerHTML = svgOutput.outerHTML,
+		blob = new Blob([outerHTML], { type: "image/svg+xml;charset=utf-8" }),
+		URL = window.URL || window.webkitURL,
+		blobURL = URL.createObjectURL(blob),
+		image = new Image();
+	image.src = blobURL;
+	return image;
 }
 
 /**
@@ -35,7 +36,7 @@ function getImageFromTex(input) {
  * @param {number} [y=0]
  * @return {HTMLImageElement} image representation of tex
  */
-function tex(input, x = 0, y = 0) {
+function tex(input, x, y) {
 	let image = getImageFromTex(input),
 		ctx = C.workingCanvas,
 		text_align = ctx.textAlign,
@@ -69,7 +70,7 @@ function tex(input, x = 0, y = 0) {
 			ctx.scale(1, -1);
 			y *= -1;
 		}
-		ctx.drawImage(image, x, y);
+		ctx.drawImage(image, x || 0, y || 0);
 		ctx.restore();
 	};
 	return image;

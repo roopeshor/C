@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 let coeffs = [
 		[0, 0],
 		[1 - PHI, 0],
@@ -31,7 +30,8 @@ let coeffs = [
 	iterCount = 0;
 C(
 	() => {
-		initContrastedCanvas();
+		background(0);
+		centreCanvas();
 		let ctx = C.workingCanvas,
 			px = 1 / ctx.dpr,
 			x = -W / 2,

@@ -76,7 +76,7 @@ Documentation are comming soon.
 
 ## Bundling
 
-Because the entire `c.js` file is relatively large, it can delay the loading of site. You can make a bundled file that only include your drawing functions and c functions that are used to draw things. Use google-closure-compiler. Use [gcc-custom.conf](./gcc-custom.conf) as a template compile the files. Edit it and save it. Run `npx google-closure-compiler --flagfile <your-custom-gcc-conf>.conf` and include the output as delayed script.
+Because the entire `c.js` file is relatively large, it can delay the loading of site. You can make a bundled file that only include your drawing functions and c functions that are used to draw things. Use google-closure-compiler. Use [gcc-custom.conf](./gcc-custom.conf) as a template compile the files. Edit it and save it. Run `npx google-closure-compiler --flagfile <your-custom-gcc-conf>.conf` or `npm run gcc-custom` and include the output as delayed script.
 
 ## Extensions
 
