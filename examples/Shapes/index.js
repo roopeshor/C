@@ -1,22 +1,18 @@
-import { BLUE } from "../../src/constants/colors.js";
+import { Manim } from "../../Extensions/Colors/importable.js";
 import { PI, TAU } from "../../src/constants/math.js";
 import { C } from "../../src/main.js";
 import { cos, min, sin } from "../../src/math/basic.js";
 import { line } from "../../src/objects/geometry.js";
-import {
-	initContrastedCanvas,
-	loop,
-	noFill,
-	noLoop,
-	stroke
-} from "../../src/settings.js";
+import { background, loop, noFill, noLoop, stroke, translate } from "../../src/settings.js";
 
 const WIDTH = min(C.getWindowWidth(), 400);
 const HEIGHT = WIDTH;
-
+const { BLUE } = Manim;
 C(
 	() => {
-		initContrastedCanvas();
+		background(0);
+		translate(CENTERX, CENTERY);
+		stroke(yellow);
 		noFill();
 		let points = [], // list of points
 			count = 40, // number of points
@@ -50,7 +46,7 @@ C(
 			100
 		);
 	},
-	".container",
+	".inward",
 	{
 		name: "inward",
 		width: WIDTH,
@@ -59,7 +55,8 @@ C(
 );
 C(
 	() => {
-		initContrastedCanvas();
+		background(0);
+		translate(CENTERX, CENTERY);
 		noFill();
 		let count = 80, // number of points
 			dA = TAU / count, // angle between two points
@@ -79,7 +76,7 @@ C(
 			line(...points[i], ...points[next]);
 		}
 	},
-	".container",
+	".infinite",
 	{
 		name: "infinite",
 		width: WIDTH,

@@ -107,7 +107,7 @@ function hasNeighbourColor(color, pixels, x, y) {
  */
 function replaceColorInImage(image, toReplace, replaced, matchAlpha = false, tolerance = 0) {
 	let data = image.data,
-		newData = C.workingCanvas.createImageData(image.width, image.height);
+		newData = C.workingContext.createImageData(image.width, image.height);
 	const [r1, g1, b1, a1] = readColor(toReplace).rgbaA;
 	const [r2, g2, b2, a2] = readColor(replaced).rgbaA;
 	let nonOccurances = 0;

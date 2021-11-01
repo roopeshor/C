@@ -14,7 +14,7 @@ function polygonWithRatioOfCentralAngles(x, y, radius, ratios, rotation = 0) {
 	if (!Array.isArray(ratios)) console.error("ratio provided is not array");
 	let sumOfRatio = ratios.reduce((a, b) => a + b, 0),
 		baseAngle = (Math.PI * 2) / sumOfRatio,
-		ctx = C.workingCanvas;
+		ctx = C.workingContext;
 	ctx.save();
 	ctx.translate(x, y);
 	ctx.rotate(rotation);
@@ -47,7 +47,7 @@ function lens(c1, r1, c2, r2) {
 		c1a2 = Math.atan2(pb[1] - c1[1], pb[0] - c1[0]),
 		c2a1 = Math.atan2(pa[1] - c2[1], pa[0] - c2[0]),
 		c2a2 = Math.atan2(pb[1] - c2[1], pb[0] - c2[0]),
-		ctx = C.workingCanvas;
+		ctx = C.workingContext;
 	ctx.beginPath();
 	ctx.arc(c1[0], c1[1], r1, c1a1, c1a2);
 	ctx.arc(c2[0], c2[1], r2, c2a2, c2a1);

@@ -8,13 +8,14 @@ import { m4 } from "./m4.js";
  * @returns {WebGL} WebGL instance
  */
 function createWebGL(configs) {
-	let c = C.workingCanvas;
+	let c = C.workingContext;
+	const cv = C.workingCanvas;
 	configs = applyDefault(
 		{
 			deleteOld: false,
 			dpr: Math.ceil(window.devicePixelRatio),
-			width: c.canvas.width,
-			height: c.canvas.height,
+			width: cv.rWidth,
+			height: cv.rHeight,
 		},
 		configs
 	);
@@ -55,9 +56,9 @@ class WebGL {
 		/** @type {HTMLCanvasElement} */
 		this.canvas = canvas;
 		/** @type number */
-		this.width = canvas.width;
+		this.width = canvas.rWidth;
 		/** @type number */
-		this.height = canvas.height;
+		this.height = canvas.rHeight;
 		/** @type number */
 		this.dpr = canvas.dpr || Math.ceil(window.devicePixelRatio);
 		this.canvas = canvas;

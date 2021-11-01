@@ -13,7 +13,7 @@ function getImageFromTex(input) {
 	) {
 		throw new Error("MathJax is not found. Please include it.");
 	}
-	let ctx = C.workingCanvas,
+	let ctx = C.workingContext,
 		svgOutput = window['MathJax'].tex2svg(input).getElementsByTagName("svg")[0],
 		g = svgOutput.getElementsByTagName("g")[0];
 	svgOutput.style.verticalAlign = "1ex";
@@ -38,7 +38,7 @@ function getImageFromTex(input) {
  */
 function tex(input, x, y) {
 	let image = getImageFromTex(input),
-		ctx = C.workingCanvas,
+		ctx = C.workingContext,
 		text_align = ctx.textAlign,
 		text_baseline = ctx.textBaseline;
 	image.onload = function () {

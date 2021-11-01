@@ -1,148 +1,140 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Shapes</title>
-	<!-- <script defer src="../../src/app.js" type="module"></script> -->
-	<script id="vertex" type="x-shader/x-vertex">
-	precision highp float;
-	attribute vec2 position;
-	varying lowp vec3 color;
-	uniform vec2 c;
-	uniform lowp float shift;
-	uniform bool smoothen;
-	uniform vec2 range;
-	void main () {
-		vec2 pos = position;
-		float iteration = 0.0;
-		gl_Position = vec4(pos / range, 0, 1);
-		for (int i = 1; i < 200; i++) {
-			pos = vec2(
-				pos.x * pos.x - pos.y * pos.y,
-				2.0 * pos.x * pos.y
-			) + c;
-			if (dot(pos, pos) > 4.0) {
-				iteration = float(i);
-				break;
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Shapes</title>
+		<script defer src="../../src/app.js" type="module"></script>
+		<script id="fragment" type="x-shader/x-fragment">
+			precision highp float;
+			float hue2rgb(float f1, float f2, float hue) {
+				if (hue < 0.0)
+					hue += 1.0;
+				else if (hue > 1.0)
+					hue -= 1.0;
+				float res;
+				if ((6.0 * hue) < 1.0)
+					res = f1 + (f2 - f1) * 6.0 * hue;
+				else if ((2.0 * hue) < 1.0)
+					res = f2;
+				else if ((3.0 * hue) < 2.0)
+					res = f1 + (f2 - f1) * ((2.0 / 3.0) - hue) * 6.0;
+				else
+					res = f1;
+				return res;
 			}
-		}
 
-		if (iteration < 200.0 && smoothen) {
-			float log2 = log(2.0);
-			iteration = iteration + 1.0
-					- log(log(dot(pos, pos)) / log2 / 2.0) / log2;
-		}
+			vec3 hsl2rgb(vec3 hsl) {
+				vec3 rgb;
+				if (hsl.y == 0.0) {
+					rgb = vec3(hsl.z); // Luminance
+				} else {
+					float f2;
+					if (hsl.z < 0.5) f2 = hsl.z * (1.0 + hsl.y);
+					else f2 = hsl.z + hsl.y - hsl.y * hsl.z;
+					float f1 = 2.0 * hsl.z - f2;
 
-		float col = iteration / 200.0 + shift;
-		if (iteration > 0.0) color = vec3(col, 1.0, 0.5);
-		else color = vec3(col, 0, 0);
-		gl_PointSize = 1.0;
-	}
-	</script>
-
-	<script id="fragment" type="x-shader/x-fragment">
-	precision highp float;
-	float hue2rgb(float f1, float f2, float hue) {
-		if (hue < 0.0)
-			hue += 1.0;
-		else if (hue > 1.0)
-			hue -= 1.0;
-		float res;
-		if ((6.0 * hue) < 1.0)
-			res = f1 + (f2 - f1) * 6.0 * hue;
-		else if ((2.0 * hue) < 1.0)
-			res = f2;
-		else if ((3.0 * hue) < 2.0)
-			res = f1 + (f2 - f1) * ((2.0 / 3.0) - hue) * 6.0;
-		else
-			res = f1;
-		return res;
-	}
-
-	vec3 hsl2rgb(vec3 hsl) {
-		vec3 rgb;
-		if (hsl.y == 0.0) {
-			rgb = vec3(hsl.z); // Luminance
-		} else {
-			float f2;
-			if (hsl.z < 0.5) f2 = hsl.z * (1.0 + hsl.y);
-			else f2 = hsl.z + hsl.y - hsl.y * hsl.z;
-			float f1 = 2.0 * hsl.z - f2;
-
-			rgb.r = hue2rgb(f1, f2, hsl.x + (1.0/3.0));
-			rgb.g = hue2rgb(f1, f2, hsl.x);
-			rgb.b = hue2rgb(f1, f2, hsl.x - (1.0/3.0));
-		}
-		return rgb;
-	}
-
-	vec3 hsl2rgb(float h, float s, float l) {
-			return hsl2rgb(vec3(h, s, l));
-	}
-	varying lowp vec3 color;
-	void main () {
-		gl_FragColor = vec4(hsl2rgb(color), .5);
-	}
-	</script>
-
-	<style>
-		body, html {
-			margin: 0;
-			padding: 5px;
-		}
-
-		.inputbox > div {
-			border: .5px solid #aaa;
-			border-radius: 8px;
-			margin: 10px 0;
-			padding: 10px;
-		}
-
-		.inputbox > div > div{
-			display: flex;
-			flex-direction: row;
-			align-content: center;
-		}
-
-		.inputbox input[type="number"] {
-			border: none;
-			border-bottom: 2px solid #888;
-			outline: none;
-			transition: all .2s ease-in-out;
-			width: 100px;
-		}
-
-		.inputbox input[type="number"]:focus {
-			border-bottom: 2px solid #058;
-		}
-
-		.inputbox h4 {
-			margin: 0 0 10px 0;
-			padding: 0;
-		}
-	</style>
-</head>
-<body>
-	<div class="inputbox">
-		<div class="shift">
-			<span>Hue shift:</span>
-			<input type="range" name="shift" id="shift" min="0" max="360" value="0">
-			<output id="shift-out">0°</output>
+					rgb.r = hue2rgb(f1, f2, hsl.x + (1.0/3.0));
+					rgb.g = hue2rgb(f1, f2, hsl.x);
+					rgb.b = hue2rgb(f1, f2, hsl.x - (1.0/3.0));
+				}
+				return rgb;
+			}
+			varying lowp vec3 color;
+			void main () {
+				gl_FragColor = vec4(hsl2rgb(color), .5);
+			}
+		</script>
+		<link
+			rel="stylesheet"
+			href="https://cdn.jsdelivr.net/npm/katex@0.13.20/dist/katex.min.css"
+			integrity="sha384-cRxb1HsKSl8bTfU9fBcGsjktUfQa6w+fwvkYnU8XjFH4Qg8To1+/9OXv5iRzrKX4"
+			crossorigin="anonymous"
+		/>
+		<script
+			defer
+			src="https://cdn.jsdelivr.net/npm/katex@0.13.20/dist/katex.min.js"
+			integrity="sha384-ov99pRO2tAc0JuxTVzf63RHHeQTJ0CIawbDZFiFTzB07aqFZwEu2pz4uzqL+5OPG"
+			crossorigin="anonymous"
+		></script>
+		<script
+			defer
+			src="https://cdn.jsdelivr.net/npm/katex@0.13.20/dist/contrib/auto-render.min.js"
+			integrity="sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR"
+			crossorigin="anonymous"
+			onload="renderMathInElement(document.body);"
+		></script>
+		<script>
+			document.addEventListener("DOMContentLoaded", function () {
+				renderMathInElement(document.body, {
+					delimiters: [
+						{ left: "$$", right: "$$", display: true },
+						{ left: "$", right: "$", display: false },
+					],
+					throwOnError: false,
+				});
+			});
+		</script>
+		<link rel="stylesheet" href="themes.css" />
+		<script defer src="./themes.js"></script>
+		<link rel="stylesheet" href="framework.css" />
+		<link rel="stylesheet" href="styles.css" />
+	</head>
+	<body>
+		<header>
+			<label id="switch" class="switch">
+				<input type="checkbox" id="themeSelector" />
+				<span class="slider round"></span>
+			</label>
+		</header>
+		<h1>Inside Julia Set</h1>
+		<div>
+			Take any complex numbers, square it, square it again, again and again. You'll see that the
+			some times it shoots off to infinity or get trapped in a cycle of different numbers. But what
+			if you do this for every single complex number? To see that let's take a moment to see
+			operations on complex numbers.
 		</div>
-		<div class="smoothen">
-			<input type="checkbox" name="smoothening" id="smoothen" value="false">
-			<span>Smoothen</span>
+		<div>
+			<h2>Squaring</h2>
+			Let $z = a + bi$ . Its square is $(a + bi)^2 = a^2 - b^2 + 2abi$ . Pretty simple. But what
+			that actually <i>look</i> like?
 		</div>
-		<div class="customC">
-			<h4>Custom value for c</h4>
-			<div>
-				<input type="number" id="re" placeholder="real"> <span>+i</span>
-				<input type="number" id="im" placeholder="imaginary">
+		<div class="inputbox">
+			<div class="shift">
+				<span>Hue shift:</span>
+				<input type="range" name="shift" id="shift" min="0" max="360" value="0" />
+				<output id="shift-out">0°</output>
+			</div>
+			<div class="smoothen">
+				<label class="form-control">
+					<input type="checkbox" name="smoothening" id="smoothen" value="false" />
+					Smoothen
+				</label>
+			</div>
+			<div class="customC">
+				<h4>Custom value for c</h4>
+				<div>
+					<input type="number" id="re" step="0.001" placeholder="real" /> <span>+i</span>
+					<input type="number" id="im" step="0.001" placeholder="imaginary" />
+				</div>
+			</div>
+			<div class="power">
+				<h4>
+					Power of z:
+					<select name="power" id="zPower">
+						<option value="1">1</option>
+						<option value="2" selected>2</option>
+						<option value="3">3</option>
+						<option value="4">4</option>
+						<option value="5">5</option>
+						<option value="6">6</option>
+					</select>
+				</h4>
 			</div>
 		</div>
-	</div>
-	<div class="container"></div>
-	<!-- <script defer src="./index.js" type="module"></script> -->
-	<script defer src="./bundle.js"></script>
+		<div class="container"></div>
+		<script defer src="../../Extensions/Math/index.js"></script>
+		<script defer src="./index.js" type="module"></script>
+		<!-- <script defer src="./bundle.js"></script> -->
+	</body>
 </html>

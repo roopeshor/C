@@ -66,21 +66,26 @@ function lerpColorArray(colorArr, v, min = 0, max = 1) {
 	return lerpColor(colorArr[b], colorArr[b + 1], a - b);
 }
 
-function getInterpolatedColorList(colorPalatte, min = 0, max = 5, step = 1, alpha = 1) {
-	const len = Math.round((max - min) / step) + 1;
-	if (len > colorPalatte.length) {
-		// not implemented
-	} else if (len < 3) {
-		throw new Error("Number of colors to compute is less than 3");
+/**
+ *
+ * @param {Array<string>} colorPalatte Array of color palettes
+ * @param {number} [min=0] minimum of range
+ * @param {number} [max=5] maximum of range
+ * @param {number} [alpha=1] value of alpha channel. This value must be between 0 & 1
+ * @returns {Object} color object
+ */
+function getInterpolatedColorList(colorPalatte, min = 0, max = 5, alpha) {
+	if (colorPalatte.length == 1) throw new Error("Atleast 2 colors are needed to create interpolatable object");
+	let step = (max - min) / (colorPalatte.length - 1),
+		colorObj = {};
+
+	for (let i = 0; i < colorPalatte.length; i++) {
+		let value = min + i * step,
+		color = readColor(colorPalatte[i]).rgbaA;
+		color[3] = isNaN(alpha) ? color[3] : alpha;
+		colorObj[value] = color;
 	}
-	const colorObj = {};
-	const cp = colorPalatte;
-	let k = 0;
-	for (let i = min; i <= max; i += step) {
-		const c = readColor(cp[k++]).rgbaA;
-		c[3] = alpha;
-		colorObj[i] = readColor(c).rgbaA;
-	}
+
 	return colorObj;
 }
 

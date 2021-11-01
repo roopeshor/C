@@ -1,69 +1,19 @@
-import {
-	BLUE,
-	BLUE_A,
-	BLUE_B,
-	BLUE_D,
-	BLUE_E,
-	DARK_BLUE,
-	DARK_BROWN,
-	GOLD,
-	GOLD_A,
-	GOLD_B,
-	GOLD_D,
-	GOLD_E,
-	GREEN,
-	GREEN_A,
-	GREEN_B,
-	GREEN_D,
-	GREEN_E,
-	GREEN_SCREEN,
-	GREY_BROWN,
-	LIGHT_BROWN,
-	LIGHT_GREY,
-	LIGHT_PINK,
-	MAROON,
-	MAROON_A,
-	MAROON_B,
-	MAROON_D,
-	MAROON_E,
-	ORANGE,
-	PINK,
-	PURPLE,
-	PURPLE_A,
-	PURPLE_B,
-	PURPLE_D,
-	PURPLE_E,
-	RED,
-	RED_A,
-	RED_B,
-	RED_D,
-	RED_E,
-	TEAL,
-	TEAL_A,
-	TEAL_B,
-	TEAL_D,
-	TEAL_E,
-	WHITE,
-	YELLOW,
-	YELLOW_A,
-	YELLOW_B,
-	YELLOW_D,
-	YELLOW_E,
-} from "../../src/constants/colors.js";
+import { Manim } from "../../Extensions/Colors/importable.js";
 import { PI } from "../../src/constants/math.js";
 import { C } from "../../src/main.js";
 import { abs, cos, round, sin } from "../../src/math/basic.js";
 import { circle, line } from "../../src/objects/geometry.js";
 import { text } from "../../src/objects/text.js";
 import {
+	background,
 	clear,
 	fill,
-	initContrastedCanvas,
 	loop,
 	noFill,
 	noLoop,
 	stroke,
 	strokeWidth,
+	translate,
 } from "../../src/settings.js";
 let W, H, radius, animatedDrawingCfg, staticDrawingCfg;
 
@@ -97,64 +47,63 @@ const drawingConfigs = {
 let points = [];
 // custom color list
 const colors = [
-	DARK_BLUE,
-	DARK_BROWN,
-	LIGHT_BROWN,
-	BLUE_A,
-	BLUE_B,
-	BLUE,
-	BLUE_D,
-	BLUE_E,
-	TEAL_A,
-	TEAL_B,
-	TEAL,
-	TEAL_D,
-	TEAL_E,
-	GREEN_A,
-	GREEN_B,
-	GREEN,
-	GREEN_D,
-	GREEN_E,
-	YELLOW_A,
-	YELLOW_B,
-	YELLOW,
-	YELLOW_D,
-	YELLOW_E,
-	GOLD_A,
-	GOLD_B,
-	GOLD,
-	GOLD_D,
-	GOLD_E,
-	RED_A,
-	RED_B,
-	RED,
-	RED_D,
-	RED_E,
-	MAROON_A,
-	MAROON_B,
-	MAROON,
-	MAROON_D,
-	MAROON_E,
-	PURPLE_A,
-	PURPLE_B,
-	PURPLE,
-	PURPLE_D,
-	PURPLE_E,
-	WHITE,
-	LIGHT_GREY,
-	GREY_BROWN,
-	PINK,
-	LIGHT_PINK,
-	GREEN_SCREEN,
-	ORANGE,
+	Manim.DARK_BLUE,
+	Manim.DARK_BROWN,
+	Manim.LIGHT_BROWN,
+	Manim.BLUE_A,
+	Manim.BLUE_B,
+	Manim.BLUE,
+	Manim.BLUE_D,
+	Manim.BLUE_E,
+	Manim.TEAL_A,
+	Manim.TEAL_B,
+	Manim.TEAL,
+	Manim.TEAL_D,
+	Manim.TEAL_E,
+	Manim.GREEN_A,
+	Manim.GREEN_B,
+	Manim.GREEN,
+	Manim.GREEN_D,
+	Manim.GREEN_E,
+	Manim.YELLOW_A,
+	Manim.YELLOW_B,
+	Manim.YELLOW,
+	Manim.YELLOW_D,
+	Manim.YELLOW_E,
+	Manim.GOLD_A,
+	Manim.GOLD_B,
+	Manim.GOLD,
+	Manim.GOLD_D,
+	Manim.GOLD_E,
+	Manim.RED_A,
+	Manim.RED_B,
+	Manim.RED,
+	Manim.RED_D,
+	Manim.RED_E,
+	Manim.MAROON_A,
+	Manim.MAROON_B,
+	Manim.MAROON,
+	Manim.MAROON_D,
+	Manim.MAROON_E,
+	Manim.PURPLE_A,
+	Manim.PURPLE_B,
+	Manim.PURPLE,
+	Manim.PURPLE_D,
+	Manim.PURPLE_E,
+	Manim.WHITE,
+	Manim.LIGHT_GREY,
+	Manim.GREY_BROWN,
+	Manim.PINK,
+	Manim.LIGHT_PINK,
+	Manim.GREEN_SCREEN,
+	Manim.ORANGE,
 ];
 
 function computePoints() {
 	points = [];
 	const ratio = 1 / drawingConfigs.pointInRadius;
 	// points in a vertical radius line
-	for (let i = 0; i <= drawingConfigs.pointInRadius; i++)
-		points.push([0, i * radius * ratio]);
+	for (let i = 0; i <= drawingConfigs.pointInRadius; i++) points.push([0, i * radius * ratio]);
 
 	// points on a arc
 	for (let i = 0; i <= (PI * drawingConfigs.pointInRadius) / 2; i++) {
@@ -164,8 +113,7 @@ function computePoints() {
 	}
 
 	// points in a horizontal radius line
-	for (let i = -drawingConfigs.pointInRadius; i <= 0; i++)
-		points.push([i * radius * ratio, 0]);
+	for (let i = -drawingConfigs.pointInRadius; i <= 0; i++) points.push([i * radius * ratio, 0]);
 }
 
 computePoints();
@@ -195,7 +143,7 @@ function linePairs(i) {
 
 function init() {
 	strokeWidth(drawingConfigs.lineWidth);
-	initContrastedCanvas();
+	background(0);
 	noFill();
 	circle(0, 0, radius);
 }
@@ -208,7 +156,7 @@ function drawStatic() {
 function drawAnimated() {
 	init();
 	let i = 0;
-	const a = C.canvasList.animatedCvs;
+	const a = C.contextList.animatedCvs;
 	if (a.currentLoop != undefined) noLoop();
 	loop(function (elapsed, fps) {
 		if (points.length <= i++) {
@@ -216,7 +164,7 @@ function drawAnimated() {
 		} else {
 			linePairs(i, points.length);
 			clear(100, -100, 200, 20);
-			fill(WHITE);
+			fill(Manim.WHITE);
 			text(fps.toFixed(3), 130, -100);
 		}
 	}, "animatedCvs");
@@ -280,3 +228,18 @@ window.onresize = function () {
 	computePoints();
 	drawEverything();
 };
+
+C(
+	() => {
+		translate(CENTERX, CENTERY);
+	},
+	Static,
+	staticDrawingCfg
+);
+C(
+	() => {
+		translate(CENTERX, CENTERY);
+	},
+	animated,
+	animatedDrawingCfg
+);

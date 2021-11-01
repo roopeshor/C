@@ -1,13 +1,15 @@
 import { C } from "../../src/main.js";
-import { cartasianPlain } from "../../src/settings.js";
-import { createWebGL } from "../../src/WebGL/webgl.js";
+import { numberPlane } from "../../src/objects/coordinate_systems.js";
+import { background, translate } from "../../src/settings.js";
 
 C(
 	() => {
 		let h_W = 400 / 2;
 		let h_H = 400 / 2;
 		console.time("cl");
-		cartasianPlain({
+		background(0);
+		translate(CENTERX, CENTERY)
+		numberPlane({
 			xAxis: {
 				range: [-2, 2],
 			},

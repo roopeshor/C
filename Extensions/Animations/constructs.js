@@ -1,9 +1,9 @@
-import { readColor } from "../color/color_reader.js";
-import { C } from "../main.js";
-import { smooth } from "../math/rate_functions.js";
-import { ellipse, point } from "../objects/geometry.js";
-import { getStrokeWidth, loop, noLoop } from "../settings.js";
-import { applyDefault } from "../utils.js";
+import { readColor } from "../../src/color/color_reader.js";
+import { C } from "../../src/main.js";
+import { smooth } from "../../src/math/rate_functions.js";
+import { ellipse, point } from "../../src/objects/geometry.js";
+import { loop, noLoop } from "../../src/settings.js";
+import { applyDefault } from "../../src/utils.js";
 
 const counters = {
 	Circle: 1,
@@ -20,7 +20,7 @@ const counters = {
  * @param {number} [args.dt=10] The duration of one frame in milliseconds.
  * @param {Function} [args.next] The function to call after the animation.
  */
-function Line(args) {
+export function Line(args) {
 	let defaults = {
 		name: "line-" + counters.Line++,
 		dur: 1000,
@@ -32,8 +32,8 @@ function Line(args) {
 		defaults,
 		args
 	);
-	canvas = canvas || C.workingCanvas.name;
-	let ctx = C.canvasList[canvas];
+	canvas = canvas || C.workingContext.name;
+	let ctx = C.contextList[canvas];
 
 	let angle = Math.atan2(p2[1] - p1[1], p2[0] - p1[0]);
 	let points = [];
@@ -61,7 +61,7 @@ function Line(args) {
 	};
 }
 
-function Arc(args) {
+export function Arc(args) {
 	const defaults = {
 		center: [0, 0],
 		name: "arc-" + counters.Arc++,
@@ -95,8 +95,8 @@ function Arc(args) {
 		radiusY,
 		clockwise,
 	} = Object.assign(defaults, args);
-	canvas = canvas || C.workingCanvas.name;
-	let ctx = C.canvasList[canvas];
+	canvas = canvas || C.workingContext.name;
+	let ctx = C.contextList[canvas];
 	let points = [];
 
 	if (args.radius) {
@@ -117,8 +117,8 @@ function Arc(args) {
 	let rx = radiusX;
 	let ry = radiusY;
 	if (ctx.doStroke) {
-		rx -= getStrokeWidth() / 2;
-		ry -= getStrokeWidth() / 2;
+		rx -= ctx.lineWidth / 2;
+		ry -= ctx.lineWidth / 2;
 	}
 	console.log(points);
 	return {
@@ -153,9 +153,9 @@ function Arc(args) {
  * @param {number} [dt=10] dur for each frame
  * @param {Function} [next=null] function to run after filling
  */
-function animateFill(name, canvasName, FILL, f, dur = 1000, dt = 10, next = null) {
+export function animateFill(name, canvasName, FILL, f, dur = 1000, dt = 10, next = null) {
 	let _fill = readColor(FILL).rgbaA;
-	const ctx = C.canvasList[canvasName];
+	const ctx = C.contextList[canvasName];
 	let previousT = -dur / dt;
 	loop(
 		"filling " + name,
@@ -191,7 +191,7 @@ function animateFill(name, canvasName, FILL, f, dur = 1000, dt = 10, next = null
  * @param {Array<number>} args.center center of the circle
  * @param {string} args.canvas name of canvas in which the animation is rendered
  */
-function Circle(args) {
+export function Circle(args) {
 	let defaults = {
 		name: "point-" + counters.Circle++,
 		radius: 100,
@@ -226,4 +226,3 @@ function Circle(args) {
 	};
 }
 
-export { Line, Arc, animateFill, Circle };

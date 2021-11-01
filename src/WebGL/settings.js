@@ -252,7 +252,7 @@ WebGL.prototype.lineWidth = function (w) {
  * @param  {...number|string|Array<number>} color
  */
 WebGL.prototype.stroke = function (...color) {
-	let c = readColor(color).rgbA;
+	let c = readColor(color).rgbaA;
 	this.styles.strokeColor = [c[0] / 255, c[1] / 255, c[2] / 255, c[3]];
 };
 

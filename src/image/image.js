@@ -10,7 +10,7 @@ import { C } from "../main.js";
  * @param {HTMLCanvasElement|HTMLImageElement|HTMLVideoElement|ImageBitmap|OffscreenCanvas} image image to draw
  */
 function drawImage(image) {
-	let ctx = C.workingCanvas,
+	let ctx = C.workingContext,
 		x,
 		y;
 	if (arguments.length < 6) {
@@ -39,7 +39,7 @@ function drawImage(image) {
  * @param {string} color color of pixel
  */
 function pixel(x, y, color, size) {
-	let ctx = C.workingCanvas;
+	let ctx = C.workingContext;
 	if (color) ctx.fillStyle = color;
 	if (!size) size = 1 / C.dpr;
 	ctx.fillRect(x, y, size, size);

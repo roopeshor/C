@@ -15,7 +15,7 @@ import { scale } from "../settings.js";
  * @param {number} [maxwidth=undefined] maximum width
  */
 function text(text, x = 0, y = 0, maxwidth = undefined) {
-	let ctx = C.workingCanvas;
+	let ctx = C.workingContext;
 	if (ctx.yAxisInverted) {
 		// if inverted reverse it and invert y component
 		scale(1, -1);
@@ -35,7 +35,7 @@ function text(text, x = 0, y = 0, maxwidth = undefined) {
  * @param {number} [maxwidth=undefined] maximum width
  */
 function fillText(text, x = 0, y = 0, maxwidth = undefined) {
-	let ctx = C.workingCanvas;
+	let ctx = C.workingContext;
 	if (ctx.yAxisInverted) {
 		scale(1, -1);
 		y *= -1;
@@ -53,7 +53,7 @@ function fillText(text, x = 0, y = 0, maxwidth = undefined) {
  * @param {number} [maxwidth=undefined] maximum width
  */
 function strokeText(text, x = 0, y = 0, maxwidth = undefined) {
-	let ctx = C.workingCanvas;
+	let ctx = C.workingContext;
 	if (ctx.yAxisInverted) {
 		scale(1, -1);
 		y *= -1;

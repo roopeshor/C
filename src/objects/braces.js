@@ -41,7 +41,7 @@ function curlyBrace(x1, y1, x2, y2, size = 20, curviness = 0.6, taleLength = 0.8
 		`M ${x2} ${y2} ` +
 		`Q ${cp3x} ${cp3y} ${cp4x} ${cp4y} ` +
 		`T ${middleTipX} ${middleTipY}`;
-	C.workingCanvas.stroke(new Path2D(path));
+	C.workingContext.stroke(new Path2D(path));
 	return [middleTipX, middleTipY];
 }
 
@@ -68,7 +68,7 @@ function arcBrace(
 	tipLineLength = smallerLineLength,
 	extender = 10
 ) {
-	const ctx = C.workingCanvas,
+	const ctx = C.workingContext,
 		smallerRadius = radius - smallerLineLength,
 		largerRadius = radius + tipLineLength;
 

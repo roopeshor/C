@@ -1,10 +1,5 @@
 import { linearGradient } from "../../src/color/gradients.js";
 import * as COLORLIST from "../../src/constants/colors.js";
-import {
-	BLACK,
-	BLUE,
-	BLUE_A, WHITE
-} from "../../src/constants/colors.js";
 import { C } from "../../src/main.js";
 import { rect } from "../../src/objects/geometry.js";
 import { text } from "../../src/objects/text.js";
@@ -18,6 +13,7 @@ import {
 	translate
 } from "../../src/settings.js";
 const W = 780;
+
 C(
 	function () {
 		background(0);
@@ -34,14 +30,14 @@ C(
 		// debugger;
 		function box(name, k) {
 			// background
-			if (name === "BLACK") stroke(WHITE);
+			if (name === "BLACK") stroke(white);
 			rect(100 + k * w, 0, w, h);
-			fill(BLACK);
+			fill(black);
 
 			// name of color
-			if (name === "BLACK") fill(WHITE);
+			if (name === "BLACK") fill(white);
 			text(name, 100 + k * w + 7, h - 18);
-			stroke(BLACK);
+			stroke(black);
 		}
 		function set1() {
 			// first set of colors
@@ -68,22 +64,22 @@ C(
 			const colorIntensities = ["A", "B", "C", "D", "E"];
 
 			noFill();
-			stroke(BLUE);
+			stroke(Manim.BLUE);
 			rect(0, 0, boxW, boxH);
-			stroke(BLACK);
+			stroke(black);
 			translate(paddingX, paddingY);
-			fill(BLUE_A);
+			fill(Manim.BLUE_A);
 			for (let i = 0; i < colors.length; i++) {
 				const col = colors[i];
 				for (let k = 0; k < col.length; k++) {
-					fill(COLORLIST[col[k]]);
+					fill(Manim[col[k]]);
 
 					// header
 					if (!i) text(colorIntensities[k], 100 + k * w + 45, -7);
 
 					// background
 					rect(100 + k * w, 0, w, h);
-					fill(COLORLIST.BLACK);
+					fill(COLORLIST.black);
 
 					// name of color
 					text(
@@ -91,7 +87,7 @@ C(
 						100 + k * w + 7,
 						h - 18
 					);
-					col[k] = COLORLIST[col[k]];
+					col[k] = Manim[col[k]];
 				}
 				translate(0, h);
 				// name of set
@@ -125,18 +121,18 @@ C(
 			const stopNames = ["Blue & Brown", "Grey shades", "Others"];
 			const pd = 40; // a quick fix
 			noFill();
-			stroke(BLUE);
+			stroke(Manim.BLUE);
 			rect(0, 0, boxW, boxH);
-			stroke(BLACK);
+			stroke(black);
 			translate(paddingX + pd, paddingY / 2);
-			fill(BLUE_A);
+			fill(Manim.BLUE_A);
 			for (let i = 0, k = 0; i < colors.length; i++) {
 				const col = colors[i];
 				for (let k = 0; k < col.length; k++) {
-					fill(COLORLIST[col[k]]);
+					fill(Manim[col[k]]);
 					if (k == 4) translate(-w * 4, h);
 					box(col[k], k);
-					col[k] = COLORLIST[col[k]];
+					col[k] = Manim[col[k]];
 				}
 				translate(0, h);
 
@@ -144,7 +140,7 @@ C(
 				fill(linearGradient([0, 0], [measureText(name).width, 0], col));
 				if (k > 4) {
 					translate(w * 4, -h);
-					fill(WHITE);
+					fill(white);
 				}
 				var name = stopNames[i];
 				text(name, -pd + 3, -h / 2 + 5);

@@ -1,4 +1,4 @@
-import { animateFill } from "./animations/create.js";
+import { animateFill } from "../Extensions/Animations/constructs.js";
 import { readColor } from "./color/color_reader.js";
 import { C } from "./main.js";
 import { smooth } from "./math/rate_functions.js";
@@ -8,7 +8,6 @@ import { defineProperties, type } from "./utils.js";
 
 // for debuggingF
 let counter = {
-		wait: 1,
 		loop: 1,
 	},
 	logStyles = {
@@ -25,7 +24,7 @@ let counter = {
  * @param {number} y
  */
 export function moveTo(x, y) {
-	C.workingCanvas.moveTo(x, y);
+	C.workingContext.moveTo(x, y);
 }
 
 /**
@@ -35,7 +34,7 @@ export function moveTo(x, y) {
  * @param {number} y
  */
 export function lineTo(x, y) {
-	C.workingCanvas.lineTo(x, y);
+	C.workingContext.lineTo(x, y);
 }
 
 /**
@@ -49,7 +48,7 @@ export function lineTo(x, y) {
  */
 export function background(...color) {
 	let col = readColor(color).hex8,
-		ctx = C.workingCanvas;
+		ctx = C.workingContext;
 	ctx.background = col;
 	ctx.save();
 	rest();
@@ -63,11 +62,11 @@ export function background(...color) {
  *
  * @param {number} [x = 0] x-axis coordinate of the rectangle's starting point.
  * @param {number} [y = 0] y-axis coordinate of the rectangle's starting point.
- * @param {number} [width = C.workingCanvas.width] Rectangle's width. Positive values are to the right, and negative values to the left.
- * @param {number} [height = C.workingCanvas.height] Rectangle's height. positive values are down, and negative are up.
+ * @param {number} [width = C.workingContext.width] Rectangle's width. Positive values are to the right, and negative values to the left.
+ * @param {number} [height = C.workingContext.height] Rectangle's height. positive values are down, and negative are up.
  */
 export function clear(x, y, width, height) {
-	let ctx = C.workingCanvas,
+	let ctx = C.workingContext,
 		d = C.dpr;
 	x = x || 0;
 	y = y || 0;
@@ -75,20 +74,7 @@ export function clear(x, y, width, height) {
 	height = height || ctx.canvas.height;
 	ctx.save();
 	ctx.setTransform(d, 0, 0, d, 0, 0);
-	ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-	ctx.restore();
-}
-
-/**
- * Erases entire canvas area by setting them to transparent black
- *
- */
-export function clearAll() {
-	let ctx = C.workingCanvas,
-		d = C.dpr;
-	ctx.save();
-	ctx.setTransform(d, 0, 0, d, 0, 0);
-	ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+	ctx.clearRect(x, y, width, height);
 	ctx.restore();
 }
 
@@ -98,60 +84,38 @@ export function clearAll() {
  */
 export function permaBackground(data) {
 	if (typeof data != "string") data = getCanvasData();
-	let canvasStyle = C.workingCanvas.canvas.style;
+	let canvasStyle = C.workingContext.canvas.style;
 	canvasStyle.background = "url('" + data + "')";
 	canvasStyle.backgroundPosition = "center";
 	canvasStyle.backgroundSize = "cover";
 }
 
 /**
- * Resets the current transformation to the identity matrix,
+ * If Some arguments are given: Resets the current transformation to the identity matrix,
  * and then invokes a transformation described by given arguments.
  * Lets you scale, rotate, translate (move), and skew the canvas.
  * See {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/transform} for more info
+ * If no Arguments are given: returns current transformation
  *
- * @param {number|DOMMatrix} a Horizontal scaling. A value of 1 results in no scaling.
- *  this can be a `DOMMatrix` which can get by {@link getTransform} function
- * @param {number} b Vertical skewing
- * @param {number} c Horizontal skewing
- * @param {number} d Vertical scaling. A value of 1 results in no scaling
- * @param {number} e Horizontal translation
- * @param {number} f Vertical translation
- */
-export function setTransform(a, b, c, d, e, f) {
-	let ctx = C.workingCanvas;
-	if (a instanceof DOMMatrix) ctx.setTransform(a.a, a.b, a.c, a.d, a.e, a.f);
-	else ctx.setTransform(a || 0, b || 0, c || 0, d || 0, e || 0, f || 0);
-	ctx.scale(C.dpr, C.dpr);
-}
-
-/**
- * Returns the current transform matrix
- *
- * @return {DOMMatrixReadOnly}
- */
-export function getTransform() {
-	return C.workingCanvas.getTransform();
-}
-
-/**
- * multiplies the current transformation with the matrix described by the arguments
- * of this method. This lets you scale, rotate, translate (move), and skew the context.
- *
- * See {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/transform} for more info
- *
- * @param {number|DOMMatrix} a Horizontal scaling. A value of 1 results in no scaling.
- *  this can be a `DOMMatrix` which can get by {@link getTransform} function
- * @param {number} b Vertical skewing
- * @param {number} c Horizontal skewing
- * @param {number} d Vertical scaling. A value of 1 results in no scaling
- * @param {number} e Horizontal translation
- * @param {number} f Vertical translation
+ * @param {number|DOMMatrix} [a] Horizontal scaling. A value of 1 results in no scaling.
+ * @param {number} [b] Vertical skewing
+ * @param {number} [c] Horizontal skewing
+ * @param {number} [d] Vertical scaling. A value of 1 results in no scaling
+ * @param {number} [e] Horizontal translation
+ * @param {number} [f] Vertical translation
  */
 export function transform(a, b, c, d, e, f) {
-	let ctx = C.workingCanvas;
-	if (a instanceof DOMMatrix) ctx.transform(a.a, a.b, a.c, a.d, a.e, a.f);
-	else ctx.transform(a || 0, b || 0, c || 0, d || 0, e || 0, f || 0);
+	let ctx = C.workingContext;
+	if (a == undefined || a == null) {
+		return C.workingContext.getTransform();
+	} else if (a instanceof DOMMatrix) {
+		ctx.setTransform(a.a, a.b, a.c, a.d, a.e, a.f);
+	} else {
+		ctx.setTransform(a || 0, b || 0, c || 0, d || 0, e || 0, f || 0);
+	}
+
+	// scale to fit width
+	ctx.scale(C.dpr, C.dpr);
 }
 
 /**
@@ -159,7 +123,7 @@ export function transform(a, b, c, d, e, f) {
  *
  */
 export function noFill() {
-	C.workingCanvas.doFill = false;
+	C.workingContext.doFill = false;
 }
 
 /**
@@ -167,7 +131,7 @@ export function noFill() {
  *
  */
 export function noStroke() {
-	C.workingCanvas.doStroke = false;
+	C.workingContext.doStroke = false;
 }
 
 /**
@@ -177,7 +141,7 @@ export function noStroke() {
  * @param {number} [y=0] amound to translate along y-axis
  */
 export function translate(x, y = 0) {
-	C.workingCanvas.translate(x, y);
+	C.workingContext.translate(x, y);
 }
 
 /**
@@ -186,7 +150,7 @@ export function translate(x, y = 0) {
  * @param {boolean} bool
  */
 export function setImageSmoothing(bool) {
-	C.workingCanvas.imageSmoothingEnabled = !!bool;
+	C.workingContext.imageSmoothingEnabled = !!bool;
 }
 
 /**
@@ -195,7 +159,7 @@ export function setImageSmoothing(bool) {
  * @param {number} w
  */
 export function strokeWidth(w) {
-	C.workingCanvas.lineWidth = Number(w);
+	C.workingContext.lineWidth = Number(w);
 }
 
 /**
@@ -207,7 +171,7 @@ export function strokeWidth(w) {
  *  the horizontal axis. A value of 1 results in no vertical scaling.
  */
 export function scale(x, y = x) {
-	C.workingCanvas.scale(x, y);
+	C.workingContext.scale(x, y);
 }
 
 /**
@@ -216,7 +180,7 @@ export function scale(x, y = x) {
  * @param {number} angle The rotation angle, clockwise in radians. You can use degree * DEG to calculate a radian from a degree.
  */
 export function rotate(angle) {
-	let ctx = C.workingCanvas;
+	let ctx = C.workingContext;
 	ctx.rotate(angle);
 	ctx.netRotation = ((ctx.netRotation + angle) % Math.PI) * 2;
 }
@@ -226,8 +190,8 @@ export function rotate(angle) {
 
  */
 export function save() {
-	C.workingCanvas.savedStates = getContextStates();
-	C.workingCanvas.save();
+	C.workingContext.savedStates = getContextStates();
+	C.workingContext.save();
 }
 
 /**
@@ -237,7 +201,7 @@ export function save() {
  * @param {string} capType
  */
 export function lineCap(capType) {
-	C.workingCanvas.lineCap = capType;
+	C.workingContext.lineCap = capType;
 }
 
 /**
@@ -247,7 +211,7 @@ export function lineCap(capType) {
  * @param {string} joinType
  */
 export function lineJoin(joinType) {
-	C.workingCanvas.lineJoin = joinType;
+	C.workingContext.lineJoin = joinType;
 }
 
 /**
@@ -255,35 +219,8 @@ export function lineJoin(joinType) {
  *
  */
 export function restore() {
-	defineProperties(C.workingCanvas.savedStates, C.workingCanvas);
-	C.workingCanvas.restore();
-}
-
-/**
- * Returns fill color/gradient
- *
- * @returns {CanvasGradient|CanvasPattern|string}
- */
-export function getFill() {
-	return C.workingCanvas.fillStyle;
-}
-
-/**
- * Returns stroke color/gradient
- *
- * @returns {CanvasGradient|CanvasPattern|string}
- */
-export function getStroke() {
-	return C.workingCanvas.strokeStyle;
-}
-
-/**
- * Returns stroke width
- *
- * @returns number
- */
-export function getStrokeWidth() {
-	return C.workingCanvas.lineWidth;
+	defineProperties(C.workingContext.savedStates, C.workingContext);
+	C.workingContext.restore();
 }
 
 /**
@@ -291,7 +228,7 @@ export function getStrokeWidth() {
  *
  */
 export function rest() {
-	let ctx = C.workingCanvas;
+	let ctx = C.workingContext;
 	ctx.setTransform(C.dpr, 0, 0, C.dpr, 0, 0);
 }
 
@@ -305,7 +242,7 @@ export function rest() {
  * * array of numbers ([0, 244, 34]). This gets converted into css color by the colorMode property
  */
 export function stroke(...color) {
-	let ctx = C.workingCanvas;
+	let ctx = C.workingContext;
 	if (arguments.length > 0) {
 		ctx.strokeStyle = readColor(color).hex8;
 		ctx.doStroke = true;
@@ -324,7 +261,7 @@ export function stroke(...color) {
  * * a array of numbers ([0, 244, 34]). This gets converted into css color by the colorMode property
  */
 export function fill(...color) {
-	let ctx = C.workingCanvas;
+	let ctx = C.workingContext;
 	if (arguments.length !== 0) {
 		ctx.fillStyle = readColor(color).hex8;
 		ctx.doFill = true;
@@ -340,7 +277,7 @@ export function fill(...color) {
  * @returns {Object}
  */
 export function getContextStates(canvasName) {
-	let ctx = C.canvasList[canvasName] || C.workingCanvas;
+	let ctx = C.contextList[canvasName] || C.workingContext;
 	return {
 		background: ctx.background,
 		colorMode: ctx.colorMode,
@@ -368,48 +305,7 @@ export function getContextStates(canvasName) {
 		textAlign: ctx.textAlign,
 		textBaseline: ctx.textBaseline,
 
-		onclick: ctx.onclick,
-		onmousemove: ctx.onmousemove,
-		onmouseout: ctx.onmouseout,
-		onmousedown: ctx.onmousedown,
-		onmouseup: ctx.onmouseup,
-		onmousewheel: ctx.onmousewheel,
-
-		// key
-		onkeydown: ctx.onkeydown,
-		onkeyup: ctx.onkeyup,
-		onkeypress: ctx.onkeypress,
-		oncopy: ctx.oncopy,
-		onpaste: ctx.onpaste,
-		oncut: ctx.oncut,
-
-		// touch
-		ontouchstart: ctx.ontouchstart,
-		ontouchmove: ctx.ontouchmove,
-		ontouchend: ctx.ontouchend,
-		ontouchcancel: ctx.ontouchcancel,
-
-		// scale
-		onresize: ctx.onresize,
-
-		// dom
-		onblur: ctx.onblur,
-		onfocus: ctx.onfocus,
-		onchange: ctx.onchange,
-		oninput: ctx.oninput,
-		onload: ctx.onload,
-		onscroll: ctx.onscroll,
-		onwheel: ctx.onwheel,
-
-		onpointerdown: ctx.onpointerdown,
-		onpointermove: ctx.onpointermove,
-		onpointerup: ctx.onpointerup,
-		onpointercancel: ctx.onpointercancel,
-		onpointerover: ctx.onpointerover,
-		onpointerout: ctx.onpointerout,
-		onpointerenter: ctx.onpointerenter,
-		onpointerleave: ctx.onpointerleave,
-		onfullscreenchange: ctx.onfullscreenchange,
+		events: ctx.events,
 	};
 }
 
@@ -444,9 +340,9 @@ export function loop(
 		dur = arguments[4];
 	}
 	if (!canvasName) {
-		ctx = C.workingCanvas;
+		ctx = C.workingContext;
 		canvasName = ctx.name;
-	} else ctx = C.canvasList[canvasName];
+	} else ctx = C.contextList[canvasName];
 	ctx.timeDelayList = [];
 	ctx.totalTimeCaptured = 0;
 	let assignedSettings = Object.assign(getContextStates(canvasName) || {}, settings);
@@ -493,11 +389,11 @@ export function loop(
 		if (!isNaN(timeDelay)) {
 			ctx.currentLoopName = name;
 			ctx.currentLoop = setInterval(function () {
-				C.workingCanvas = ctx;
+				C.workingContext = ctx;
 				let S = getContextStates(canvasName);
-				defineProperties(assignedSettings, C.workingCanvas);
+				defineProperties(assignedSettings, C.workingContext);
 				functionToRun(window.performance.now() - ctx.timeStart, getFPS());
-				defineProperties(S, C.workingCanvas);
+				defineProperties(S, C.workingContext);
 			}, timeDelay);
 		} else {
 			run();
@@ -505,11 +401,11 @@ export function loop(
 	}
 	function run() {
 		ctx.currentLoop = window.requestAnimationFrame(run);
-		C.workingCanvas = ctx;
+		C.workingContext = ctx;
 		let S = getContextStates(canvasName);
-		if (settings) defineProperties(assignedSettings, C.workingCanvas);
+		if (settings) defineProperties(assignedSettings, C.workingContext);
 		functionToRun(window.performance.now() - ctx.timeStart, getFPS());
-		if (settings) defineProperties(S, C.workingCanvas);
+		if (settings) defineProperties(S, C.workingContext);
 	}
 
 	function getFPS() {
@@ -531,9 +427,9 @@ export function loop(
  * @param {number} [time] time of execution. Used for debugging
  */
 export function noLoop(canvasName, time) {
-	let ctx = C.workingCanvas;
+	let ctx = C.workingContext;
 	if (!canvasName) canvasName = ctx.name;
-	else ctx = C.canvasList[canvasName];
+	else ctx = C.contextList[canvasName];
 	clearInterval(ctx.currentLoop);
 	window.cancelAnimationFrame(ctx.currentLoop);
 	ctx.currentLoop = undefined;
@@ -571,7 +467,7 @@ export function noLoop(canvasName, time) {
  *
  */
 export function startShape() {
-	let ctx = C.workingCanvas;
+	let ctx = C.workingContext;
 	ctx.beginPath();
 	ctx.pathStarted = true;
 }
@@ -581,7 +477,7 @@ export function startShape() {
  *
  */
 export function endShape() {
-	let ctx = C.workingCanvas;
+	let ctx = C.workingContext;
 	ctx.closePath();
 	ctx.pathStarted = false;
 }
@@ -593,7 +489,7 @@ export function endShape() {
  * @returns {string}
  */
 export function getFont(detailed = false) {
-	let ctx = C.workingCanvas;
+	let ctx = C.workingContext;
 	if (detailed) {
 		let { fontStyle, fontVariant, fontWeight, fontStretch, fontSize, lineHeight, fontFamily } = ctx;
 		return `${fontStyle} ${fontVariant} ${fontWeight} ${fontStretch} ${fontSize}/${lineHeight} ${fontFamily}`;
@@ -609,7 +505,7 @@ export function getFont(detailed = false) {
  * @returns {TextMetrics}
  */
 export function measureText(text) {
-	return C.workingCanvas.measureText(text);
+	return C.workingContext.measureText(text);
 }
 
 /**
@@ -629,7 +525,7 @@ export function measureText(text) {
  * * SMALLER
  */
 export function fontSize(size) {
-	let ctx = C.workingCanvas;
+	let ctx = C.workingContext;
 	size = typeof size === "number" ? size + "px" : size;
 	ctx.fontSize = size;
 	ctx.font = getFont(true);
@@ -641,7 +537,7 @@ export function fontSize(size) {
  * @param {string} family
  */
 export function fontFamily(family) {
-	let ctx = C.workingCanvas;
+	let ctx = C.workingContext;
 	ctx.fontFamily = family;
 	ctx.font = getFont(true);
 }
@@ -656,7 +552,7 @@ export function fontFamily(family) {
  * * OBLIQUE [<angle>]
  */
 export function fontStyle(style) {
-	let ctx = C.workingCanvas;
+	let ctx = C.workingContext;
 	ctx.fontStyle = style;
 	ctx.font = getFont(true);
 }
@@ -668,7 +564,7 @@ export function fontStyle(style) {
  * @param {string} variant
  */
 export function fontVariant(variant) {
-	let ctx = C.workingCanvas;
+	let ctx = C.workingContext;
 	ctx.fontVariant = variant;
 	ctx.font = getFont(true);
 }
@@ -679,7 +575,7 @@ export function fontVariant(variant) {
  * @param {string} weight
  */
 export function fontWeight(weight) {
-	let ctx = C.workingCanvas;
+	let ctx = C.workingContext;
 	ctx.fontWeight = weight;
 	ctx.font = getFont(true);
 }
@@ -703,7 +599,7 @@ export function fontWeight(weight) {
  * * <percentage>
  */
 export function fontStretch(stretch) {
-	let ctx = C.workingCanvas;
+	let ctx = C.workingContext;
 	ctx.fontStretch = stretch;
 	ctx.font = getFont(true);
 }
@@ -715,7 +611,7 @@ export function fontStretch(stretch) {
  * @param {string} height
  */
 export function lineHeight(height) {
-	let ctx = C.workingCanvas;
+	let ctx = C.workingContext;
 	ctx.lineHeight = height;
 	ctx.font = getFont(true);
 }
@@ -727,14 +623,14 @@ export function lineHeight(height) {
  * @returns {string}
  */
 export function getCanvasData(datURL = "image/png") {
-	return C.workingCanvas.canvas.toDataURL(datURL);
+	return C.workingContext.canvas.toDataURL(datURL);
 }
 
 /**
  * puts a imageData to canvas
  */
 export function putImageData() {
-	C.workingCanvas.putImageData(...arguments);
+	C.workingContext.putImageData(...arguments);
 }
 
 /**
@@ -757,7 +653,7 @@ export function saveCanvas(name = "drawing", datURL = "image/png") {
  *
  */
 export function lineDash() {
-	C.workingCanvas.setLineDash([...arguments]);
+	C.workingContext.setLineDash([...arguments]);
 }
 
 /**
@@ -774,7 +670,7 @@ export function lineDash() {
  * NOTE: You can use constants LEFT, RIGHT, CENTER, START, and END for aligning
  */
 export function textAlign(align) {
-	C.workingCanvas.textAlign = align;
+	C.workingContext.textAlign = align;
 }
 
 /**
@@ -792,170 +688,5 @@ export function textAlign(align) {
  * NOTE: You can use constants TOP, HANGING, MIDDLE, ALPHABETIC, IDEOGRAPHIC, BOTTOM for baseline
  */
 export function textBaseline(baseline) {
-	C.workingCanvas.textBaseline = baseline;
-}
-
-/**
- * Sets the text alignment to centered in x and y axes.
- *
- */
-export function centerdText() {
-	textAlign("center");
-	textBaseline("middle");
-}
-
-/**
- * translates canvas to center
- */
-export function centreCanvas() {
-	let ctx = C.workingCanvas;
-	ctx.translate(ctx.canvas.width / 2, ctx.canvas.height / 2);
-}
-
-/**
- * Inverts y-axis
- */
-export function invertYAxis() {
-	let ctx = C.workingCanvas;
-	ctx.scale(1, -1);
-	ctx.yAxisInverted = !ctx.yAxisInverted;
-}
-
-/**
- * Wait for a given time in milliseconds.
- *
- * @param {number} time time in milliseconds
- * @param {string} canvasName canvas name
- */
-export function wait(time, canvasName, name) {
-	canvasName = C.workingCanvas.name || canvasName;
-	loop(
-		name || "wait-" + counter.wait++,
-		(elapsed) => {
-			if (elapsed >= time) noLoop(canvasName, elapsed);
-		},
-		canvasName,
-		time,
-		500,
-		{},
-		time
-	);
-}
-
-export function showCreation() {
-	let animations = Array.prototype.slice.call(arguments);
-	for (let i = 0; i < animations.length; i++) {
-		let animation = animations[i];
-		if (type(animation) == "Object") {
-			let dur = animation.dur || 2000,
-				ctx = animation.canvas || C.workingCanvas,
-				next = animation.next || null,
-				name = animation.name,
-				dTime = animation.dTime || 14,
-				points = animation.points,
-				closed = animation.closed || false,
-				tension = animation.tension || 1,
-				smoothen = animation.smoothen == undefined ? true : animation.smoothen,
-				rateFunction = animation.rateFunction || smooth,
-				syncWithTime = animation.syncWithTime || false,
-				t = 0,
-				dt = dTime / dur,
-				len = points.length - 1;
-			if (ctx.lineWidth > 0 && ctx.doStroke) {
-				if (typeof animation.draw != "function") {
-					if (smoothen) {
-						loop(
-							name,
-							(elapsed) => {
-								if (t > 1) {
-									noLoop(ctx.name, elapsed);
-								}
-								let i = Math.round(len * rateFunction(t)),
-									ip1 = Math.round(len * rateFunction(t + dt)),
-									ip2 = Math.round(len * rateFunction(t + dt * 2));
-								if (closed) {
-									i %= len;
-									ip1 %= len;
-									ip2 %= len;
-								}
-								let recentPoint =
-										points[Math.round(len * rateFunction(t - dt))] ||
-										points[len - Math.abs(Math.round(len * rateFunction(t - dt)))],
-									currentPoint = points[i],
-									nextPoint = points[ip1],
-									secondNextPoint = points[ip2],
-									cp = getBezierControlPoints(
-										recentPoint,
-										currentPoint,
-										nextPoint,
-										secondNextPoint,
-										tension
-									);
-								ctx.beginPath();
-								if (closed)
-									ctx.moveTo(...points[Math.abs(Math.round(len * rateFunction(t)) % len)]);
-								else ctx.moveTo(...points[Math.round(len * rateFunction(t))]);
-
-								ctx.bezierCurveTo(cp[0], cp[1], cp[2], cp[3], nextPoint[0], nextPoint[1]);
-								if (ctx.doStroke) ctx.stroke();
-								ctx.closePath();
-								if (!syncWithTime) t += dt;
-								else t = elapsed / dur;
-							},
-							ctx.name,
-							dTime,
-							50,
-							{},
-							dur
-						);
-					} else {
-						loop(
-							name,
-							(elapsed) => {
-								if (t > 1) {
-									noLoop(ctx.name, elapsed);
-								} else if (t == 0) {
-									ctx.beginPath();
-									ctx.moveTo(...points[Math.abs(Math.round(len * rateFunction(0)))]);
-								}
-								let currentPoint = points[Math.round(len * rateFunction(t)) % len];
-								ctx.lineTo(currentPoint[0], currentPoint[1]);
-								if (ctx.doStroke) ctx.stroke();
-								if (!syncWithTime) t += dt;
-								else t = elapsed / dur;
-							},
-							ctx.name,
-							dTime,
-							50,
-							{},
-							dur
-						);
-					}
-				} else {
-					animation.draw();
-				}
-			}
-			if (closed && animation.fill) {
-				animateFill(name, ctx.name, animation.fill, animation.filler, animation.fillTime, 10, next);
-			}
-		} else {
-			throw new Error(
-				i +
-					1 +
-					(i == 0 ? "st" : i == 1 ? "nd" : i == 2 ? "rd" : "th") +
-					" argument provided is not a object."
-			);
-		}
-	}
-}
-
-/**
- * Draws a cartasian plain and moves canvas to center and inverts y-axis.
- * TODO: find a new name for this function
- * @param {Object} cfg configurations for the plain.
- */
-export function cartasianPlain(cfg) {
-	centreCanvas();
-	invertYAxis();
-	numberPlane(cfg);
+	C.workingContext.textBaseline = baseline;
 }

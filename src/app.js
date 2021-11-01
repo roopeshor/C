@@ -24,8 +24,6 @@ import * as Functions from "./objects/functions.js";
 import * as CoordinateSystems from "./objects/coordinate_systems.js";
 import * as MoreShapes from "./objects/more_shapes.js";
 
-import * as CreateAnimation from "./animations/create.js";
-
 import * as Basic from "./math/basic.js";
 import * as Points from "./math/points.js";
 import * as Math_Random from "./math/random.js";
@@ -56,8 +54,6 @@ defineProperties(Braces);
 defineProperties(Arrows);
 defineProperties(Functions);
 defineProperties(MoreShapes);
-
-defineProperties(CreateAnimation);
 
 defineProperties(Arithmeics);
 defineProperties(Basic);

@@ -1,44 +1,31 @@
 import { linearGradient } from "../../src/color/gradients.js";
-import {
-	BLUE_C,
-	DARK_BROWN,
-	GREEN_C,
-	PURPLE_C,
-	RED_C,
-	TEAL_C,
-	WHITE,
-	YELLOW_C
-} from "../../src/constants/colors.js";
+import { Manim } from "../../Extensions/Colors/importable.js";
 import { CENTER, MIDDLE } from "../../src/constants/drawing.js";
 import { PI, RAD, TWO_PI } from "../../src/constants/math.js";
 import { C } from "../../src/main.js";
 import { rotateAroundOrigin } from "../../src/math/points.js";
 import { doubleArrow, measurement } from "../../src/objects/arrows.js";
 import { arcBrace } from "../../src/objects/braces.js";
-import {
-	angle,
-	circle,
-	circularSegment,
-	line,
-	point,
-	sector
-} from "../../src/objects/geometry.js";
+import { angle, circle, circularSegment, line, point, sector } from "../../src/objects/geometry.js";
 import { fillText, text } from "../../src/objects/text.js";
 import {
 	background,
-	centreCanvas,
 	fill,
-	fontStyle, lineDash,
-	noFill, save,
+	fontStyle,
+	lineDash,
+	noFill,
+	save,
 	stroke,
 	strokeWidth,
 	textAlign,
 	textBaseline,
-	translate
+	translate,
 } from "../../src/settings.js";
+import { white } from "../../src/constants/colors.js";
 
-const W = 300;
-const H = 300;
+const W = 300,
+	H = 300,
+	{ TEAL, GREEN, RED, PURPLE, BLUE, YELLOW, DARK_BROWN } = Manim;
 
 C(
 	() => {
@@ -48,11 +35,11 @@ C(
 		const pointOnCircle = rotateAroundOrigin(PI / 6, radius);
 		background(0);
 		centreCanvas();
-		stroke(WHITE);
-		fill(TEAL_C);
+		stroke(white);
+		fill(TEAL);
 		translate(0, -30);
 		circularSegment(0, 0, radius, TWO_PI / 3, PI / 6);
-		fill(WHITE);
+		fill(white);
 		var tip = arcBrace(0, 0, radius + 15, TWO_PI / 3, PI / 6, 10, 10, 5);
 		textAlign(CENTER);
 		text("S", ...tip);
@@ -69,27 +56,9 @@ C(
 		fillText("h", leftStart - 10, pointOnCircle[1] * 1.4);
 		fillText("d", leftStart - 10, pointOnCircle[1] * 0.4);
 		strokeWidth(1);
-		fill(WHITE);
-		doubleArrow(
-			leftStart + 10,
-			0,
-			leftStart + 10,
-			pointOnCircle[1],
-			13,
-			10,
-			0,
-			4
-		);
-		doubleArrow(
-			leftStart + 10,
-			pointOnCircle[1],
-			leftStart + 10,
-			radius,
-			13,
-			10,
-			0,
-			4
-		);
+		fill(white);
+		doubleArrow(leftStart + 10, 0, leftStart + 10, pointOnCircle[1], 13, 10, 0, 4);
+		doubleArrow(leftStart + 10, pointOnCircle[1], leftStart + 10, radius, 13, 10, 0, 4);
 		save();
 
 		// horizontal markers
@@ -112,8 +81,8 @@ C(
 	() => {
 		background(0);
 		centreCanvas();
-		stroke(GREEN_C);
-		fill(RED_C);
+		stroke(GREEN);
+		fill(RED);
 		const line1 = [
 			[-50, -50],
 			[120, 120],
@@ -123,23 +92,23 @@ C(
 			[120, -120],
 		];
 		line(line1[0][0], line1[0][1], line1[1][0], line1[1][1]);
-		stroke(RED_C);
+		stroke(RED);
 		line(line2[0][0], line2[0][1], line2[1][0], line2[1][1]);
 
-		fill(PURPLE_C);
+		fill(PURPLE);
 		point(line1[0][0], line1[0][1]);
-		fill(BLUE_C);
+		fill(BLUE);
 		point(line1[1][0], line1[1][1]);
-		fill(GREEN_C);
+		fill(GREEN);
 		point(line2[0][0], line2[0][1]);
-		fill(YELLOW_C);
+		fill(YELLOW);
 		point(line2[1][0], line2[1][1]);
 
 		noFill();
-		stroke(BLUE_C);
+		stroke(BLUE);
 		const { ang, center } = angle(...line2, ...line1, 20);
 
-		fill(WHITE);
+		fill(white);
 		textBaseline(MIDDLE);
 		fontStyle("italic");
 		text("θ = " + (ang * RAD).toFixed(1), ...center);
@@ -155,13 +124,9 @@ C(
 	() => {
 		background(0);
 		centreCanvas();
-		stroke(GREEN_C);
+		stroke(GREEN);
 		var r = 120;
-		const color = linearGradient(
-			[-r, 0],
-			[r, 0],
-			[BLUE_C, GREEN_C, RED_C, YELLOW_C, PURPLE_C, DARK_BROWN]
-		);
+		const color = linearGradient([-r, 0], [r, 0], [BLUE, GREEN, RED, YELLOW, PURPLE, DARK_BROWN]);
 		stroke(color);
 		fill(color);
 		noFill();

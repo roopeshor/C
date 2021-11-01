@@ -1,4 +1,4 @@
-import { TRANSPARENT } from "../constants/colors.js";
+
 import { BEVEL, CENTER, MIDDLE } from "../constants/drawing.js";
 import { C } from "../main.js";
 import { circleIntersection } from "../math/points.js";
@@ -7,7 +7,7 @@ import { applyDefault, doFillAndStroke } from "../utils.js";
 import { fillText } from "./text.js";
 
 const DEFAULT_TIP_WIDTH = 15;
-
+const TRANSPARENT = "rgba(0,0,0,0)";
 /**
  * Draws a arrow tip
  *
@@ -19,7 +19,7 @@ const DEFAULT_TIP_WIDTH = 15;
  * @param {number} height height of tip
  */
 function arrowTip(x1, y1, x2, y2, width, height) {
-	let ctx = C.workingCanvas;
+	let ctx = C.workingContext;
 	let thickness = ctx.lineWidth;
 	let distance = Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2);
 	if (isNaN(width)) width = distance;
@@ -83,7 +83,7 @@ function arrow(
 
 	const xTipSpacing = Math.cos(angle) * (tipWidth - arrowCurving);
 	const yTipSpacing = Math.sin(angle) * (tipWidth - arrowCurving);
-	const ctx = C.workingCanvas;
+	const ctx = C.workingContext;
 	const pathStarted = ctx.pathStarted;
 	if (!pathStarted) startShape();
 	ctx.moveTo(x1, y1);
@@ -132,7 +132,7 @@ function doubleArrow(
 
 	arrow(x1, y1, x2, y2, tipWidth, tipHeight, arrowCurving, spacing);
 	arrowTip(x1, y1, x1 - xPadding, y1 - yPadding, tipWidth, tipHeight);
-	doFillAndStroke(C.workingCanvas);
+	doFillAndStroke(C.workingContext);
 	endShape();
 }
 
@@ -154,7 +154,7 @@ function doubleArrow(
  * @param {number} args.arrowCurving worping of arrow
  */
 function measurement(args) {
-	const ctx = C.workingCanvas;
+	const ctx = C.workingContext;
 	const defaults = {
 		background: TRANSPARENT,
 		tipWidth: DEFAULT_TIP_WIDTH,
@@ -231,7 +231,7 @@ function curvedArrow(
 	tipOffset = 0,
 	reverse = false
 ) {
-	const ctx = C.workingCanvas;
+	const ctx = C.workingContext;
 
 	const tipAngularDiameter = tipWidth / radius;
 	ctx.save();
@@ -293,7 +293,7 @@ function curvedDoubleArrow(
 	arrowCurving = 0,
 	tipOffset = 0
 ) {
-	const ctx = C.workingCanvas;
+	const ctx = C.workingContext;
 	ctx.save();
 	const tipAngularDiameter = tipWidth / radius;
 	const tangent = [
@@ -350,7 +350,7 @@ function curvedArrowBetweenPoints(
 	otherArc = false,
 	reverse = false
 ) {
-	const ctx = C.workingCanvas;
+	const ctx = C.workingContext;
 	const pathStarted = ctx.pathStarted;
 	ctx.save();
 	if (!pathStarted) ctx.beginPath();
@@ -409,7 +409,7 @@ function curvedDoubleArrowBetweenPoints(
 	tipOffset = 0,
 	otherArc = false
 ) {
-	const ctx = C.workingCanvas;
+	const ctx = C.workingContext;
 	ctx.save();
 	const center = circleIntersection(p1, radius, p2, radius)[0];
 	p1[0] -= center[0];

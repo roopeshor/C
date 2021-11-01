@@ -4,44 +4,939 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.m3 = void 0;
-const m3 = {
-  multiply: function (a, b) {
-    return [b[0] * a[0] + b[1] * a[3] + b[2] * a[6], b[0] * a[1] + b[1] * a[4] + b[2] * a[7], b[0] * a[2] + b[1] * a[5] + b[2] * a[8], b[3] * a[0] + b[4] * a[3] + b[5] * a[6], b[3] * a[1] + b[4] * a[4] + b[5] * a[7], b[3] * a[2] + b[4] * a[5] + b[5] * a[8], b[6] * a[0] + b[7] * a[3] + b[8] * a[6], b[6] * a[1] + b[7] * a[4] + b[8] * a[7], b[6] * a[2] + b[7] * a[5] + b[8] * a[8]];
-  },
-  translation: function (tx, ty) {
-    // prettier-ignore
-    return [1, 0, 0, 0, 1, 0, tx, ty, 1];
-  },
-  translate: function (m, tx, ty) {
-    let mat = this.multiply(m, this.translation(tx, ty));
+exports.Arc = Arc;
+exports.Circle = Circle;
+exports.Line = Line;
+exports.animateFill = animateFill;
 
-    for (let i = 0; i < mat.length; i++) m[i] = mat[i];
-  },
-  rotation: function (ang) {
-    var c = Math.cos(ang);
-    var s = Math.sin(ang); // prettier-ignore
+var _color_reader = require("../../src/color/color_reader.js");
 
-    return [c, -s, 0, s, c, 0, 0, 0, 1];
-  },
-  rotate: function (m, ang) {
-    let mat = this.multiply(m, this.rotation(ang));
+var _main = require("../../src/main.js");
 
-    for (let i = 0; i < mat.length; i++) m[i] = mat[i];
-  },
-  scaling: function (sx, sy) {
-    // prettier-ignore
-    return [sx, 0, 0, 0, sy, 0, 0, 0, 1];
-  },
-  scale: function (m, sx, sy) {
-    let mat = this.multiply(m, this.scaling(sx, sy));
+var _rate_functions = require("../../src/math/rate_functions.js");
 
-    for (let i = 0; i < mat.length; i++) m[i] = mat[i];
+var _geometry = require("../../src/objects/geometry.js");
+
+var _settings = require("../../src/settings.js");
+
+var _utils = require("../../src/utils.js");
+
+const counters = {
+  Circle: 1,
+  Line: 1,
+  animateFill: 1,
+  Arc: 1
+};
+/**
+ * Animates a line from point p1 to point p2.
+ * @param {Object} args
+ * @param {Array<number>} args.p1 The first point.
+ * @param {Array<number>} args.p2 The second point.
+ * @param {number} [args.dt=10] The duration of one frame in milliseconds.
+ * @param {Function} [args.next] The function to call after the animation.
+ */
+
+function Line(args) {
+  let defaults = {
+    name: "line-" + counters.Line++,
+    dur: 1000,
+    dTime: 10,
+    next: null,
+    rateFunction: _rate_functions.smooth
+  };
+  let {
+    p1,
+    p2,
+    name,
+    dur,
+    canvas,
+    dTime,
+    rateFunction,
+    next,
+    syncWithTime
+  } = (0, _utils.applyDefault)(defaults, args);
+  canvas = canvas || _main.C.workingContext.name;
+  let ctx = _main.C.contextList[canvas];
+  let angle = Math.atan2(p2[1] - p1[1], p2[0] - p1[0]);
+  let points = [];
+  let xDiff = p2[0] - p1[0];
+  let yDiff = p2[1] - p1[1];
+  let dt = Math.abs(Math.cos(angle) / xDiff);
+
+  if (Math.abs(Math.PI / 2 - Math.abs(angle)) < 1e-6) {
+    dt = 1 / Math.abs(yDiff);
+  }
+
+  for (let t = 0; t <= 1 + 1e-6; t += dt) {
+    points.push([p1[0] * (1 - t) + p2[0] * t, p1[1] * (1 - t) + p2[1] * t]);
+  }
+
+  return {
+    points: points,
+    // list of computed points
+    dur: dur,
+    dTime: dTime,
+    canvas: ctx,
+    rateFunction: rateFunction,
+    name: name,
+    closed: false,
+    smoothen: false,
+    fill: false,
+    next: next,
+    syncWithTime: syncWithTime
+  };
+}
+
+function Arc(args) {
+  const defaults = {
+    center: [0, 0],
+    name: "arc-" + counters.Arc++,
+    radiusX: 100,
+    radiusY: 100,
+    dur: 1000,
+    dTime: 16,
+    fill: false,
+    fillTime: 500,
+    next: null,
+    rateFunction: _rate_functions.smooth,
+    closed: false,
+    startAngle: 0,
+    angle: Math.PI / 2,
+    clockwise: false
+  };
+  let {
+    name,
+    dur,
+    center,
+    canvas,
+    dTime,
+    fill: fillColor,
+    fillTime,
+    next,
+    closed,
+    rateFunction,
+    startAngle,
+    angle,
+    radiusX,
+    radiusY,
+    clockwise
+  } = Object.assign(defaults, args);
+  canvas = canvas || _main.C.workingContext.name;
+  let ctx = _main.C.contextList[canvas];
+  let points = [];
+
+  if (args.radius) {
+    radiusX = args.radius;
+    radiusY = args.radius;
+  }
+
+  let dt = 2 / (_main.C.dpr * (radiusX + radiusY));
+  let start = startAngle;
+  let end = angle + startAngle + 1e-6;
+
+  function pushPoint(t) {
+    const x1 = Math.cos(t) * radiusX + center[0];
+    const y1 = Math.sin(t) * radiusY + center[1];
+    points.push([x1, y1]);
+  }
+
+  if (clockwise) for (let t = end; t >= start; t -= dt) pushPoint(t);else for (let t = start; t <= end; t += dt) pushPoint(t);
+  let rx = radiusX;
+  let ry = radiusY;
+
+  if (ctx.doStroke) {
+    rx -= ctx.lineWidth / 2;
+    ry -= ctx.lineWidth / 2;
+  }
+
+  console.log(points);
+  return {
+    points: points,
+    // list of computed points
+    dur: dur,
+    dTime: dTime,
+    canvas: ctx,
+    rateFunction: rateFunction,
+    name: name,
+    closed: closed,
+    smoothen: true,
+    tension: 1,
+    fill: fillColor,
+    fillTime: fillTime,
+    next: next,
+    rx: rx,
+    ry: ry,
+    filler: function () {
+      (0, _geometry.ellipse)(center[0], center[1], rx, ry, 0, startAngle, angle);
+    }
+  };
+}
+/**
+ * animate filling of a given shape
+ * ! Has some flaws !
+ * @param {string} name name of animation. Optional
+ * @param {string} canvasName ID of canvas
+ * @param {string|Array<number>} FILL color of canvas
+ * @param {Function} f funciton that draws the shape
+ * @param {number} [dur=1000] dur to run
+ * @param {number} [dt=10] dur for each frame
+ * @param {Function} [next=null] function to run after filling
+ */
+
+
+function animateFill(name, canvasName, FILL, f, dur = 1000, dt = 10, next = null) {
+  let _fill = (0, _color_reader.readColor)(FILL).rgbaA;
+  const ctx = _main.C.contextList[canvasName];
+  let previousT = -dur / dt;
+  (0, _settings.loop)("filling " + name, t => {
+    if (t >= dur) {
+      (0, _settings.noLoop)(canvasName, t);
+      if (typeof next == "function") next();
+    }
+
+    ctx.fillStyle = (0, _color_reader.readColor)(_fill[0], _fill[1], _fill[2], _fill[3] / (t - previousT)).hex8;
+    f();
+    previousT = t;
+  }, canvasName, dt, 1000, {}, dur);
+}
+/**
+ * Animates drawing of a point.
+ * @param {Object} args object containing configs
+ *
+ * @param {string} [args.name] Name of the animation. Default: "point-" + counters.Circle
+ * @param {number} [args.radius = 3] radius of circle
+ * @param {number} [args.dur = 1000] duration of animation
+ * @param {number} [args.dTime = 1] duration of each frame
+ * @param {boolean|string} [args.fill = false] if false, no fill. Else a color to fill with.
+ * @param {number} [args.fillTime = 500] time to fill inside circle.
+ * @param {funciton} [args.next = null] function to run after animation ends.
+ * @param {funciton} [args.rateFunction = smooth] function to use for rate.
+ * @param {Array<number>} args.center center of the circle
+ * @param {string} args.canvas name of canvas in which the animation is rendered
+ */
+
+
+function Circle(args) {
+  let defaults = {
+    name: "point-" + counters.Circle++,
+    radius: 100,
+    dur: 1000,
+    dTime: 16,
+    fill: false,
+    fillTime: 500,
+    next: null,
+    rateFunction: _rate_functions.smooth,
+    startAngle: 0,
+    angle: Math.PI * 2
+  };
+  args = Object.assign(defaults, args);
+  let center = args.center,
+      {
+    points,
+    dur,
+    dTime,
+    canvas,
+    rateFunction,
+    fill: fillColor,
+    fillTime,
+    next,
+    rx
+  } = Arc(args);
+  return {
+    points: points,
+    // list of computed points
+    dur: dur,
+    dTime: dTime,
+    canvas: canvas,
+    rateFunction: rateFunction,
+    name: args.name,
+    closed: true,
+    smoothen: true,
+    tension: 1,
+    fill: fillColor,
+    fillTime: fillTime,
+    next: next,
+    filler: function () {
+      (0, _geometry.point)(center[0], center[1], rx * 2, false);
+    }
+  };
+}
+
+},{"../../src/color/color_reader.js":7,"../../src/main.js":17,"../../src/math/rate_functions.js":22,"../../src/objects/geometry.js":28,"../../src/settings.js":32,"../../src/utils.js":33}],2:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.m4 = void 0;
+
+/**
+ *
+ * @returns {Float32Array}
+ */
+function readMatrix(args) {
+  let mat;
+  if (Array.isArray(args[0]) && args[0].length == 16) mat = args[0];else if (args.length == 16) mat = args;else if (args[0] instanceof m4) mat = args[0].mat;else mat = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
+  return new Float32Array(mat);
+}
+
+const EPSILON = 0.000001;
+
+class m4 {
+  /**
+   * Returns a 4x4 Float32Array and functions to modify them
+   * @param {...number|Array<number>|m4|Float32Array} [array] of numbers
+   */
+  constructor(array) {
+    this.mat = readMatrix(arguments);
+    return this;
+  }
+  /**
+   * Multiplies a matrix by this
+   * from p5.js
+   * @param {...number|Array<number>|m4} mat matrix
+   */
+
+
+  multiply(mat) {
+    let m = readMatrix(arguments); // each row is used for the multiplier
+
+    let b0 = this.mat[0],
+        b1 = this.mat[1],
+        b2 = this.mat[2],
+        b3 = this.mat[3];
+    this.mat[0] = b0 * m[0] + b1 * m[4] + b2 * m[8] + b3 * m[12];
+    this.mat[1] = b0 * m[1] + b1 * m[5] + b2 * m[9] + b3 * m[13];
+    this.mat[2] = b0 * m[2] + b1 * m[6] + b2 * m[10] + b3 * m[14];
+    this.mat[3] = b0 * m[3] + b1 * m[7] + b2 * m[11] + b3 * m[15];
+    b0 = this.mat[4];
+    b1 = this.mat[5];
+    b2 = this.mat[6];
+    b3 = this.mat[7];
+    this.mat[4] = b0 * m[0] + b1 * m[4] + b2 * m[8] + b3 * m[12];
+    this.mat[5] = b0 * m[1] + b1 * m[5] + b2 * m[9] + b3 * m[13];
+    this.mat[6] = b0 * m[2] + b1 * m[6] + b2 * m[10] + b3 * m[14];
+    this.mat[7] = b0 * m[3] + b1 * m[7] + b2 * m[11] + b3 * m[15];
+    b0 = this.mat[8];
+    b1 = this.mat[9];
+    b2 = this.mat[10];
+    b3 = this.mat[11];
+    this.mat[8] = b0 * m[0] + b1 * m[4] + b2 * m[8] + b3 * m[12];
+    this.mat[9] = b0 * m[1] + b1 * m[5] + b2 * m[9] + b3 * m[13];
+    this.mat[10] = b0 * m[2] + b1 * m[6] + b2 * m[10] + b3 * m[14];
+    this.mat[11] = b0 * m[3] + b1 * m[7] + b2 * m[11] + b3 * m[15];
+    b0 = this.mat[12];
+    b1 = this.mat[13];
+    b2 = this.mat[14];
+    b3 = this.mat[15];
+    this.mat[12] = b0 * m[0] + b1 * m[4] + b2 * m[8] + b3 * m[12];
+    this.mat[13] = b0 * m[1] + b1 * m[5] + b2 * m[9] + b3 * m[13];
+    this.mat[14] = b0 * m[2] + b1 * m[6] + b2 * m[10] + b3 * m[14];
+    this.mat[15] = b0 * m[3] + b1 * m[7] + b2 * m[11] + b3 * m[15];
+    return this;
+  }
+  /**
+   * Rotate our Matrix around an axis by the given angle.
+   * @param {number} a The angle of rotation in radians
+   * @param {number|Array<number>} x  the axis to rotate around
+   * adapted by p5js's p5.Matrix rotation
+   */
+
+
+  rotate(a, x, y, z) {
+    if (x instanceof Array) {
+      // x is an array, extract the components from it.
+      y = x[1];
+      z = x[2];
+      x = x[0]; //must be last
+    }
+
+    const len = Math.sqrt(x * x + y * y + z * z);
+    x *= 1 / len;
+    y *= 1 / len;
+    z *= 1 / len;
+    const a00 = this.mat[0],
+          a01 = this.mat[1],
+          a02 = this.mat[2],
+          a03 = this.mat[3],
+          a10 = this.mat[4],
+          a11 = this.mat[5],
+          a12 = this.mat[6],
+          a13 = this.mat[7],
+          a20 = this.mat[8],
+          a21 = this.mat[9],
+          a22 = this.mat[10],
+          a23 = this.mat[11]; //sin,cos, and tan of respective angle
+
+    const sA = Math.sin(a),
+          cA = Math.cos(a),
+          tA = 1 - cA,
+          // Construct the elements of the rotation matrix
+    b00 = x * x * tA + cA,
+          b01 = y * x * tA + z * sA,
+          b02 = z * x * tA - y * sA,
+          b10 = x * y * tA - z * sA,
+          b11 = y * y * tA + cA,
+          b12 = z * y * tA + x * sA,
+          b20 = x * z * tA + y * sA,
+          b21 = y * z * tA - x * sA,
+          b22 = z * z * tA + cA; // rotation-specific matrix multiplication
+
+    this.mat[0] = a00 * b00 + a10 * b01 + a20 * b02;
+    this.mat[1] = a01 * b00 + a11 * b01 + a21 * b02;
+    this.mat[2] = a02 * b00 + a12 * b01 + a22 * b02;
+    this.mat[3] = a03 * b00 + a13 * b01 + a23 * b02;
+    this.mat[4] = a00 * b10 + a10 * b11 + a20 * b12;
+    this.mat[5] = a01 * b10 + a11 * b11 + a21 * b12;
+    this.mat[6] = a02 * b10 + a12 * b11 + a22 * b12;
+    this.mat[7] = a03 * b10 + a13 * b11 + a23 * b12;
+    this.mat[8] = a00 * b20 + a10 * b21 + a20 * b22;
+    this.mat[9] = a01 * b20 + a11 * b21 + a21 * b22;
+    this.mat[10] = a02 * b20 + a12 * b21 + a22 * b22;
+    this.mat[11] = a03 * b20 + a13 * b21 + a23 * b22;
+    return this;
+  }
+
+  scale(x, y, z) {
+    if (x instanceof Array) {
+      // x is an array, extract the components from it.
+      y = x[1];
+      z = x[2];
+      x = x[0];
+    }
+
+    this.mat[0] *= x;
+    this.mat[1] *= x;
+    this.mat[2] *= x;
+    this.mat[3] *= x;
+    this.mat[4] *= y;
+    this.mat[5] *= y;
+    this.mat[6] *= y;
+    this.mat[7] *= y;
+    this.mat[8] *= z;
+    this.mat[9] *= z;
+    this.mat[10] *= z;
+    this.mat[11] *= z;
+    return this;
+  }
+
+  rotateX(a) {
+    this.rotate(a, 1, 0, 0);
+    return this;
+  }
+
+  rotateY(a) {
+    this.rotate(a, 0, 1, 0);
+    return this;
+  }
+
+  rotateZ(a) {
+    this.rotate(a, 0, 0, 1);
+    return this;
+  }
+
+  translate(x, y, z = 0) {
+    this.mat[12] += this.mat[0] * x + this.mat[4] * y + this.mat[8] * z;
+    this.mat[13] += this.mat[1] * x + this.mat[5] * y + this.mat[9] * z;
+    this.mat[14] += this.mat[2] * x + this.mat[6] * y + this.mat[10] * z;
+    this.mat[15] += this.mat[3] * x + this.mat[7] * y + this.mat[11] * z;
+    return this;
+  }
+
+  clone() {
+    let mat = [];
+
+    for (let i = 0; i < this.mat.length; i++) mat.push(this.mat[i]);
+
+    return new m4(mat);
+  }
+  /**
+   * Generates a look-at matrix with the given eye position, focal point, and up axis.
+   * If you want a matrix that actually makes an object look at another object, you should use targetTo instead.
+   *
+   * @param {Array<number>} eye Position of the viewer
+   * @param {Array<number>} center Point the viewer is looking at
+   * @param {Array<number>} up vec3 pointing up
+   * @returns {m4}
+   */
+
+
+  static lookAt(eye, center, up) {
+    let x0, x1, x2, y0, y1, y2, z0, z1, z2, len;
+    let eyex = eye[0];
+    let eyey = eye[1];
+    let eyez = eye[2];
+    let upx = up[0];
+    let upy = up[1];
+    let upz = up[2];
+    let centerx = center[0];
+    let centery = center[1];
+    let centerz = center[2];
+
+    if (Math.abs(eyex - centerx) < EPSILON && Math.abs(eyey - centery) < EPSILON && Math.abs(eyez - centerz) < EPSILON) {
+      return m4.identity();
+    }
+
+    z0 = eyex - centerx;
+    z1 = eyey - centery;
+    z2 = eyez - centerz;
+    len = 1 / Math.hypot(z0, z1, z2);
+    z0 *= len;
+    z1 *= len;
+    z2 *= len;
+    x0 = upy * z2 - upz * z1;
+    x1 = upz * z0 - upx * z2;
+    x2 = upx * z1 - upy * z0;
+    len = Math.hypot(x0, x1, x2);
+
+    if (!len) {
+      x0 = 0;
+      x1 = 0;
+      x2 = 0;
+    } else {
+      len = 1 / len;
+      x0 *= len;
+      x1 *= len;
+      x2 *= len;
+    }
+
+    y0 = z1 * x2 - z2 * x1;
+    y1 = z2 * x0 - z0 * x2;
+    y2 = z0 * x1 - z1 * x0;
+    len = Math.hypot(y0, y1, y2);
+
+    if (!len) {
+      y0 = 0;
+      y1 = 0;
+      y2 = 0;
+    } else {
+      len = 1 / len;
+      y0 *= len;
+      y1 *= len;
+      y2 *= len;
+    }
+
+    let mat = new Float32Array(16);
+    mat[0] = x0;
+    mat[1] = y0;
+    mat[2] = z0;
+    mat[3] = 0;
+    mat[4] = x1;
+    mat[5] = y1;
+    mat[6] = z1;
+    mat[7] = 0;
+    mat[8] = x2;
+    mat[9] = y2;
+    mat[10] = z2;
+    mat[11] = 0;
+    mat[12] = -(x0 * eyex + x1 * eyey + x2 * eyez);
+    mat[13] = -(y0 * eyex + y1 * eyey + y2 * eyez);
+    mat[14] = -(z0 * eyex + z1 * eyey + z2 * eyez);
+    mat[15] = 1;
+    return new m4(mat);
+  }
+  /**
+   * Returns a identity matrix.
+   * @returns {m4}
+   */
+
+
+  static identity() {
+    return new m4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+  }
+  /**
+   * Generates a perspective projection matrix with the given bounds.
+   * The near/far clip planes correspond to a normalized device coordinate Z range of [-1, 1],
+   * which matches WebGL/OpenGL's clip volume.
+   * Passing null/undefined/no value for far will generate infinite projection matrix.
+   *
+   * @param {m4} mat mat4 frustum matrix will be written into
+   * @param {number} fovy Vertical field of view in radians
+   * @param {number} aspect Aspect ratio. typically viewport width/height
+   * @param {number} near Near bound of the frustum
+   * @param {number} far Far bound of the frustum, can be null or Infinity
+   * @returns {m4} mat
+   */
+
+
+  static perspective(mat, fovy, aspect, near, far) {
+    const f = 1.0 / Math.tan(fovy / 2);
+    let out = mat.mat;
+    out[0] = f / aspect;
+    out[1] = 0;
+    out[2] = 0;
+    out[3] = 0;
+    out[4] = 0;
+    out[5] = f;
+    out[6] = 0;
+    out[7] = 0;
+    out[8] = 0;
+    out[9] = 0;
+    out[11] = -1;
+    out[12] = 0;
+    out[13] = 0;
+    out[15] = 0;
+
+    if (far != null && far !== Infinity) {
+      const nf = 1 / (near - far);
+      out[10] = (far + near) * nf;
+      out[14] = 2 * far * near * nf;
+    } else {
+      out[10] = -1;
+      out[14] = -2 * near;
+    }
+
+    return mat;
+  }
+
+}
+
+exports.m4 = m4;
+
+},{}],3:[function(require,module,exports){
+"use strict";
+
+var _color_reader = require("../color/color_reader.js");
+
+var _m = require("./m4.js");
+
+var _webgl = require("./webgl.js");
+
+function readPoints(points, count) {
+  let pts = [],
+      is2D = false;
+
+  if (points.length % count == 0) {
+    // 2d point array. Convert it to 3d point array
+    if (points.length / count == 2) {
+      is2D = true;
+
+      for (let i = 0; i < points.length; i += 2) pts.push(points[i], points[i + 1], 0);
+    } else pts = points;
+  } else {
+    throw Error("excess component in points");
+  }
+
+  return [pts, is2D];
+}
+/**
+ * clears the canvas using given color
+ * @param {number} r red value
+ * @param {number} g green value
+ * @param {number} b blue value
+ * @param {number} a alpha value
+ */
+
+
+_webgl.WebGL.prototype.background = function (r, g, b, a) {
+  this.gl.clearColor(r, g, b, a);
+  this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
+  return this;
+};
+/**
+ * clears canvas
+ * @returns {WebGL}
+ */
+
+
+_webgl.WebGL.prototype.clear = function () {
+  this.background(0, 0, 0, 0);
+  return this;
+};
+
+_webgl.WebGL.prototype.putBufferData = function (data, type = this.gl.ARRAY_BUFFER, usage = this.gl.STATIC_DRAW) {
+  // Create a buffer to put stuffs in
+  var buffer = this.gl.createBuffer();
+  this.gl.bindBuffer(type, buffer);
+  this.gl.bufferData(type, new Float32Array(data), usage);
+  return buffer;
+};
+/**
+ * sets geometry of a objevt in buffer
+ * @param {Array<number>} data data of positions to set
+ * @param {number} [count=3] number of vertices to set
+ * @param {number} [offset=0] offset of data to set
+ * @param {number} [primitiveType=WebGLRenderingContext.TRIANGLES] type of primitive to draw
+ * @param {number} [bufferTarget=WebGLRenderingContext.ARRAY_BUFFER] target buffer to set data to
+ * @param {number} [bufferUsage=WebGLRenderingContext.STATIC_DRAW] usage type of buffer
+ * @returns {WebGL}
+ */
+
+
+_webgl.WebGL.prototype.setGeometry = function (data, count = 3, offset = 0, primitiveType = this.gl.TRIANGLES, bufferTarget = this.gl.ARRAY_BUFFER, bufferUsage = this.gl.STATIC_DRAW) {
+  let gl = this.gl,
+      program = this.program; // Create and bind a buffer to put positions of points in
+
+  this.computeMatrix();
+  gl.uniformMatrix4fv(program.uniforms.matrix, false, this.matrix.mat); // set the color
+
+  gl.uniform4fv(program.uniforms.vertexColor, this.styles.fillColor);
+  this.putBufferData(readPoints(data, count)[0]); // Tell the attribute how to get data out of positionBuffer (ARRAY_BUFFER)
+
+  gl.enableVertexAttribArray(program.attributes.vertexPosition);
+  gl.vertexAttribPointer(program.attributes.vertexPosition, // position of position attribute
+  3, // pull 3 components per iteration
+  gl.FLOAT, // type of the data is 32bit floats
+  false, // don't normalize the data
+  0, // 0 = move forward size * sizeof(type) each iteration to get the next position
+  0 // start at the beginning of the buffer
+  ); // Draw the geometry.
+
+  gl.drawArrays(primitiveType, offset, count);
+  return this;
+};
+
+_webgl.WebGL.prototype.computeMatrix = function () {
+  // Multiplies all matrix
+  // this.matrix = this.worldMatrix.clone();
+  // this.matrix.multiply(this.projectionMatrix).multiply(this.viewMatrix);
+  this.matrix = this.projectionMatrix.clone();
+  this.matrix.multiply(this.viewMatrix).multiply(this.worldMatrix);
+};
+
+_webgl.WebGL.prototype.line = function () {
+  let [points, is2D] = readPoints(arguments, 2); // use gl.LINE to draw lines with width of 1px
+
+  const fill = this.styles.fillColor;
+  this.styles.fillColor = this.styles.strokeColor;
+
+  if (this.styles.lineWidth == 1) {
+    this.setGeometry(points, 2, 0, this.gl.LINES);
+  } else if (is2D) {
+    let x1 = points[0],
+        y1 = points[1],
+        x2 = points[3],
+        y2 = points[4];
+    let angle = Math.atan2(y2 - y1, x2 - x1) + Math.PI / 2;
+    let lw = this.styles.lineWidth / 2;
+    let dx = Math.cos(angle) * lw;
+    let dy = Math.sin(angle) * lw;
+    this.setGeometry([x1 - dx, y1 - dy, 0, x1 + dx, y1 + dy, 0, x2 + dx, y2 + dy, 0, x2 + dx, y2 + dy, 0, x2 - dx, y2 - dy, 0, x1 - dx, y1 - dy, 0], 6);
+  }
+
+  this.styles.fillColor = fill;
+  return this;
+};
+/**
+ * rotates canvas by a given angle around x-axis.
+ * @param {number} angle angle to rotate by
+ * @returns {WebGL}
+ */
+
+
+_webgl.WebGL.prototype.rotateX = function (angle) {
+  this.worldMatrix.rotateX(angle);
+  return this;
+};
+/**
+ * rotates canvas by a given angle around y-axis.
+ * @param {number} angle angle to rotate by
+ * @returns {WebGL}
+ */
+
+
+_webgl.WebGL.prototype.rotateY = function (angle) {
+  this.worldMatrix.rotateY(angle);
+  return this;
+};
+/**
+ * rotates canvas by a given angle around z-axis.
+ * @param {number} angle angle to rotate by
+ * @returns {WebGL}
+ */
+
+
+_webgl.WebGL.prototype.rotateZ = function (angle) {
+  this.worldMatrix.rotateZ(angle);
+  return this;
+};
+/**
+ * Translate canvas by a given vector by multiplying current matrix by a translation matrix
+ * @param {number} x x value of vector
+ * @param {number} [y=0] y value of vector
+ * @returns {WebGL}
+ */
+
+
+_webgl.WebGL.prototype.translate = function (x, y = 0, z = 0) {
+  this.worldMatrix.translate(x, y, z);
+  return this;
+};
+/**
+ * Scales canvas by given x, y,z factors
+ */
+
+
+_webgl.WebGL.prototype.scale = function (x, y = x, z = 1) {
+  this.worldMatrix.scale(x, y, z);
+  return this;
+};
+/**
+ *
+ * @param  {...number|string|Array<number>} color
+ */
+
+
+_webgl.WebGL.prototype.fill = function (...color) {
+  let c = (0, _color_reader.readColor)(color).rgbaA;
+  this.styles.fillColor = [c[0] / 255, c[1] / 255, c[2] / 255, c[3]];
+};
+/**
+ * Draws a rectangle
+ */
+
+
+_webgl.WebGL.prototype.fillRect = function () {
+  let x,
+      y,
+      z,
+      w,
+      h,
+      i = 0;
+  x = arguments[i++], y = arguments[i++]; // if there is no z component in position, let z = 0
+
+  if (arguments.length == 4) z = 0;else z = arguments[i++];
+  w = arguments[i++];
+  h = arguments[i++]; // prettier-ignore
+
+  this.setGeometry([x, y, z, x + w, y, z, x + w, y + h, z, x + w, y + h, z, x, y + h, z, x, y, z], 6);
+};
+/**
+ * Draws a triangle
+ */
+
+
+_webgl.WebGL.prototype.triangle = function (...points) {
+  this.setGeometry(points, 3);
+};
+
+_webgl.WebGL.prototype.lineWidth = function (w) {
+  this.styles.lineWidth = w;
+};
+/**
+ *
+ * @param  {...number|string|Array<number>} color
+ */
+
+
+_webgl.WebGL.prototype.stroke = function (...color) {
+  let c = (0, _color_reader.readColor)(color).rgbaA;
+  this.styles.strokeColor = [c[0] / 255, c[1] / 255, c[2] / 255, c[3]];
+};
+
+_webgl.WebGL.prototype.cube = function (size = 200) {
+  var cubeRotation = 0.0;
+  let gl = this.gl; // prettier-ignore
+
+  const positions = [// Front face
+  -1.0 * size, -1.0 * size, 1.0 * size, 1.0 * size, -1.0 * size, 1.0 * size, 1.0 * size, 1.0 * size, 1.0 * size, -1.0 * size, 1.0 * size, 1.0 * size, // Back face
+  -1.0 * size, -1.0 * size, -1.0 * size, -1.0 * size, 1.0 * size, -1.0 * size, 1.0 * size, 1.0 * size, -1.0 * size, 1.0 * size, -1.0 * size, -1.0 * size, // Top face
+  -1.0 * size, 1.0 * size, -1.0 * size, -1.0 * size, 1.0 * size, 1.0 * size, 1.0 * size, 1.0 * size, 1.0 * size, 1.0 * size, 1.0 * size, -1.0 * size, // Bottom face
+  -1.0 * size, -1.0 * size, -1.0 * size, 1.0 * size, -1.0 * size, -1.0 * size, 1.0 * size, -1.0 * size, 1.0 * size, -1.0 * size, -1.0 * size, 1.0 * size, // Right face
+  1.0 * size, -1.0 * size, -1.0 * size, 1.0 * size, 1.0 * size, -1.0 * size, 1.0 * size, 1.0 * size, 1.0 * size, 1.0 * size, -1.0 * size, 1.0 * size, // Left face
+  -1.0 * size, -1.0 * size, -1.0 * size, -1.0 * size, -1.0 * size, 1.0 * size, -1.0 * size, 1.0 * size, 1.0 * size, -1.0 * size, 1.0 * size, -1.0 * size]; // create bind and buffer data. that's all
+
+  const positionBuffer = this.putBufferData(positions); // Now set up the colors for the faces
+
+  const faceColors = [[1.0, 1.0, 1.0, 1.0], // Front face: white
+  [1.0, 0.0, 0.0, 1.0], // Back face: red
+  [0.0, 1.0, 0.0, 1.0], // Top face: green
+  [0.0, 0.0, 1.0, 1.0], // Bottom face: blue
+  [1.0, 1.0, 0.0, 1.0], // Right face: yellow
+  [1.0, 0.0, 1.0, 1.0] // Left face: purple
+  ]; // Convert the array of colors into a table for all the vertices.
+
+  var colors = [];
+
+  for (var j = 0; j < faceColors.length; ++j) {
+    const c = faceColors[j]; // Repeat each color four times for the four vertices of the face
+
+    colors = colors.concat(c, c, c, c);
+  }
+
+  const colorBuffer = this.putBufferData(colors);
+  /* Build the element array buffer; this specifies the indices
+   into the vertex arrays for each face's vertices.
+   This array defines each face as two triangles, using the
+   indices into the vertex array to specify each triangle's position. */
+  // prettier-ignore
+
+  const indices = [0, 1, 2, 0, 2, 3, // front
+  4, 5, 6, 4, 6, 7, // back
+  8, 9, 10, 8, 10, 11, // top
+  12, 13, 14, 12, 14, 15, // bottom
+  16, 17, 18, 16, 18, 19, // right
+  20, 21, 22, 20, 22, 23 // left
+  ];
+  const indexBuffer = this.putBufferData(indices, gl.ELEMENT_ARRAY_BUFFER);
+  gl.enable(gl.DEPTH_TEST); // Enable depth testing
+
+  gl.depthFunc(gl.LEQUAL); // Near things obscure far things
+
+  /* Create a perspective matrix, a special matrix that is
+   used to simulate the distortion of perspective in a camera.
+   Our field of view is 45 degrees, with a width/height
+   ratio that matches the display size of the canvas
+   and we only want to see objects between 0.1 units
+   and 100 units away from the camera. */
+
+  const fieldOfView = 45 * Math.PI / 180; // in radians
+
+  const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
+  const zNear = 0.1;
+  const zFar = 100.0; // as the destination to receive the result.
+
+  _m.m4.perspective(this.projectionMatrix, fieldOfView, aspect, zNear, zFar); // Now move the drawing position a bit to where we want to
+  // start drawing the square.
+
+
+  this.worldMatrix.translate(-0.0, 0.0, -6.0); // amount to translate
+
+  this.worldMatrix.rotateZ(cubeRotation);
+  this.worldMatrix.rotateX(cubeRotation * 0.7); // Tell WebGL how to pull out the positions from the position
+  // buffer into the vertexPosition attribute
+
+  gl.vertexAttribPointer(this.program.attributes.vertexPosition, 3, // numComponents
+  gl.FLOAT, // type
+  false, // normalize
+  0, // stride
+  0 // offset
+  );
+  gl.enableVertexAttribArray(this.program.attributes.vertexPosition); // Tell WebGL how to pull out the colors from the color buffer
+  // into the vertexColor attribute.
+
+  gl.vertexAttribPointer(this.program.uniforms.vertexColor, 4, // numComponents
+  gl.FLOAT, // type
+  false, // normalize
+  0, // stride
+  0 // offset
+  ); // Tell WebGL which indices to use to index the vertices
+
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer); // Tell WebGL to use our program when drawing
+
+  this.useProgram("multiColor"); // gl.useProgram(this.program.program);
+  // Set the shader uniforms
+
+  this.computeMatrix();
+  gl.uniformMatrix4fv(this.program.uniforms.matrix, false, this.matrix.mat);
+  {
+    const vertexCount = 36;
+    const type = gl.UNSIGNED_SHORT;
+    const offset = 0;
+    gl.drawElements(gl.TRIANGLES, vertexCount, type, offset);
   }
 };
-exports.m3 = m3;
 
-},{}],2:[function(require,module,exports){
+_webgl.WebGL.prototype.lookAt = function (eye, center = [0, 0, 0], up = [0, 1, 0]) {
+  this.viewMatrix = _m.m4.lookAt(eye, center, up);
+};
+
+_webgl.WebGL.prototype.perspective = function (fov, aspect, near, far) {
+  _m.m4.perspective(this.projectionMatrix, fov, aspect, near, far); // this.computeMatrix();
+
+};
+
+},{"../color/color_reader.js":7,"./m4.js":2,"./webgl.js":4}],4:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -54,28 +949,42 @@ var _main = require("../main.js");
 
 var _utils = require("../utils.js");
 
-var _m = require("./m3.js");
+var _m = require("./m4.js");
 
 /**
- * Creates a WebGL instance thati include useful methods to work with WebGL.
- * @param	{object} configs configuration for canvas. Follwoing properties are accepted:
+ * Creates a WebGL instance thati include usefullkj methods to work with WebGL.
+ * @param {Object} [configs] configuration for canvas. Follwoing properties are accepted:
  * @param	{boolean} [configs.deleteOld=false] whether to delete old canvas.
  * @returns {WebGL} WebGL instance
  */
 function createWebGL(configs) {
-  let c = _main.C.workingCanvas;
+  let c = _main.C.workingContext;
+  const cv = _main.C.workingCanvas;
   configs = (0, _utils.applyDefault)({
-    deleteOld: true,
-    dpr: c.dpr,
-    width: c.width,
-    height: c.height
+    deleteOld: false,
+    dpr: Math.ceil(window.devicePixelRatio),
+    width: cv.rWidth,
+    height: cv.rHeight
   }, configs);
-  let container = c.container;
-  if (configs.deleteOld) container.removeChild(c.canvas);
+  let container = c.canvas.parentElement;
 
   let cvs = _main.C.makeCanvas(configs);
 
-  container.append(cvs);
+  if (configs.deleteOld) {
+    container.removeChild(c.canvas);
+  } else {
+    container.style.position = "relative";
+    cvs.style.position = "absolute";
+    cvs.style.top = "0";
+    cvs.style.left = "0";
+  } // attach active listeners from canvas
+
+
+  for (let event in c.canvas.events) {
+    cvs.addEventListener(event, c.canvas.events[event]);
+  }
+
+  container.appendChild(cvs);
   return new WebGL(cvs);
 }
 /**
@@ -92,8 +1001,7 @@ class WebGL {
     }
 
     if (!gl) {
-      console.error("WebGL is not supported");
-      return null;
+      throw new Error("WebGL is not supported");
     }
 
     gl.viewport(0, 0, canvas.width, canvas.height); // make it transparent so that standard canvas can be seen
@@ -104,92 +1012,129 @@ class WebGL {
     /** @type {HTMLCanvasElement} */
 
     this.canvas = canvas;
-    /** @type {number} */
+    /** @type number */
 
-    this.width = canvas.width;
-    /** @type {number} */
+    this.width = canvas.rWidth;
+    /** @type number */
 
-    this.height = canvas.height;
-    /** @type {number} */
+    this.height = canvas.rHeight;
+    /** @type number */
 
-    this.dpr = canvas.dpr;
-    const sources = {
-      default: {
-        vertex: `attribute vec2 a_position;
+    this.dpr = canvas.dpr || Math.ceil(window.devicePixelRatio);
+    this.canvas = canvas;
+    this.sources = {
+      // one color for all vertex
+      singleColor: {
+        vertex: `attribute vec3 a_position;
+					uniform vec2 u_resolution;
+					uniform mat4 u_matrix;
 
-uniform vec2 u_resolution;
-uniform mat3 u_matrix;
-
-void main() {
-  // Multiply the position by the matrix.
-  vec2 position = (u_matrix * vec3(a_position, 1)).xy;
-
-  // convert from pixels to -1->+1 (clipspace)
-  vec2 clipSpace = position / u_resolution * 2.0 - 1.0;
-
-  gl_Position = vec4(clipSpace * vec2(1, -1), 0, 1);
-}`,
+					void main() {
+						gl_Position = u_matrix * vec4(a_position, 1) / vec4(u_resolution, 1, 1);
+					}`,
         fragment: `precision mediump float;
-uniform vec4 u_color;
-void main() {
-   gl_FragColor = u_color;
-}`,
+					uniform vec4 u_color;
+					void main() {
+						gl_FragColor = u_color;
+					}`,
         uniforms: {
           resolution: "u_resolution",
           matrix: "u_matrix",
-          color: "u_color"
+          vertexColor: "u_color"
         },
-        attribs: {
-          position: "a_position"
-        }
+        attributes: {
+          vertexPosition: "a_position"
+        },
+        program: null
+      },
+      // one color for each vertex
+      multiColor: {
+        vertex: `attribute vec3 a_position;
+					attribute vec4 aVertexColor;
+					uniform vec2 u_resolution;
+					uniform mat4 u_matrix;
+					varying lowp vec4 vColor;
+					void main() {
+						gl_Position = u_matrix * vec4(a_position, 1);
+						// / vec4(u_resolution, 1, 1);
+						vColor = aVertexColor;
+					}`,
+        fragment: `precision mediump float;
+					varying lowp vec4 vColor;
+					void main(void) {
+						gl_FragColor = vColor;
+					}`,
+        uniforms: {
+          resolution: "u_resolution",
+          matrix: "u_matrix"
+        },
+        attributes: {
+          vertexPosition: "a_position",
+          vertexColor: "aVertexColor"
+        },
+        program: null
       }
     };
 
-    for (let source in sources) {
-      let src = sources[source];
-      src.program = this.createProgramFromSource(src.vertex, src.fragment);
-      let obj = {};
-
-      for (let attr in src.attribs) {
-        let nameInProgram = src.attribs[attr];
-        obj[attr] = this.gl.getAttribLocation(src.program, nameInProgram); // enable vertex attrib array
-
-        this.gl.enableVertexAttribArray(obj[attr]);
-      }
-
-      src.attribs = obj;
-      obj = {};
-
-      for (let uniform in src.uniforms) {
-        let nameInProgram = src.uniforms[uniform];
-        obj[uniform] = this.gl.getUniformLocation(src.program, nameInProgram);
-      }
-
-      src.uniforms = obj;
+    for (let source in this.sources) {
+      this.sources[source] = this.createCustomProgram(this.sources[source]);
     }
     /**
      * Current using program
-     * @type {WebGLProgram}
      */
 
 
-    this.program = sources.default;
+    this.program = this.sources.singleColor;
     gl.useProgram(this.program.program);
     /**
-     * Projection matrix used for drawing
-     * @type {number[]}
+     * Projection matrix
+     * @type {m4}
      */
-    // prettier-ignore
 
-    this.projectionMatrix = [1, 0, 0, 0, 1, 0, 0, 0, 1];
+    this.projectionMatrix = new _m.m4();
     /**
-     * Color to fill inside the shape
-     * @type {number[]}
+     * Model/world matrix
+     * @type {m4}
      */
 
-    this.fillColor = [0, 0, 0, 1]; // set the resolution
+    this.worldMatrix = new _m.m4();
+    /**
+     * View matrix
+     * @type {m4}
+     */
 
-    this.gl.uniform2f(this.program.uniforms.resolution, canvas.width, canvas.height);
+    this.viewMatrix = new _m.m4();
+    /**
+     * Composition of all matricies
+     * @type {m4}
+     */
+
+    this.matrix = new _m.m4(); // set the resolution
+
+    gl.uniform2f(this.program.uniforms.resolution, canvas.width / 2 / this.dpr, canvas.height / 2 / this.dpr);
+    this.styles = {
+      /** Color to fill inside the shape */
+      fillColor: [1, 0, 1, 1],
+
+      /** Color given to the border of shape &  for lines */
+      strokeColor: [1, 1, 0, 1],
+
+      /** Width of line */
+      lineWidth: 1
+    };
+  }
+
+  useProgram(program) {
+    if (this.sources[program]) {
+      this.program = this.sources[program];
+      this.gl.useProgram(this.program.program);
+      this.gl.uniform2f(this.program.uniforms.resolution, this.canvas.width / 2 / this.dpr, this.canvas.height / 2 / this.dpr);
+    } else if (program.program) {
+      this.program = program;
+      this.gl.useProgram(program.program);
+    } else {
+      throw new Error(`${program} not fouund`);
+    }
   }
   /**
    * Returns a shader from given source and type
@@ -260,381 +1205,91 @@ void main() {
     this.canvas.height = displayHeight;
   }
 
-}
-/**
- * clears the canvas using given color
- * @param {number} r red value
- * @param {number} g green value
- * @param {number} b blue value
- * @param {number} a alpha value
- */
+  putProperties() {
+    let gl = this.gl,
+        numComponents = 3,
+        type = gl.FLOAT,
+        normalize = false,
+        stride = 0,
+        offset = 0;
+    const positionBuffer = gl.createBuffer(); // Select the positionBuffer as the one to apply buffer
+    // operations to from here out.
 
+    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+    gl.vertexAttribPointer(this.program.attributes.vertexPosition, numComponents, type, normalize, stride, offset);
+    gl.enableVertexAttribArray(this.program.attributes.vertexPosition); // Tell WebGL how to pull out the colors from the color buffer
+    // into the vertexColor attribute.
+
+    numComponents = 4;
+    type = gl.FLOAT;
+    normalize = false;
+    stride = 0;
+    offset = 0;
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.program.uniforms.vertexColor);
+    gl.vertexAttribPointer(this.program.uniforms.vertexColor, numComponents, type, normalize, stride, offset);
+  }
+  /**
+   * Creates a custom program from sources and retuns program and variables
+   * @param {Object} program program that contains shader sources and variables of shaders
+   * @param {string|HTMLScriptElement} program.vertex vertex shader program
+   * @param {string|HTMLScriptElement} program.fragment fragment shader program
+   * @param {Object.<string,string>} program.uniforms uniform variables of program. format: {uniformName: name_in_shader}
+   * @param {Object.<string,string>} program.attributes attributes of program. format: {attrName: name_in_shader}
+   */
+
+
+  createCustomProgram(program) {
+    let gl = this.gl,
+        uniforms = {},
+        attributes = {},
+        program_;
+
+    if (program.vertex instanceof HTMLScriptElement) {
+      program.vertex = program.vertex.textContent.trim();
+    }
+
+    if (program.fragment instanceof HTMLScriptElement) {
+      program.fragment = program.fragment.textContent.trim();
+    }
+
+    program_ = this.createProgramFromSource(program.vertex, program.fragment);
+
+    for (let attr in program.attributes) {
+      let nameInProgram = program.attributes[attr];
+      attributes[attr] = gl.getAttribLocation(program_, nameInProgram); // gl.enableVertexAttribArray(src[attr]); // TODO: should all attributes be enabled?
+    }
+
+    for (let uniform in program.uniforms) {
+      let nameInProgram = program.uniforms[uniform];
+      uniforms[uniform] = gl.getUniformLocation(program_, nameInProgram);
+    }
+
+    return {
+      program: program_,
+      uniforms: uniforms,
+      attributes: attributes,
+      vertex: program.vertex,
+      fragment: program.fragment
+    };
+  }
+
+  attribUsage(position, components = 3, type = this.gl.FLOAT, normalize = false, stride = 0, offset = 0) {
+    this.gl.enableVertexAttribArray(position);
+    this.gl.vertexAttribPointer(position, // position of attribute
+    components, // components to pull per iteration
+    type, // type of the data
+    normalize, // whether normalize the data
+    stride, // 0 = move forward size * sizeof(type) each iteration to get the next position
+    offset // where to start
+    );
+  }
+
+}
 
 exports.WebGL = WebGL;
 
-WebGL.prototype.background = function (r, g, b, a) {
-  this.gl.clearColor(r, g, b, a);
-  this.gl.clear(this.gl.COLOR_BUFFER_BIT);
-  return this;
-};
-/**
- * clears canvas
- * @returns {this}
- */
-
-
-WebGL.prototype.clear = function () {
-  this.background(0, 0, 0, 0);
-  return this;
-};
-
-WebGL.prototype.bindNewBuffer = function (type = this.gl.ARRAY_BUFFER) {
-  // Create a buffer to put stuffs in
-  var buffer = this.gl.createBuffer();
-  this.gl.bindBuffer(type, buffer);
-  return buffer;
-};
-/**
- * sets geometry of a objevt in buffer
- * @param {number[]} data data of positions to set
- * @param {*} target
- * @param {*} usage
- * @returns {this}
- */
-
-
-WebGL.prototype.setGeometry = function (data, target = this.gl.ARRAY_BUFFER, usage = this.gl.STATIC_DRAW) {
-  let gl = this.gl,
-      program = this.program; // Create and bind a buffer to put positions of points in
-
-  this.bindNewBuffer();
-  gl.bufferData(target, new Float32Array(data), usage); // Set the matrix.
-
-  gl.uniformMatrix3fv(program.uniforms.matrix, false, this.projectionMatrix); // set the color
-
-  gl.uniform4fv(program.uniforms.color, this.fillColor); // Tell the attribute how to get data out of positionBuffer (ARRAY_BUFFER)
-
-  gl.vertexAttribPointer(program.attribs.position, // position of position attribute
-  2, // pull 2 components per iteration
-  gl.FLOAT, // type of the data is 32bit floats
-  false, // don't normalize the data
-  0, // 0 = move forward size * sizeof(type) each iteration to get the next position
-  0 // start at the beginning of the buffer
-  ); // Draw the geometry.
-
-  var primitiveType = gl.TRIANGLES;
-  var offset = 0;
-  var count = 18; // 6 triangles in the 'F', 3 points per triangle
-
-  gl.drawArrays(primitiveType, offset, count);
-  return this;
-};
-/**
- * rotates canvas by a given angle.
- * Multiplies current matrix by a rotation matrix
- * @param {number} angle angle to rotate by
- * @returns {this}
- */
-
-
-WebGL.prototype.rotate = function (angle) {
-  _m.m3.rotate(this.projectionMatrix, angle);
-
-  return this;
-};
-/**
- * Translate canvas by a given vector by multiplying current matrix by a translation matrix
- * @param {number} x x value of vector
- * @param {number} y y value of vector
- * @returns {this}
- */
-
-
-WebGL.prototype.translate = function (x, y) {
-  _m.m3.translate(this.projectionMatrix, x, y);
-
-  return this;
-};
-/**
- * Scales canvas by given x, y factors
- */
-
-
-WebGL.prototype.scale = function (x, y) {
-  _m.m3.scale(this.projectionMatrix, x, y);
-
-  return this;
-};
-
-WebGL.prototype.fill = function (r, g, b, a) {
-  this.fillColor = [r, g, b, a];
-};
-
-},{"../main.js":17,"../utils.js":33,"./m3.js":1}],3:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.Arc = Arc;
-exports.Circle = Circle;
-exports.Line = Line;
-exports.animateFill = animateFill;
-
-var _color_reader = require("../color/color_reader.js");
-
-var _main = require("../main.js");
-
-var _rate_functions = require("../math/rate_functions.js");
-
-var _geometry = require("../objects/geometry.js");
-
-var _settings = require("../settings.js");
-
-var _utils = require("../utils.js");
-
-const counters = {
-  Circle: 1,
-  Line: 1,
-  animateFill: 1,
-  Arc: 1
-};
-/**
- * Animates a line from point p1 to point p2.
- *
- * @param {array<number>} p1 The first point.
- * @param {array<number>} p2 The second point.
- * @param {number} [dt=10] The duration of one frame in milliseconds.
- * @param {function} [next=() => {}] The function to call after the animation.
- */
-
-function Line(args) {
-  let defaults = {
-    name: "line-" + counters.Line++,
-    dur: 1000,
-    dTime: 10,
-    next: null,
-    rateFunction: _rate_functions.smooth
-  };
-  let {
-    p1,
-    p2,
-    name,
-    dur,
-    canvas,
-    dTime,
-    rateFunction,
-    next,
-    syncWithTime
-  } = (0, _utils.applyDefault)(defaults, args);
-  canvas = canvas || _main.C.workingCanvas.name;
-  let ctx = _main.C.canvasList[canvas];
-  let angle = Math.atan2(p2[1] - p1[1], p2[0] - p1[0]);
-  let points = [];
-  let xDiff = p2[0] - p1[0];
-  let yDiff = p2[1] - p1[1];
-  let dt = Math.abs(Math.cos(angle) / xDiff);
-
-  if (Math.abs(Math.PI / 2 - Math.abs(angle)) < 1e-6) {
-    dt = 1 / Math.abs(yDiff);
-  }
-
-  for (let t = 0; t <= 1 + 1e-6; t += dt) {
-    points.push([p1[0] * (1 - t) + p2[0] * t, p1[1] * (1 - t) + p2[1] * t]);
-  }
-
-  return {
-    points: points,
-    // list of computed points
-    dur: dur,
-    dTime: dTime,
-    canvas: ctx,
-    rateFunction: rateFunction,
-    name: name,
-    closed: false,
-    smoothen: false,
-    fill: false,
-    next: next,
-    syncWithTime: syncWithTime
-  };
-}
-
-function Arc(args) {
-  const defaults = {
-    center: [0, 0],
-    name: "arc-" + counters.Arc++,
-    radiusX: 100,
-    radiusY: 100,
-    dur: 1000,
-    dTime: 16,
-    fill: false,
-    fillTime: 500,
-    next: null,
-    rateFunction: _rate_functions.smooth,
-    closed: false,
-    startAngle: 0,
-    angle: Math.PI / 2,
-    clockwise: false
-  };
-  let {
-    name,
-    dur,
-    center,
-    canvas,
-    dTime,
-    fill: fillColor,
-    fillTime,
-    next,
-    closed,
-    rateFunction,
-    startAngle,
-    angle,
-    radiusX,
-    radiusY,
-    clockwise
-  } = Object.assign(defaults, args);
-  canvas = canvas || _main.C.workingCanvas.name;
-  let ctx = _main.C.canvasList[canvas];
-  let points = [];
-
-  if (args.radius) {
-    radiusX = args.radius;
-    radiusY = args.radius;
-  }
-
-  let dt = 2 / (ctx.dpr * (radiusX + radiusY));
-  let start = startAngle;
-  let end = angle + startAngle + 1e-6;
-
-  function pushPoint(t) {
-    const x1 = Math.cos(t) * radiusX + center[0];
-    const y1 = Math.sin(t) * radiusY + center[1];
-    points.push([x1, y1]);
-  }
-
-  if (clockwise) for (let t = end; t >= start; t -= dt) pushPoint(t);else for (let t = start; t <= end; t += dt) pushPoint(t);
-  let rx = radiusX;
-  let ry = radiusY;
-
-  if (ctx.doStroke) {
-    rx -= (0, _settings.getStrokeWidth)() / 2;
-    ry -= (0, _settings.getStrokeWidth)() / 2;
-  }
-
-  console.log(points);
-  return {
-    points: points,
-    // list of computed points
-    dur: dur,
-    dTime: dTime,
-    canvas: ctx,
-    rateFunction: rateFunction,
-    name: name,
-    closed: closed,
-    smoothen: true,
-    tension: 1,
-    fill: fillColor,
-    fillTime: fillTime,
-    next: next,
-    rx: rx,
-    ry: ry,
-    filler: function () {
-      (0, _geometry.ellipse)(center[0], center[1], rx, ry, 0, startAngle, angle);
-    }
-  };
-}
-/**
- * animate filling of a given shape
- * ! Has some flaws !
- * @param {string} id ID of canvas
- * @param {string} FILL color of canvas
- * @param {function} f funciton that draws the shape
- * @param {number} [dur=1000] dur to run
- * @param {number} [dt=10] dur for each frame
- * @param {function} [next=null] function to run after filling
- */
-
-
-function animateFill(name, canvasName, FILL, f, dur = 1000, dt = 10, next = null) {
-  let _fill = (0, _color_reader.readColor)(FILL, true);
-
-  const ctx = _main.C.canvasList[canvasName];
-  let previousT = -dur / dt;
-  (0, _settings.loop)("filling " + name, t => {
-    if (t >= dur) {
-      (0, _settings.noLoop)(canvasName, t);
-      if (typeof next == "function") next();
-    }
-
-    ctx.fillStyle = (0, _color_reader.readColor)(_fill[0], _fill[1], _fill[2], _fill[3] / (t - previousT));
-    f();
-    previousT = t;
-  }, canvasName, dt, 1000, {}, dur);
-}
-/**
- * Animates drawing of a point.
- * @param {object} args object containing configs
- *
- * @param {string} [args.name = "point-" + counters.Circle] Name of the animation
- * @param {number} [args.radius = 3] radius of circle
- * @param {number} [args.dur = 1000] duration of animation
- * @param {number} [args.dTime = 1] duration of each frame
- * @param {boolean|string} [args.fill = false] if false, no fill. Else a color to fill with.
- * @param {number} [args.fillTime = 500] time to fill inside circle.
- * @param {funciton} [args.next = null] function to run after animation ends.
- * @param {funciton} [args.rateFunction = smooth] function to use for rate.
- * @param {array<number>} args.center center of the circle
- * @param {string} args.canvas name of canvas in which the animation is rendered
- */
-
-
-function Circle(args) {
-  let defaults = {
-    name: "point-" + counters.Circle++,
-    radius: 100,
-    dur: 1000,
-    dTime: 16,
-    fill: false,
-    fillTime: 500,
-    next: null,
-    rateFunction: _rate_functions.smooth,
-    startAngle: 0,
-    angle: Math.PI * 2
-  };
-  args = Object.assign(defaults, args);
-  let center = args.center,
-      {
-    points,
-    dur,
-    dTime,
-    canvas,
-    rateFunction,
-    fill: fillColor,
-    fillTime,
-    next,
-    rx
-  } = Arc(args);
-  return {
-    points: points,
-    // list of computed points
-    dur: dur,
-    dTime: dTime,
-    canvas: canvas,
-    rateFunction: rateFunction,
-    name: args.name,
-    closed: true,
-    smoothen: true,
-    tension: 1,
-    fill: fillColor,
-    fillTime: fillTime,
-    next: next,
-    filler: function () {
-      (0, _geometry.point)(center[0], center[1], rx * 2, false);
-    }
-  };
-}
-
-},{"../color/color_reader.js":6,"../main.js":17,"../math/rate_functions.js":22,"../objects/geometry.js":28,"../settings.js":32,"../utils.js":33}],4:[function(require,module,exports){
+},{"../main.js":17,"../utils.js":33,"./m4.js":2}],5:[function(require,module,exports){
 "use strict";
 
 var _utils = require("./utils.js");
@@ -679,8 +1334,6 @@ var CoordinateSystems = _interopRequireWildcard(require("./objects/coordinate_sy
 
 var MoreShapes = _interopRequireWildcard(require("./objects/more_shapes.js"));
 
-var CreateAnimation = _interopRequireWildcard(require("./animations/create.js"));
-
 var Basic = _interopRequireWildcard(require("./math/basic.js"));
 
 var Points = _interopRequireWildcard(require("./math/points.js"));
@@ -694,6 +1347,8 @@ var RateFunctions = _interopRequireWildcard(require("./math/rate_functions.js"))
 var _main = require("./main.js");
 
 var WebGL = _interopRequireWildcard(require("./WebGL/webgl.js"));
+
+var WebGLSettings = _interopRequireWildcard(require("./WebGL/settings.js"));
 
 function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
 
@@ -719,7 +1374,6 @@ function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && 
 (0, _utils.defineProperties)(Arrows);
 (0, _utils.defineProperties)(Functions);
 (0, _utils.defineProperties)(MoreShapes);
-(0, _utils.defineProperties)(CreateAnimation);
 (0, _utils.defineProperties)(Arithmeics);
 (0, _utils.defineProperties)(Basic);
 (0, _utils.defineProperties)(Points);
@@ -730,8 +1384,9 @@ function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && 
 (0, _utils.defineProperties)(COLORLIST, _main.C.COLORLIST); //! Experimental features
 
 (0, _utils.defineProperties)(WebGL);
+(0, _utils.defineProperties)(WebGLSettings);
 
-},{"./WebGL/webgl.js":2,"./animations/create.js":3,"./color/color_converters.js":5,"./color/color_reader.js":6,"./color/gradients.js":7,"./color/interpolation.js":8,"./color/random.js":9,"./constants/color_palettes.js":10,"./constants/colors.js":11,"./constants/drawing.js":12,"./constants/math.js":13,"./image/image.js":15,"./image/processing.js":16,"./main.js":17,"./math/aritmetics.js":18,"./math/basic.js":19,"./math/points.js":20,"./math/random.js":21,"./math/rate_functions.js":22,"./objects/arrows.js":24,"./objects/braces.js":25,"./objects/coordinate_systems.js":26,"./objects/functions.js":27,"./objects/geometry.js":28,"./objects/more_shapes.js":29,"./objects/tex.js":30,"./objects/text.js":31,"./settings.js":32,"./utils.js":33}],5:[function(require,module,exports){
+},{"./WebGL/settings.js":3,"./WebGL/webgl.js":4,"./color/color_converters.js":6,"./color/color_reader.js":7,"./color/gradients.js":8,"./color/interpolation.js":9,"./color/random.js":10,"./constants/color_palettes.js":11,"./constants/colors.js":12,"./constants/drawing.js":13,"./constants/math.js":14,"./image/image.js":15,"./image/processing.js":16,"./main.js":17,"./math/aritmetics.js":18,"./math/basic.js":19,"./math/points.js":20,"./math/random.js":21,"./math/rate_functions.js":22,"./objects/arrows.js":24,"./objects/braces.js":25,"./objects/coordinate_systems.js":26,"./objects/functions.js":27,"./objects/geometry.js":28,"./objects/more_shapes.js":29,"./objects/tex.js":30,"./objects/text.js":31,"./settings.js":32,"./utils.js":33}],6:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -755,12 +1410,12 @@ function hue2RGB(p, q, t) {
  * adapted from http://en.wikipedia.org/wiki/HSL_color_space.
  * Assumes values of red, green, and blue are between 0 & 1 and
  * returns hue, saturation and lightness in range 0 to 1
- * @method RGBToHSL
+
  * @global
- * @param {number} red The red color value
- * @param {number} green The green color value
- * @param {number} blue The blue color value
- * @return {array<number>} The HSL representation
+ * @param {number} r The red color value
+ * @param {number} g The green color value
+ * @param {number} b The blue color value
+ * @return {Array<number>} The HSL representation
  */
 
 
@@ -791,7 +1446,7 @@ function RGBToHSL(r, g, b) {
  * @param {number} hue The hue
  * @param {number} saturation The saturation
  * @param {number} lightness The lightness
- * @return {array<number>} The RGB representation
+ * @return {Array<number>} The RGB representation
  */
 
 
@@ -817,10 +1472,11 @@ function HSLToRGB(hue, saturation, lightness) {
  * Assumes values of red, green, and blue are between 0 & 1 and
  * returns hue, saturation and value in range 0 to 1
  *
- * @param {number} red The red color value
- * @param {number} green The green color value
- * @param {number} blue The blue color value
- * @return {array<number>} The HSV representation
+ * @global
+ * @param {number} r The red color value
+ * @param {number} g The green color value
+ * @param {number} b The blue color value
+ * @return {Array<number>} The HSV representation
  */
 
 
@@ -852,7 +1508,7 @@ function RGBToHSV(r, g, b) {
  * @param {number} hue The hue
  * @param {number} saturation The saturation
  * @param {number} value The value
- * @return {array<number>} The RGB representation
+ * @return {Array<number>} The RGB representation
  */
 
 
@@ -870,7 +1526,7 @@ function HSVToRGB(hue, saturation, value) {
   return [r, g, b];
 }
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -878,19 +1534,14 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.readColor = readColor;
 
-var namedColors = _interopRequireWildcard(require("../constants/named_colors.js"));
-
-var _main = require("../main.js");
+var Colors = _interopRequireWildcard(require("../constants/colors.js"));
 
 function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
 
 function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
 // adapeted from p5.js
-
-/**
- * Full color string patterns. The capture groups are necessary.
- */
+// Full color string patterns. The capture groups are necessary.
 let // Matching format: #XXX
 HEX3 = /^#([a-f0-9])([a-f0-9])([a-f0-9])$/i,
     // Matching format: #XXXX
@@ -919,25 +1570,12 @@ RGBA = /^rgba\((\d{1,3}),(\d{1,3}),(\d{1,3}),(?:(\d+(?:\.\d+)?)|(?:\.\d+))\)$/i;
  * * readColor(255, 200, 100, true) // [255, 200, 100, 1]
  * * readColor("#f3da", true)       // [255, 51, 221, 0.0392156862745098]
  *
- * @return {string|array} color string/array
+ * @return {Object} color string/array
  */
 
-function readColor() {
-  let args = Array.prototype.slice.call(arguments),
-      color,
-      toArray,
-      lastArg = args[args.length - 1],
-      result;
-  if (Array.isArray(args[0])) args = args[0];
-
-  if (typeof lastArg == "boolean") {
-    toArray = lastArg;
-    color = args.slice(0, args.length - 1);
-  } else {
-    toArray = false;
-    color = args.slice(0, args.length);
-  }
-
+function readColor(...color) {
+  let result;
+  if (Array.isArray(color[0])) color = color[0];
   let c1 = color[0];
 
   if (typeof c1 === "number") {
@@ -948,13 +1586,13 @@ function readColor() {
     } else if (color.length === 3) {
       result = [c1, color[1], color[2], 1];
     } else if (color.length === 4) {
-      result = [c1, color[1], color[2], color[3] / 255];
+      result = [c1, color[1], color[2], color[3]];
     }
   } else if (typeof c1 == "string") {
     // Adapted from p5.js
     let str = c1.replace(/\s/g, "").toLowerCase(); // convert string to array if it is a named colour.
 
-    if (namedColors[str]) result = readColor(namedColors[str], true);else if (HEX3.test(str)) {
+    if (Colors[str]) result = readColor(Colors[str]).rgbaA;else if (HEX3.test(str)) {
       result = HEX3.exec(str).slice(1).map(color => parseInt(color + color, 16));
       result[3] = 1;
     } else if (HEX6.test(str)) {
@@ -964,55 +1602,60 @@ function readColor() {
       result = HEX4.exec(str).slice(1).map(color => parseInt(color + color, 16));
     } else if (HEX8.test(str)) {
       result = HEX8.exec(str).slice(1).map(color => parseInt(color, 16));
-      result[3] /= 255;
     } else if (RGB.test(str)) {
-      result = RGB.exec(str).slice(1).map(color => parseInt(color));
+      result = RGB.exec(str).slice(1).map(color => parseInt(color, 10));
       result[3] = 1;
     } else if (RGBA.test(str)) {
       result = RGBA.exec(str).slice(1).map((color, index) => {
         if (index == 3) return parseFloat(color);
-        return parseInt(color);
+        return parseInt(color, 10);
       });
     } else {
       console.log(str);
       throw new Error("Given color is not valid");
     }
   } else {
-    return c1;
+    result = c1;
+    return {
+      rgbaA: result,
+      rgba: result,
+      hex6: result,
+      hex8: result,
+      hex: result,
+      hsl: result
+    };
   }
 
-  if (!toArray) {
-    let mode = (_main.C.workingCanvas || {}).colorMode || "rgba";
-
-    if (mode === "rgba") {
-      result = `rgba(${result[0]}, ${result[1]}, ${result[2]}, ${result[3]})`;
-    } else if (mode === "hsl" || mode === "rgb") {
-      result = mode + `(${result[0]}, ${result[1]}, ${result[2]})`;
-    } else if (mode == "hex6") {
-      let r = "#";
-      result.map((color, i) => {
-        if (i < 3) {
-          let hex = Math.round(color).toString(16);
-          r += hex.length == 1 ? "0" + hex : hex;
-        }
-      });
-      result = r;
-    } else if (mode == "hex8") {
-      let r = "#";
-      result.map((color, i) => {
-        if (i < 4) {
-          let hex = Math.round(color).toString(16);
-          r += hex.length == 1 ? "0" + hex : hex;
-        }
-      });
-      result = r;
+  let a = result[3];
+  result[3] *= 255;
+  let hex6 = "#",
+      r = result;
+  r.map((color, i) => {
+    if (i < 3) {
+      let hex = Math.round(color).toString(16);
+      hex6 += hex.length == 1 ? "0" + hex : hex;
     }
-  }
-
-  return result;
+  });
+  let hex8 = "#";
+  r = result;
+  r.map((color, i) => {
+    if (i < 4) {
+      let hex = Math.round(color).toString(16);
+      hex8 += hex.length == 1 ? "0" + hex : hex;
+    }
+  });
+  result[3] = a;
+  return {
+    rgbaA: result,
+    rgba: `rgba(${result[0]}, ${result[1]}, ${result[2]}, ${result[3]})`,
+    hex6: hex6,
+    hex8: hex8,
+    hex: hex8,
+    hsl: `hsl(${result[0]}, ${result[1]}, ${result[2]})`
+  };
 }
 
-},{"../constants/named_colors.js":14,"../main.js":17}],7:[function(require,module,exports){
+},{"../constants/colors.js":12}],8:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1022,12 +1665,14 @@ exports.linearGradient = linearGradient;
 
 var _main = require("../main.js");
 
+var _utils = require("../utils.js");
+
 /**
  * creates a linear gradient
  *
- * @param {array<number>} initialPoint initial point as [x, y]
- * @param {array<number>} finalPoint final point as [x, y]
- * @param {Object|array<any>} colorStops color stops
+ * @param {Array<number>} initialPoint initial point as [x, y]
+ * @param {Array<number>} finalPoint final point as [x, y]
+ * @param {Object|Array<*>} colStops color stops
  @example
  ```js
 let color = linearGradient(
@@ -1050,30 +1695,34 @@ let color = linearGradient(
 );
 ```
  */
-function linearGradient(initialPoint, finalPoint, colorStops) {
-  const ctx = _main.C.workingCanvas;
+function linearGradient(initialPoint, finalPoint, colStops) {
+  const ctx = _main.C.workingContext;
   const gradient = ctx.createLinearGradient(initialPoint[0], initialPoint[1], finalPoint[0], finalPoint[1]);
 
-  if (Array.isArray(colorStops)) {
+  if ((0, _utils.type)(colStops) == "Array") {
     const stops = {};
-    const step = 1 / colorStops.length;
+    const step = 1 / colStops.length;
 
-    for (let i = 0; i < colorStops.length; i++) {
-      stops[step * i] = colorStops[i];
+    for (let i = 0; i < colStops.length; i++) {
+      stops[step * i] = colStops[i];
     }
 
-    colorStops = stops;
+    colStops = stops;
+  } else if ((0, _utils.type)(colStops) == "Object") {
+    colStops = colStops;
+  } else {
+    throw new Error("Color Stops must be an Array or an Object");
   }
 
-  for (let stops = Object.keys(colorStops), i = 0; i < stops.length; i++) {
-    const stop = stops[i];
-    gradient.addColorStop(stop, colorStops[stop]);
+  for (let stops = Object.keys(colStops || {}), i = 0; i < stops.length; i++) {
+    const stop = Number(stops[i]);
+    gradient.addColorStop(stop, colStops[stop]);
   }
 
   return gradient;
 }
 
-},{"../main.js":17}],8:[function(require,module,exports){
+},{"../main.js":17,"../utils.js":33}],9:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1094,23 +1743,24 @@ var _color_reader = require("./color_reader.js");
  * @param {number} v should be between 0 and 1.
  */
 function lerpColor(color1, color2, v) {
-  const c1 = (0, _color_reader.readColor)(color1, true);
-  const c2 = (0, _color_reader.readColor)(color2, true);
-  return (0, _color_reader.readColor)(Math.min(Math.max(0, (c2[0] - c1[0]) * v + c1[0]), 255), Math.min(Math.max(0, (c2[1] - c1[1]) * v + c1[1]), 255), Math.min(Math.max(0, (c2[2] - c1[2]) * v + c1[2]), 255), Math.min(Math.max(0, (c2[3] - c1[3]) * v + c1[3]), 255));
+  const c1 = (0, _color_reader.readColor)(color1).rgbaA;
+  const c2 = (0, _color_reader.readColor)(color2).rgbaA;
+  return (0, _color_reader.readColor)(Math.min(Math.max(0, (c2[0] - c1[0]) * v + c1[0]), 255), Math.min(Math.max(0, (c2[1] - c1[1]) * v + c1[1]), 255), Math.min(Math.max(0, (c2[2] - c1[2]) * v + c1[2]), 255), Math.min(Math.max(0, (c2[3] - c1[3]) * v + c1[3]), 255)).hex8;
 }
 /**
  * Lerps across a color Object
  *
- * @param {object} colorObj
+ * @param {Object} colorObj
  * @param {number} v
  * @return {string}
  */
 
 
 function lerpColorObject(colorObj, v) {
-  const stopes = Object.keys(colorObj).sort();
+  const stopes = Object.keys(colorObj || {}).sort();
   const min = Math.min(...stopes);
   const max = Math.max(...stopes);
+  let color = "#000000";
   if (v >= max) return colorObj[max];
   if (v <= min) return colorObj[min];
 
@@ -1118,16 +1768,20 @@ function lerpColorObject(colorObj, v) {
     let a = stopes[i];
 
     if (v > a) {
-      return lerpColor(colorObj[a], colorObj[stopes[i + 1]], (v - a) / (stopes[i + 1] - a));
+      color = lerpColor(colorObj[a], colorObj[stopes[i + 1]], (v - a) / (stopes[i + 1] - a));
+      break;
     } else if (v == a) {
-      return colorObj[a];
+      color = colorObj[a];
+      break;
     }
   }
+
+  return color;
 }
 /**
  * Lerps across a color Array
  * From <https://github.com/yuki-koyama/tinycolormap/blob/fe597277c782c583eb40362de98a08df62efc628/include/tinycolormap.hpp#L159>
- * @param {array<string>} colorArr array that contains color as string
+ * @param {Array<string>} colorArr array that contains color as string
  * @param {number} v value to interpolate
  * @param {number} [min = 0] minimum value of the range
  * @param {number} [max = 1] maximum value of the range
@@ -1146,31 +1800,32 @@ function lerpColorArray(colorArr, v, min = 0, max = 1) {
   b = Math.floor(a);
   return lerpColor(colorArr[b], colorArr[b + 1], a - b);
 }
+/**
+ *
+ * @param {Array<string>} colorPalatte Array of color palettes
+ * @param {number} [min=0] minimum of range
+ * @param {number} [max=5] maximum of range
+ * @param {number} [alpha=1] value of alpha channel. This value must be between 0 & 1
+ * @returns {Object} color object
+ */
 
-function getInterpolatedColorList(colorPalatte, min = 0, max = 5, step = 1, alpha = 1) {
-  const len = Math.round((max - min) / step) + 1;
-  const list = Object.keys(colorPalatte),
-        listMax = Math.max(...list);
 
-  if (len > listMax) {// not implemented
-  } else if (len < 3) {
-    throw new Error("Number of colors to compute is less than 3");
-  }
+function getInterpolatedColorList(colorPalatte, min = 0, max = 5, alpha) {
+  if (colorPalatte.length == 1) throw new Error("Atleast 2 colors are needed to create interpolatable object");
+  let step = (max - min) / (colorPalatte.length - 1),
+      colorObj = {};
 
-  const colorObj = {};
-  const cp = colorPalatte[len];
-  let k = 0;
-
-  for (let i = min; i <= max; i += step) {
-    const c = (0, _color_reader.readColor)(cp[k++], true);
-    c[3] = alpha;
-    colorObj[i] = (0, _color_reader.readColor)(...c);
+  for (let i = 0; i < colorPalatte.length; i++) {
+    let value = min + i * step,
+        color = (0, _color_reader.readColor)(colorPalatte[i]).rgbaA;
+    color[3] = isNaN(alpha) ? color[3] : alpha;
+    colorObj[value] = color;
   }
 
   return colorObj;
 }
 
-},{"./color_reader.js":6}],9:[function(require,module,exports){
+},{"./color_reader.js":7}],10:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1216,7 +1871,7 @@ function randomDefinedColor() {
   return COLORLIST[definedColorList[(0, _random.randomInt)(definedColorList.length - 1)]];
 }
 
-},{"../constants/colors.js":11,"../math/random.js":21}],10:[function(require,module,exports){
+},{"../constants/colors.js":12,"../math/random.js":21}],11:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1224,9 +1879,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.ColorPalettes = void 0;
 // prettier-ignore
-
-/** @type {Object.<string, string[]>} ColorPalette */
-let ColorPalettes = {
+let colorPalettes = {
   // This product includes color specifications and designs developed by Cynthia Brewer (http://colorbrewer.org/).
   // Please see license at http://colorbrewer.org/export/LICENSE.txt
   YlGn: "#ffffe5 #f7fcb9 #d9f0a3 #addd8e #78c679 #41ab5d #238443 #006837 #004529",
@@ -1273,156 +1926,13 @@ let ColorPalettes = {
   Grey: "#000000 #ffffff",
   Gray: "#000000 #ffffff"
 };
+
+for (var p in colorPalettes) colorPalettes[p] = colorPalettes[p].split(" ");
+/** @type {Object.<string, Array<string>>} ColorPalette */
+
+
+const ColorPalettes = colorPalettes;
 exports.ColorPalettes = ColorPalettes;
-
-for (var p in ColorPalettes) ColorPalettes[p] = ColorPalettes[p].split(" ");
-
-},{}],11:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.YELLOW_E = exports.YELLOW_D = exports.YELLOW_C = exports.YELLOW_B = exports.YELLOW_A = exports.YELLOW = exports.WHITE = exports.TRANSPARENT = exports.TEAL_E = exports.TEAL_D = exports.TEAL_C = exports.TEAL_B = exports.TEAL_A = exports.TEAL = exports.RED_E = exports.RED_D = exports.RED_C = exports.RED_B = exports.RED_A = exports.RED = exports.PURPLE_E = exports.PURPLE_D = exports.PURPLE_C = exports.PURPLE_B = exports.PURPLE_A = exports.PURPLE = exports.PINK = exports.ORANGE = exports.MAROON_E = exports.MAROON_D = exports.MAROON_C = exports.MAROON_B = exports.MAROON_A = exports.MAROON = exports.LIGHT_PINK = exports.LIGHT_GREY = exports.LIGHT_GRAY = exports.LIGHT_BROWN = exports.GREY_BROWN = exports.GREY = exports.GREEN_SCREEN = exports.GREEN_E = exports.GREEN_D = exports.GREEN_C = exports.GREEN_B = exports.GREEN_A = exports.GREEN = exports.GRAY = exports.GOLD_E = exports.GOLD_D = exports.GOLD_C = exports.GOLD_B = exports.GOLD_A = exports.GOLD = exports.DARK_GREY = exports.DARK_GRAY = exports.DARK_BROWN = exports.DARK_BLUE = exports.DARKER_GREY = exports.DARKER_GRAY = exports.BLUE_E = exports.BLUE_D = exports.BLUE_C = exports.BLUE_B = exports.BLUE_A = exports.BLUE = exports.BLACK = void 0;
-
-/**
- * List of colors
- */
-// from Manim
-const DARK_BLUE = "#236b8e",
-      DARK_BROWN = "#8b4513",
-      LIGHT_BROWN = "#cd853f",
-      BLUE_A = "#c7e9f1",
-      BLUE_B = "#9cdceb",
-      BLUE_C = "#58c4dd",
-      BLUE_D = "#29abca",
-      BLUE_E = "#1c758a",
-      BLUE = "#58c4dd",
-      TEAL_A = "#acead7",
-      TEAL_B = "#76ddc0",
-      TEAL_C = "#5cd0b3",
-      TEAL_D = "#55c1a7",
-      TEAL_E = "#49a88f",
-      TEAL = "#5cd0b3",
-      GREEN_A = "#c9e2ae",
-      GREEN_B = "#a6cf8c",
-      GREEN_C = "#83c167",
-      GREEN_D = "#77b05d",
-      GREEN_E = "#699c52",
-      GREEN = "#83c167",
-      YELLOW_A = "#fff1b6",
-      YELLOW_B = "#ffea94",
-      YELLOW_C = "#ffff00",
-      YELLOW_D = "#f4d345",
-      YELLOW_E = "#e8c11c",
-      YELLOW = "#ffff00",
-      GOLD_A = "#f7c797",
-      GOLD_B = "#f9b775",
-      GOLD_C = "#f0ac5f",
-      GOLD_D = "#e1a158",
-      GOLD_E = "#c78d46",
-      GOLD = "#f0ac5f",
-      RED_A = "#f7a1a3",
-      RED_B = "#ff8080",
-      RED_C = "#fc6255",
-      RED_D = "#e65a4c",
-      RED_E = "#cf5044",
-      RED = "#fc6255",
-      MAROON_A = "#ecabc1",
-      MAROON_B = "#ec92ab",
-      MAROON_C = "#c55f73",
-      MAROON_D = "#a24d61",
-      MAROON_E = "#94424f",
-      MAROON = "#c55f73",
-      PURPLE_A = "#caa3e8",
-      PURPLE_B = "#b189c6",
-      PURPLE_C = "#9a72ac",
-      PURPLE_D = "#715582",
-      PURPLE_E = "#644172",
-      PURPLE = "#9a72ac",
-      WHITE = "#ffffff",
-      BLACK = "#000000",
-      LIGHT_GRAY = "#bbbbbb",
-      LIGHT_GREY = "#bbbbbb",
-      GRAY = "#888888",
-      GREY = "#888888",
-      DARK_GREY = "#444444",
-      DARK_GRAY = "#444444",
-      DARKER_GREY = "#222222",
-      DARKER_GRAY = "#222222",
-      GREY_BROWN = "#736357",
-      PINK = "#d147bd",
-      LIGHT_PINK = "#dc75cd",
-      GREEN_SCREEN = "#00ff00",
-      ORANGE = "#ff862f",
-      TRANSPARENT = "rgba(0,0,0,0)";
-exports.TRANSPARENT = TRANSPARENT;
-exports.ORANGE = ORANGE;
-exports.GREEN_SCREEN = GREEN_SCREEN;
-exports.LIGHT_PINK = LIGHT_PINK;
-exports.PINK = PINK;
-exports.GREY_BROWN = GREY_BROWN;
-exports.DARKER_GRAY = DARKER_GRAY;
-exports.DARKER_GREY = DARKER_GREY;
-exports.DARK_GRAY = DARK_GRAY;
-exports.DARK_GREY = DARK_GREY;
-exports.GREY = GREY;
-exports.GRAY = GRAY;
-exports.LIGHT_GREY = LIGHT_GREY;
-exports.LIGHT_GRAY = LIGHT_GRAY;
-exports.BLACK = BLACK;
-exports.WHITE = WHITE;
-exports.PURPLE = PURPLE;
-exports.PURPLE_E = PURPLE_E;
-exports.PURPLE_D = PURPLE_D;
-exports.PURPLE_C = PURPLE_C;
-exports.PURPLE_B = PURPLE_B;
-exports.PURPLE_A = PURPLE_A;
-exports.MAROON = MAROON;
-exports.MAROON_E = MAROON_E;
-exports.MAROON_D = MAROON_D;
-exports.MAROON_C = MAROON_C;
-exports.MAROON_B = MAROON_B;
-exports.MAROON_A = MAROON_A;
-exports.RED = RED;
-exports.RED_E = RED_E;
-exports.RED_D = RED_D;
-exports.RED_C = RED_C;
-exports.RED_B = RED_B;
-exports.RED_A = RED_A;
-exports.GOLD = GOLD;
-exports.GOLD_E = GOLD_E;
-exports.GOLD_D = GOLD_D;
-exports.GOLD_C = GOLD_C;
-exports.GOLD_B = GOLD_B;
-exports.GOLD_A = GOLD_A;
-exports.YELLOW = YELLOW;
-exports.YELLOW_E = YELLOW_E;
-exports.YELLOW_D = YELLOW_D;
-exports.YELLOW_C = YELLOW_C;
-exports.YELLOW_B = YELLOW_B;
-exports.YELLOW_A = YELLOW_A;
-exports.GREEN = GREEN;
-exports.GREEN_E = GREEN_E;
-exports.GREEN_D = GREEN_D;
-exports.GREEN_C = GREEN_C;
-exports.GREEN_B = GREEN_B;
-exports.GREEN_A = GREEN_A;
-exports.TEAL = TEAL;
-exports.TEAL_E = TEAL_E;
-exports.TEAL_D = TEAL_D;
-exports.TEAL_C = TEAL_C;
-exports.TEAL_B = TEAL_B;
-exports.TEAL_A = TEAL_A;
-exports.BLUE = BLUE;
-exports.BLUE_E = BLUE_E;
-exports.BLUE_D = BLUE_D;
-exports.BLUE_C = BLUE_C;
-exports.BLUE_B = BLUE_B;
-exports.BLUE_A = BLUE_A;
-exports.LIGHT_BROWN = LIGHT_BROWN;
-exports.DARK_BROWN = DARK_BROWN;
-exports.DARK_BLUE = DARK_BLUE;
 
 },{}],12:[function(require,module,exports){
 "use strict";
@@ -1430,142 +1940,10 @@ exports.DARK_BLUE = DARK_BLUE;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.X_SMALL = exports.X_LARGE = exports.XX_SMALL = exports.XX_LARGE = exports.XXX_LARGE = exports.ULTRA_EXPANDED = exports.ULTRA_CONDENSED = exports.TOP = exports.START = exports.SQUARE = exports.SMALLER = exports.SMALL = exports.SEMI_EXPANDED = exports.SEMI_CONDENSED = exports.ROUND = exports.RIGHT = exports.OBLIQUE = exports.NORMAL = exports.MITER = exports.MILTER = exports.MIDDLE = exports.MEDIUM = exports.LEFT = exports.LARGER = exports.LARGE = exports.ITALIC = exports.IDEOGRAPHIC = exports.HANGING = exports.EXTRA_EXPANDED = exports.EXTRA_CONDENSED = exports.EXPANDED = exports.END = exports.CONDENSED = exports.CENTER = exports.BUTT = exports.BOTTOM = exports.BEVEL = exports.ALPHABETIC = void 0;
-const BUTT = "butt",
-      SQUARE = "square",
-      ROUND = "round",
-      MILTER = "milter",
-      BEVEL = "bevel",
-      MITER = "miter",
-      LEFT = "left",
-      RIGHT = "right",
-      CENTER = "center",
-      START = "start",
-      END = "end",
-      TOP = "top",
-      HANGING = "hanging",
-      MIDDLE = "middle",
-      ALPHABETIC = "alphabetic",
-      IDEOGRAPHIC = "ideographic",
-      BOTTOM = "bottom",
-      // font stretch properties
-ULTRA_CONDENSED = "ultra-condensed",
-      // 50%
-EXTRA_CONDENSED = "extra-condensed",
-      // 62.5%
-CONDENSED = "condensed",
-      // 75%
-SEMI_CONDENSED = "semi-condensed",
-      // 87.5%
-NORMAL = "normal",
-      // 100%
-SEMI_EXPANDED = "semi-expanded",
-      // 112.5%
-EXPANDED = "expanded",
-      // 125%
-EXTRA_EXPANDED = "extra-expanded",
-      // 150%
-ULTRA_EXPANDED = "ultra-expanded",
-      // 200%
-// font size properties
-XX_SMALL = "xx-small",
-      X_SMALL = "x-small",
-      SMALL = "small",
-      MEDIUM = "medium",
-      LARGE = "large",
-      X_LARGE = "x-large",
-      XX_LARGE = "xx-large",
-      XXX_LARGE = "xxx-large",
-      LARGER = "larger",
-      SMALLER = "smaller",
-      // font style properties
-ITALIC = "italic",
-      OBLIQUE = "oblique";
-exports.OBLIQUE = OBLIQUE;
-exports.ITALIC = ITALIC;
-exports.SMALLER = SMALLER;
-exports.LARGER = LARGER;
-exports.XXX_LARGE = XXX_LARGE;
-exports.XX_LARGE = XX_LARGE;
-exports.X_LARGE = X_LARGE;
-exports.LARGE = LARGE;
-exports.MEDIUM = MEDIUM;
-exports.SMALL = SMALL;
-exports.X_SMALL = X_SMALL;
-exports.XX_SMALL = XX_SMALL;
-exports.ULTRA_EXPANDED = ULTRA_EXPANDED;
-exports.EXTRA_EXPANDED = EXTRA_EXPANDED;
-exports.EXPANDED = EXPANDED;
-exports.SEMI_EXPANDED = SEMI_EXPANDED;
-exports.NORMAL = NORMAL;
-exports.SEMI_CONDENSED = SEMI_CONDENSED;
-exports.CONDENSED = CONDENSED;
-exports.EXTRA_CONDENSED = EXTRA_CONDENSED;
-exports.ULTRA_CONDENSED = ULTRA_CONDENSED;
-exports.BOTTOM = BOTTOM;
-exports.IDEOGRAPHIC = IDEOGRAPHIC;
-exports.ALPHABETIC = ALPHABETIC;
-exports.MIDDLE = MIDDLE;
-exports.HANGING = HANGING;
-exports.TOP = TOP;
-exports.END = END;
-exports.START = START;
-exports.CENTER = CENTER;
-exports.RIGHT = RIGHT;
-exports.LEFT = LEFT;
-exports.MITER = MITER;
-exports.BEVEL = BEVEL;
-exports.MILTER = MILTER;
-exports.ROUND = ROUND;
-exports.SQUARE = SQUARE;
-exports.BUTT = BUTT;
-
-},{}],13:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.TWO_PI = exports.TIERCE_PI = exports.TAU = exports.SQRT2 = exports.RAD = exports.QUATER_PI = exports.PI = exports.PHI = exports.LN2 = exports.LN10 = exports.HALF_PI = exports.E = exports.DEG = void 0;
-const E = 2.71828182845904523,
-      LN2 = 0.6931471805599453,
-      LN10 = 2.30258509299404568,
-      PI = 3.14159265358979323,
-      HALF_PI = 1.57079632679489661,
-      TIERCE_PI = 1.04719755119659774,
-      QUATER_PI = 0.7853981633974483,
-      TAU = 6.28318530717958647,
-      TWO_PI = 6.28318530717958647,
-      SQRT2 = 1.41421356237309504,
-      PHI = 1.618033988749894,
-      // conversion factors
-DEG = Math.PI / 180,
-      // degree to radian
-RAD = 180 / Math.PI; // radian to degree
-
-exports.RAD = RAD;
-exports.DEG = DEG;
-exports.PHI = PHI;
-exports.SQRT2 = SQRT2;
-exports.TWO_PI = TWO_PI;
-exports.TAU = TAU;
-exports.QUATER_PI = QUATER_PI;
-exports.TIERCE_PI = TIERCE_PI;
-exports.HALF_PI = HALF_PI;
-exports.PI = PI;
-exports.LN10 = LN10;
-exports.LN2 = LN2;
-exports.E = E;
-
-},{}],14:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
 exports.moccasin = exports.mistyrose = exports.mintcream = exports.midnightblue = exports.mediumvioletred = exports.mediumturquoise = exports.mediumspringgreen = exports.mediumslateblue = exports.mediumseagreen = exports.mediumpurple = exports.mediumorchid = exports.mediumblue = exports.mediumaquamarine = exports.maroon = exports.magenta = exports.linen = exports.limegreen = exports.lime = exports.lightyellow = exports.lightsteelblue = exports.lightslategrey = exports.lightslategray = exports.lightskyblue = exports.lightseagreen = exports.lightsalmon = exports.lightpink = exports.lightgrey = exports.lightgreen = exports.lightgray = exports.lightgoldenrodyellow = exports.lightcyan = exports.lightcoral = exports.lightblue = exports.lemonchiffon = exports.lawngreen = exports.lavenderblush = exports.lavender = exports.khaki = exports.ivory = exports.indigo = exports.indianred = exports.hotpink = exports.honeydew = exports.grey = exports.greenyellow = exports.green = exports.gray = exports.goldenrod = exports.gold = exports.ghostwhite = exports.gainsboro = exports.fuchsia = exports.forestgreen = exports.floralwhite = exports.firebrick = exports.dodgerblue = exports.dimgrey = exports.dimgray = exports.deepskyblue = exports.deeppink = exports.darkviolet = exports.darkturquoise = exports.darkslategrey = exports.darkslategray = exports.darkslateblue = exports.darkseagreen = exports.darksalmon = exports.darkred = exports.darkorchid = exports.darkorange = exports.darkolivegreen = exports.darkmagenta = exports.darkkhaki = exports.darkgrey = exports.darkgreen = exports.darkgray = exports.darkgoldenrod = exports.darkcyan = exports.darkblue = exports.cyan = exports.crimson = exports.cornsilk = exports.cornflowerblue = exports.coral = exports.chocolate = exports.chartreuse = exports.cadetblue = exports.burlywood = exports.brown = exports.blueviolet = exports.blue = exports.blanchedalmond = exports.black = exports.bisque = exports.beige = exports.azure = exports.aquamarine = exports.aqua = exports.antiquewhite = exports.aliceblue = void 0;
 exports.yellowgreen = exports.yellow = exports.whitesmoke = exports.white = exports.wheat = exports.violet = exports.turquoise = exports.tomato = exports.thistle = exports.teal = exports.tan = exports.steelblue = exports.springgreen = exports.snow = exports.slategrey = exports.slategray = exports.slateblue = exports.skyblue = exports.silver = exports.sienna = exports.seashell = exports.seagreen = exports.sandybrown = exports.salmon = exports.saddlebrown = exports.royalblue = exports.rosybrown = exports.red = exports.rebeccapurple = exports.purple = exports.powderblue = exports.plum = exports.pink = exports.peru = exports.peachpuff = exports.papayawhip = exports.palevioletred = exports.paleturquoise = exports.palegreen = exports.palegoldenrod = exports.orchid = exports.orangered = exports.orange = exports.olivedrab = exports.olive = exports.oldlace = exports.navy = exports.navajowhite = exports.moccasin = exports.mistyrose = exports.mintcream = exports.midnightblue = exports.mediumvioletred = exports.mediumturquoise = exports.mediumspringgreen = exports.mediumslateblue = exports.mediumseagreen = exports.mediumpurple = exports.mediumorchid = exports.mediumblue = exports.mediumaquamarine = exports.maroon = exports.magenta = exports.linen = exports.limegreen = exports.lime = exports.lightyellow = exports.lightsteelblue = exports.lightslategrey = exports.lightslategray = exports.lightskyblue = exports.lightseagreen = exports.lightsalmon = exports.lightpink = exports.lightgrey = exports.lightgreen = exports.lightgray = exports.lightgoldenrodyellow = exports.lightcyan = exports.lightcoral = exports.lightblue = exports.lemonchiffon = exports.lawngreen = exports.lavenderblush = exports.lavender = exports.khaki = exports.ivory = exports.indigo = exports.indianred = exports.hotpink = exports.honeydew = exports.grey = exports.greenyellow = exports.green = exports.gray = exports.goldenrod = exports.gold = exports.ghostwhite = exports.gainsboro = exports.fuchsia = exports.forestgreen = exports.floralwhite = exports.firebrick = exports.dodgerblue = exports.dimgrey = exports.dimgray = exports.deepskyblue = exports.deeppink = exports.darkviolet = exports.darkturquoise = exports.darkslategrey = exports.darkslategray = exports.darkslateblue = exports.darkseagreen = exports.darksalmon = exports.darkred = exports.darkorchid = exports.darkorange = exports.darkolivegreen = exports.darkmagenta = exports.darkkhaki = exports.darkgrey = exports.darkgreen = exports.darkgray = exports.darkgoldenrod = exports.darkcyan = exports.darkblue = exports.cyan = exports.crimson = exports.cornsilk = exports.cornflowerblue = exports.coral = exports.chocolate = exports.chartreuse = exports.cadetblue = exports.burlywood = exports.brown = exports.blueviolet = exports.blue = exports.blanchedalmond = exports.black = exports.bisque = exports.beige = exports.azure = exports.aquamarine = exports.aqua = exports.antiquewhite = exports.aliceblue = void 0;
-// Named css colors
+
+/* List of named CSS colors  */
 const aliceblue = "#f0f8ff",
       antiquewhite = "#faebd7",
       aqua = "#00ffff",
@@ -1681,7 +2059,8 @@ const aliceblue = "#f0f8ff",
       papayawhip = "#ffefd5",
       peachpuff = "#ffdab9",
       peru = "#cd853f",
-      pink = "#ffc0cb",
+      // LIGHT_BROWM
+pink = "#ffc0cb",
       plum = "#dda0dd",
       powderblue = "#b0e0e6",
       purple = "#800080",
@@ -1690,7 +2069,8 @@ const aliceblue = "#f0f8ff",
       rosybrown = "#bc8f8f",
       royalblue = "#4169e1",
       saddlebrown = "#8b4513",
-      salmon = "#fa8072",
+      // DARK_BROWN
+salmon = "#fa8072",
       sandybrown = "#f4a460",
       seagreen = "#2e8b57",
       seashell = "#fff5ee",
@@ -1713,7 +2093,8 @@ const aliceblue = "#f0f8ff",
       white = "#ffffff",
       whitesmoke = "#f5f5f5",
       yellow = "#ffff00",
-      yellowgreen = "#9acd32";
+      // YELLOW_C / YELLOW
+yellowgreen = "#9acd32";
 exports.yellowgreen = yellowgreen;
 exports.yellow = yellow;
 exports.whitesmoke = whitesmoke;
@@ -1863,6 +2244,139 @@ exports.aqua = aqua;
 exports.antiquewhite = antiquewhite;
 exports.aliceblue = aliceblue;
 
+},{}],13:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.X_SMALL = exports.X_LARGE = exports.XX_SMALL = exports.XX_LARGE = exports.XXX_LARGE = exports.ULTRA_EXPANDED = exports.ULTRA_CONDENSED = exports.TOP = exports.START = exports.SQUARE = exports.SMALLER = exports.SMALL = exports.SEMI_EXPANDED = exports.SEMI_CONDENSED = exports.ROUND = exports.RIGHT = exports.OBLIQUE = exports.NORMAL = exports.MITER = exports.MILTER = exports.MIDDLE = exports.MEDIUM = exports.LEFT = exports.LARGER = exports.LARGE = exports.ITALIC = exports.IDEOGRAPHIC = exports.HANGING = exports.EXTRA_EXPANDED = exports.EXTRA_CONDENSED = exports.EXPANDED = exports.END = exports.CONDENSED = exports.CENTER = exports.BUTT = exports.BOTTOM = exports.BEVEL = exports.ALPHABETIC = void 0;
+const BUTT = "butt",
+      SQUARE = "square",
+      ROUND = "round",
+      MILTER = "milter",
+      BEVEL = "bevel",
+      MITER = "miter",
+      LEFT = "left",
+      RIGHT = "right",
+      CENTER = "center",
+      START = "start",
+      END = "end",
+      TOP = "top",
+      HANGING = "hanging",
+      MIDDLE = "middle",
+      ALPHABETIC = "alphabetic",
+      IDEOGRAPHIC = "ideographic",
+      BOTTOM = "bottom",
+      // font stretch properties
+ULTRA_CONDENSED = "ultra-condensed",
+      // 50%
+EXTRA_CONDENSED = "extra-condensed",
+      // 62.5%
+CONDENSED = "condensed",
+      // 75%
+SEMI_CONDENSED = "semi-condensed",
+      // 87.5%
+NORMAL = "normal",
+      // 100%
+SEMI_EXPANDED = "semi-expanded",
+      // 112.5%
+EXPANDED = "expanded",
+      // 125%
+EXTRA_EXPANDED = "extra-expanded",
+      // 150%
+ULTRA_EXPANDED = "ultra-expanded",
+      // 200%
+// font size properties
+XX_SMALL = "xx-small",
+      X_SMALL = "x-small",
+      SMALL = "small",
+      MEDIUM = "medium",
+      LARGE = "large",
+      X_LARGE = "x-large",
+      XX_LARGE = "xx-large",
+      XXX_LARGE = "xxx-large",
+      LARGER = "larger",
+      SMALLER = "smaller",
+      // font style properties
+ITALIC = "italic",
+      OBLIQUE = "oblique";
+exports.OBLIQUE = OBLIQUE;
+exports.ITALIC = ITALIC;
+exports.SMALLER = SMALLER;
+exports.LARGER = LARGER;
+exports.XXX_LARGE = XXX_LARGE;
+exports.XX_LARGE = XX_LARGE;
+exports.X_LARGE = X_LARGE;
+exports.LARGE = LARGE;
+exports.MEDIUM = MEDIUM;
+exports.SMALL = SMALL;
+exports.X_SMALL = X_SMALL;
+exports.XX_SMALL = XX_SMALL;
+exports.ULTRA_EXPANDED = ULTRA_EXPANDED;
+exports.EXTRA_EXPANDED = EXTRA_EXPANDED;
+exports.EXPANDED = EXPANDED;
+exports.SEMI_EXPANDED = SEMI_EXPANDED;
+exports.NORMAL = NORMAL;
+exports.SEMI_CONDENSED = SEMI_CONDENSED;
+exports.CONDENSED = CONDENSED;
+exports.EXTRA_CONDENSED = EXTRA_CONDENSED;
+exports.ULTRA_CONDENSED = ULTRA_CONDENSED;
+exports.BOTTOM = BOTTOM;
+exports.IDEOGRAPHIC = IDEOGRAPHIC;
+exports.ALPHABETIC = ALPHABETIC;
+exports.MIDDLE = MIDDLE;
+exports.HANGING = HANGING;
+exports.TOP = TOP;
+exports.END = END;
+exports.START = START;
+exports.CENTER = CENTER;
+exports.RIGHT = RIGHT;
+exports.LEFT = LEFT;
+exports.MITER = MITER;
+exports.BEVEL = BEVEL;
+exports.MILTER = MILTER;
+exports.ROUND = ROUND;
+exports.SQUARE = SQUARE;
+exports.BUTT = BUTT;
+
+},{}],14:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.TWO_PI = exports.TIERCE_PI = exports.TAU = exports.SQRT2 = exports.RAD = exports.QUATER_PI = exports.PI = exports.PHI = exports.LN2 = exports.LN10 = exports.HALF_PI = exports.E = exports.DEG = void 0;
+const E = 2.71828182845904523,
+      LN2 = 0.6931471805599453,
+      LN10 = 2.30258509299404568,
+      PI = 3.14159265358979323,
+      HALF_PI = 1.57079632679489661,
+      TIERCE_PI = 1.04719755119659774,
+      QUATER_PI = 0.7853981633974483,
+      TAU = 6.28318530717958647,
+      TWO_PI = 6.28318530717958647,
+      SQRT2 = 1.41421356237309504,
+      PHI = 1.618033988749894,
+      // conversion factors
+DEG = Math.PI / 180,
+      // degree to radian
+RAD = 180 / Math.PI; // radian to degree
+
+exports.RAD = RAD;
+exports.DEG = DEG;
+exports.PHI = PHI;
+exports.SQRT2 = SQRT2;
+exports.TWO_PI = TWO_PI;
+exports.TAU = TAU;
+exports.QUATER_PI = QUATER_PI;
+exports.TIERCE_PI = TIERCE_PI;
+exports.HALF_PI = HALF_PI;
+exports.PI = PI;
+exports.LN10 = LN10;
+exports.LN2 = LN2;
+exports.E = E;
+
 },{}],15:[function(require,module,exports){
 "use strict";
 
@@ -1884,10 +2398,10 @@ var _main = require("../main.js");
 /**
  * Draws a given image in canvas.
  * See more about the parameters : {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/drawImage}
- * @param {CanvasImageData} image image to draw
+ * @param {HTMLCanvasElement|HTMLImageElement|HTMLVideoElement|ImageBitmap|OffscreenCanvas} image image to draw
  */
-function drawImage(img) {
-  let ctx = _main.C.workingCanvas,
+function drawImage(image) {
+  let ctx = _main.C.workingContext,
       x,
       y;
 
@@ -1903,10 +2417,10 @@ function drawImage(img) {
     ctx.save();
     ctx.translate(x, y);
     ctx.scale(1, -1);
-    ctx.drawImage(img, 0, 0, ...Array.prototype.slice.call(arguments, 3));
+    ctx.drawImage(image, 0, 0, ...Array.prototype.slice.call(arguments, 3));
     ctx.restore();
   } else {
-    ctx.drawImage(img, x, y, ...Array.prototype.slice.call(arguments, 3));
+    ctx.drawImage(image, x, y, ...Array.prototype.slice.call(arguments, 3));
   }
 }
 /**
@@ -1919,16 +2433,16 @@ function drawImage(img) {
 
 
 function pixel(x, y, color, size) {
-  let ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingContext;
   if (color) ctx.fillStyle = color;
-  if (!size) size = 1 / ctx.dpr;
+  if (!size) size = 1 / _main.C.dpr;
   ctx.fillRect(x, y, size, size);
 }
 /**
  * Loads a image from given url. I
  * @param {string} url url of image
- * @param {function} [resolver] function to call when image is loaded
- * @param {function} [fallback] function to call when image fails to loaded
+ * @param {Function} [resolver] function to call when image is loaded
+ * @param {Function} [fallback] function to call when image fails to loaded
  * @returns {Image} image. This may not be loaded yet.
  */
 
@@ -1983,7 +2497,7 @@ var _main = require("../main.js");
  * @param {ImageData} pixels
  * @param {number} x x-coordinate of point
  * @param {number} y y-coordinate of point
- * @return {array <array<number>>} array of color components [r, g, b, a]
+ * @return {Uint8ClampedArray} array of color components [r, g, b, a]
  */
 function getPixelColor(pixels, x, y) {
   let index = pixels.width * y + x;
@@ -1993,7 +2507,7 @@ function getPixelColor(pixels, x, y) {
  * Convert image data to 2d array of colors.
  *
  * @param {ImageData} pixels
- * @returns {array<array>} 2d array of colors
+ * @returns {Array<Array<number>>} 2d array of colors
  */
 
 
@@ -2021,7 +2535,7 @@ function imageDataToColorArray(pixels) {
 /**
  * Returns if neighbor pixels have the same color as given.
  *
- * @param {array<number>} color color to compare with
+ * @param {Array<number>} color color to compare with
  * @param {ImageData} pixels image data
  * @param {number} x x-coordinate of point
  * @param {number} y y-coordinate of point
@@ -2086,10 +2600,10 @@ function hasNeighbourColor(color, pixels, x, y) {
 
 function replaceColorInImage(image, toReplace, replaced, matchAlpha = false, tolerance = 0) {
   let data = image.data,
-      newData = _main.C.workingCanvas.createImageData(image.width, image.height);
+      newData = _main.C.workingContext.createImageData(image.width, image.height);
 
-  const [r1, g1, b1, a1] = (0, _color_reader.readColor)(toReplace, true);
-  const [r2, g2, b2, a2] = (0, _color_reader.readColor)(replaced, true);
+  const [r1, g1, b1, a1] = (0, _color_reader.readColor)(toReplace).rgbaA;
+  const [r2, g2, b2, a2] = (0, _color_reader.readColor)(replaced).rgbaA;
   let nonOccurances = 0;
 
   for (let i = 0; i < data.length; i += 4) {
@@ -2117,7 +2631,7 @@ function replaceColorInImage(image, toReplace, replaced, matchAlpha = false, tol
 }
 /**
  * Converts a image to ImageData.
- * @param {CanvasImageData} image image
+ * @param {HTMLCanvasElement|HTMLImageElement|HTMLVideoElement|ImageBitmap|OffscreenCanvas} image image
  * @param {number} x x-coordinate of starting point in image
  * @param {number} y y-coordinate of starting point in image
  * @param {number} [width = image.width] width of area to be covered
@@ -2129,7 +2643,7 @@ function replaceColorInImage(image, toReplace, replaced, matchAlpha = false, tol
 function imageToData(image, x, y, width, height, smoothen = false) {
   let cvs = document.createElement("canvas");
   let ctx = cvs.getContext("2d");
-  let dpr = _main.C.workingCanvas.dpr;
+  let dpr = _main.C.dpr;
   x = x * dpr || 0;
   y = y * dpr || 0;
   cvs.width = width = (isNaN(width) ? image.width : width) * dpr;
@@ -2139,7 +2653,7 @@ function imageToData(image, x, y, width, height, smoothen = false) {
   return ctx.getImageData(x, y, width, height);
 }
 
-},{"../color/color_reader.js":6,"../main.js":17}],17:[function(require,module,exports){
+},{"../color/color_reader.js":7,"../main.js":17}],17:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2152,9 +2666,9 @@ var _utils = require("./utils.js");
 /**
  * Main Function
  *
- * @param {function} fx codes to exeecute
- * @param {HTMLElement} [container=document.body] container for the drawings
- * @param {object} [cfgs={}] configurations
+ * @param {Function} fx codes to exeecute
+ * @param {Element|string} [container=document.body] container for the drawings as an element or css selector
+ * @param {Object} [cfgs] configurations
  */
 function C(fx, container, cfgs = {}) {
   const defaultConfigs = {
@@ -2191,75 +2705,29 @@ function C(fx, container, cfgs = {}) {
     lineHeight: 1.2,
     font: "20px serif",
     // event listeners
-    // mouse
-    onclick: undefined,
-    onmousemove: undefined,
-    onmouseout: undefined,
-    onmousedown: undefined,
-    onmouseup: undefined,
-    onmousewheel: undefined,
-    // key
-    onkeydown: undefined,
-    onkeyup: undefined,
-    onkeypress: undefined,
-    oncopy: undefined,
-    onpaste: undefined,
-    oncut: undefined,
-    // touch
-    ontouchstart: undefined,
-    ontouchmove: undefined,
-    ontouchend: undefined,
-    ontouchcancel: undefined,
-    // scale
-    onresize: undefined,
-    // dom
-    onblur: undefined,
-    onfocus: undefined,
-    onchange: undefined,
-    oninput: undefined,
-    onload: undefined,
-    onscroll: undefined,
-    onwheel: undefined,
-    onpointerdown: undefined,
-    onpointermove: undefined,
-    onpointerup: undefined,
-    onpointercancel: undefined,
-    onpointerover: undefined,
-    onpointerout: undefined,
-    onpointerenter: undefined,
-    onpointerleave: undefined,
-    onfullscreenchange: undefined
+    events: {}
   }; // assign configs
 
-  const configs = (0, _utils.applyDefault)(defaultConfigs, cfgs); // initialize canvas
+  let configs = (0, _utils.applyDefault)(defaultConfigs, cfgs);
+  /** @type {HTMLCanvasElement} */
 
-  let canvas = C.makeCanvas(configs);
+  let canvas;
 
   if (typeof container === "string") {
     container = document.querySelector(container);
   } else if (!(container instanceof HTMLElement)) {
     container = document.body;
-  }
+  } // initialize canvas
 
-  if (typeof container.CID !== "number") {
-    container.CID = 1;
-  }
 
+  let c = container.querySelector("canvas");
+  if (c) canvas = c;else canvas = C.makeCanvas(configs);
+  if (typeof container.CID !== "number") container.CID = 1;
   let parentCID = container.CID,
       parentName = container.id || container.classList.item(0),
-      canvasName = configs.name;
+      canvasName = configs.name || canvas.name;
 
-  if (typeof canvasName == "string") {
-    const cvs = container.querySelector("#" + canvasName);
-
-    if (cvs instanceof HTMLElement) {
-      // if already exist
-      canvas = cvs;
-      prepareCanvas();
-      fx();
-      return;
-    }
-  } else {
+  if (typeof canvasName != "string") {
     canvasName = parentName + "-C-" + parentCID;
     configs.name = canvasName;
   }
@@ -2267,12 +2735,15 @@ function C(fx, container, cfgs = {}) {
   function prepareCanvas() {
     // add additional information to rendererContext
     C.resizeCanvas(canvas, configs);
-    canvas.context = Object.assign(canvas.getContext("2d"), configs);
+    /** @type {CanvasRenderingContext2D} */
+
+    let crc2d = canvas.getContext("2d");
+    (0, _utils.defineProperties)(configs, crc2d);
+    canvas.context = crc2d;
     canvas.context.setTransform(configs.dpr, 0, 0, configs.dpr, 0, 0);
-    C.workingCanvas = canvas.context;
-    C.workingCanvas.container = container;
-    C.workingCanvas.savedStates = defaultConfigs;
-    C.workingCanvas.delayedAnimations = [];
+    C.workingContext = canvas.context;
+    C.workingContext.savedStates = defaultConfigs;
+    C.workingContext.delayedAnimations = [];
   } // set canvas's id and class to its name
 
 
@@ -2280,8 +2751,24 @@ function C(fx, container, cfgs = {}) {
   canvas.classList.add(canvasName); // add canvas to container
 
   container.appendChild(canvas);
-  prepareCanvas();
-  C.canvasList[canvasName] = canvas.context;
+  if (c) C.workingContext = canvas.context;else prepareCanvas();
+  C.contextList[canvasName] = canvas.context; // attach event listeners
+
+  let active = {};
+
+  for (let event in configs.events) {
+    let listener = configs.events[event];
+
+    if (listener) {
+      canvas.addEventListener(event, listener);
+      active[event] = listener;
+    }
+  } // attach list of active listeners to canvas for other uses
+
+
+  canvas.events = active;
+  C.dpr = configs.dpr;
+  C.workingCanvas = canvas;
   fx();
 }
 /**
@@ -2290,28 +2777,34 @@ function C(fx, container, cfgs = {}) {
  */
 
 
-C.canvasList = {}; // C.delayedAnimations = [];
+C.contextList = {}; // C.delayedAnimations = [];
 
 /**
  * Number of canvases
- * @type {Number}
+ * @type number
  */
 
 C.nameID = 0;
 /**
- * Current working canvas
+ * Current working context
  * @type {CanvasRenderingContext2D}
  */
 
-C.workingCanvas = {}; // index of current working canvas in `C.canvasList`
+C.workingContext; // index of current working canvas in `C.contextList`
 
 /**
  * Current working canvas
- * @type {HTMLElement}
+ * @type {HTMLCanvasElement}
  */
 
-C.workingCanvas.container = {}; //container of canvas
+C.workingCanvas;
+/**
+ * device pixel ratio applied to current working canvas.
+ ** Note: this property is not explictly defined in C.workingContext for the sake of GCC
+ * @type {number}
+ */
 
+C.dpr;
 /**
  * Default configurations
  */
@@ -2319,12 +2812,12 @@ C.workingCanvas.container = {}; //container of canvas
 /**
  * return inner width of container tag
  * @param {HTMLElement} [container=document.body]
- * @returns {Number}
+ * @returns number
  */
 
 C.getWindowWidth = function (container = document.body) {
   const cs = window.getComputedStyle(container);
-  return parseInt(cs.width) - parseInt(cs.paddingRight) - parseInt(cs.paddingLeft);
+  return parseInt(cs.width, 10) - parseInt(cs.paddingRight, 10) - parseInt(cs.paddingLeft, 10);
 };
 /**
  * Set width and height attribute of canvas element to the given values in `configs`
@@ -2346,6 +2839,8 @@ C.resizeCanvas = function (cvs, configs) {
   cvs.style.height = height + "px";
   cvs.width = dpr * width;
   cvs.height = dpr * height;
+  cvs.rWidth = width;
+  cvs.rHeight = height;
 };
 /**
  * Returns a canvas element with given params
@@ -2357,14 +2852,13 @@ C.resizeCanvas = function (cvs, configs) {
 
 C.makeCanvas = function (configs) {
   const cvs = document.createElement("canvas");
-  this.resizeCanvas(cvs, configs);
+  C.resizeCanvas(cvs, configs);
   return cvs;
 };
 /**
  * Add extension to window and C extension list
  *
  * @param {Object} extObj
- * @param {boolean} editable warn the edit of functions
  */
 
 
@@ -2379,6 +2873,12 @@ C.addExtension = function (extObj) {
 
 C.debugAnimations = false; // whther to debug animations
 
+/**
+ * List of extensions
+ * @type {Object}
+ */
+
+C.extensions = {};
 /**
  * Whehter to debug animations
  *
@@ -2397,23 +2897,52 @@ C.debug = function (bool) {
 
 
 C.getCanvas = function (name) {
-  return C.canvasList[name] || C.workingCanvas;
+  return C.contextList[name] || C.workingContext;
 };
 /**
  * Log of animations
- * @type {array<object>}
+ * @type {Array<Object>}
  */
 
 
 C._ANIMATIONLOG_ = [];
 /**
  * Set of functions
- * @type {object}
+ * @type {Object}
  */
 
 C.functions = {};
 C.COLORLIST = {}; //list of colors
-// register to window
+
+function defineConstant(constantList) {
+  let constants = Object.keys(constantList);
+
+  for (let i = 0; i < constants.length; i++) {
+    let constant = constants[i];
+    Object.defineProperty(window, constant, {
+      configurable: true,
+      enumerable: true,
+      get: constantList[constant],
+      set: function (val) {
+        Object.defineProperty(window, constant, {
+          configurable: true,
+          enumerable: true,
+          value: val,
+          writable: true
+        });
+      }
+    });
+  }
+}
+
+defineConstant({
+  CENTERX: function () {
+    return C.workingCanvas.rWidth / 2;
+  },
+  CENTERY: function () {
+    return C.workingCanvas.rHeight / 2;
+  }
+}); // register to window
 
 window["C"] = C;
 
@@ -2433,7 +2962,7 @@ exports.lcmArray = lcmArray;
  *
  * @param {number} a
  * @param {number} b
- * @return {number}
+ * @return number
  */
 function gcd(a, b) {
   while (b != 0) {
@@ -2447,7 +2976,7 @@ function gcd(a, b) {
 /**
  * Returns greatest common divisor of a list of integers.
  *
- * @return {number}
+ * @return number
  */
 
 
@@ -2464,7 +2993,7 @@ function gcdArray(list) {
  *
  * @param {number} a
  * @param {number} b
- * @return {number}
+ * @return number
  */
 
 
@@ -2473,7 +3002,7 @@ function lcm(a, b) {
 }
 /**
  * Returns least common multiple of a list of integers given explictly or as array.
- * @return {number}
+ * @return number
  */
 
 
@@ -2561,9 +3090,9 @@ exports.rotateAroundPoint = rotateAroundPoint;
 /**
  * return distance between two points
  *
- * @param {array<number>} p1
- * @param {array<number>} p2
- * @return {number} distance between p1 and p2
+ * @param {Array<number>} p1
+ * @param {Array<number>} p2
+ * @return number distance between p1 and p2
  */
 function dist(p1, p2) {
   return Math.sqrt(Math.pow(p1[0] - p2[0], 2) + Math.pow(p1[1] - p2[1], 2));
@@ -2571,11 +3100,11 @@ function dist(p1, p2) {
 /**
  * Returns a point rotated around a point by certain angle, exetened by a certain length
  *
- * @param {number|array<number>} x center x or center as array of coords [x, y]
+ * @param {number|Array<number>} x center x or center as array of coords [x, y]
  * @param {number} y center y
  * @param {number} angle angle of rotation
  * @param {number} len length to extend the point
- * @returns {array<number>} array of two points
+ * @returns {Array<number>} array of two points
  */
 
 
@@ -2592,7 +3121,7 @@ function rotateAroundPoint(x, y, angle, len = 10) {
  *
  * @param {number} angle angle of rotation
  * @param {number} len length to extend the point
- * @returns {array<number>} array of two points
+ * @returns {Array<number>} array of two points
  */
 
 
@@ -2602,11 +3131,11 @@ function rotateAroundOrigin(angle, len = 10) {
 /**
  * Returns the point of intersection of two lines.
  *
- * @param {array<number>} p1 start point of first line as [x, y]
- * @param {array<number>} p2 end point of first line as [x, y]
- * @param {array<number>} p3 start point of second line as [x, y]
- * @param {array<number>} p4 end point of second line as [x, y]
- * @return {array<number>} intersection point of lines as [x, y]
+ * @param {Array<number>} p1 start point of first line as [x, y]
+ * @param {Array<number>} p2 end point of first line as [x, y]
+ * @param {Array<number>} p3 start point of second line as [x, y]
+ * @param {Array<number>} p4 end point of second line as [x, y]
+ * @return {Array<number>|Iterable} intersection point of lines as [x, y]
  */
 
 
@@ -2623,11 +3152,11 @@ function lineIntersection(p1, p2, p3, p4) {
  * Finds intersection of two circles.
  * Adapted from {@link https://stackoverflow.com/a/14146166}
  *
- * @param {array<number>} c1 center of first circle as [x, y]
+ * @param {Array<number>} c1 center of first circle as [x, y]
  * @param {number} r1 radius of first circle
- * @param {array<number>} c2 center of second circle as [x, y]
+ * @param {Array<number>} c2 center of second circle as [x, y]
  * @param {number} r2 radius of second circle
- * @return {array<number>} array of two points as [x, y]
+ * @return {Array<Array<number>>} array of two points as [x, y]
  */
 
 
@@ -2641,10 +3170,10 @@ function circleIntersection(c1, r1, c2, r2) {
 }
 /**
  * Extend a point by given length from a given center
- * @param {array<number>} center center from the point to be extended
- * @param {array<number>} point point to be extended
+ * @param {Array<number>} center center from the point to be extended
+ * @param {Array<number>} point point to be extended
  * @param {number} len length to extend the point
- * @returns {array<number>}
+ * @returns {Array<number>}
  */
 
 
@@ -2658,9 +3187,9 @@ function extendFromPoint(center, point, len = 10) {
 }
 /**
  * Extend a point by given length from origin (0, 0)
- * @param {array<number>} point point to be extended
+ * @param {Array<number>} point point to be extended
  * @param {number} len length to extend the point
- * @returns {array<number>}
+ * @returns {Array<number>}
  */
 
 
@@ -2681,7 +3210,7 @@ exports.randomInt = randomInt;
  *
  * @param {number} [max=10] maximum range
  * @param {number} [min=0] minimum range
- * @return {number}
+ * @return number
  */
 function randomInt(max = 10, min = 0) {
   return Math.round(Math.random() * (max - min) + min);
@@ -2958,8 +3487,6 @@ exports.curvedDoubleArrowBetweenPoints = curvedDoubleArrowBetweenPoints;
 exports.doubleArrow = doubleArrow;
 exports.measurement = measurement;
 
-var _colors = require("../constants/colors.js");
-
 var _drawing = require("../constants/drawing.js");
 
 var _main = require("../main.js");
@@ -2973,6 +3500,7 @@ var _utils = require("../utils.js");
 var _text = require("./text.js");
 
 const DEFAULT_TIP_WIDTH = 15;
+const TRANSPARENT = "rgba(0,0,0,0)";
 /**
  * Draws a arrow tip
  *
@@ -2985,7 +3513,7 @@ const DEFAULT_TIP_WIDTH = 15;
  */
 
 function arrowTip(x1, y1, x2, y2, width, height) {
-  let ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingContext;
   let thickness = ctx.lineWidth;
   let distance = Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2);
   if (isNaN(width)) width = distance;
@@ -3044,7 +3572,7 @@ function arrow(x1, y1, x2, y2, tipWidth = DEFAULT_TIP_WIDTH, tipHeight = tipWidt
   y2 -= yDiff;
   const xTipSpacing = Math.cos(angle) * (tipWidth - arrowCurving);
   const yTipSpacing = Math.sin(angle) * (tipWidth - arrowCurving);
-  const ctx = _main.C.workingCanvas;
+  const ctx = _main.C.workingContext;
   const pathStarted = ctx.pathStarted;
   if (!pathStarted) (0, _settings.startShape)();
   ctx.moveTo(x1, y1);
@@ -3062,7 +3590,7 @@ function arrow(x1, y1, x2, y2, tipWidth = DEFAULT_TIP_WIDTH, tipHeight = tipWidt
  *
  * @param {number} x1
  * @param {number} y1
- * @param {number} x20]
+ * @param {number} x2
  * @param {number} y2
  * @param {number} [tipWidth=DEFAULT_TIP_WIDTH] width of tip
  * @param {number} tipHeight height of tip. Default value is tipWidth / 1.2
@@ -3082,17 +3610,17 @@ function doubleArrow(x1, y1, x2, y2, tipWidth = DEFAULT_TIP_WIDTH, tipHeight = t
   y1 += yPadding + ySpacing;
   arrow(x1, y1, x2, y2, tipWidth, tipHeight, arrowCurving, spacing);
   arrowTip(x1, y1, x1 - xPadding, y1 - yPadding, tipWidth, tipHeight);
-  (0, _utils.doFillAndStroke)(_main.C.workingCanvas);
+  (0, _utils.doFillAndStroke)(_main.C.workingContext);
   (0, _settings.endShape)();
 }
 /**
  * Draws a double tipped arrow with text in the middle
  *
- * @param {object} args parameters.
+ * @param {Object} args parameters.
  * Possible values:
  * @param {string} args.text text
- * @param {array} args.p1 first point
- * @param {array} args.p2 second point
+ * @param {Array<number>} args.p1 first point
+ * @param {Array<number>} args.p2 second point
  * @param {number} [args.tipWidth = 15] tip width
  * @param {number} [args.tipHeight = 12.5] tip height
  * @param {number} [args.spacing = 0] spacing
@@ -3105,9 +3633,9 @@ function doubleArrow(x1, y1, x2, y2, tipWidth = DEFAULT_TIP_WIDTH, tipHeight = t
 
 
 function measurement(args) {
-  const ctx = _main.C.workingCanvas;
+  const ctx = _main.C.workingContext;
   const defaults = {
-    background: _colors.TRANSPARENT,
+    background: TRANSPARENT,
     tipWidth: DEFAULT_TIP_WIDTH,
     tipHeight: DEFAULT_TIP_WIDTH / 1.2,
     innerPadding: 3,
@@ -3143,7 +3671,7 @@ function measurement(args) {
  * @param {number} x x position of circle
  * @param {number} y y position of circle
  * @param {number} radius radius of circle
- * @param {number} [angle=Math.PI / 2] central angle of arc
+ * @param {number} [angle=1.5707963267948966] central angle of arc
  * @param {number} [startAngle=0] starting angle
  * @param {number} [tipWidth=DEFAULT_TIP_WIDTH] width of tip
  * @param {number} tipHeight height of tip. Default value is tipWidth / 1.2
@@ -3154,7 +3682,7 @@ function measurement(args) {
 
 
 function curvedArrow(x, y, radius, angle = Math.PI / 2, startAngle = 0, tipWidth = DEFAULT_TIP_WIDTH, tipHeight = tipWidth / 1.2, arrowCurving = 0, tipOffset = 0, reverse = false) {
-  const ctx = _main.C.workingCanvas;
+  const ctx = _main.C.workingContext;
   const tipAngularDiameter = tipWidth / radius;
   ctx.save();
   arrowCurving /= radius;
@@ -3183,7 +3711,7 @@ function curvedArrow(x, y, radius, angle = Math.PI / 2, startAngle = 0, tipWidth
  * @param {number} x x position of circle
  * @param {number} y y position of circle
  * @param {number} radius radius of circle
- * @param {number} [angle=Math.PI / 2] central angle of arrow in radians
+ * @param {number} [angle=1.5707963267948966] central angle of arrow in radians
  * @param {number} [startAngle=0] start angle of arrow in radians
  * @param {number} [tipWidth=DEFAULT_TIP_WIDTH] width of arrow tip
  * @param {number} tipHeight height of tip. Default value is tipWidth / 1.2
@@ -3193,7 +3721,7 @@ function curvedArrow(x, y, radius, angle = Math.PI / 2, startAngle = 0, tipWidth
 
 
 function curvedDoubleArrow(x, y, radius, angle = Math.PI / 2, startAngle = 0, tipWidth = DEFAULT_TIP_WIDTH, tipHeight = tipWidth / 1.2, arrowCurving = 0, tipOffset = 0) {
-  const ctx = _main.C.workingCanvas;
+  const ctx = _main.C.workingContext;
   ctx.save();
   const tipAngularDiameter = tipWidth / radius;
   const tangent = [-Math.cos(startAngle + tipAngularDiameter / 2 + Math.PI / 2), -Math.sin(startAngle + tipAngularDiameter / 2 + Math.PI / 2)];
@@ -3206,8 +3734,8 @@ function curvedDoubleArrow(x, y, radius, angle = Math.PI / 2, startAngle = 0, ti
 /**
  * Draws a curved arrow between two points that wraps around a circle with a definite radius.
  *
- * @param {array<number>} p1 start point
- * @param {array<number>} p2 end point
+ * @param {Array<number>} p1 start point
+ * @param {Array<number>} p2 end point
  * @param {number} radius radius of circle
  * @param {number} [tipWidth=DEFAULT_TIP_WIDTH] width of tip
  * @param {number} tipHeight height of tip. Default value is tipWidth / 1.2
@@ -3215,12 +3743,12 @@ function curvedDoubleArrow(x, y, radius, angle = Math.PI / 2, startAngle = 0, ti
  * @param {number} [tipOffset=0] offset (padding) of tip from it's defined end. Expressed in radians
  * @param {boolean} [otherArc=false] whether to use other arc
  * @param {boolean} [reverse=false] whether to reverse the direction of arrow.
- * @return {array} coordiante of the center of arc as [x, y]
+ * @return {Array<number>} coordiante of the center of arc as [x, y]
  */
 
 
 function curvedArrowBetweenPoints(p1, p2, radius, tipWidth = DEFAULT_TIP_WIDTH, tipHeight = tipWidth / 1.2, arrowCurving = 0, tipOffset = 0, otherArc = false, reverse = false) {
-  const ctx = _main.C.workingCanvas;
+  const ctx = _main.C.workingContext;
   const pathStarted = ctx.pathStarted;
   ctx.save();
   if (!pathStarted) ctx.beginPath();
@@ -3249,20 +3777,20 @@ function curvedArrowBetweenPoints(p1, p2, radius, tipWidth = DEFAULT_TIP_WIDTH, 
 /**
  * Draws a double tipped curved arrow between two points that wraps around a circle with a definite radius.
  *
- * @param {array<number>} p1 start point
- * @param {array<number>} p2 end point
+ * @param {Array<number>} p1 start point
+ * @param {Array<number>} p2 end point
  * @param {number} radius radius of circle
  * @param {number} [tipWidth=DEFAULT_TIP_WIDTH] width of tip
  * @param {number} tipHeight height of tip. Default value is tipWidth / 1.2
  * @param {number} [arrowCurving=0] arrow curving const. Expressed in pixels
  * @param {number} [tipOffset=0] offset (padding) of tip from it's defined. Expressed in radians
  * @param {boolean} [otherArc=false] whether to use other arc
- * @return {array} coordiante of the center of arc as [x, y]
+ * @return {Array<number>} coordiante of the center of arc as [x, y]
  */
 
 
 function curvedDoubleArrowBetweenPoints(p1, p2, radius, tipWidth = DEFAULT_TIP_WIDTH, tipHeight = tipWidth / 1.2, arrowCurving = 0, tipOffset = 0, otherArc = false) {
-  const ctx = _main.C.workingCanvas;
+  const ctx = _main.C.workingContext;
   ctx.save();
   const center = (0, _points.circleIntersection)(p1, radius, p2, radius)[0];
   p1[0] -= center[0];
@@ -3291,7 +3819,7 @@ function curvedDoubleArrowBetweenPoints(p1, p2, radius, tipWidth = DEFAULT_TIP_W
   return center;
 }
 
-},{"../constants/colors.js":11,"../constants/drawing.js":12,"../main.js":17,"../math/points.js":20,"../settings.js":32,"../utils.js":33,"./text.js":31}],25:[function(require,module,exports){
+},{"../constants/drawing.js":13,"../main.js":17,"../math/points.js":20,"../settings.js":32,"../utils.js":33,"./text.js":31}],25:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3334,7 +3862,7 @@ function curlyBrace(x1, y1, x2, y2, size = 20, curviness = 0.6, taleLength = 0.8
   const cp4y = y1 - 0.75 * len * dy - (1 - curviness) * size * dx;
   const path = `M ${x1} ${y1} ` + `Q ${cp1x} ${cp1y} ${cp2x} ${cp2y} ` + `T ${middleTipX} ${middleTipY} ` + `M ${x2} ${y2} ` + `Q ${cp3x} ${cp3y} ${cp4x} ${cp4y} ` + `T ${middleTipX} ${middleTipY}`;
 
-  _main.C.workingCanvas.stroke(new Path2D(path));
+  _main.C.workingContext.stroke(new Path2D(path));
 
   return [middleTipX, middleTipY];
 }
@@ -3345,16 +3873,16 @@ function curlyBrace(x1, y1, x2, y2, size = 20, curviness = 0.6, taleLength = 0.8
  * @param {number} y y-axis coord
  * @param {number} [radius=100] radius of circle
  * @param {number} [startAngle=0] starting angle
- * @param {number} [angle=Math.PI / 2] central angle
+ * @param {number} [angle=1.5707963267948966] central angle
  * @param {number} [smallerLineLength=10] length of small tips at the ends of brace
  * @param {number} [tipLineLength=smallerLineLength] length of middle tip
  * @param {number} [extender=5] how much the coordinate of middle tip should be extended.
- * @return {array} array of two numbers that are the coordinate of middle tip extended by a certain value.
+ * @return {Array<number>} array of two numbers that are the coordinate of middle tip extended by a certain value.
  */
 
 
 function arcBrace(x, y, radius = 100, angle = Math.PI / 2, startAngle = 0, smallerLineLength = 10, tipLineLength = smallerLineLength, extender = 10) {
-  const ctx = _main.C.workingCanvas,
+  const ctx = _main.C.workingContext,
         smallerRadius = radius - smallerLineLength,
         largerRadius = radius + tipLineLength;
   ctx.save();
@@ -3403,6 +3931,8 @@ var _geometry = require("./geometry.js");
 
 var _text = require("./text.js");
 
+const BLUE = "#58c4dd";
+
 function isArray(o) {
   return Array.isArray(o);
 } // list of plotters
@@ -3429,16 +3959,18 @@ function getPlotterList(unitSpace, unitValue, cfgs = {}) {
     }
   };
 }
+
+const ORIGIN = [0, 0];
 /**
  * Creates a axes.
  * @param {Object} args
  * Possible configurations are:
  *
- * @param {object} xAxis Configurations for x axis. (See {@link numberLine} for more configurations)
- * @param {object} yAxis Configurations for y axis. (See {@link numberLine} for more configurations)
- * @param {array} [center = [0, 0]] center of axes
+ * @param {Object} args.xAxis Configurations for x axis. (See {@link numberLine} for more configurations)
+ * @param {Object} args.yAxis Configurations for y axis. (See {@link numberLine} for more configurations)
+ * @param {Array<number>} [args.center = ORIGIN] center of axes
  *
- * @returns {object} object that contains following properties:
+ * @returns {Object} object that contains following properties:
  * * xAxis                 <object>   : x axis confiurations from numberLine (See {@link numberLine} for those configurations).
  * * yAxis                 <object>   : y axis confiurations from numberLine (See {@link numberLine} for those configurations).
  * * unitValue             <array>    : How much a unit is in its value in x and y directions.
@@ -3447,13 +3979,13 @@ function getPlotterList(unitSpace, unitValue, cfgs = {}) {
  * * getFunctionGraph      <function> : Draws a function graph whose unit sizing are predefined by the axes. see {@link functionGraph} to see possible configurations.
  */
 
-
 function axes(args = {}) {
-  const ctx = _main.C.workingCanvas; // default configurations
+  const ctx = _main.C.workingContext;
+  const cvs = _main.C.workingCanvas; // default configurations
 
   const defaultConfigs = {
     xAxis: {
-      length: ctx.width,
+      length: cvs.rWidth,
       includeTick: true,
       includeLeftTip: true,
       includeRightTip: true,
@@ -3461,7 +3993,7 @@ function axes(args = {}) {
       includeNumbers: false
     },
     yAxis: {
-      length: ctx.height,
+      length: cvs.rHeight,
       rotation: Math.PI / 2,
       textRotation: -Math.PI / 2,
       textDirection: [0, 0.4],
@@ -3471,7 +4003,7 @@ function axes(args = {}) {
       excludeOriginTick: true,
       includeNumbers: false
     },
-    center: [0, 0]
+    center: ORIGIN
   }; // configurations
 
   args = (0, _utils.applyDefault)(defaultConfigs, args);
@@ -3529,17 +4061,19 @@ function axes(args = {}) {
   };
   return Object.assign(ret, getPlotterList(unitSpace, unitValue, ret));
 }
+
+const TEXT_DIR = [0, -0.8];
 /**
  * Creates a numberLine with parameters in a object
- * @param {object} args configuration object
+ * @param {Object} args configuration object
  *
- * @param {array} [args.point1 = [-ctx.width / 2, 0]] starting point of line. Default value is [-ctx.width / 2, 0]
- * @param {array} [args.point2 = [ctx.width / 2, 0]] ending point of line
- * @param {array} [args.range = [-5, 5, 1]] range of numbers to draw ticks and numbers
- * @param {array} [args.numbersToInclude = []] list of numbers to be displayed
- * @param {array} [args.numbersToExclude = []] list of numbers that shouldn't be displayed
- * @param {array} [args.numbersWithElongatedTicks = []] list of numbers where tick line should be longer
- * @param {array} [args.textDirection = 0, -0.8] Direction of text relative to nearby tick
+ * @param {Array<number>} [args.point1] starting point of line. Default: [-ctx.width / 2, 0]
+ * @param {Array<number>} [args.point2] ending point of line. Default: [ctx.width / 2, 0]
+ * @param {Array<number>} [args.range] range of numbers to draw ticks and numbers. Default: [-5, 5, 1]
+ * @param {Array<number>} [args.numbersToInclude] list of numbers to be displayed
+ * @param {Array<number>} [args.numbersToExclude] list of numbers that shouldn't be displayed
+ * @param {Array<number>} [args.numbersWithElongatedTicks] list of numbers where tick line should be longer
+ * @param {Array<number>} [args.textDirection = TEXT_DIR] Direction of text relative to nearby tick
  *
  * @param {boolean} [args.includeLeftTip = false] whether to add an arrow tip at left
  * @param {boolean} [args.includeRightTip = false] whether to add an arrow tip at right
@@ -3555,20 +4089,20 @@ function axes(args = {}) {
  * @param {number} [args.textRotation = 0] Amount to rotate text
  * @param {number} args.decimalPlaces Number of decimal places in text. By default value is number of decimals in step
  *
- * @param {string} [args.color = GREY] Color of axis and ticks
- * @param {string} [args.textColor = WHITE] Color of text
+ * @param {string} [args.color = grey] Color of axis and ticks
+ * @param {string} [args.textColor = white] Color of text
  *
- * @returns {object} configurations about the number line
+ * @returns {Object} configurations about the number line
  *
- * * center     {array} Center of the number line in px
- * * tickList   {array} List of tick inervals
- * * unitValue  {array} How much a unit is in its value in x and y directions.
- * * unitSpace {array} How much a unit is in px in x and y directions.
+ * * center     {Array<number>} Center of the number line in px
+ * * tickList   {Array<number>} List of tick inervals
+ * * unitValue  {Array<number>} How much a unit is in its value in x and y directions.
+ * * unitSpace {Array<number>} How much a unit is in px in x and y directions.
  */
 
-
 function numberLine(args = {}) {
-  const ctx = _main.C.workingCanvas;
+  const ctx = _main.C.workingContext;
+  const cvs = _main.C.workingCanvas;
   const defaultConfigs = {
     rotation: 0,
     lineWidth: 2,
@@ -3577,9 +4111,9 @@ function numberLine(args = {}) {
     tipHeight: 10,
     tickHeight: 10,
     textRotation: 0,
-    length: ctx.width,
+    length: parseInt(cvs.rWidth),
     longerTickMultiple: 1.5,
-    center: [0, 0],
+    center: ORIGIN,
     range: [-5, 5, 1],
     numbersToInclude: [],
     numbersToExclude: [],
@@ -3590,8 +4124,8 @@ function numberLine(args = {}) {
     includeLeftTip: false,
     includeRightTip: false,
     excludeOriginTick: false,
-    color: _colors.GREY,
-    textColor: _colors.WHITE
+    color: _colors.grey,
+    textColor: _colors.white
   };
   args = (0, _utils.applyDefault)(defaultConfigs, args);
   const {
@@ -3725,10 +4259,10 @@ function numberLine(args = {}) {
  * @param {Object} args
  * Possible parameters:
  *
- * @param {object} args.xAxis Configurations for x axis. See {@link numberLine} for possible configurations.
- * @param {object} args.yAxis Configurations for y axis. See {@link numberLine} for possible configurations.
- * @param {array} args.center Center of number plane as [x, y] in px.
- * @param {object} args.grid Set of styles to draw grid & subgrids. This can have following properties:
+ * @param {Object} args.xAxis Configurations for x axis. See {@link numberLine} for possible configurations.
+ * @param {Object} args.yAxis Configurations for y axis. See {@link numberLine} for possible configurations.
+ * @param {Array<number>} args.center Center of number plane as [x, y] in px.
+ * @param {Object} args.grid Set of styles to draw grid & subgrids. This can have following properties:
  *   @param {number} [args.grid.lineWidth = 1]  stroke width of grid lines
  *   @param {number} [args.grid.subgrids = 0]  number of sub-grid division to draw
  *   @param {number} [args.grid.subgridLineWidth = 0.7]  stroke width of sub-grid
@@ -3748,11 +4282,11 @@ function numberLine(args = {}) {
 
 
 function numberPlane(args = {}) {
-  const ctx = _main.C.workingCanvas; // default configurations
+  const cvs = _main.C.workingCanvas; // default configurations
 
   const defaultConfigs = {
     xAxis: {
-      length: ctx.width,
+      length: parseInt(cvs.rWidth),
       includeTick: true,
       includeNumbers: true,
       includeLeftTip: false,
@@ -3761,7 +4295,7 @@ function numberPlane(args = {}) {
       unitSpace: 50
     },
     yAxis: {
-      length: ctx.height,
+      length: parseInt(cvs.style.height),
       textRotation: -Math.PI / 2,
       unitSpace: 50,
       includeTick: true,
@@ -3774,10 +4308,10 @@ function numberPlane(args = {}) {
       subgrids: 1,
       lineWidth: 1,
       subgridLineWidth: 0.7,
-      color: _colors.BLUE + "a0",
-      subgridLineColor: _colors.GREY + "50"
+      color: BLUE + "a0",
+      subgridLineColor: _colors.grey + "50"
     },
-    center: [0, 0]
+    center: ORIGIN
   }; // configurations
 
   args = (0, _utils.applyDefault)(defaultConfigs, args);
@@ -3910,7 +4444,7 @@ function numberPlane(args = {}) {
   return Object.assign(ret, getPlotterList(unitSpace, unitValue, ret));
 }
 
-},{"../constants/colors.js":11,"../main.js":17,"../settings.js":32,"../utils.js":33,"./arrows.js":24,"./functions.js":27,"./geometry.js":28,"./text.js":31}],27:[function(require,module,exports){
+},{"../constants/colors.js":12,"../main.js":17,"../settings.js":32,"../utils.js":33,"./arrows.js":24,"./functions.js":27,"./geometry.js":28,"./text.js":31}],27:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3939,23 +4473,25 @@ const animationEventChain = {
 let counter = {
   parametricFunction: 1
 };
+const RANGE = [0, 10, 0.1];
+const UNIT_VEC = [1, 1];
 /**
  * Draws a parametric functions
  * This accept parameters as object.
- * @param {object} args configuration object
+ * @param {Object} args configuration object
  * It can have following properties:
  *
- * @param {function} args.paramFunction function to plot. Must recieve one argument and return a array of point as [x, y]
+ * @param {Function} args.paramFunction function to plot. Must recieve one argument and return a array of point as [x, y]
  * @param {number} [args.tension = 1] Smoothness tension.
- * @param {array} [args.range = [0, 10, 0.1]] Range as [min, max, dt]
- * @param {array} [args.discontinuities = []] Array of t where the curve discontinues.
- * @param {array} [args.unitValue = [1, 1]] Value of each unit space
- * @param {array} [args.unitLength = [1, 1]] Length of each unit in pixels
+ * @param {Array<number>} [args.range = RANGE] Range as [min, max, dt]
+ * @param {Array<number>} [args.discontinuities] Array of t where the curve discontinues.
+ * @param {Array<number>} [args.unitValue = UNIT_VEC] Value of each unit space
+ * @param {Array<number>} [args.unitSpace = UNIT_VEC] Length of each unit in pixels
  * @param {boolean} [args.smoothen = true] Whether to smoothen the shape.
  * @param {boolean} [args.closed = false] Whether the function draws a closed shape.
  * @param {boolean} [args.draw = true] Wheteher to draw the function graph right now.
  *
- * @returns {object} object that contains following properties:
+ * @returns {Object} object that contains following properties:
  *
  * * points  <array>    : Array of computed points in the function
  * * draw    <function> : Function that draws the plot
@@ -3965,10 +4501,10 @@ let counter = {
 function parametricFunction(args) {
   let defaultConfigs = {
     tension: 1,
-    unitValue: [1, 1],
-    unitLength: [1, 1],
+    unitValue: UNIT_VEC,
+    unitSpace: UNIT_VEC,
     // length of each unit in pixels
-    range: [0, 10, 0.1],
+    range: RANGE,
     discontinuities: [],
     smoothen: true,
     closed: false,
@@ -3995,8 +4531,8 @@ function parametricFunction(args) {
   let epsilon = 1e-6,
       row = 0,
       noPoints = 0,
-      unitX = args.unitLength[0] / args.unitValue[0],
-      unitY = args.unitLength[1] / args.unitValue[1];
+      unitX = args.unitSpace[0] / args.unitValue[0],
+      unitY = args.unitSpace[1] / args.unitValue[1];
   if (step < epsilon) epsilon = step / 2;
 
   for (let t = min; t <= max + epsilon; t += step) {
@@ -4018,7 +4554,7 @@ function parametricFunction(args) {
   if (args.draw) plot();
 
   function plot() {
-    let ctx = _main.C.workingCanvas;
+    let ctx = _main.C.workingContext;
 
     for (let i = 0; i < points.length; i++) {
       let p = points[i];
@@ -4039,7 +4575,7 @@ function parametricFunction(args) {
     }
   }
 
-  let ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingContext;
   return {
     points: points[0],
     dur: args.dur,
@@ -4057,9 +4593,9 @@ function parametricFunction(args) {
         let j = 0;
 
         if (smoothen) {
-          (0, _settings.loop)("parametric-plot-" + counter.parametricFunction++, smoothed(j), _main.C.workingCanvas.name, dt);
+          (0, _settings.loop)("parametric-plot-" + counter.parametricFunction++, smoothed(j), _main.C.workingContext.name, dt);
         } else {
-          (0, _settings.loop)("parametric-plot-" + counter.parametricFunction++, nonSmoothed(j), _main.C.workingCanvas.name, dt);
+          (0, _settings.loop)("parametric-plot-" + counter.parametricFunction++, nonSmoothed(j), _main.C.workingContext.name, dt);
         }
       }
 
@@ -4118,17 +4654,17 @@ function functionGraph(args) {
  * Draws a heat plot of given function. The function must take atleast 2 arguments and return a number.
  * More precisely f: ℜ² → ℜ
  * All parameters should be enclosed in a object.
- * @param {object} args
+ * @param {Object} args
  * Possible parameters are:
  *
- * @param {array} [args.min = [-4, -4]] minimum point
- * @param {array} [args.max = [4, 4]] maximum point
- * @param {object} args.colors object of color map
- * @param {array} [args.unitValue = [1, 1]] Value of each unit space
- * @param {array} [args.unitLength = [1, 1]] Length of each unit in pixels
+ * @param {Array<number>} [args.min] minimum point. Default: [-4, -4]
+ * @param {Array<number>} [args.max] maximum point. Default: [4, 4]
+ * @param {Object} args.colors object of color map
+ * @param {Array<number>} [args.unitValue = UNIT_VEC] Value of each unit space
+ * @param {Array<number>} [args.unitSpace = UNIT_VEC] Length of each unit in pixels
  * @param {number} [args.resolution = 1] resolution of plot
- * @param {function} [args.interpolator = linear] function to interpolate color.
- * @return {object} metadatas
+ * @param {Function} [args.interpolator = linear] function to interpolate color.
+ * @return {Object} metadatas
  */
 
 
@@ -4145,8 +4681,8 @@ function heatPlot(args) {
       3: "#3d96dab0",
       5: "#2b6b99b0"
     },
-    unitLength: [1, 1],
-    unitValue: [1, 1],
+    unitSpace: UNIT_VEC,
+    unitValue: UNIT_VEC,
     resolution: 1,
     interpolator: x => x
   };
@@ -4159,14 +4695,16 @@ function heatPlot(args) {
     plotFunction,
     interpolator
   } = args,
-      ctx = _main.C.workingCanvas,
-      unitSizeX = args.unitLength[0] / args.unitValue[0],
-      unitSizeY = args.unitLength[1] / args.unitValue[1],
-      UVX = args.unitValue[0] / args.unitLength[0],
-      UVY = args.unitValue[1] / args.unitLength[1],
+      ctx = _main.C.workingContext,
+      unitSizeX = args.unitSpace[0] / args.unitValue[0],
+      unitSizeY = args.unitSpace[1] / args.unitValue[1],
+      UVX = args.unitValue[0] / args.unitSpace[0],
+      UVY = args.unitValue[1] / args.unitSpace[1],
       stopes = Object.keys(colors).sort(); // converting colors to rgba array
 
-  for (let stop of stopes) colors[stop] = (0, _color_reader.readColor)(colors[stop], true);
+  for (let stop of stopes) {
+    colors[stop] = (0, _color_reader.readColor)(colors[stop]).rgbaA;
+  }
 
   let minS = Math.min(...stopes),
       maxS = Math.max(...stopes);
@@ -4174,8 +4712,7 @@ function heatPlot(args) {
 
   for (let x = min[0]; x <= max[0]; x += resolution * UVX) {
     for (let y = min[1]; y <= max[1]; y += resolution * UVY) {
-      let c = lerpColorArray(plotFunction(x, y));
-      ctx.fillStyle = c;
+      ctx.fillStyle = lerpColorArray(plotFunction(x, y));
       ctx.fillRect(x * unitSizeX, y * unitSizeY, resolution, resolution);
     }
   }
@@ -4205,7 +4742,7 @@ function heatPlot(args) {
   };
 }
 
-},{"../color/color_reader.js":6,"../main.js":17,"../settings.js":32,"../utils.js":33,"./geometry.js":28}],28:[function(require,module,exports){
+},{"../color/color_reader.js":7,"../main.js":17,"../settings.js":32,"../utils.js":33,"./geometry.js":28}],28:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4257,7 +4794,7 @@ var _utils = require("../utils.js");
  * @param {number} [startAngle=0] The angle at which the arc starts in radians, measured from the positive x-axis.
  */
 function arc(x, y, r, angle = Math.PI / 2, startAngle = 0) {
-  let ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingContext;
   if (!ctx.pathStarted) ctx.beginPath();
   ctx.arc(x, y, r, startAngle, startAngle + angle);
   if (!ctx.pathStarted) (0, _utils.doFillAndStroke)(ctx);
@@ -4273,7 +4810,7 @@ function arc(x, y, r, angle = Math.PI / 2, startAngle = 0) {
 
 
 function point(x, y, size = 10, doStroke = false) {
-  let ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingContext;
   ctx.beginPath();
   ctx.arc(x, y, size / 2, 0, Math.PI * 2);
   ctx.fill();
@@ -4286,13 +4823,13 @@ function point(x, y, size = 10, doStroke = false) {
  * @param {number} x x-axis coordinate of center of circular sector
  * @param {number} y y-axis coordinate of center of circular sector
  * @param {number} r radius of the circular sector
- * @param {number} [angle=Math.PI / 2] central angle
+ * @param {number} [angle=1.5707963267948966] central angle
  * @param {number} [startAngle=0] The angle at which the arc starts in radians, measured from the positive x-axis.
  */
 
 
 function circularSegment(x, y, r, angle = Math.PI / 2, startAngle = 0) {
-  let ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingContext;
   if (!ctx.pathStarted) ctx.beginPath();
   ctx.arc(x, y, r, startAngle, startAngle + angle);
   if (!ctx.pathStarted) (0, _utils.doFillAndStroke)(ctx);
@@ -4307,7 +4844,7 @@ function circularSegment(x, y, r, angle = Math.PI / 2, startAngle = 0) {
 
 
 function circle(x, y, r) {
-  let ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingContext;
   ctx.beginPath();
   ctx.arc(x, y, r, 0, Math.PI * 2);
   (0, _utils.doFillAndStroke)(ctx);
@@ -4322,12 +4859,12 @@ function circle(x, y, r) {
  * @param {number} radius2 ellipse's minor-axis radius. Must be non-negative.
  * @param {number} [rotation=0] The rotation of the ellipse, expressed in radians.
  * @param {number} [startAngle=0] The angle at which the ellipse starts, measured clockwise from the positive x-axis and expressed in radians.
- * @param {number} [angle=Math.PI * 2] central angle of ellipse. Use negative values to rotate it anticlockwise
+ * @param {number} [angle=6.28318530717958] central angle of ellipse. Use negative values to rotate it anticlockwise
  */
 
 
 function ellipse(x, y, radius1, radius2, rotation = 0, startAngle = 0, angle = Math.PI * 2) {
-  let ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingContext;
   if (!ctx.pathStarted) ctx.beginPath();
   ctx.ellipse(x, y, radius1, radius2, rotation, startAngle, startAngle + angle);
   if (!ctx.pathStarted) (0, _utils.doFillAndStroke)(ctx);
@@ -4346,7 +4883,7 @@ function ellipse(x, y, radius1, radius2, rotation = 0, startAngle = 0, angle = M
 
 
 function bezier(cpx1, cpy1, cpx2, cpy2, x3, y3) {
-  let ctx = _main.C.workingCanvas,
+  let ctx = _main.C.workingContext,
       pathStarted = ctx.pathStarted;
   if (!pathStarted) ctx.beginPath();
   ctx.bezierCurveTo(cpx1, cpy1, cpx2, cpy2, x3, y3);
@@ -4364,7 +4901,7 @@ function bezier(cpx1, cpy1, cpx2, cpy2, x3, y3) {
 
 
 function sector(x, y, radius, angle = Math.PI / 2, startAngle = 0) {
-  let ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingContext;
   ctx.beginPath();
   ctx.moveTo(x, y);
   ctx.arc(x, y, radius, startAngle, startAngle + angle);
@@ -4374,12 +4911,12 @@ function sector(x, y, radius, angle = Math.PI / 2, startAngle = 0) {
 /**
  * Returns bēzier control points that passes smoothly through given points.
  *
- * @param {array} recentPoint previous point
- * @param {array} currentPoint
- * @param {array} nextPoint
- * @param {array} secondNextPoint
+ * @param {Array<number>} recentPoint previous point
+ * @param {Array<number>} currentPoint
+ * @param {Array<number>} nextPoint
+ * @param {Array<number>} secondNextPoint
  * @param {number} [tension=1]
- * @return {array} two control points as [cp1x, cp1y, cp2x, cp2y]
+ * @return {Array<number>} two control points as [cp1x, cp1y, cp2x, cp2y]
  */
 
 
@@ -4390,7 +4927,7 @@ function getBezierControlPoints(recentPoint, currentPoint, nextPoint, secondNext
  * Adds a smooth curve passing through given points and tension using bézie curve to the current shape.
  * Taken from {@link https://stackoverflow.com/a/49371349}
  *
- * @param {array <array<number>>} points array of points as [x, y]
+ * @param {Array<Array<number>>} points array of points as [x, y]
  * @param {number} tension tension of the curve
  */
 
@@ -4403,19 +4940,19 @@ function smoothCurveThroughPointsTo(points, tension = 1, closed = true) {
         secondNextPoint = i != points.length - 2 ? points[i + 2] : closed ? points[1] : nextPoint,
         cp = getBezierControlPoints(recentPoint, currentPoint, nextPoint, secondNextPoint, tension);
 
-    _main.C.workingCanvas.bezierCurveTo(cp[0], cp[1], cp[2], cp[3], nextPoint[0], nextPoint[1]);
+    _main.C.workingContext.bezierCurveTo(cp[0], cp[1], cp[2], cp[3], nextPoint[0], nextPoint[1]);
   }
 }
 /**
  * Draws smooth curve passing through given points and tension using bézie curve.
  *
- * @param {array <array<number>>} points array of points as [x, y]
+ * @param {Array<Array<number>>} points array of points as [x, y]
  * @param {number} tension tension of the curve
  */
 
 
 function smoothCurveThroughPoints(points, tension = 1, closed = true) {
-  let ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingContext;
   ctx.beginPath();
   ctx.moveTo(points[0][0], points[0][1]);
   smoothCurveThroughPointsTo(points, tension, closed);
@@ -4444,7 +4981,7 @@ function smoothCurveThroughPoints(points, tension = 1, closed = true) {
 
 
 function quadraticCurve() {
-  let ctx = _main.C.workingCanvas,
+  let ctx = _main.C.workingContext,
       args = arguments;
 
   if (args.length == 4) {
@@ -4467,7 +5004,7 @@ function quadraticCurve() {
 
 
 function annulus(x, y, innerRadius, outerRadius) {
-  let ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingContext;
   ctx.beginPath();
   ctx.arc(x, y, innerRadius, 0, 2 * Math.PI, false);
   ctx.moveTo(outerRadius, 0);
@@ -4487,7 +5024,7 @@ function annulus(x, y, innerRadius, outerRadius) {
 
 
 function annulusSector(x, y, innerRadius, outerRadius, angle, startAngle) {
-  let ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingContext;
   ctx.beginPath();
   ctx.arc(x, y, innerRadius, startAngle, startAngle + angle, false);
   ctx.arc(x, y, outerRadius, startAngle + angle, startAngle, true);
@@ -4496,20 +5033,23 @@ function annulusSector(x, y, innerRadius, outerRadius, angle, startAngle) {
 /**
  * Angle between two lines. And returns the coordinate of middle of angle
  *
- * @param {array<number>} p1 start point of first line array of point as [x, y]
- * @param {array<number>} p2 end point of first line array of point as [x, y]
- * @param {array<number>} p3 start point of second line array of point as [x, y]
- * @param {array<number>} p4 end point of second line array of point as [x, y]
+ * @param {Array<number>} p1 start point of first line array of point as [x, y]
+ * @param {Array<number>} p2 end point of first line array of point as [x, y]
+ * @param {Array<number>} p3 start point of second line array of point as [x, y]
+ * @param {Array<number>} p4 end point of second line array of point as [x, y]
  * @param {number} radius radius of angle
  * @param {number} extender extender of output point
  * @param {boolean} otherAngle whether to draw the other angle
  * @param {number} angleDir there can be four angle in a line intersection. Choose a number from 1 to 4.
- * @returns {array} coordinate of point in the middle of angle as array of point as [x, y]
+ * @returns {Object} coordinate of point in the middle of angle as array of point as [x, y] and angle between them
  */
 
 
 function angle(p1, p2, p3, p4, radius = 20, extender = 10, otherAngle = false, angleDir = 1) {
-  let [x, y] = (0, _points.lineIntersection)(p1, p2, p3, p4);
+  let p = (0, _points.lineIntersection)(p1, p2, p3, p4),
+      x = p[0],
+      y = p[1],
+      info = {};
 
   if (!(isNaN(x) || isNaN(y))) {
     let ang,
@@ -4525,7 +5065,7 @@ function angle(p1, p2, p3, p4, radius = 20, extender = 10, otherAngle = false, a
       4: [a3, a2]
     },
         dir = angleDirs[angleDir],
-        ctx = _main.C.workingCanvas;
+        ctx = _main.C.workingContext;
 
     if (otherAngle) {
       startAngle = dir[1];
@@ -4550,14 +5090,15 @@ function angle(p1, p2, p3, p4, radius = 20, extender = 10, otherAngle = false, a
       ctx.closePath();
     }
 
-    return {
+    info = {
       center: [x + (radius + extender) * Math.cos(startAngle + ang / 2), y + (radius + extender) * Math.sin(startAngle + ang / 2)],
       ang: ang
     };
   } else {
-    // TODO: should it be `throw Error()`?
-    console.error("No intersection point");
+    throw new Error("No intersection point");
   }
+
+  return info;
 }
 /**
  * Creates a circular arc using the given control points and radius.
@@ -4570,7 +5111,7 @@ function angle(p1, p2, p3, p4, radius = 20, extender = 10, otherAngle = false, a
  * @param {number} y2 y-coord of second point
  * @param {number} radius radius of arc
  * @param {boolean} otherArc specifies whether to use other arc of the circle.
- * @returns {array} returns the coordinate of center of the arc as [x, y]
+ * @returns {Array<number>} returns the coordinate of center of the arc as [x, y]
  */
 
 
@@ -4578,7 +5119,7 @@ function arcBetweenPoints(x1, y1, x2, y2, radius, otherArc = false) {
   if (x1 == x2 && y1 == y2) // TODO: should it be `throw Error()`?
     console.error("Can't draw a arc between points. Given points are exactly same");
   let center = (0, _points.circleIntersection)([x1, y1], radius, [x2, y2], radius)[0],
-      ctx = _main.C.workingCanvas,
+      ctx = _main.C.workingContext,
       angleFromXAxis = Math.atan2(y1 - center[1], x1 - center[0]),
       centralAngle = Math.atan2(y2 - center[1], x2 - center[0]) - angleFromXAxis;
 
@@ -4607,7 +5148,7 @@ function arcBetweenPoints(x1, y1, x2, y2, radius, otherArc = false) {
 
 
 function line(x1, y1, x2, y2) {
-  let ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingContext;
   ctx.beginPath();
   ctx.moveTo(x1, y1);
   ctx.lineTo(x2, y2);
@@ -4625,7 +5166,7 @@ function line(x1, y1, x2, y2) {
 
 
 function rect(x, y, width, height) {
-  let ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingContext;
   ctx.beginPath();
   ctx.rect(x, y, width, height);
   if (ctx.doFill) ctx.fill();
@@ -4650,7 +5191,7 @@ function polygon() {
   let args = arguments;
 
   if (args.length > 2) {
-    let ctx = _main.C.workingCanvas,
+    let ctx = _main.C.workingContext,
         start = args[0];
     ctx.beginPath();
     ctx.moveTo(start[0], start[1]);
@@ -4680,15 +5221,15 @@ function square(x, y, sideLength) {
 /**
  * Draws quadrilateral with four points as array of coordinate as [x, y]
  *
- * @param {array<number>} p1 1st point
- * @param {array<number>} p2 2nd point
- * @param {array<number>} p3 3rd point
- * @param {array<number>} p4 4th point
+ * @param {Array<number>} p1 1st point
+ * @param {Array<number>} p2 2nd point
+ * @param {Array<number>} p3 3rd point
+ * @param {Array<number>} p4 4th point
  */
 
 
 function quad(p1, p2, p3, p4) {
-  let ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingContext;
   ctx.beginPath();
   ctx.moveTo(p1[0], p1[1]);
   ctx.lineTo(p2[0], p2[1]);
@@ -4702,14 +5243,14 @@ function quad(p1, p2, p3, p4) {
 /**
  * Draws triangle with three points as array of coordinate as [x, y]
  *
- * @param {array<number>} p1 first point
- * @param {array<number>} p2 second point
- * @param {array<number>} p3 third point
+ * @param {Array<number>} p1 first point
+ * @param {Array<number>} p2 second point
+ * @param {Array<number>} p3 third point
  */
 
 
 function triangle(p1, p2, p3) {
-  let ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingContext;
   ctx.beginPath();
   ctx.moveTo(p1[0], p1[1]);
   ctx.lineTo(p2[0], p2[1]);
@@ -4762,7 +5303,7 @@ function regularPolygon(x, y, sides, sideLength, rotation = 0) {
 function regularPolygonWithRadius(x, y, sides, radius, rotation = 0) {
   let i = 0,
       e = Math.PI * 2 / sides,
-      ctx = _main.C.workingCanvas;
+      ctx = _main.C.workingContext;
   rotation += e / 2;
   let initial = [Math.cos(rotation) * radius + x, Math.sin(rotation) * radius + y];
   ctx.beginPath();
@@ -4797,14 +5338,14 @@ var _points = require("../math/points.js");
  * @param {number} x x coord of centre of polygon
  * @param {number} y y coord of centre of polygon
  * @param {number} radius radius of ex-circle of polygon
- * @param {array} ratios array of ratios of central angles. Must have atleast 3 elements.
+ * @param {Array<number>} ratios array of ratios of central angles. Must have atleast 3 elements.
  * @param {number} [rotation=0] amound to rotate the entire polygon.
  */
 function polygonWithRatioOfCentralAngles(x, y, radius, ratios, rotation = 0) {
   if (!Array.isArray(ratios)) console.error("ratio provided is not array");
   let sumOfRatio = ratios.reduce((a, b) => a + b, 0),
       baseAngle = Math.PI * 2 / sumOfRatio,
-      ctx = _main.C.workingCanvas;
+      ctx = _main.C.workingContext;
   ctx.save();
   ctx.translate(x, y);
   ctx.rotate(rotation);
@@ -4823,22 +5364,24 @@ function polygonWithRatioOfCentralAngles(x, y, radius, ratios, rotation = 0) {
 }
 /**
  * Creates a lens.
- * @param {array} c1 center coordinate as array [x, y]
+ * @param {Array<number>} c1 center coordinate as array [x, y]
  * @param {number} r1
- * @param {array} c2 center coordinate as array [x, y]
+ * @param {Array<number>} c2 center coordinate as array [x, y]
  * @param {number} r2
  */
 
 
 function lens(c1, r1, c2, r2) {
   // find intersectionPoint
-  let [pa, pb] = (0, _points.circleIntersection)(c1, r1, c2, r2); // angles to the points
+  let p = (0, _points.circleIntersection)(c1, r1, c2, r2),
+      pa = p[0],
+      pb = p[1]; // angles to the points
 
   let c1a1 = Math.atan2(pa[1] - c1[1], pa[0] - c1[0]),
       c1a2 = Math.atan2(pb[1] - c1[1], pb[0] - c1[0]),
       c2a1 = Math.atan2(pa[1] - c2[1], pa[0] - c2[0]),
       c2a2 = Math.atan2(pb[1] - c2[1], pb[0] - c2[0]),
-      ctx = _main.C.workingCanvas;
+      ctx = _main.C.workingContext;
   ctx.beginPath();
   ctx.arc(c1[0], c1[1], r1, c1a1, c1a2);
   ctx.arc(c2[0], c2[1], r2, c2a2, c2a1);
@@ -4867,25 +5410,25 @@ var _main = require("../main.js");
  * @return {HTMLImageElement}
  */
 function getImageFromTex(input) {
-  if (typeof window.MathJax == "object" && typeof window.MathJax.tex2svg == "function") {
-    let ctx = _main.C.workingCanvas,
-        svgOutput = window.MathJax.tex2svg(input).getElementsByTagName("svg")[0],
-        g = svgOutput.getElementsByTagName("g")[0];
-    svgOutput.style.verticalAlign = "1ex";
-    g.setAttribute("stroke", ctx.strokeStyle);
-    g.setAttribute("fill", ctx.fillStyle);
-    let outerHTML = svgOutput.outerHTML,
-        blob = new Blob([outerHTML], {
-      type: "image/svg+xml;charset=utf-8"
-    }),
-        URL = window.URL || window.webkitURL || window,
-        blobURL = URL.createObjectURL(blob),
-        image = new Image();
-    image.src = blobURL;
-    return image;
-  } else {
-    console.error("MathJax is not found. Please include it.");
+  if (!(typeof window["MathJax"] == "object" && typeof window["MathJax"]["tex2svg"] == "function")) {
+    throw new Error("MathJax is not found. Please include it.");
   }
+
+  let ctx = _main.C.workingContext,
+      svgOutput = window['MathJax'].tex2svg(input).getElementsByTagName("svg")[0],
+      g = svgOutput.getElementsByTagName("g")[0];
+  svgOutput.style.verticalAlign = "1ex";
+  g.setAttribute("stroke", ctx.strokeStyle);
+  g.setAttribute("fill", ctx.fillStyle);
+  let outerHTML = svgOutput.outerHTML,
+      blob = new Blob([outerHTML], {
+    type: "image/svg+xml;charset=utf-8"
+  }),
+      URL = window.URL || window.webkitURL,
+      blobURL = URL.createObjectURL(blob),
+      image = new Image();
+  image.src = blobURL;
+  return image;
 }
 /**
  * Draws tex inputs
@@ -4897,9 +5440,9 @@ function getImageFromTex(input) {
  */
 
 
-function tex(input, x = 0, y = 0) {
+function tex(input, x, y) {
   let image = getImageFromTex(input),
-      ctx = _main.C.workingCanvas,
+      ctx = _main.C.workingContext,
       text_align = ctx.textAlign,
       text_baseline = ctx.textBaseline;
 
@@ -4942,14 +5485,14 @@ function tex(input, x = 0, y = 0) {
       y *= -1;
     }
 
-    ctx.drawImage(image, x, y);
+    ctx.drawImage(image, x || 0, y || 0);
     ctx.restore();
   };
 
   return image;
 }
 
-},{"../constants/drawing.js":12,"../main.js":17}],31:[function(require,module,exports){
+},{"../constants/drawing.js":13,"../main.js":17}],31:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4977,7 +5520,7 @@ var _settings = require("../settings.js");
  * @param {number} [maxwidth=undefined] maximum width
  */
 function text(text, x = 0, y = 0, maxwidth = undefined) {
-  let ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingContext;
 
   if (ctx.yAxisInverted) {
     // if inverted reverse it and invert y component
@@ -4999,7 +5542,7 @@ function text(text, x = 0, y = 0, maxwidth = undefined) {
 
 
 function fillText(text, x = 0, y = 0, maxwidth = undefined) {
-  let ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingContext;
 
   if (ctx.yAxisInverted) {
     (0, _settings.scale)(1, -1);
@@ -5020,7 +5563,7 @@ function fillText(text, x = 0, y = 0, maxwidth = undefined) {
 
 
 function strokeText(text, x = 0, y = 0, maxwidth = undefined) {
-  let ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingContext;
 
   if (ctx.yAxisInverted) {
     (0, _settings.scale)(1, -1);
@@ -5038,11 +5581,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.background = background;
-exports.cartasianPlain = cartasianPlain;
-exports.centerdText = centerdText;
-exports.centreCanvas = centreCanvas;
 exports.clear = clear;
-exports.clearAll = clearAll;
 exports.endShape = endShape;
 exports.fill = fill;
 exports.fontFamily = fontFamily;
@@ -5053,13 +5592,7 @@ exports.fontVariant = fontVariant;
 exports.fontWeight = fontWeight;
 exports.getCanvasData = getCanvasData;
 exports.getContextStates = getContextStates;
-exports.getFill = getFill;
 exports.getFont = getFont;
-exports.getStroke = getStroke;
-exports.getStrokeWidth = getStrokeWidth;
-exports.getTransform = getTransform;
-exports.initContrastedCanvas = initContrastedCanvas;
-exports.invertYAxis = invertYAxis;
 exports.lineCap = lineCap;
 exports.lineDash = lineDash;
 exports.lineHeight = lineHeight;
@@ -5080,8 +5613,6 @@ exports.save = save;
 exports.saveCanvas = saveCanvas;
 exports.scale = scale;
 exports.setImageSmoothing = setImageSmoothing;
-exports.setTransform = setTransform;
-exports.showCreation = showCreation;
 exports.startShape = startShape;
 exports.stroke = stroke;
 exports.strokeWidth = strokeWidth;
@@ -5089,13 +5620,10 @@ exports.textAlign = textAlign;
 exports.textBaseline = textBaseline;
 exports.transform = transform;
 exports.translate = translate;
-exports.wait = wait;
 
-var _create = require("./animations/create.js");
+var _constructs = require("../Extensions/Animations/constructs.js");
 
 var _color_reader = require("./color/color_reader.js");
-
-var _colors = require("./constants/colors.js");
 
 var _main = require("./main.js");
 
@@ -5109,7 +5637,6 @@ var _utils = require("./utils.js");
 
 // for debuggingF
 let counter = {
-  wait: 1,
   loop: 1
 },
     logStyles = {
@@ -5127,7 +5654,7 @@ let counter = {
  */
 
 function moveTo(x, y) {
-  _main.C.workingCanvas.moveTo(x, y);
+  _main.C.workingContext.moveTo(x, y);
 }
 /**
  * Adda a straight line to the current shape by connecting the shape's last point to the specified (x, y) coordinates.
@@ -5138,7 +5665,7 @@ function moveTo(x, y) {
 
 
 function lineTo(x, y) {
-  _main.C.workingCanvas.lineTo(x, y);
+  _main.C.workingContext.lineTo(x, y);
 }
 /**
  * Sets background to a given value
@@ -5147,115 +5674,84 @@ function lineTo(x, y) {
  * * a hex string (#fff, #acf2dc)
  * * a number (0 for rgb(0,0,0), 233 for rgb(233,233,233))
  * * a array of numbers ([0, 244, 34])
+ * @param {...number} color
  */
 
 
-function background() {
-  let col = (0, _color_reader.readColor)(...arguments),
-      ctx = _main.C.workingCanvas;
+function background(...color) {
+  let col = (0, _color_reader.readColor)(color).hex8,
+      ctx = _main.C.workingContext;
   ctx.background = col;
   ctx.save();
   rest();
   ctx.fillStyle = col;
-  ctx.fillRect(0, 0, ctx.width, ctx.height);
+  ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
   ctx.restore();
 }
 /**
  * Erases the pixels in a rectangular area by setting them to transparent black
- * See {@link https://developer.mozilla.org/en-US/docs/Web/CSS/font-stretch} for more info
  *
- * @param {number} x x-axis coordinate of the rectangle's starting point.
- * @param {number} y y-axis coordinate of the rectangle's starting point.
- * @param {number} width Rectangle's width. Positive values are to the right, and negative values to the left.
- * @param {number} height Rectangle's height. positive values are down, and negative are up.
+ * @param {number} [x = 0] x-axis coordinate of the rectangle's starting point.
+ * @param {number} [y = 0] y-axis coordinate of the rectangle's starting point.
+ * @param {number} [width = C.workingContext.width] Rectangle's width. Positive values are to the right, and negative values to the left.
+ * @param {number} [height = C.workingContext.height] Rectangle's height. positive values are down, and negative are up.
  */
 
 
 function clear(x, y, width, height) {
-  let ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingContext,
+      d = _main.C.dpr;
   x = x || 0;
   y = y || 0;
-  width = width || ctx.width;
-  height = height || ctx.height;
-  ctx.clearRect(x, y, width, height);
-}
-/**
- * Erases entire canvas area by setting them to transparent black
- *
- */
-
-
-function clearAll() {
-  let ctx = _main.C.workingCanvas,
-      d = ctx.dpr;
+  width = width || ctx.canvas.width;
+  height = height || ctx.canvas.height;
   ctx.save();
   ctx.setTransform(d, 0, 0, d, 0, 0);
-  ctx.clearRect(0, 0, ctx.width, ctx.height);
+  ctx.clearRect(x, y, width, height);
   ctx.restore();
 }
 /**
  * sets the given image data as css background. If not given it will set current canvas drawing as the background
- *
+ * @param {string} [data] image data
  */
 
 
 function permaBackground(data) {
   if (typeof data != "string") data = getCanvasData();
-  let canvasStyle = _main.C.workingCanvas.canvas.style;
+  let canvasStyle = _main.C.workingContext.canvas.style;
   canvasStyle.background = "url('" + data + "')";
   canvasStyle.backgroundPosition = "center";
   canvasStyle.backgroundSize = "cover";
 }
 /**
- * Resets the current transformation to the identity matrix,
+ * If Some arguments are given: Resets the current transformation to the identity matrix,
  * and then invokes a transformation described by given arguments.
  * Lets you scale, rotate, translate (move), and skew the canvas.
  * See {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/transform} for more info
+ * If no Arguments are given: returns current transformation
  *
- * @param {number|DOMMatrix} a Horizontal scaling. A value of 1 results in no scaling.
- *  this can be a `DOMMatrix` which can get by {@link getTransform} function
- * @param {number} b Vertical skewing
- * @param {number} c Horizontal skewing
- * @param {number} d Vertical scaling. A value of 1 results in no scaling
- * @param {number} e Horizontal translation
- * @param {number} f Vertical translation
- */
-
-
-function setTransform(a, b, c, d, e, f) {
-  let ctx = _main.C.workingCanvas;
-  if (a instanceof DOMMatrix) ctx.setTransform(a);else ctx.setTransform(a, b, c, d, e, f);
-  ctx.scale(ctx.dpr, ctx.dpr);
-}
-/**
- * Returns the current transform matrix
- *
- * @return {DOMMatrix}
- */
-
-
-function getTransform() {
-  return _main.C.workingCanvas.getTransform();
-}
-/**
- * multiplies the current transformation with the matrix described by the arguments
- * of this method. This lets you scale, rotate, translate (move), and skew the context.
- *
- * See {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/transform} for more info
- *
- * @param {number|DOMMatrix} a Horizontal scaling. A value of 1 results in no scaling.
- *  this can be a `DOMMatrix` which can get by {@link getTransform} function
- * @param {number} b Vertical skewing
- * @param {number} c Horizontal skewing
- * @param {number} d Vertical scaling. A value of 1 results in no scaling
- * @param {number} e Horizontal translation
- * @param {number} f Vertical translation
+ * @param {number|DOMMatrix} [a] Horizontal scaling. A value of 1 results in no scaling.
+ * @param {number} [b] Vertical skewing
+ * @param {number} [c] Horizontal skewing
+ * @param {number} [d] Vertical scaling. A value of 1 results in no scaling
+ * @param {number} [e] Horizontal translation
+ * @param {number} [f] Vertical translation
  */
 
 
 function transform(a, b, c, d, e, f) {
-  let ctx = _main.C.workingCanvas;
-  if (a instanceof DOMMatrix) ctx.transform(a);else ctx.transform(a, b, c, d, e, f);
+  let ctx = _main.C.workingContext;
+
+  if (a == undefined || a == null) {
+    return _main.C.workingContext.getTransform();
+  } else if (a instanceof DOMMatrix) {
+    ctx.setTransform(a.a, a.b, a.c, a.d, a.e, a.f);
+  } else {
+    ctx.setTransform(a || 0, b || 0, c || 0, d || 0, e || 0, f || 0);
+  } // scale to fit width
+
+
+  ctx.scale(_main.C.dpr, _main.C.dpr);
 }
 /**
  * Prevent filling inside shapes
@@ -5264,7 +5760,7 @@ function transform(a, b, c, d, e, f) {
 
 
 function noFill() {
-  _main.C.workingCanvas.doFill = false;
+  _main.C.workingContext.doFill = false;
 }
 /**
  * Prevent drawing strokes of shapes
@@ -5273,7 +5769,7 @@ function noFill() {
 
 
 function noStroke() {
-  _main.C.workingCanvas.doStroke = false;
+  _main.C.workingContext.doStroke = false;
 }
 /**
  * Translates (moves) canvas to a position
@@ -5284,7 +5780,7 @@ function noStroke() {
 
 
 function translate(x, y = 0) {
-  _main.C.workingCanvas.translate(x, y);
+  _main.C.workingContext.translate(x, y);
 }
 /**
  * Sets whether to enable image smoothening
@@ -5294,7 +5790,7 @@ function translate(x, y = 0) {
 
 
 function setImageSmoothing(bool) {
-  _main.C.workingCanvas.imageSmoothingEnabled = !!bool;
+  _main.C.workingContext.imageSmoothingEnabled = !!bool;
 }
 /**
  * Sets the stroke width (line width/line thickness)
@@ -5304,7 +5800,7 @@ function setImageSmoothing(bool) {
 
 
 function strokeWidth(w) {
-  _main.C.workingCanvas.lineWidth = Number(w);
+  _main.C.workingContext.lineWidth = Number(w);
 }
 /**
  * Scales the canvas by a given amount
@@ -5317,7 +5813,7 @@ function strokeWidth(w) {
 
 
 function scale(x, y = x) {
-  _main.C.workingCanvas.scale(x, y);
+  _main.C.workingContext.scale(x, y);
 }
 /**
  * Rotates the canvas
@@ -5327,7 +5823,7 @@ function scale(x, y = x) {
 
 
 function rotate(angle) {
-  let ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingContext;
   ctx.rotate(angle);
   ctx.netRotation = (ctx.netRotation + angle) % Math.PI * 2;
 }
@@ -5338,9 +5834,9 @@ function rotate(angle) {
 
 
 function save() {
-  _main.C.savedStates = getContextStates();
+  _main.C.workingContext.savedStates = getContextStates();
 
-  _main.C.workingCanvas.save();
+  _main.C.workingContext.save();
 }
 /**
  * Set the type of line end
@@ -5351,7 +5847,7 @@ function save() {
 
 
 function lineCap(capType) {
-  _main.C.workingCanvas.lineCap = capType;
+  _main.C.workingContext.lineCap = capType;
 }
 /**
  * Sets type of line joining
@@ -5362,7 +5858,7 @@ function lineCap(capType) {
 
 
 function lineJoin(joinType) {
-  _main.C.workingCanvas.lineJoin = joinType;
+  _main.C.workingContext.lineJoin = joinType;
 }
 /**
  * Restore the saved state of canvas
@@ -5371,39 +5867,9 @@ function lineJoin(joinType) {
 
 
 function restore() {
-  Object.assign(_main.C.workingCanvas, _main.C.savedStates);
+  (0, _utils.defineProperties)(_main.C.workingContext.savedStates, _main.C.workingContext);
 
-  _main.C.workingCanvas.restore();
-}
-/**
- * Returns fill color/gradient
- *
- * @returns {string|CanvasGradient}
- */
-
-
-function getFill() {
-  return _main.C.workingCanvas.fillStyle;
-}
-/**
- * Returns stroke color/gradient
- *
- * @returns {string|CanvasGradient}
- */
-
-
-function getStroke() {
-  return _main.C.workingCanvas.strokeStyle;
-}
-/**
- * Returns stroke width
- *
- * @returns {number}
- */
-
-
-function getStrokeWidth() {
-  return _main.C.workingCanvas.lineWidth;
+  _main.C.workingContext.restore();
 }
 /**
  * Reset the applied transform to idendity matrix and scales canvas by dpr
@@ -5412,8 +5878,8 @@ function getStrokeWidth() {
 
 
 function rest() {
-  let ctx = _main.C.workingCanvas;
-  ctx.setTransform(ctx.dpr, 0, 0, ctx.dpr, 0, 0);
+  let ctx = _main.C.workingContext;
+  ctx.setTransform(_main.C.dpr, 0, 0, _main.C.dpr, 0, 0);
 }
 /**
  * Sets stroke color to a given value if value is given
@@ -5423,15 +5889,14 @@ function rest() {
  * * hex string (#fff, #acf2dc)
  * * number (0 for rgb(0,0,0), 233 for rgb(233,233,233))
  * * array of numbers ([0, 244, 34]). This gets converted into css color by the colorMode property
- *
  */
 
 
-function stroke() {
-  let ctx = _main.C.workingCanvas;
+function stroke(...color) {
+  let ctx = _main.C.workingContext;
 
   if (arguments.length > 0) {
-    ctx.strokeStyle = (0, _color_reader.readColor)(...arguments);
+    ctx.strokeStyle = (0, _color_reader.readColor)(color).hex8;
     ctx.doStroke = true;
   } else {
     ctx.stroke();
@@ -5445,15 +5910,14 @@ function stroke() {
  * * a hex string (#fff, #acf2dc)
  * * a number (0 for rgb(0,0,0), 233 for rgb(233,233,233))
  * * a array of numbers ([0, 244, 34]). This gets converted into css color by the colorMode property
- *
  */
 
 
-function fill() {
-  let ctx = _main.C.workingCanvas;
+function fill(...color) {
+  let ctx = _main.C.workingContext;
 
   if (arguments.length !== 0) {
-    ctx.fillStyle = (0, _color_reader.readColor)(...arguments);
+    ctx.fillStyle = (0, _color_reader.readColor)(color).hex8;
     ctx.doFill = true;
   } else {
     ctx.fill();
@@ -5462,13 +5926,13 @@ function fill() {
 /**
  * Returns variables in workingCanvas or given canvas
  *
- * @param {string} canvasID id of canvas to get the data.
+ * @param {string} [canvasName] id of canvas to get the data.
  * @returns {Object}
  */
 
 
 function getContextStates(canvasName) {
-  let ctx = _main.C.canvasList[canvasName] || _main.C.workingCanvas;
+  let ctx = _main.C.contextList[canvasName] || _main.C.workingContext;
   return {
     background: ctx.background,
     colorMode: ctx.colorMode,
@@ -5490,49 +5954,13 @@ function getContextStates(canvasName) {
     font: ctx.font,
     textAlign: ctx.textAlign,
     textBaseline: ctx.textBaseline,
-    onclick: ctx.onclick,
-    onmousemove: ctx.onmousemove,
-    onmouseout: ctx.onmouseout,
-    onmousedown: ctx.onmousedown,
-    onmouseup: ctx.onmouseup,
-    onmousewheel: ctx.onmousewheel,
-    // key
-    onkeydown: ctx.onkeydown,
-    onkeyup: ctx.onkeyup,
-    onkeypress: ctx.onkeypress,
-    oncopy: ctx.oncopy,
-    onpaste: ctx.onpaste,
-    oncut: ctx.oncut,
-    // touch
-    ontouchstart: ctx.ontouchstart,
-    ontouchmove: ctx.ontouchmove,
-    ontouchend: ctx.ontouchend,
-    ontouchcancel: ctx.ontouchcancel,
-    // scale
-    onresize: ctx.onresize,
-    // dom
-    onblur: ctx.onblur,
-    onfocus: ctx.onfocus,
-    onchange: ctx.onchange,
-    oninput: ctx.oninput,
-    onload: ctx.onload,
-    onscroll: ctx.onscroll,
-    onwheel: ctx.onwheel,
-    onpointerdown: ctx.onpointerdown,
-    onpointermove: ctx.onpointermove,
-    onpointerup: ctx.onpointerup,
-    onpointercancel: ctx.onpointercancel,
-    onpointerover: ctx.onpointerover,
-    onpointerout: ctx.onpointerout,
-    onpointerenter: ctx.onpointerenter,
-    onpointerleave: ctx.onpointerleave,
-    onfullscreenchange: ctx.onfullscreenchange
+    events: ctx.events
   };
 }
 /**
  * Starts a new loop
  * ! Currently in progress with asynchronous animations.
- * @param {function} functionToRun function which contains code to run
+ * @param {Function} functionToRun function which contains code to run
  * @param {string} canvasName name of canvas. It must be unique if you're running multiple animation at once
  * @param {number} timeDelay time delay between 2 frames. If given loop will execute with setInterval function.
  *  If not provided the loop will be run with requestAnimationFrame (this keeps a consistant frame rate between 40 to 50 FPS).
@@ -5554,13 +5982,13 @@ function loop(name, functionToRun, canvasName, timeDelay, timeDelaysToRemember =
   }
 
   if (!canvasName) {
-    ctx = _main.C.workingCanvas;
+    ctx = _main.C.workingContext;
     canvasName = ctx.name;
-  } else ctx = _main.C.canvasList[canvasName];
+  } else ctx = _main.C.contextList[canvasName];
 
   ctx.timeDelayList = [];
   ctx.totalTimeCaptured = 0;
-  let assignedSettings = Object.assign(getContextStates(canvasName), settings); // debugger;
+  let assignedSettings = Object.assign(getContextStates(canvasName) || {}, settings); // debugger;
 
   if (ctx.currentLoop != undefined) {
     // already a animation is running
@@ -5611,11 +6039,11 @@ function loop(name, functionToRun, canvasName, timeDelay, timeDelaysToRemember =
     if (!isNaN(timeDelay)) {
       ctx.currentLoopName = name;
       ctx.currentLoop = setInterval(function () {
-        _main.C.workingCanvas = ctx;
+        _main.C.workingContext = ctx;
         let S = getContextStates(canvasName);
-        Object.assign(_main.C.workingCanvas, assignedSettings);
+        (0, _utils.defineProperties)(assignedSettings, _main.C.workingContext);
         functionToRun(window.performance.now() - ctx.timeStart, getFPS());
-        Object.assign(_main.C.workingCanvas, S);
+        (0, _utils.defineProperties)(S, _main.C.workingContext);
       }, timeDelay);
     } else {
       run();
@@ -5624,11 +6052,11 @@ function loop(name, functionToRun, canvasName, timeDelay, timeDelaysToRemember =
 
   function run() {
     ctx.currentLoop = window.requestAnimationFrame(run);
-    _main.C.workingCanvas = ctx;
+    _main.C.workingContext = ctx;
     let S = getContextStates(canvasName);
-    if (settings) Object.assign(_main.C.workingCanvas, assignedSettings);
+    if (settings) (0, _utils.defineProperties)(assignedSettings, _main.C.workingContext);
     functionToRun(window.performance.now() - ctx.timeStart, getFPS());
-    if (settings) Object.assign(_main.C.workingCanvas, S);
+    if (settings) (0, _utils.defineProperties)(S, _main.C.workingContext);
   }
 
   function getFPS() {
@@ -5645,13 +6073,14 @@ function loop(name, functionToRun, canvasName, timeDelay, timeDelaysToRemember =
 /**
  * Stops current loop
  *
- * @param {string} canvasName name of the canvas given to {@link loop}
+ * @param {string} [canvasName] name of the canvas given to {@link loop}
+ * @param {number} [time] time of execution. Used for debugging
  */
 
 
 function noLoop(canvasName, time) {
-  let ctx = _main.C.workingCanvas;
-  if (!canvasName) canvasName = ctx.name;else ctx = _main.C.canvasList[canvasName];
+  let ctx = _main.C.workingContext;
+  if (!canvasName) canvasName = ctx.name;else ctx = _main.C.contextList[canvasName];
   clearInterval(ctx.currentLoop);
   window.cancelAnimationFrame(ctx.currentLoop);
   ctx.currentLoop = undefined;
@@ -5687,7 +6116,7 @@ function noLoop(canvasName, time) {
 
 
 function startShape() {
-  let ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingContext;
   ctx.beginPath();
   ctx.pathStarted = true;
 }
@@ -5698,7 +6127,7 @@ function startShape() {
 
 
 function endShape() {
-  let ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingContext;
   ctx.closePath();
   ctx.pathStarted = false;
 }
@@ -5711,7 +6140,7 @@ function endShape() {
 
 
 function getFont(detailed = false) {
-  let ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingContext;
 
   if (detailed) {
     let {
@@ -5737,7 +6166,7 @@ function getFont(detailed = false) {
 
 
 function measureText(text) {
-  return _main.C.workingCanvas.measureText(text);
+  return _main.C.workingContext.measureText(text);
 }
 /**
  * Sets font size
@@ -5758,7 +6187,7 @@ function measureText(text) {
 
 
 function fontSize(size) {
-  let ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingContext;
   size = typeof size === "number" ? size + "px" : size;
   ctx.fontSize = size;
   ctx.font = getFont(true);
@@ -5771,7 +6200,7 @@ function fontSize(size) {
 
 
 function fontFamily(family) {
-  let ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingContext;
   ctx.fontFamily = family;
   ctx.font = getFont(true);
 }
@@ -5787,7 +6216,7 @@ function fontFamily(family) {
 
 
 function fontStyle(style) {
-  let ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingContext;
   ctx.fontStyle = style;
   ctx.font = getFont(true);
 }
@@ -5800,7 +6229,7 @@ function fontStyle(style) {
 
 
 function fontVariant(variant) {
-  let ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingContext;
   ctx.fontVariant = variant;
   ctx.font = getFont(true);
 }
@@ -5812,7 +6241,7 @@ function fontVariant(variant) {
 
 
 function fontWeight(weight) {
-  let ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingContext;
   ctx.fontWeight = weight;
   ctx.font = getFont(true);
 }
@@ -5837,7 +6266,7 @@ function fontWeight(weight) {
 
 
 function fontStretch(stretch) {
-  let ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingContext;
   ctx.fontStretch = stretch;
   ctx.font = getFont(true);
 }
@@ -5850,7 +6279,7 @@ function fontStretch(stretch) {
 
 
 function lineHeight(height) {
-  let ctx = _main.C.workingCanvas;
+  let ctx = _main.C.workingContext;
   ctx.lineHeight = height;
   ctx.font = getFont(true);
 }
@@ -5863,20 +6292,15 @@ function lineHeight(height) {
 
 
 function getCanvasData(datURL = "image/png") {
-  return _main.C.workingCanvas.canvas.toDataURL(datURL);
+  return _main.C.workingContext.canvas.toDataURL(datURL);
 }
 /**
  * puts a imageData to canvas
- * @param {ImageData} imageData
- * @param {number} x
- * @param {number} y
- * @param {number} w
- * @param {number} h
  */
 
 
 function putImageData() {
-  _main.C.workingCanvas.putImageData(...arguments);
+  _main.C.workingContext.putImageData(...arguments);
 }
 /**
  * Save the canvas as image
@@ -5901,7 +6325,7 @@ function saveCanvas(name = "drawing", datURL = "image/png") {
 
 
 function lineDash() {
-  _main.C.workingCanvas.setLineDash([...arguments]);
+  _main.C.workingContext.setLineDash([...arguments]);
 }
 /**
  * Specifies the current text alignment used when drawing text.
@@ -5919,7 +6343,7 @@ function lineDash() {
 
 
 function textAlign(align) {
-  _main.C.workingCanvas.textAlign = align;
+  _main.C.workingContext.textAlign = align;
 }
 /**
  * Specifies the current text baseline used when drawing text.
@@ -5938,156 +6362,10 @@ function textAlign(align) {
 
 
 function textBaseline(baseline) {
-  _main.C.workingCanvas.textBaseline = baseline;
-}
-/**
- * Sets the text alignment to centered in x and y axes.
- *
- */
-
-
-function centerdText() {
-  textAlign("center");
-  textBaseline("middle");
-}
-/**
- * translates canvas to center
- */
-
-
-function centreCanvas() {
-  let ctx = _main.C.workingCanvas;
-  ctx.translate(ctx.width / 2, ctx.height / 2);
-}
-/**
- * Inverts y-axis
- */
-
-
-function invertYAxis() {
-  let ctx = _main.C.workingCanvas;
-  ctx.scale(1, -1);
-  ctx.yAxisInverted = !ctx.yAxisInverted;
-}
-/**
- * Centers canvas to center, with black background, yellow stroke, no fill enabled and y axis inverted
- */
-
-
-function initContrastedCanvas() {
-  background(0);
-  stroke(_colors.YELLOW);
-  noFill();
-}
-/**
- * Wait for a given time in milliseconds.
- *
- * @param {number} time time in milliseconds
- * @param {string} canvasName canvas name
- */
-
-
-function wait(time, canvasName, name) {
-  canvasName = _main.C.workingCanvas.name || canvasName;
-  loop(name || "wait-" + counter.wait++, elapsed => {
-    if (elapsed >= time) noLoop(canvasName, elapsed);
-  }, canvasName, time, 500, {}, time);
+  _main.C.workingContext.textBaseline = baseline;
 }
 
-function showCreation() {
-  let animations = Array.prototype.slice.call(arguments);
-
-  for (let i = 0; i < animations.length; i++) {
-    let animation = animations[i];
-
-    if ((0, _utils.getType)(animation) == "Object") {
-      let dur = animation.dur || 2000,
-          ctx = animation.canvas || _main.C.workingCanvas,
-          next = animation.next || null,
-          name = animation.name,
-          dTime = animation.dTime || 14,
-          points = animation.points,
-          closed = animation.closed || false,
-          tension = animation.tension || 1,
-          smoothen = animation.smoothen == undefined ? true : animation.smoothen,
-          rateFunction = animation.rateFunction || _rate_functions.smooth,
-          syncWithTime = animation.syncWithTime || false,
-          t = 0,
-          dt = dTime / dur,
-          len = points.length - 1;
-
-      if (ctx.lineWidth > 0 && ctx.doStroke) {
-        if (typeof animation.draw != "function") {
-          if (smoothen) {
-            loop(name, elapsed => {
-              if (t > 1) {
-                noLoop(ctx.name, elapsed);
-              }
-
-              let i = Math.round(len * rateFunction(t)),
-                  ip1 = Math.round(len * rateFunction(t + dt)),
-                  ip2 = Math.round(len * rateFunction(t + dt * 2));
-
-              if (closed) {
-                i %= len;
-                ip1 %= len;
-                ip2 %= len;
-              }
-
-              let recentPoint = points[Math.round(len * rateFunction(t - dt))] || points[len - Math.abs(Math.round(len * rateFunction(t - dt)))],
-                  currentPoint = points[i],
-                  nextPoint = points[ip1],
-                  secondNextPoint = points[ip2],
-                  cp = (0, _geometry.getBezierControlPoints)(recentPoint, currentPoint, nextPoint, secondNextPoint, tension);
-              ctx.beginPath();
-              if (closed) ctx.moveTo(...points[Math.abs(Math.round(len * rateFunction(t)) % len)]);else ctx.moveTo(...points[Math.round(len * rateFunction(t))]);
-              ctx.bezierCurveTo(cp[0], cp[1], cp[2], cp[3], nextPoint[0], nextPoint[1]);
-              if (ctx.doStroke) ctx.stroke();
-              ctx.closePath();
-              if (!syncWithTime) t += dt;else t = elapsed / dur;
-            }, ctx.name, dTime, 50, {}, dur);
-          } else {
-            loop(name, elapsed => {
-              if (t > 1) {
-                noLoop(ctx.name, elapsed);
-              } else if (t == 0) {
-                ctx.beginPath();
-                ctx.moveTo(...points[Math.abs(Math.round(len * rateFunction(0)))]);
-              }
-
-              let currentPoint = points[Math.round(len * rateFunction(t)) % len];
-              ctx.lineTo(currentPoint[0], currentPoint[1]);
-              if (ctx.doStroke) ctx.stroke();
-              if (!syncWithTime) t += dt;else t = elapsed / dur;
-            }, ctx.name, dTime, 50, {}, dur);
-          }
-        } else {
-          animation.draw();
-        }
-      }
-
-      if (closed && animation.fill) {
-        (0, _create.animateFill)(name, ctx.name, animation.fill, animation.filler, animation.fillTime, 10, next);
-      }
-    } else {
-      throw new Error(i + 1 + (i == 0 ? "st" : i == 1 ? "nd" : i == 2 ? "rd" : "th") + " argument provided is not a object.");
-    }
-  }
-}
-/**
- * Draws a cartasian plain and moves canvas to center and inverts y-axis.
- * TODO: find a new name for this function
- * @param {object} cfg configurations for the plain.
- */
-
-
-function cartasianPlain(cfg) {
-  centreCanvas();
-  invertYAxis();
-  (0, _coordinate_systems.numberPlane)(cfg);
-}
-
-},{"./animations/create.js":3,"./color/color_reader.js":6,"./constants/colors.js":11,"./main.js":17,"./math/rate_functions.js":22,"./objects/coordinate_systems.js":26,"./objects/geometry.js":28,"./utils.js":33}],33:[function(require,module,exports){
+},{"../Extensions/Animations/constructs.js":1,"./color/color_reader.js":7,"./main.js":17,"./math/rate_functions.js":22,"./objects/coordinate_systems.js":26,"./objects/geometry.js":28,"./utils.js":33}],33:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6098,19 +6376,17 @@ exports.approximateIndexInArray = approximateIndexInArray;
 exports.arange = arange;
 exports.defineProperties = defineProperties;
 exports.doFillAndStroke = doFillAndStroke;
-exports.getType = getType;
+exports.type = void 0;
 
 var _main = require("./main.js");
 
 /**
  * Returns the type of object
- *
- * @param {*} stuff
  * @return {string}
  */
-function getType(stuff) {
-  return Object.prototype.toString.call(stuff).slice(8, -1);
-}
+const type = stuff => Object.prototype.toString.call(stuff).slice(8, -1);
+
+exports.type = type;
 
 Object.clone = Object.clone || function (toClone) {
   let newObj = {};
@@ -6125,12 +6401,13 @@ Object.clone = Object.clone || function (toClone) {
 /**
  * defines new properties to a given Object
  *
- * @param {object} target source object
- * @param {object} [target=window] target object
+ * @param {*} source source object
+ * @param {*} [target=window] target object
+ * @param {boolean} [assignToC=true] whether apply properties to C.
  */
 
 
-function defineProperties(source, target = window, assignToC = true) {
+function defineProperties(source, target = window, assignToC = false) {
   Object.assign(target, source);
   if (assignToC) Object.assign(_main.C.functions, source);
 }
@@ -6144,10 +6421,10 @@ function arange(start, end, step, rev = false) {
  * Applies default configurations to a given target object
  * Must be in the form of
  *
- * @param {object} _default default configurations
- * @param {object} [target={}] target object
+ * @param {Object} _default default configurations
+ * @param {Object} [target] target object. Default = {}.
  * @param {boolean} [deepApply=true] whether to apply defaults to deep nested objects
- * @return {object} applied object
+ * @return {Object} applied object
  */
 
 
@@ -6158,14 +6435,21 @@ function applyDefault(_default, target = {}, deepApply = true) {
     let prop = keys[i],
         defaultProp = _default[prop],
         targetProp = target[prop],
-        defaultType = getType(defaultProp),
-        targetType = getType(targetProp);
+        defaultType = type(defaultProp),
+        targetType = type(targetProp);
 
     if (defaultType == "Object" && deepApply) {
       target[prop] = applyDefault(defaultProp, targetProp, deepApply);
     }
 
-    if (targetType !== defaultType) target[prop] = _default[prop];
+    if (defaultType == "Undefined" || defaultType == "Null") {
+      // let the value in target as it is. Since the type is not defined in default configs
+      continue;
+    }
+
+    if (targetType !== defaultType) {
+      target[prop] = _default[prop];
+    }
   }
 
   return target;
@@ -6194,6 +6478,6 @@ function approximateIndexInArray(val, array, epsilon = 1e-6) {
   return -1;
 }
 
-window.applyDefault = applyDefault;
+window["applyDefault"] = applyDefault;
 
-},{"./main.js":17}]},{},[4]);
+},{"./main.js":17}]},{},[5]);

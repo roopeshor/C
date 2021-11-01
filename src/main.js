@@ -46,6 +46,7 @@ function C(fx, container, cfgs = {}) {
 		// event listeners
 		events: {},
 	};
+
 	// assign configs
 	let configs = applyDefault(defaultConfigs, cfgs);
 	/** @type {HTMLCanvasElement} */
@@ -78,18 +79,18 @@ function C(fx, container, cfgs = {}) {
 		defineProperties(configs, crc2d);
 		canvas.context = crc2d;
 		canvas.context.setTransform(configs.dpr, 0, 0, configs.dpr, 0, 0);
-		C.workingCanvas = canvas.context;
-		C.workingCanvas.savedStates = defaultConfigs;
-		C.workingCanvas.delayedAnimations = [];
+		C.workingContext = canvas.context;
+		C.workingContext.savedStates = defaultConfigs;
+		C.workingContext.delayedAnimations = [];
 	}
 	// set canvas's id and class to its name
 	canvas.id = canvasName;
 	canvas.classList.add(canvasName);
 	// add canvas to container
 	container.appendChild(canvas);
-	if (c) C.workingCanvas = canvas.context;
+	if (c) C.workingContext = canvas.context;
 	else prepareCanvas();
-	C.canvasList[canvasName] = canvas.context;
+	C.contextList[canvasName] = canvas.context;
 
 	// attach event listeners
 	let active = {};
@@ -103,6 +104,7 @@ function C(fx, container, cfgs = {}) {
 	// attach list of active listeners to canvas for other uses
 	canvas.events = active;
 	C.dpr = configs.dpr;
+	C.workingCanvas = canvas;
 	fx();
 }
 
@@ -110,7 +112,7 @@ function C(fx, container, cfgs = {}) {
  * List of available canvases
  * @type {Object}
  */
-C.canvasList = {};
+C.contextList = {};
 
 // C.delayedAnimations = [];
 
@@ -121,14 +123,20 @@ C.canvasList = {};
 C.nameID = 0;
 
 /**
- * Current working canvas
+ * Current working context
  * @type {CanvasRenderingContext2D}
  */
-C.workingCanvas; // index of current working canvas in `C.canvasList`
+C.workingContext; // index of current working canvas in `C.contextList`
+
+/**
+ * Current working canvas
+ * @type {HTMLCanvasElement}
+ */
+C.workingCanvas;
 
 /**
  * device pixel ratio applied to current working canvas.
- ** Note: this property is not explictly defined in C.workingCanvas for the sake of GCC
+ ** Note: this property is not explictly defined in C.workingContext for the sake of GCC
  * @type {number}
  */
 C.dpr;
@@ -164,13 +172,15 @@ C.resizeCanvas = function (cvs, configs) {
 	cvs.style.height = height + "px";
 	cvs.width = dpr * width;
 	cvs.height = dpr * height;
+	cvs.rWidth = width;
+	cvs.rHeight = height;
 };
 
 /**
  * Returns a canvas element with given params
  *
  * @param {Object} configs
- * @returns {HTMLCanvasElement|Element}
+ * @returns {HTMLCanvasElement}
  */
 C.makeCanvas = function (configs) {
 	const cvs = document.createElement("canvas");
@@ -216,7 +226,7 @@ C.debug = function (bool) {
  * @returns {CanvasRenderingContext2D} Canvas context
  */
 C.getCanvas = function (name) {
-	return C.canvasList[name] || C.workingCanvas;
+	return C.contextList[name] || C.workingContext;
 };
 
 /**
@@ -232,6 +242,35 @@ C._ANIMATIONLOG_ = [];
 C.functions = {};
 
 C.COLORLIST = {}; //list of colors
+
+function defineConstant(constantList) {
+	let constants = Object.keys(constantList);
+	for (let i = 0; i < constants.length; i++) {
+		let constant = constants[i];
+		Object.defineProperty(window, constant, {
+			configurable: true,
+			enumerable: true,
+			get: constantList[constant],
+			set: function (val) {
+				Object.defineProperty(window, constant, {
+					configurable: true,
+					enumerable: true,
+					value: val,
+					writable: true,
+				});
+			},
+		});
+	}
+}
+defineConstant({
+	CENTERX: function () {
+		return C.workingCanvas.rWidth / 2;
+	},
+	CENTERY: function () {
+		return C.workingCanvas.rHeight / 2;
+	},
+});
+
 // register to window
 window["C"] = C;
 

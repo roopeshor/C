@@ -4,15 +4,18 @@ import { cos, sin } from "../../src/math/basic.js";
 import { line, point } from "../../src/objects/geometry.js";
 import {
   background,
-  initContrastedCanvas,
-  loop
+  loop,
+	stroke,
+	translate
 } from "../../src/settings.js";
 const W = 400;
 const H = 400;
 
 C(
 	() => {
-		initContrastedCanvas();
+		background(0);
+		translate(CENTERX, CENTERY);
+		stroke(yellow)
 		var vertex = [
 			[-50, -50, -50],
 			[50, -50, -50],

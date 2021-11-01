@@ -1,3 +1,5 @@
+import { translate } from "../../src/settings.js";
+
 let coeffs = [
 		[0, 0],
 		[1 - PHI, 0],
@@ -15,7 +17,7 @@ let coeffs = [
 		[-0.512511498387847167, 0.521295573094847167],
 	],
 	coeff = coeffs[2],
-	s = 1/4,
+	s = 1 / 4,
 	W = 400,
 	H = 400,
 	// W = 1980 * s,
@@ -25,14 +27,14 @@ let coeffs = [
 	cy = coeff[1],
 	R = sqrt(cx ** 2 + cy ** 2) + 90 ** 2,
 	R2 = R ** 2,
-	unit = H ,
+	unit = H,
 	pat = ColorPalettes.Inferno,
 	iterCount = 0;
 C(
 	() => {
 		background(0);
-		centreCanvas();
-		let ctx = C.workingCanvas,
+		translate(CENTERX, CENTERY);
+		let ctx = C.workingContext,
 			px = 1 / ctx.dpr,
 			x = -W / 2,
 			time = window.performance.now(),

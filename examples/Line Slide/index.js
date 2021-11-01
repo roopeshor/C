@@ -1,16 +1,11 @@
-import { Arc, Line } from "../../src/animations/create.js";
-import { BLUE, GREEN, ORANGE, RED } from "../../src/constants/colors.js";
+import { Manim } from "../../Extensions/Colors/importable.js";
+import { Line, Arc } from "../../Extensions/Animations/constructs.js";
 import { C } from "../../src/main.js";
-import {
-	background,
-	centreCanvas,
-	showCreation,
-	stroke,
-	strokeWidth,
-} from "../../src/settings.js";
+import { background, stroke, strokeWidth } from "../../src/settings.js";
 
 const W = 400;
 const H = 400;
+const { BLUE, GREEN, ORANGE, RED } = Manim;
 C.debug(true);
 function createAxis(canvasID, xAxis, yAxis) {
 	showCreation(

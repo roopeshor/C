@@ -5,12 +5,13 @@ import {
 } from "../../src/image/processing.js";
 import { C } from "../../src/main.js";
 import { rect } from "../../src/objects/geometry.js";
-import { initContrastedCanvas, putImageData, setImageSmoothing } from "../../src/settings.js";
+import { background, putImageData, setImageSmoothing, translate } from "../../src/settings.js";
 
 C(
 	() => {
 		const imgURL = "./images/braces.png";
-		initContrastedCanvas();
+		background(0);
+		translate(CENTERX, CENTERY);
 		setImageSmoothing(false);
 		loadImagePromise(imgURL).then((img) => {
 			let dat = imageToData(img, 0, 0, 400, 400);

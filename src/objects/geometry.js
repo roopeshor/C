@@ -16,7 +16,7 @@ import { doFillAndStroke } from "../utils.js";
  * @param {number} [startAngle=0] The angle at which the arc starts in radians, measured from the positive x-axis.
  */
 function arc(x, y, r, angle = Math.PI / 2, startAngle = 0) {
-	let ctx = C.workingCanvas;
+	let ctx = C.workingContext;
 	if (!ctx.pathStarted) ctx.beginPath();
 	ctx.arc(x, y, r, startAngle, startAngle + angle);
 	if (!ctx.pathStarted) doFillAndStroke(ctx);
@@ -31,7 +31,7 @@ function arc(x, y, r, angle = Math.PI / 2, startAngle = 0) {
  * @param {boolean} [doStroke=false] whether to stroke or not
  */
 function point(x, y, size = 10, doStroke = false) {
-	let ctx = C.workingCanvas;
+	let ctx = C.workingContext;
 	ctx.beginPath();
 	ctx.arc(x, y, size / 2, 0, Math.PI * 2);
 	ctx.fill();
@@ -49,7 +49,7 @@ function point(x, y, size = 10, doStroke = false) {
  * @param {number} [startAngle=0] The angle at which the arc starts in radians, measured from the positive x-axis.
  */
 function circularSegment(x, y, r, angle = Math.PI / 2, startAngle = 0) {
-	let ctx = C.workingCanvas;
+	let ctx = C.workingContext;
 	if (!ctx.pathStarted) ctx.beginPath();
 	ctx.arc(x, y, r, startAngle, startAngle + angle);
 	if (!ctx.pathStarted) doFillAndStroke(ctx);
@@ -63,7 +63,7 @@ function circularSegment(x, y, r, angle = Math.PI / 2, startAngle = 0) {
  * @param {number} r radius
  */
 function circle(x, y, r) {
-	let ctx = C.workingCanvas;
+	let ctx = C.workingContext;
 	ctx.beginPath();
 	ctx.arc(x, y, r, 0, Math.PI * 2);
 	doFillAndStroke(ctx);
@@ -82,7 +82,7 @@ function circle(x, y, r) {
  * @param {number} [angle=6.28318530717958] central angle of ellipse. Use negative values to rotate it anticlockwise
  */
 function ellipse(x, y, radius1, radius2, rotation = 0, startAngle = 0, angle = Math.PI * 2) {
-	let ctx = C.workingCanvas;
+	let ctx = C.workingContext;
 	if (!ctx.pathStarted) ctx.beginPath();
 	ctx.ellipse(x, y, radius1, radius2, rotation, startAngle, startAngle + angle);
 	if (!ctx.pathStarted) doFillAndStroke(ctx);
@@ -100,7 +100,7 @@ function ellipse(x, y, radius1, radius2, rotation = 0, startAngle = 0, angle = M
  * @param {number} y3 y-axis coord of the end point
  */
 function bezier(cpx1, cpy1, cpx2, cpy2, x3, y3) {
-	let ctx = C.workingCanvas,
+	let ctx = C.workingContext,
 		pathStarted = ctx.pathStarted;
 	if (!pathStarted) ctx.beginPath();
 	ctx.bezierCurveTo(cpx1, cpy1, cpx2, cpy2, x3, y3);
@@ -117,7 +117,7 @@ function bezier(cpx1, cpy1, cpx2, cpy2, x3, y3) {
  * @param {number} [startAngle=0] The angle at which the arc starts in radians, measured from the positive x-axis.
  */
 function sector(x, y, radius, angle = Math.PI / 2, startAngle = 0) {
-	let ctx = C.workingCanvas;
+	let ctx = C.workingContext;
 	ctx.beginPath();
 	ctx.moveTo(x, y);
 	ctx.arc(x, y, radius, startAngle, startAngle + angle);
@@ -164,7 +164,7 @@ function smoothCurveThroughPointsTo(points, tension = 1, closed = true) {
 			nextPoint = points[i + 1],
 			secondNextPoint = i != points.length - 2 ? points[i + 2] : closed ? points[1] : nextPoint,
 			cp = getBezierControlPoints(recentPoint, currentPoint, nextPoint, secondNextPoint, tension);
-		C.workingCanvas.bezierCurveTo(cp[0], cp[1], cp[2], cp[3], nextPoint[0], nextPoint[1]);
+		C.workingContext.bezierCurveTo(cp[0], cp[1], cp[2], cp[3], nextPoint[0], nextPoint[1]);
 	}
 }
 
@@ -175,7 +175,7 @@ function smoothCurveThroughPointsTo(points, tension = 1, closed = true) {
  * @param {number} tension tension of the curve
  */
 function smoothCurveThroughPoints(points, tension = 1, closed = true) {
-	let ctx = C.workingCanvas;
+	let ctx = C.workingContext;
 	ctx.beginPath();
 	ctx.moveTo(points[0][0], points[0][1]);
 	smoothCurveThroughPointsTo(points, tension, closed);
@@ -203,7 +203,7 @@ function smoothCurveThroughPoints(points, tension = 1, closed = true) {
  * @global
  */
 function quadraticCurve() {
-	let ctx = C.workingCanvas,
+	let ctx = C.workingContext,
 		args = arguments;
 	if (args.length == 4) {
 		ctx.quadraticCurveTo(args[0], args[1], args[2], args[3]);
@@ -224,7 +224,7 @@ function quadraticCurve() {
  * @param {number} outerRadius radius of the outer circle
  */
 function annulus(x, y, innerRadius, outerRadius) {
-	let ctx = C.workingCanvas;
+	let ctx = C.workingContext;
 	ctx.beginPath();
 	ctx.arc(x, y, innerRadius, 0, 2 * Math.PI, false);
 	ctx.moveTo(outerRadius, 0);
@@ -243,7 +243,7 @@ function annulus(x, y, innerRadius, outerRadius) {
  * @param {number} startAngle The angle at which the sector starts in radians, measured from the positive x-axis.
  */
 function annulusSector(x, y, innerRadius, outerRadius, angle, startAngle) {
-	let ctx = C.workingCanvas;
+	let ctx = C.workingContext;
 	ctx.beginPath();
 	ctx.arc(x, y, innerRadius, startAngle, startAngle + angle, false);
 	ctx.arc(x, y, outerRadius, startAngle + angle, startAngle, true);
@@ -282,7 +282,7 @@ function angle(p1, p2, p3, p4, radius = 20, extender = 10, otherAngle = false, a
 				4: [a3, a2],
 			},
 			dir = angleDirs[angleDir],
-			ctx = C.workingCanvas;
+			ctx = C.workingContext;
 		if (otherAngle) {
 			startAngle = dir[1];
 			ang = dir[0] - dir[1];
@@ -335,7 +335,7 @@ function arcBetweenPoints(x1, y1, x2, y2, radius, otherArc = false) {
 		// TODO: should it be `throw Error()`?
 		console.error("Can't draw a arc between points. Given points are exactly same");
 	let center = circleIntersection([x1, y1], radius, [x2, y2], radius)[0],
-		ctx = C.workingCanvas,
+		ctx = C.workingContext,
 		angleFromXAxis = Math.atan2(y1 - center[1], x1 - center[0]),
 		centralAngle = Math.atan2(y2 - center[1], x2 - center[0]) - angleFromXAxis;
 	if (!ctx.pathStarted) {
@@ -359,7 +359,7 @@ function arcBetweenPoints(x1, y1, x2, y2, radius, otherArc = false) {
  * @param {number} y2 end y coord
  */
 function line(x1, y1, x2, y2) {
-	let ctx = C.workingCanvas;
+	let ctx = C.workingContext;
 	ctx.beginPath();
 	ctx.moveTo(x1, y1);
 	ctx.lineTo(x2, y2);
@@ -376,7 +376,7 @@ function line(x1, y1, x2, y2) {
  * @param {number} height height
  */
 function rect(x, y, width, height) {
-	let ctx = C.workingCanvas;
+	let ctx = C.workingContext;
 	ctx.beginPath();
 	ctx.rect(x, y, width, height);
 	if (ctx.doFill) ctx.fill();
@@ -399,7 +399,7 @@ function rect(x, y, width, height) {
 function polygon() {
 	let args = arguments;
 	if (args.length > 2) {
-		let ctx = C.workingCanvas,
+		let ctx = C.workingContext,
 			start = args[0];
 		ctx.beginPath();
 		ctx.moveTo(start[0], start[1]);
@@ -433,7 +433,7 @@ function square(x, y, sideLength) {
  * @param {Array<number>} p4 4th point
  */
 function quad(p1, p2, p3, p4) {
-	let ctx = C.workingCanvas;
+	let ctx = C.workingContext;
 	ctx.beginPath();
 	ctx.moveTo(p1[0], p1[1]);
 	ctx.lineTo(p2[0], p2[1]);
@@ -453,7 +453,7 @@ function quad(p1, p2, p3, p4) {
  * @param {Array<number>} p3 third point
  */
 function triangle(p1, p2, p3) {
-	let ctx = C.workingCanvas;
+	let ctx = C.workingContext;
 	ctx.beginPath();
 	ctx.moveTo(p1[0], p1[1]);
 	ctx.lineTo(p2[0], p2[1]);
@@ -502,7 +502,7 @@ function regularPolygon(x, y, sides, sideLength, rotation = 0) {
 function regularPolygonWithRadius(x, y, sides, radius, rotation = 0) {
 	let i = 0,
 		e = (Math.PI * 2) / sides,
-		ctx = C.workingCanvas;
+		ctx = C.workingContext;
 	rotation += e / 2;
 	let initial = [Math.cos(rotation) * radius + x, Math.sin(rotation) * radius + y];
 	ctx.beginPath();

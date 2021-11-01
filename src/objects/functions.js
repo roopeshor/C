@@ -87,7 +87,7 @@ function parametricFunction(args) {
 	// draw the plot
 	if (args.draw) plot();
 	function plot() {
-		let ctx = C.workingCanvas;
+		let ctx = C.workingContext;
 		for (let i = 0; i < points.length; i++) {
 			let p = points[i];
 			if (smoothen) {
@@ -103,7 +103,7 @@ function parametricFunction(args) {
 			}
 		}
 	}
-	let ctx = C.workingCanvas;
+	let ctx = C.workingContext;
 	return {
 		points: points[0],
 		dur: args.dur,
@@ -123,14 +123,14 @@ function parametricFunction(args) {
 					loop(
 						"parametric-plot-" + counter.parametricFunction++,
 						smoothed(j),
-						C.workingCanvas.name,
+						C.workingContext.name,
 						dt
 					);
 				} else {
 					loop(
 						"parametric-plot-" + counter.parametricFunction++,
 						nonSmoothed(j),
-						C.workingCanvas.name,
+						C.workingContext.name,
 						dt
 					);
 				}
@@ -216,7 +216,7 @@ function heatPlot(args) {
 	};
 	args = applyDefault(defaultConfigs, args, false);
 	let { min, max, colors, resolution, plotFunction, interpolator } = args,
-		ctx = C.workingCanvas,
+		ctx = C.workingContext,
 		unitSizeX = args.unitSpace[0] / args.unitValue[0],
 		unitSizeY = args.unitSpace[1] / args.unitValue[1],
 		UVX = args.unitValue[0] / args.unitSpace[0],

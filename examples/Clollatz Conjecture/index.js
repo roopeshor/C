@@ -2,7 +2,8 @@ import { lerpColorArray } from "../../src/color/interpolation.js";
 import { ColorPalettes } from "../../src/constants/color_palettes.js";
 import { pixel } from "../../src/image/image.js";
 import { C } from "../../src/main.js";
-import { background, cartasianPlain } from "../../src/settings.js";
+import { numberPlane } from "../../src/objects/coordinate_systems.js";
+import { background, translate } from "../../src/settings.js";
 
 // complex operators
 /**
@@ -99,7 +100,8 @@ const csub = (a, b) => {
 C(
 	() => {
 		background(0);
-		cartasianPlain({
+		translate(CENTERX, CENTERY);
+		numberPlane({
 			xAxis: {
 				range: [0, 4],
 			},

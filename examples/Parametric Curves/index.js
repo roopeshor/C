@@ -1,4 +1,4 @@
-import { GREEN } from "../../src/constants/colors.js";
+import { Manim } from "../../Extensions/Colors/importable.js";
 import { E, PI, TAU } from "../../src/constants/math.js";
 import { C } from "../../src/main.js";
 import { lcm } from "../../src/math/aritmetics.js";
@@ -6,11 +6,11 @@ import { abs, cos, sgn, sin } from "../../src/math/basic.js";
 import { axes } from "../../src/objects/coordinate_systems.js";
 import {
 	background,
-	initContrastedCanvas,
 	noFill,
 	permaBackground,
 	stroke,
 	strokeWidth,
+	translate
 } from "../../src/settings.js";
 
 const W = 300;
@@ -19,8 +19,12 @@ const CFG = {
 	width: W,
 	height: H,
 };
+const {
+	GREEN
+} = Manim;
 function drawAxis(min = -4, max = 4, dx = 1) {
-	initContrastedCanvas();
+	background(0);
+	translate(CENTERX, CENTERY)
 	strokeWidth(2);
 	stroke(GREEN);
 	noFill();

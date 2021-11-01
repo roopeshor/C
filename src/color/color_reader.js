@@ -1,4 +1,4 @@
-import * as namedColors from "../constants/named_colors.js";
+import * as Colors from "../constants/colors.js";
 
 // adapeted from p5.js
 // Full color string patterns. The capture groups are necessary.
@@ -52,7 +52,7 @@ function readColor(...color) {
 		let str = c1.replace(/\s/g, "").toLowerCase();
 		// convert string to array if it is a named colour.
 
-		if (namedColors[str]) result = readColor(namedColors[str]).rgbaA;
+		if (Colors[str]) result = readColor(Colors[str]).rgbaA;
 		else if (HEX3.test(str)) {
 			result = HEX3.exec(str)
 				.slice(1)

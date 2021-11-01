@@ -1,4 +1,4 @@
-import { BLUE, GREY, WHITE } from "../constants/colors.js";
+import { grey, white } from "../constants/colors.js";
 import { C } from "../main.js";
 import {
 	fill,
@@ -8,7 +8,7 @@ import {
 	save,
 	stroke,
 	strokeWidth,
-	translate
+	translate,
 } from "../settings.js";
 import { applyDefault, arange } from "../utils.js";
 import { arrowTip } from "./arrows.js";
@@ -16,6 +16,7 @@ import { functionGraph, heatPlot, parametricFunction } from "./functions.js";
 import { line } from "./geometry.js";
 import { fillText } from "./text.js";
 
+const BLUE = "#58c4dd";
 function isArray(o) {
 	return Array.isArray(o);
 }
@@ -61,11 +62,12 @@ const ORIGIN = [0, 0];
  * * getFunctionGraph      <function> : Draws a function graph whose unit sizing are predefined by the axes. see {@link functionGraph} to see possible configurations.
  */
 function axes(args = {}) {
-	const ctx = C.workingCanvas;
+	const ctx = C.workingContext;
+	const cvs = C.workingCanvas;
 	// default configurations
 	const defaultConfigs = {
 		xAxis: {
-			length: ctx.canvas.width,
+			length: cvs.rWidth,
 			includeTick: true,
 			includeLeftTip: true,
 			includeRightTip: true,
@@ -73,7 +75,7 @@ function axes(args = {}) {
 			includeNumbers: false,
 		},
 		yAxis: {
-			length: ctx.canvas.height,
+			length: cvs.rHeight,
 			rotation: Math.PI / 2,
 			textRotation: -Math.PI / 2,
 			textDirection: [0, 0.4],
@@ -136,7 +138,6 @@ function axes(args = {}) {
 	return Object.assign(ret, getPlotterList(unitSpace, unitValue, ret));
 }
 
-
 const TEXT_DIR = [0, -0.8];
 /**
  * Creates a numberLine with parameters in a object
@@ -164,8 +165,8 @@ const TEXT_DIR = [0, -0.8];
  * @param {number} [args.textRotation = 0] Amount to rotate text
  * @param {number} args.decimalPlaces Number of decimal places in text. By default value is number of decimals in step
  *
- * @param {string} [args.color = GREY] Color of axis and ticks
- * @param {string} [args.textColor = WHITE] Color of text
+ * @param {string} [args.color = grey] Color of axis and ticks
+ * @param {string} [args.textColor = white] Color of text
  *
  * @returns {Object} configurations about the number line
  *
@@ -175,7 +176,8 @@ const TEXT_DIR = [0, -0.8];
  * * unitSpace {Array<number>} How much a unit is in px in x and y directions.
  */
 function numberLine(args = {}) {
-	const ctx = C.workingCanvas;
+	const ctx = C.workingContext;
+	const cvs = C.workingCanvas;
 	const defaultConfigs = {
 		rotation: 0,
 		lineWidth: 2,
@@ -184,7 +186,7 @@ function numberLine(args = {}) {
 		tipHeight: 10,
 		tickHeight: 10,
 		textRotation: 0,
-		length: ctx.canvas.width,
+		length: parseInt(cvs.rWidth),
 		longerTickMultiple: 1.5,
 
 		center: ORIGIN,
@@ -200,8 +202,8 @@ function numberLine(args = {}) {
 		includeRightTip: false,
 		excludeOriginTick: false,
 
-		color: GREY,
-		textColor: WHITE,
+		color: grey,
+		textColor: white,
 	};
 	args = applyDefault(defaultConfigs, args);
 	const {
@@ -352,11 +354,11 @@ function numberLine(args = {}) {
  * * getFunctionGraph      <function>: Draws a function graph whose unit sizing are predefined by the axes. see {@link functionGraph} to see possible configurations.
  */
 function numberPlane(args = {}) {
-	const ctx = C.workingCanvas;
+	const cvs = C.workingCanvas;
 	// default configurations
 	const defaultConfigs = {
 		xAxis: {
-			length: ctx.canvas.width,
+			length: parseInt(cvs.rWidth),
 
 			includeTick: true,
 			includeNumbers: true,
@@ -366,7 +368,7 @@ function numberPlane(args = {}) {
 			unitSpace: 50,
 		},
 		yAxis: {
-			length: ctx.canvas.height,
+			length: parseInt(cvs.style.height),
 			textRotation: -Math.PI / 2,
 
 			unitSpace: 50,
@@ -383,7 +385,7 @@ function numberPlane(args = {}) {
 			subgridLineWidth: 0.7,
 
 			color: BLUE + "a0",
-			subgridLineColor: GREY + "50",
+			subgridLineColor: grey + "50",
 		},
 		center: ORIGIN,
 	};

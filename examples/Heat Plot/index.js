@@ -3,7 +3,7 @@ import { ColorPalettes } from "../../src/constants/color_palettes.js";
 import { PI, TAU } from "../../src/constants/math.js";
 import { C } from "../../src/main.js";
 import { axes } from "../../src/objects/coordinate_systems.js";
-import { background, centreCanvas } from "../../src/settings.js";
+import { background } from "../../src/settings.js";
 
 const container = document.querySelector(".container");
 const W = 300;
@@ -32,7 +32,7 @@ const plots = [
 			"3π/2",
 			"2π",
 		],
-		colors: getInterpolatedColorList(Spectral, -2, 2, 0.5, 0.8),
+		colors: getInterpolatedColorList(Spectral, -2, 2, 0.8),
 	},
 
 	{
@@ -46,7 +46,7 @@ const plots = [
 		},
 		resolution: 2,
 		includeNumbers: true,
-		colors: getInterpolatedColorList(Spectral, 0, 7, 1, 0.8),
+		colors: getInterpolatedColorList(Spectral, 0, 7, 0.8),
 	},
 
 	{
@@ -61,7 +61,7 @@ const plots = [
 		},
 		includeNumbers: true,
 		numbersToInclude: ["-2π", "-π", "0", "π", "2π"],
-		colors: getInterpolatedColorList(Spectral, -5, 5, 1, 0.8),
+		colors: getInterpolatedColorList(Spectral, -5, 5, 0.8),
 	},
 
 	{
@@ -75,7 +75,7 @@ const plots = [
 			yAxis: [-6, 6, 1],
 		},
 		includeNumbers: true,
-		colors: getInterpolatedColorList(Spectral, -5, 5, 1, 0.8),
+		colors: getInterpolatedColorList(Spectral, -5, 5, 0.8),
 	},
 ];
 

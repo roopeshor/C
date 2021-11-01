@@ -1,15 +1,12 @@
 import {
 	Circle,
 	Line
-} from "../../src/animations/create.js";
+} from "../../Extensions/Animations/constructs.js";
 import { C } from "../../src/main.js";
 import { circleIntersection, lineIntersection } from "../../src/math/points.js";
 import {
 	background,
-	centreCanvas,
-	showCreation,
 	strokeWidth,
-	wait
 } from "../../src/settings.js";
 
 const W = 300;
