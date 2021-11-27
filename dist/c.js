@@ -672,7 +672,7 @@ _webgl.WebGL.prototype.perspective = function (fov, aspect, near, far) {
 
 };
 
-},{"../color/color_reader.js":7,"./m4.js":1,"./webgl.js":3}],3:[function(require,module,exports){
+},{"../color/color_reader.js":6,"./m4.js":1,"./webgl.js":3}],3:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1025,411 +1025,76 @@ class WebGL {
 
 exports.WebGL = WebGL;
 
-},{"../main.js":17,"../utils.js":32,"./m4.js":1}],4:[function(require,module,exports){
+},{"../main.js":16,"../utils.js":31,"./m4.js":1}],4:[function(require,module,exports){
 "use strict";
 
-var _C = _interopRequireWildcard(require("./c.js"));
-
 var _utils = require("./utils.js");
+
+var _main = require("./main.js");
+
+var _settings = _interopRequireWildcard(require("./settings.js"));
+
+var _constants$math = _interopRequireWildcard(require("./constants/math.js"));
+
+var _constants$drawing = _interopRequireWildcard(require("./constants/drawing.js"));
+
+var _constants$color_palettes = _interopRequireWildcard(require("./constants/color_palettes.js"));
+
+var _color$gradients = _interopRequireWildcard(require("./color/gradients.js"));
+
+var _color$random = _interopRequireWildcard(require("./color/random.js"));
+
+var _color$color_reader = _interopRequireWildcard(require("./color/color_reader.js"));
+
+var _color$interpolation = _interopRequireWildcard(require("./color/interpolation.js"));
+
+var _color$color_converters = _interopRequireWildcard(require("./color/color_converters.js"));
+
+var _image$image = _interopRequireWildcard(require("./image/image.js"));
+
+var _image$processing = _interopRequireWildcard(require("./image/processing.js"));
+
+var _objects$tex = _interopRequireWildcard(require("./objects/tex.js"));
+
+var _objects$text = _interopRequireWildcard(require("./objects/text.js"));
+
+var _objects$braces = _interopRequireWildcard(require("./objects/braces.js"));
+
+var _objects$arrows = _interopRequireWildcard(require("./objects/arrows.js"));
+
+var _objects$geometry = _interopRequireWildcard(require("./objects/geometry.js"));
+
+var _objects$functions = _interopRequireWildcard(require("./objects/functions.js"));
+
+var _objects$coordinate_systems = _interopRequireWildcard(require("./objects/coordinate_systems.js"));
+
+var _objects$more_shapes = _interopRequireWildcard(require("./objects/more_shapes.js"));
+
+var _math$functions = _interopRequireWildcard(require("./math/functions.js"));
+
+var _math$points = _interopRequireWildcard(require("./math/points.js"));
+
+var _math$random = _interopRequireWildcard(require("./math/random.js"));
+
+var _math$aritmetics = _interopRequireWildcard(require("./math/aritmetics.js"));
+
+var _math$rate_functions = _interopRequireWildcard(require("./math/rate_functions.js"));
+
+var _WebGL$webgl = _interopRequireWildcard(require("./WebGL/webgl.js"));
+
+var _WebGL$settings = _interopRequireWildcard(require("./WebGL/settings.js"));
 
 function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
 
 function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
-(0, _utils.defineProperties)(_C);
+//! Experimental features
+[{
+  defineProperties: _utils.defineProperties,
+  C: _main.C
+}, _settings, _constants$math, _constants$drawing, _constants$color_palettes, _color$gradients, _color$random, _color$color_reader, _color$interpolation, _color$color_converters, _image$image, _image$processing, _objects$tex, _objects$text, _objects$braces, _objects$arrows, _objects$geometry, _objects$functions, _objects$coordinate_systems, _objects$more_shapes, _math$functions, _math$points, _math$random, _math$aritmetics, _math$rate_functions, _WebGL$webgl, _WebGL$settings].forEach(value => (0, _utils.defineProperties)(value));
 
-},{"./c.js":5,"./utils.js":32}],5:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-var _exportNames = {
-  defineProperties: true,
-  C: true
-};
-Object.defineProperty(exports, "C", {
-  enumerable: true,
-  get: function () {
-    return _main.C;
-  }
-});
-Object.defineProperty(exports, "defineProperties", {
-  enumerable: true,
-  get: function () {
-    return _utils.defineProperties;
-  }
-});
-
-var _utils = require("./utils.js");
-
-var _settings = require("./settings.js");
-
-Object.keys(_settings).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _settings[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _settings[key];
-    }
-  });
-});
-
-var _main = require("./main.js");
-
-var _math = require("./constants/math.js");
-
-Object.keys(_math).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _math[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _math[key];
-    }
-  });
-});
-
-var _drawing = require("./constants/drawing.js");
-
-Object.keys(_drawing).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _drawing[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _drawing[key];
-    }
-  });
-});
-
-var _color_palettes = require("./constants/color_palettes.js");
-
-Object.keys(_color_palettes).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _color_palettes[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _color_palettes[key];
-    }
-  });
-});
-
-var _gradients = require("./color/gradients.js");
-
-Object.keys(_gradients).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _gradients[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _gradients[key];
-    }
-  });
-});
-
-var _random = require("./color/random.js");
-
-Object.keys(_random).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _random[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _random[key];
-    }
-  });
-});
-
-var _color_reader = require("./color/color_reader.js");
-
-Object.keys(_color_reader).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _color_reader[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _color_reader[key];
-    }
-  });
-});
-
-var _interpolation = require("./color/interpolation.js");
-
-Object.keys(_interpolation).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _interpolation[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _interpolation[key];
-    }
-  });
-});
-
-var _color_converters = require("./color/color_converters.js");
-
-Object.keys(_color_converters).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _color_converters[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _color_converters[key];
-    }
-  });
-});
-
-var _image = require("./image/image.js");
-
-Object.keys(_image).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _image[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _image[key];
-    }
-  });
-});
-
-var _processing = require("./image/processing.js");
-
-Object.keys(_processing).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _processing[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _processing[key];
-    }
-  });
-});
-
-var _tex = require("./objects/tex.js");
-
-Object.keys(_tex).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _tex[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _tex[key];
-    }
-  });
-});
-
-var _text = require("./objects/text.js");
-
-Object.keys(_text).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _text[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _text[key];
-    }
-  });
-});
-
-var _braces = require("./objects/braces.js");
-
-Object.keys(_braces).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _braces[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _braces[key];
-    }
-  });
-});
-
-var _arrows = require("./objects/arrows.js");
-
-Object.keys(_arrows).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _arrows[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _arrows[key];
-    }
-  });
-});
-
-var _geometry = require("./objects/geometry.js");
-
-Object.keys(_geometry).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _geometry[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _geometry[key];
-    }
-  });
-});
-
-var _functions = require("./objects/functions.js");
-
-Object.keys(_functions).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _functions[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _functions[key];
-    }
-  });
-});
-
-var _coordinate_systems = require("./objects/coordinate_systems.js");
-
-Object.keys(_coordinate_systems).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _coordinate_systems[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _coordinate_systems[key];
-    }
-  });
-});
-
-var _more_shapes = require("./objects/more_shapes.js");
-
-Object.keys(_more_shapes).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _more_shapes[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _more_shapes[key];
-    }
-  });
-});
-
-var _functions2 = require("./math/functions.js");
-
-Object.keys(_functions2).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _functions2[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _functions2[key];
-    }
-  });
-});
-
-var _points = require("./math/points.js");
-
-Object.keys(_points).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _points[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _points[key];
-    }
-  });
-});
-
-var _random2 = require("./math/random.js");
-
-Object.keys(_random2).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _random2[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _random2[key];
-    }
-  });
-});
-
-var _aritmetics = require("./math/aritmetics.js");
-
-Object.keys(_aritmetics).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _aritmetics[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _aritmetics[key];
-    }
-  });
-});
-
-var _rate_functions = require("./math/rate_functions.js");
-
-Object.keys(_rate_functions).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _rate_functions[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _rate_functions[key];
-    }
-  });
-});
-
-var _webgl = require("./WebGL/webgl.js");
-
-Object.keys(_webgl).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _webgl[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _webgl[key];
-    }
-  });
-});
-
-var _settings2 = require("./WebGL/settings.js");
-
-Object.keys(_settings2).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _settings2[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _settings2[key];
-    }
-  });
-});
-
-},{"./WebGL/settings.js":2,"./WebGL/webgl.js":3,"./color/color_converters.js":6,"./color/color_reader.js":7,"./color/gradients.js":8,"./color/interpolation.js":9,"./color/random.js":10,"./constants/color_palettes.js":11,"./constants/drawing.js":13,"./constants/math.js":14,"./image/image.js":15,"./image/processing.js":16,"./main.js":17,"./math/aritmetics.js":18,"./math/functions.js":19,"./math/points.js":20,"./math/random.js":21,"./math/rate_functions.js":22,"./objects/arrows.js":23,"./objects/braces.js":24,"./objects/coordinate_systems.js":25,"./objects/functions.js":26,"./objects/geometry.js":27,"./objects/more_shapes.js":28,"./objects/tex.js":29,"./objects/text.js":30,"./settings.js":31,"./utils.js":32}],6:[function(require,module,exports){
+},{"./WebGL/settings.js":2,"./WebGL/webgl.js":3,"./color/color_converters.js":5,"./color/color_reader.js":6,"./color/gradients.js":7,"./color/interpolation.js":8,"./color/random.js":9,"./constants/color_palettes.js":10,"./constants/drawing.js":12,"./constants/math.js":13,"./image/image.js":14,"./image/processing.js":15,"./main.js":16,"./math/aritmetics.js":17,"./math/functions.js":18,"./math/points.js":19,"./math/random.js":20,"./math/rate_functions.js":21,"./objects/arrows.js":22,"./objects/braces.js":23,"./objects/coordinate_systems.js":24,"./objects/functions.js":25,"./objects/geometry.js":26,"./objects/more_shapes.js":27,"./objects/tex.js":28,"./objects/text.js":29,"./settings.js":30,"./utils.js":31}],5:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1570,7 +1235,7 @@ function HSVToRGB(hue, saturation, value) {
   return [r, g, b];
 }
 
-},{}],7:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1695,7 +1360,7 @@ function readColor(...color) {
   };
 }
 
-},{"../constants/colors.js":12}],8:[function(require,module,exports){
+},{"../constants/colors.js":11}],7:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1762,7 +1427,7 @@ function linearGradient(initialPoint, finalPoint, colStops) {
   return gradient;
 }
 
-},{"../main.js":17,"../utils.js":32}],9:[function(require,module,exports){
+},{"../main.js":16,"../utils.js":31}],8:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1865,7 +1530,7 @@ function getInterpolatedColorList(colorPalatte, min = 0, max = 5, alpha) {
   return colorObj;
 }
 
-},{"./color_reader.js":7}],10:[function(require,module,exports){
+},{"./color_reader.js":6}],9:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1907,7 +1572,7 @@ function randomDefinedColor() {
   return _colors.Colors[definedColorList[(0, _random.randomInt)(definedColorList.length - 1)]];
 }
 
-},{"../constants/colors.js":12,"../math/random.js":21}],11:[function(require,module,exports){
+},{"../constants/colors.js":11,"../math/random.js":20}],10:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1970,7 +1635,7 @@ for (var p in colorPalettes) colorPalettes[p] = colorPalettes[p].split(" ");
 const ColorPalettes = colorPalettes;
 exports.ColorPalettes = ColorPalettes;
 
-},{}],12:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2131,7 +1796,7 @@ const Colors = {
 };
 exports.Colors = Colors;
 
-},{}],13:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2227,7 +1892,7 @@ exports.ROUND = ROUND;
 exports.SQUARE = SQUARE;
 exports.BUTT = BUTT;
 
-},{}],14:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2264,7 +1929,7 @@ exports.LN10 = LN10;
 exports.LN2 = LN2;
 exports.E = E;
 
-},{}],15:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2362,7 +2027,7 @@ function loadImagePromise(url) {
   });
 }
 
-},{"../main.js":17}],16:[function(require,module,exports){
+},{"../main.js":16}],15:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2540,7 +2205,7 @@ function imageToData(image, x, y, width, height, smoothen = false) {
   return ctx.getImageData(x, y, width, height);
 }
 
-},{"../color/color_reader.js":7,"../main.js":17}],17:[function(require,module,exports){
+},{"../color/color_reader.js":6,"../main.js":16}],16:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2833,7 +2498,7 @@ defineConstant({
 
 window["C"] = C;
 
-},{"./utils.js":32}],18:[function(require,module,exports){
+},{"./utils.js":31}],17:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2902,7 +2567,7 @@ function lcmArray(list) {
   return n;
 }
 
-},{}],19:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2966,7 +2631,7 @@ function sigmoid(t) {
   return 1.0 / (1 + Math.exp(-t));
 }
 
-},{}],20:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3090,7 +2755,7 @@ function extendFromOrigin(point, len = 10) {
   return extendFromPoint([0, 0], point, len);
 }
 
-},{}],21:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3109,7 +2774,7 @@ function randomInt(max = 10, min = 0) {
   return Math.round(Math.random() * (max - min) + min);
 }
 
-},{}],22:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3353,7 +3018,7 @@ function exponentialDecay(t, halfLife = 0.1) {
 // 	return bezier([0, 0, pullFactor, pullFactor, 1, 1, 1])(t);
 // }
 
-},{"./functions.js":19}],23:[function(require,module,exports){
+},{"./functions.js":18}],22:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3700,7 +3365,7 @@ function curvedDoubleArrowBetweenPoints(p1, p2, radius, tipWidth = DEFAULT_TIP_W
   return center;
 }
 
-},{"../constants/drawing.js":13,"../main.js":17,"../math/points.js":20,"../settings.js":31,"../utils.js":32,"./text.js":30}],24:[function(require,module,exports){
+},{"../constants/drawing.js":12,"../main.js":16,"../math/points.js":19,"../settings.js":30,"../utils.js":31,"./text.js":29}],23:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3786,7 +3451,7 @@ function arcBrace(x, y, radius = 100, angle = Math.PI / 2, startAngle = 0, small
   return [(largerRadius + extender) * Math.cos(angle / 2 + startAngle) + x, (largerRadius + extender) * Math.sin(angle / 2 + startAngle) + y];
 }
 
-},{"../main.js":17}],25:[function(require,module,exports){
+},{"../main.js":16}],24:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4323,7 +3988,7 @@ function numberPlane(args = {}) {
   return Object.assign(ret, getPlotterList(unitSpace, unitValue, ret));
 }
 
-},{"../main.js":17,"../settings.js":31,"../utils.js":32,"./arrows.js":23,"./functions.js":26,"./geometry.js":27,"./text.js":30}],26:[function(require,module,exports){
+},{"../main.js":16,"../settings.js":30,"../utils.js":31,"./arrows.js":22,"./functions.js":25,"./geometry.js":26,"./text.js":29}],25:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4621,7 +4286,7 @@ function heatPlot(args) {
   };
 }
 
-},{"../color/color_reader.js":7,"../main.js":17,"../settings.js":31,"../utils.js":32,"./geometry.js":27}],27:[function(require,module,exports){
+},{"../color/color_reader.js":6,"../main.js":16,"../settings.js":30,"../utils.js":31,"./geometry.js":26}],26:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5198,7 +4863,7 @@ function regularPolygonWithRadius(x, y, sides, radius, rotation = 0) {
   if (ctx.doStroke) ctx.stroke();
 }
 
-},{"../main.js":17,"../math/points.js":20,"../utils.js":32}],28:[function(require,module,exports){
+},{"../main.js":16,"../math/points.js":19,"../utils.js":31}],27:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5269,7 +4934,7 @@ function lens(c1, r1, c2, r2) {
   ctx.closePath();
 }
 
-},{"../main.js":17,"../math/points.js":20}],29:[function(require,module,exports){
+},{"../main.js":16,"../math/points.js":19}],28:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5371,7 +5036,7 @@ function tex(input, x, y) {
   return image;
 }
 
-},{"../constants/drawing.js":13,"../main.js":17}],30:[function(require,module,exports){
+},{"../constants/drawing.js":12,"../main.js":16}],29:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5453,7 +5118,7 @@ function strokeText(text, x = 0, y = 0, maxwidth = undefined) {
   if (ctx.yAxisInverted) (0, _settings.scale)(1, -1);
 }
 
-},{"../main.js":17,"../settings.js":31}],31:[function(require,module,exports){
+},{"../main.js":16,"../settings.js":30}],30:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6236,7 +5901,7 @@ function textBaseline(baseline) {
   _main.C.workingContext.textBaseline = baseline;
 }
 
-},{"./color/color_reader.js":7,"./main.js":17,"./utils.js":32}],32:[function(require,module,exports){
+},{"./color/color_reader.js":6,"./main.js":16,"./utils.js":31}],31:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6351,4 +6016,4 @@ function approximateIndexInArray(val, array, epsilon = 1e-6) {
 
 window["applyDefault"] = applyDefault;
 
-},{"./main.js":17}]},{},[4]);
+},{"./main.js":16}]},{},[4]);
