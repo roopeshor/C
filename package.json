@@ -1,30 +1,29 @@
 {
-  "name": "c",
-  "version": "2.0.0",
-  "description": "JavaScript library for drawing figures & diagrams and also for animating them.",
-  "main": "src/app.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-		"build": "grunt && npm run gcc",
-    "gcc": "npx google-closure-compiler --flagfile gcc.conf",
-    "gcc-custom": "npx google-closure-compiler --flagfile gcc-custom.conf"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Roopesh2/C.git"
-  },
-  "author": "Roopesh",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/Roopesh2/C/issues"
-  },
-  "homepage": "https://github.com/Roopesh2/C#readme",
-  "devDependencies": {
-    "esmify": "^2.1.1",
-    "google-closure-compiler": "^20210601.0.0",
-    "grunt-browserify": "^6.0.0",
-    "grunt-contrib-concat": "^1.0.1",
-    "grunt-contrib-uglify": "^5.0.1",
-    "grunt-jsdoc": "^2.4.1"
-  }
+	"name": "c",
+	"version": "2.0.0",
+	"description": "JavaScript library for drawing figures & diagrams and also for animating them.",
+	"main": "src/c.js",
+	"scripts": {
+		"test": "echo \"No test specified\" && exit 0",
+		"build": "grunt && npm run gcc-main && npm run gcc-core",
+		"gcc-main": "npx google-closure-compiler --entry_point \"./src/app.js\" --js_output_file \"./dist/c.gcc.js\" --flagfile gcc.conf ",
+		"gcc-core": "npx google-closure-compiler --entry_point \"./src/core.js\" --js_output_file \"./dist/c.core.gcc.js\" --flagfile gcc.conf ",
+		"gcc-custom": "npx google-closure-compiler --flagfile gcc-custom.conf"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Roopesh2/C.git"
+	},
+	"author": "Roopesh",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/Roopesh2/C/issues"
+	},
+	"homepage": "https://github.com/Roopesh2/C#readme",
+	"devDependencies": {
+		"esmify": "^2.1.1",
+		"google-closure-compiler": "^20211107.0.0",
+		"grunt-browserify": "^6.0.0",
+		"grunt-contrib-uglify": "^5.0.1"
+	}
 }
