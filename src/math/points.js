@@ -5,7 +5,7 @@
  * @param {Array<number>} p2
  * @return number distance between p1 and p2
  */
-function dist(p1, p2) {
+export function dist(p1, p2) {
 	return Math.sqrt(Math.pow(p1[0] - p2[0], 2) + Math.pow(p1[1] - p2[1], 2));
 }
 
@@ -18,7 +18,7 @@ function dist(p1, p2) {
  * @param {number} len length to extend the point
  * @returns {Array<number>} array of two points
  */
-function rotateAroundPoint(x, y, angle, len = 10) {
+export function rotateAroundPoint(x, y, angle, len = 10) {
 	if (Array.isArray(x) && x.length === 2) {
 		y = x[1];
 		x = x[0];
@@ -33,7 +33,7 @@ function rotateAroundPoint(x, y, angle, len = 10) {
  * @param {number} len length to extend the point
  * @returns {Array<number>} array of two points
  */
-function rotateAroundOrigin(angle, len = 10) {
+export function rotateAroundOrigin(angle, len = 10) {
 	return rotateAroundPoint(0, 0, angle, len);
 }
 
@@ -46,7 +46,7 @@ function rotateAroundOrigin(angle, len = 10) {
  * @param {Array<number>} p4 end point of second line as [x, y]
  * @return {Array<number>|Iterable} intersection point of lines as [x, y]
  */
-function lineIntersection(p1, p2, p3, p4) {
+export function lineIntersection(p1, p2, p3, p4) {
 	const m1 = (p2[1] - p1[1]) / (p2[0] - p1[0]);
 	const m2 = (p4[1] - p3[1]) / (p4[0] - p3[0]);
 
@@ -69,7 +69,7 @@ function lineIntersection(p1, p2, p3, p4) {
  * @param {number} r2 radius of second circle
  * @return {Array<Array<number>>} array of two points as [x, y]
  */
-function circleIntersection(c1, r1, c2, r2) {
+export function circleIntersection(c1, r1, c2, r2) {
 	const d = dist(c1, c2);
 	const a = (r1 * r1 - r2 * r2 + d * d) / (2 * d);
 	const h = Math.sqrt(r1 * r1 - a * a);
@@ -88,7 +88,7 @@ function circleIntersection(c1, r1, c2, r2) {
  * @param {number} len length to extend the point
  * @returns {Array<number>}
  */
-function extendFromPoint(center, point, len = 10) {
+export function extendFromPoint(center, point, len = 10) {
 	let dx = point[0] - center[0],
 		dy = point[1] - center[1],
 		angle = Math.atan2(dy, dx),
@@ -102,16 +102,6 @@ function extendFromPoint(center, point, len = 10) {
  * @param {number} len length to extend the point
  * @returns {Array<number>}
  */
-function extendFromOrigin(point, len = 10) {
+export function extendFromOrigin(point, len = 10) {
 	return extendFromPoint([0, 0], point, len);
 }
-
-export {
-	dist,
-	rotateAroundOrigin,
-	rotateAroundPoint,
-	lineIntersection,
-	circleIntersection,
-	extendFromPoint,
-	extendFromOrigin,
-};

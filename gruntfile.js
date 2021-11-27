@@ -1,12 +1,10 @@
 module.exports = function (grunt) {
-	var name = "<%= pkg.name %>",
-		banner ="/*"+name + "-<%= pkg.version%> - " +
-			"<%= grunt.template.today('yyyy-mm-dd') %> \n" +
-			"* License: <%= pkg.license %> */\n",
-		devRelease = "dist/" + name + ".js",
-		minRelease = "dist/" + name + ".min.js",
-		sourceMapMin = "dist/" + name + ".min.js.map",
-		sourceMapUrl = name + ".min.js.map";
+	var banner =
+		"/*" +
+		"C" +
+		"-<%= pkg.version%> - " +
+		"<%= grunt.template.today('yyyy-mm-dd') %> \n" +
+		"* License: <%= pkg.license %> */\n";
 
 	grunt.initConfig({
 		pkg: grunt.file.readJSON("package.json"),
@@ -14,40 +12,38 @@ module.exports = function (grunt) {
 			options: {
 				plugin: [[require("esmify"), {}]],
 			},
-			target: {
-				src: ["src/app.js"],
-				dest: devRelease,
+			main: {
+				src: "src/app.js",
+				dest: "dist/c.js",
+			},
+			core: {
+				src: "src/core.js",
+				dest: "dist/c.core.js",
 			},
 		},
 		uglify: {
 			options: {
 				banner: banner,
 				sourceMapRoot: "../",
-				sourceMap: sourceMapMin,
-				sourceMappingURL: sourceMapUrl,
+				sourceMap: "dist/c.min.js.map",
 			},
-			target: {
-				src: [devRelease],
-				dest: minRelease,
+			main: {
+				src: "dist/c.js",
+				dest: "dist/c.min.js",
+			},
+			core: {
+				src: "dist/c.core.js",
+				dest: "dist/c.core.min.js",
 			},
 		},
-		jsdoc : {
-			dist : {
-				src: ['src/**.js'],
-				options: {
-					destination: 'doc',
-				},
-			},
-    },
 	});
 
-	grunt.loadNpmTasks("grunt-contrib-concat");
 	grunt.loadNpmTasks("grunt-contrib-uglify");
 	grunt.loadNpmTasks("grunt-browserify");
-	grunt.loadNpmTasks('grunt-jsdoc');
-
-	grunt.registerTask("default", ["browserify", "uglify"]);
-
-	grunt.registerTask("minify", ["browserify", "uglify"]);
-	grunt.registerTask("doc", ["jsdoc"]);
+	grunt.registerTask("default", [
+		"browserify:main",
+		"uglify:main",
+		"browserify:core",
+		"uglify:core",
+	]);
 };

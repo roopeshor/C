@@ -1,4 +1,4 @@
-function hue2RGB(p, q, t) {
+export function hue2RGB(p, q, t) {
 	if (t < 0) t += 1;
 	if (t > 1) t -= 1;
 	if (t < 1 / 6) return p + (q - p) * 6 * t;
@@ -19,7 +19,7 @@ function hue2RGB(p, q, t) {
  * @param {number} b The blue color value
  * @return {Array<number>} The HSL representation
  */
-function RGBToHSL(r, g, b) {
+export function RGBToHSL(r, g, b) {
 	let max = Math.max(r, g, b),
 		min = Math.min(r, g, b),
 		hue,
@@ -51,7 +51,7 @@ function RGBToHSL(r, g, b) {
  * @param {number} lightness The lightness
  * @return {Array<number>} The RGB representation
  */
-function HSLToRGB(hue, saturation, lightness) {
+export function HSLToRGB(hue, saturation, lightness) {
 	let r, g, b;
 	hue /= 360;
 	if (saturation === 0) {
@@ -82,7 +82,7 @@ function HSLToRGB(hue, saturation, lightness) {
  * @param {number} b The blue color value
  * @return {Array<number>} The HSV representation
  */
-function RGBToHSV(r, g, b) {
+export function RGBToHSV(r, g, b) {
 	let max = Math.max(r, g, b), // val
 		min = Math.min(r, g, b), // chroma
 		hue,
@@ -113,7 +113,7 @@ function RGBToHSV(r, g, b) {
  * @param {number} value The value
  * @return {Array<number>} The RGB representation
  */
-function HSVToRGB(hue, saturation, value) {
+export function HSVToRGB(hue, saturation, value) {
 	let r,
 		g,
 		b,
@@ -133,5 +133,3 @@ function HSVToRGB(hue, saturation, value) {
 
 	return [r, g, b];
 }
-
-export { RGBToHSL, HSLToRGB, RGBToHSV, HSVToRGB };

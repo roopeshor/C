@@ -9,7 +9,7 @@ import { C } from "../main.js";
  * See more about the parameters : {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/drawImage}
  * @param {HTMLCanvasElement|HTMLImageElement|HTMLVideoElement|ImageBitmap|OffscreenCanvas} image image to draw
  */
-function drawImage(image) {
+export function drawImage(image) {
 	let ctx = C.workingContext,
 		x,
 		y;
@@ -38,7 +38,7 @@ function drawImage(image) {
  * @param {number} y y-coordinate of pixel
  * @param {string} color color of pixel
  */
-function pixel(x, y, color, size) {
+export function pixel(x, y, color, size) {
 	let ctx = C.workingContext;
 	if (color) ctx.fillStyle = color;
 	if (!size) size = 1 / C.dpr;
@@ -52,7 +52,7 @@ function pixel(x, y, color, size) {
  * @param {Function} [fallback] function to call when image fails to loaded
  * @returns {Image} image. This may not be loaded yet.
  */
-function loadImage(url, resolver, fallback) {
+export function loadImage(url, resolver, fallback) {
 	var img = new Image(); // Create new img element
 	img.src = url;
 	if (typeof resolver == "function") {
@@ -69,10 +69,8 @@ function loadImage(url, resolver, fallback) {
  * @param {string} url url of image
  * @returns {Promise} promise that resolves to image
  */
-function loadImagePromise(url) {
+export function loadImagePromise(url) {
 	return new Promise((resolve, reject) => {
 		loadImage(url, resolve, reject);
 	});
 }
-
-export { drawImage, pixel, loadImage, loadImagePromise };

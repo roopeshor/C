@@ -9,7 +9,7 @@ import { C } from "../main.js";
  * @param {number} y y-coordinate of point
  * @return {Uint8ClampedArray} array of color components [r, g, b, a]
  */
-function getPixelColor(pixels, x, y) {
+export function getPixelColor(pixels, x, y) {
 	let index = pixels.width * y + x;
 	return pixels.data.subarray(index, index + 4);
 }
@@ -20,7 +20,7 @@ function getPixelColor(pixels, x, y) {
  * @param {ImageData} pixels
  * @returns {Array<Array<number>>} 2d array of colors
  */
-function imageDataToColorArray(pixels) {
+export function imageDataToColorArray(pixels) {
 	let w = pixels.width,
 		h = pixels.height,
 		dat = Array.from(pixels.data),
@@ -48,7 +48,7 @@ function imageDataToColorArray(pixels) {
  * @param {number} y y-coordinate of point
  * @return {boolean}
  */
-function hasNeighbourColor(color, pixels, x, y) {
+export function hasNeighbourColor(color, pixels, x, y) {
 	let dat = pixels.data,
 		w = pixels.width;
 	for (let i = x - 1; i <= x + 1; i++) {
@@ -105,7 +105,7 @@ function hasNeighbourColor(color, pixels, x, y) {
  * @param {boolean} [matchAlpha = false] whether to check if alpha channel is same as that of toReplace.
  * @param {number} [tolerance = 0] minimum difference between each color channel
  */
-function replaceColorInImage(image, toReplace, replaced, matchAlpha = false, tolerance = 0) {
+export function replaceColorInImage(image, toReplace, replaced, matchAlpha = false, tolerance = 0) {
 	let data = image.data,
 		newData = C.workingContext.createImageData(image.width, image.height);
 	const [r1, g1, b1, a1] = readColor(toReplace).rgbaA;
@@ -149,7 +149,7 @@ function replaceColorInImage(image, toReplace, replaced, matchAlpha = false, tol
  * @param {number} [height = image.height] height of area to be covered
  * @param {boolean} [smoothen = false] whether to capture a smoothened the image
  */
-function imageToData(image, x, y, width, height, smoothen = false) {
+export function imageToData(image, x, y, width, height, smoothen = false) {
 	let cvs = document.createElement("canvas");
 	let ctx = cvs.getContext("2d");
 	let dpr = C.dpr;
@@ -161,12 +161,3 @@ function imageToData(image, x, y, width, height, smoothen = false) {
 	ctx.drawImage(image, 0, 0, width, height);
 	return ctx.getImageData(x, y, width, height);
 }
-
-export {
-	getPixelColor,
-	imageDataToColorArray,
-	hasNeighbourColor,
-	replaceColorInImage,
-	imageToData,
-	// createMapOfLetter,
-};

@@ -1,6 +1,6 @@
 import { DEG } from "../../src/constants/math.js";
 import { C } from "../../src/main.js";
-import { cos, sin } from "../../src/math/basic.js";
+import { cos, sin } from "../../src/math/functions.js";
 import { line, point } from "../../src/objects/geometry.js";
 import {
   background,
@@ -15,7 +15,7 @@ C(
 	() => {
 		background(0);
 		translate(CENTERX, CENTERY);
-		stroke(yellow)
+		stroke("yellow")
 		var vertex = [
 			[-50, -50, -50],
 			[50, -50, -50],

@@ -7,7 +7,7 @@ import { readColor } from "./color_reader.js";
  * @param {string} color2 color
  * @param {number} v should be between 0 and 1.
  */
-function lerpColor(color1, color2, v) {
+export function lerpColor(color1, color2, v) {
 	const c1 = readColor(color1).rgbaA;
 	const c2 = readColor(color2).rgbaA;
 	return readColor(
@@ -25,7 +25,7 @@ function lerpColor(color1, color2, v) {
  * @param {number} v
  * @return {string}
  */
-function lerpColorObject(colorObj, v) {
+export function lerpColorObject(colorObj, v) {
 	const stopes = Object.keys(colorObj || {}).sort();
 	const min = Math.min(...stopes);
 	const max = Math.max(...stopes);
@@ -54,7 +54,7 @@ function lerpColorObject(colorObj, v) {
  * @param {number} [max = 1] maximum value of the range
  * @return {string} lerped color
  */
-function lerpColorArray(colorArr, v, min = 0, max = 1) {
+export function lerpColorArray(colorArr, v, min = 0, max = 1) {
 	let len = colorArr.length - 1;
 	if (v >= max) return colorArr[len];
 	if (v <= min) return colorArr[0];
@@ -74,7 +74,7 @@ function lerpColorArray(colorArr, v, min = 0, max = 1) {
  * @param {number} [alpha=1] value of alpha channel. This value must be between 0 & 1
  * @returns {Object} color object
  */
-function getInterpolatedColorList(colorPalatte, min = 0, max = 5, alpha) {
+export function getInterpolatedColorList(colorPalatte, min = 0, max = 5, alpha) {
 	if (colorPalatte.length == 1) throw new Error("Atleast 2 colors are needed to create interpolatable object");
 	let step = (max - min) / (colorPalatte.length - 1),
 		colorObj = {};
@@ -88,5 +88,3 @@ function getInterpolatedColorList(colorPalatte, min = 0, max = 5, alpha) {
 
 	return colorObj;
 }
-
-export { lerpColor, lerpColorObject, getInterpolatedColorList, lerpColorArray };

@@ -15,7 +15,7 @@ import { doFillAndStroke } from "../utils.js";
  * @param {number} [angle=PI/2] central angle (use negative values to rotate arc clockwise)
  * @param {number} [startAngle=0] The angle at which the arc starts in radians, measured from the positive x-axis.
  */
-function arc(x, y, r, angle = Math.PI / 2, startAngle = 0) {
+export function arc(x, y, r, angle = Math.PI / 2, startAngle = 0) {
 	let ctx = C.workingContext;
 	if (!ctx.pathStarted) ctx.beginPath();
 	ctx.arc(x, y, r, startAngle, startAngle + angle);
@@ -30,7 +30,7 @@ function arc(x, y, r, angle = Math.PI / 2, startAngle = 0) {
  * @param {number} [size=10] diameter of point in px
  * @param {boolean} [doStroke=false] whether to stroke or not
  */
-function point(x, y, size = 10, doStroke = false) {
+export function point(x, y, size = 10, doStroke = false) {
 	let ctx = C.workingContext;
 	ctx.beginPath();
 	ctx.arc(x, y, size / 2, 0, Math.PI * 2);
@@ -48,7 +48,7 @@ function point(x, y, size = 10, doStroke = false) {
  * @param {number} [angle=1.5707963267948966] central angle
  * @param {number} [startAngle=0] The angle at which the arc starts in radians, measured from the positive x-axis.
  */
-function circularSegment(x, y, r, angle = Math.PI / 2, startAngle = 0) {
+export function circularSegment(x, y, r, angle = Math.PI / 2, startAngle = 0) {
 	let ctx = C.workingContext;
 	if (!ctx.pathStarted) ctx.beginPath();
 	ctx.arc(x, y, r, startAngle, startAngle + angle);
@@ -62,7 +62,7 @@ function circularSegment(x, y, r, angle = Math.PI / 2, startAngle = 0) {
  * @param {number} y y-coord
  * @param {number} r radius
  */
-function circle(x, y, r) {
+export function circle(x, y, r) {
 	let ctx = C.workingContext;
 	ctx.beginPath();
 	ctx.arc(x, y, r, 0, Math.PI * 2);
@@ -81,7 +81,7 @@ function circle(x, y, r) {
  * @param {number} [startAngle=0] The angle at which the ellipse starts, measured clockwise from the positive x-axis and expressed in radians.
  * @param {number} [angle=6.28318530717958] central angle of ellipse. Use negative values to rotate it anticlockwise
  */
-function ellipse(x, y, radius1, radius2, rotation = 0, startAngle = 0, angle = Math.PI * 2) {
+export function ellipse(x, y, radius1, radius2, rotation = 0, startAngle = 0, angle = Math.PI * 2) {
 	let ctx = C.workingContext;
 	if (!ctx.pathStarted) ctx.beginPath();
 	ctx.ellipse(x, y, radius1, radius2, rotation, startAngle, startAngle + angle);
@@ -99,7 +99,7 @@ function ellipse(x, y, radius1, radius2, rotation = 0, startAngle = 0, angle = M
  * @param {number} x3 x-axis coord of the end point
  * @param {number} y3 y-axis coord of the end point
  */
-function bezier(cpx1, cpy1, cpx2, cpy2, x3, y3) {
+export function bezier(cpx1, cpy1, cpx2, cpy2, x3, y3) {
 	let ctx = C.workingContext,
 		pathStarted = ctx.pathStarted;
 	if (!pathStarted) ctx.beginPath();
@@ -116,7 +116,7 @@ function bezier(cpx1, cpy1, cpx2, cpy2, x3, y3) {
  * @param {number} [angle=PI/2] central angle (use negative angle to move sector clockwise)
  * @param {number} [startAngle=0] The angle at which the arc starts in radians, measured from the positive x-axis.
  */
-function sector(x, y, radius, angle = Math.PI / 2, startAngle = 0) {
+export function sector(x, y, radius, angle = Math.PI / 2, startAngle = 0) {
 	let ctx = C.workingContext;
 	ctx.beginPath();
 	ctx.moveTo(x, y);
@@ -135,7 +135,7 @@ function sector(x, y, radius, angle = Math.PI / 2, startAngle = 0) {
  * @param {number} [tension=1]
  * @return {Array<number>} two control points as [cp1x, cp1y, cp2x, cp2y]
  */
-function getBezierControlPoints(
+export function getBezierControlPoints(
 	recentPoint,
 	currentPoint,
 	nextPoint,
@@ -157,7 +157,7 @@ function getBezierControlPoints(
  * @param {Array<Array<number>>} points array of points as [x, y]
  * @param {number} tension tension of the curve
  */
-function smoothCurveThroughPointsTo(points, tension = 1, closed = true) {
+export function smoothCurveThroughPointsTo(points, tension = 1, closed = true) {
 	for (let i = 0; i < points.length - 1; i++) {
 		let recentPoint = i > 0 ? points[i - 1] : closed ? points[points.length - 2] : points[0],
 			currentPoint = points[i],
@@ -174,7 +174,7 @@ function smoothCurveThroughPointsTo(points, tension = 1, closed = true) {
  * @param {Array<Array<number>>} points array of points as [x, y]
  * @param {number} tension tension of the curve
  */
-function smoothCurveThroughPoints(points, tension = 1, closed = true) {
+export function smoothCurveThroughPoints(points, tension = 1, closed = true) {
 	let ctx = C.workingContext;
 	ctx.beginPath();
 	ctx.moveTo(points[0][0], points[0][1]);
@@ -202,7 +202,7 @@ function smoothCurveThroughPoints(points, tension = 1, closed = true) {
  * * 6th argument is y coordinate of the ending point
  * @global
  */
-function quadraticCurve() {
+export function quadraticCurve() {
 	let ctx = C.workingContext,
 		args = arguments;
 	if (args.length == 4) {
@@ -223,7 +223,7 @@ function quadraticCurve() {
  * @param {number} innerRadius radius of the inner circle
  * @param {number} outerRadius radius of the outer circle
  */
-function annulus(x, y, innerRadius, outerRadius) {
+export function annulus(x, y, innerRadius, outerRadius) {
 	let ctx = C.workingContext;
 	ctx.beginPath();
 	ctx.arc(x, y, innerRadius, 0, 2 * Math.PI, false);
@@ -242,7 +242,7 @@ function annulus(x, y, innerRadius, outerRadius) {
  * @param {number} angle central angle of the annulus sector
  * @param {number} startAngle The angle at which the sector starts in radians, measured from the positive x-axis.
  */
-function annulusSector(x, y, innerRadius, outerRadius, angle, startAngle) {
+export function annulusSector(x, y, innerRadius, outerRadius, angle, startAngle) {
 	let ctx = C.workingContext;
 	ctx.beginPath();
 	ctx.arc(x, y, innerRadius, startAngle, startAngle + angle, false);
@@ -263,7 +263,7 @@ function annulusSector(x, y, innerRadius, outerRadius, angle, startAngle) {
  * @param {number} angleDir there can be four angle in a line intersection. Choose a number from 1 to 4.
  * @returns {Object} coordinate of point in the middle of angle as array of point as [x, y] and angle between them
  */
-function angle(p1, p2, p3, p4, radius = 20, extender = 10, otherAngle = false, angleDir = 1) {
+export function angle(p1, p2, p3, p4, radius = 20, extender = 10, otherAngle = false, angleDir = 1) {
 	let p = lineIntersection(p1, p2, p3, p4),
 		x = p[0],
 		y = p[1],
@@ -330,7 +330,7 @@ function angle(p1, p2, p3, p4, radius = 20, extender = 10, otherAngle = false, a
  * @param {boolean} otherArc specifies whether to use other arc of the circle.
  * @returns {Array<number>} returns the coordinate of center of the arc as [x, y]
  */
-function arcBetweenPoints(x1, y1, x2, y2, radius, otherArc = false) {
+export function arcBetweenPoints(x1, y1, x2, y2, radius, otherArc = false) {
 	if (x1 == x2 && y1 == y2)
 		// TODO: should it be `throw Error()`?
 		console.error("Can't draw a arc between points. Given points are exactly same");
@@ -358,7 +358,7 @@ function arcBetweenPoints(x1, y1, x2, y2, radius, otherArc = false) {
  * @param {number} x2 end x coord
  * @param {number} y2 end y coord
  */
-function line(x1, y1, x2, y2) {
+export function line(x1, y1, x2, y2) {
 	let ctx = C.workingContext;
 	ctx.beginPath();
 	ctx.moveTo(x1, y1);
@@ -375,7 +375,7 @@ function line(x1, y1, x2, y2) {
  * @param {number} width widht
  * @param {number} height height
  */
-function rect(x, y, width, height) {
+export function rect(x, y, width, height) {
 	let ctx = C.workingContext;
 	ctx.beginPath();
 	ctx.rect(x, y, width, height);
@@ -396,7 +396,7 @@ function rect(x, y, width, height) {
  * )
  * ```
  */
-function polygon() {
+export function polygon() {
 	let args = arguments;
 	if (args.length > 2) {
 		let ctx = C.workingContext,
@@ -420,7 +420,7 @@ function polygon() {
  * @param {number} y x-coord
  * @param {number} sideLength
  */
-function square(x, y, sideLength) {
+export function square(x, y, sideLength) {
 	rect(x, y, sideLength, sideLength);
 }
 
@@ -432,7 +432,7 @@ function square(x, y, sideLength) {
  * @param {Array<number>} p3 3rd point
  * @param {Array<number>} p4 4th point
  */
-function quad(p1, p2, p3, p4) {
+export function quad(p1, p2, p3, p4) {
 	let ctx = C.workingContext;
 	ctx.beginPath();
 	ctx.moveTo(p1[0], p1[1]);
@@ -452,7 +452,7 @@ function quad(p1, p2, p3, p4) {
  * @param {Array<number>} p2 second point
  * @param {Array<number>} p3 third point
  */
-function triangle(p1, p2, p3) {
+export function triangle(p1, p2, p3) {
 	let ctx = C.workingContext;
 	ctx.beginPath();
 	ctx.moveTo(p1[0], p1[1]);
@@ -472,7 +472,7 @@ function triangle(p1, p2, p3) {
  * @param {number} sideLength length of side
  * @param {number} [rotation=0] amound to rotate the entire triangle
  */
-function equiTriangle(x, y, sideLength, rotation = 0) {
+export function equiTriangle(x, y, sideLength, rotation = 0) {
 	regularPolygon(x, y, 3, sideLength, rotation);
 }
 
@@ -485,7 +485,7 @@ function equiTriangle(x, y, sideLength, rotation = 0) {
  * @param {number} sideLength length of a side
  * @param {number} [rotation=0] amound to rotate the entire polygon
  */
-function regularPolygon(x, y, sides, sideLength, rotation = 0) {
+export function regularPolygon(x, y, sides, sideLength, rotation = 0) {
 	let radius = sideLength / (2 * Math.sin(Math.PI / sides)); // finds ex-radius
 	regularPolygonWithRadius(x, y, sides, radius, rotation);
 }
@@ -499,7 +499,7 @@ function regularPolygon(x, y, sides, sideLength, rotation = 0) {
  * @param {number} radius radius
  * @param {number} [rotation=0] amound to rotate the entire polygon
  */
-function regularPolygonWithRadius(x, y, sides, radius, rotation = 0) {
+export function regularPolygonWithRadius(x, y, sides, radius, rotation = 0) {
 	let i = 0,
 		e = (Math.PI * 2) / sides,
 		ctx = C.workingContext;
@@ -515,30 +515,3 @@ function regularPolygonWithRadius(x, y, sides, radius, rotation = 0) {
 	if (ctx.doFill) ctx.fill();
 	if (ctx.doStroke) ctx.stroke();
 }
-
-export {
-	arc,
-	circle,
-	ellipse,
-	bezier,
-	point,
-	sector,
-	circularSegment,
-	smoothCurveThroughPointsTo,
-	smoothCurveThroughPoints,
-	quadraticCurve,
-	annulus,
-	annulusSector,
-	angle,
-	arcBetweenPoints,
-	line,
-	rect,
-	polygon,
-	square,
-	quad,
-	triangle,
-	equiTriangle,
-	regularPolygon,
-	getBezierControlPoints,
-	regularPolygonWithRadius,
-};

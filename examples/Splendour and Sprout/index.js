@@ -1,7 +1,7 @@
 import { Manim } from "../../Extensions/Colors/importable.js";
 import { PI } from "../../src/constants/math.js";
 import { C } from "../../src/main.js";
-import { abs, cos, round, sin } from "../../src/math/basic.js";
+import { abs, cos, round, sin } from "../../src/math/functions.js";
 import { circle, line } from "../../src/objects/geometry.js";
 import { text } from "../../src/objects/text.js";
 import {

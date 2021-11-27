@@ -1,4 +1,3 @@
-import { grey, white } from "../constants/colors.js";
 import { C } from "../main.js";
 import {
 	fill,
@@ -165,8 +164,8 @@ const TEXT_DIR = [0, -0.8];
  * @param {number} [args.textRotation = 0] Amount to rotate text
  * @param {number} args.decimalPlaces Number of decimal places in text. By default value is number of decimals in step
  *
- * @param {string} [args.color = grey] Color of axis and ticks
- * @param {string} [args.textColor = white] Color of text
+ * @param {string} [args.color = "grey"] Color of axis and ticks
+ * @param {string} [args.textColor = "white"] Color of text
  *
  * @returns {Object} configurations about the number line
  *
@@ -202,8 +201,8 @@ function numberLine(args = {}) {
 		includeRightTip: false,
 		excludeOriginTick: false,
 
-		color: grey,
-		textColor: white,
+		color: "grey",
+		textColor: "white",
 	};
 	args = applyDefault(defaultConfigs, args);
 	const {
@@ -385,7 +384,7 @@ function numberPlane(args = {}) {
 			subgridLineWidth: 0.7,
 
 			color: BLUE + "a0",
-			subgridLineColor: grey + "50",
+			subgridLineColor: "#88888850",
 		},
 		center: ORIGIN,
 	};

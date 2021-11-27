@@ -1,5 +1,5 @@
 import { linearGradient } from "../../src/color/gradients.js";
-import * as COLORLIST from "../../src/constants/colors.js";
+import { Colors } from "../../src/constants/colors.js";
 import { C } from "../../src/main.js";
 import { rect } from "../../src/objects/geometry.js";
 import { text } from "../../src/objects/text.js";
@@ -10,7 +10,7 @@ import {
 	measureText,
 	noFill,
 	stroke,
-	translate
+	translate,
 } from "../../src/settings.js";
 const W = 780;
 
@@ -30,14 +30,14 @@ C(
 		// debugger;
 		function box(name, k) {
 			// background
-			if (name === "BLACK") stroke(white);
+			if (name === "BLACK") stroke("white");
 			rect(100 + k * w, 0, w, h);
-			fill(black);
+			fill("black");
 
 			// name of color
-			if (name === "BLACK") fill(white);
+			if (name === "BLACK") fill("white");
 			text(name, 100 + k * w + 7, h - 18);
-			stroke(black);
+			stroke("black");
 		}
 		function set1() {
 			// first set of colors
@@ -51,22 +51,13 @@ C(
 				["MAROON_A", "MAROON_B", "MAROON", "MAROON_D", "MAROON_E"],
 				["PURPLE_A", "PURPLE_B", "PURPLE", "PURPLE_D", "PURPLE_E"],
 			];
-			const stopNames = [
-				"Blue",
-				"Teal",
-				"Green",
-				"Yellow",
-				"Gold",
-				"Red",
-				"Maroon",
-				"Purple",
-			];
+			const stopNames = ["Blue", "Teal", "Green", "Yellow", "Gold", "Red", "Maroon", "Purple"];
 			const colorIntensities = ["A", "B", "C", "D", "E"];
 
 			noFill();
 			stroke(Manim.BLUE);
 			rect(0, 0, boxW, boxH);
-			stroke(black);
+			stroke("black");
 			translate(paddingX, paddingY);
 			fill(Manim.BLUE_A);
 			for (let i = 0; i < colors.length; i++) {
@@ -79,14 +70,10 @@ C(
 
 					// background
 					rect(100 + k * w, 0, w, h);
-					fill(COLORLIST.black);
+					fill(Colors.black);
 
 					// name of color
-					text(
-						stopNames[i].toUpperCase() + "_" + colorIntensities[k],
-						100 + k * w + 7,
-						h - 18
-					);
+					text(stopNames[i].toUpperCase() + "_" + colorIntensities[k], 100 + k * w + 7, h - 18);
 					col[k] = Manim[col[k]];
 				}
 				translate(0, h);
@@ -108,22 +95,14 @@ C(
 			const colors = [
 				["DARK_BLUE", "DARK_BROWN", "LIGHT_BROWN"],
 				["LIGHT_GREY", "GREY", "DARK_GREY", "DARKER_GREY"],
-				[
-					"WHITE",
-					"BLACK",
-					"GREY_BROWN",
-					"PINK",
-					"LIGHT_PINK",
-					"GREEN_SCREEN",
-					"ORANGE",
-				],
+				["WHITE", "BLACK", "GREY_BROWN", "PINK", "LIGHT_PINK", "GREEN_SCREEN", "ORANGE"],
 			];
 			const stopNames = ["Blue & Brown", "Grey shades", "Others"];
 			const pd = 40; // a quick fix
 			noFill();
 			stroke(Manim.BLUE);
 			rect(0, 0, boxW, boxH);
-			stroke(black);
+			stroke("black");
 			translate(paddingX + pd, paddingY / 2);
 			fill(Manim.BLUE_A);
 			for (let i = 0, k = 0; i < colors.length; i++) {
@@ -140,7 +119,7 @@ C(
 				fill(linearGradient([0, 0], [measureText(name).width, 0], col));
 				if (k > 4) {
 					translate(w * 4, -h);
-					fill(white);
+					fill("white");
 				}
 				var name = stopNames[i];
 				text(name, -pd + 3, -h / 2 + 5);

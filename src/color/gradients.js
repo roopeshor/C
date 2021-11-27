@@ -29,7 +29,7 @@ let color = linearGradient(
 );
 ```
  */
-function linearGradient(initialPoint, finalPoint, colStops) {
+export function linearGradient(initialPoint, finalPoint, colStops) {
 	const ctx = C.workingContext;
 	const gradient = ctx.createLinearGradient(
 		initialPoint[0],
@@ -55,5 +55,3 @@ function linearGradient(initialPoint, finalPoint, colStops) {
 	}
 	return gradient;
 }
-
-export { linearGradient };

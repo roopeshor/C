@@ -21,7 +21,6 @@ import {
 	textBaseline,
 	translate,
 } from "../../src/settings.js";
-import { white } from "../../src/constants/colors.js";
 
 const W = 300,
 	H = 300,
@@ -35,11 +34,11 @@ C(
 		const pointOnCircle = rotateAroundOrigin(PI / 6, radius);
 		background(0);
 		centreCanvas();
-		stroke(white);
+		stroke("white");
 		fill(TEAL);
 		translate(0, -30);
 		circularSegment(0, 0, radius, TWO_PI / 3, PI / 6);
-		fill(white);
+		fill("white");
 		var tip = arcBrace(0, 0, radius + 15, TWO_PI / 3, PI / 6, 10, 10, 5);
 		textAlign(CENTER);
 		text("S", ...tip);
@@ -56,7 +55,7 @@ C(
 		fillText("h", leftStart - 10, pointOnCircle[1] * 1.4);
 		fillText("d", leftStart - 10, pointOnCircle[1] * 0.4);
 		strokeWidth(1);
-		fill(white);
+		fill("white");
 		doubleArrow(leftStart + 10, 0, leftStart + 10, pointOnCircle[1], 13, 10, 0, 4);
 		doubleArrow(leftStart + 10, pointOnCircle[1], leftStart + 10, radius, 13, 10, 0, 4);
 		save();
@@ -108,7 +107,7 @@ C(
 		stroke(BLUE);
 		const { ang, center } = angle(...line2, ...line1, 20);
 
-		fill(white);
+		fill("white");
 		textBaseline(MIDDLE);
 		fontStyle("italic");
 		text("θ = " + (ang * RAD).toFixed(1), ...center);

@@ -1,7 +1,7 @@
 import { Manim } from "../../Extensions/Colors/importable.js";
 import { PI, TAU } from "../../src/constants/math.js";
 import { C } from "../../src/main.js";
-import { cos, min, sin } from "../../src/math/basic.js";
+import { cos, min, sin } from "../../src/math/functions.js";
 import { line } from "../../src/objects/geometry.js";
 import { background, loop, noFill, noLoop, stroke, translate } from "../../src/settings.js";
 
@@ -12,7 +12,7 @@ C(
 	() => {
 		background(0);
 		translate(CENTERX, CENTERY);
-		stroke(yellow);
+		stroke("yellow");
 		noFill();
 		let points = [], // list of points
 			count = 40, // number of points

@@ -5,8 +5,6 @@
  * @param {number} [min=0] minimum range
  * @return number
  */
-function randomInt(max = 10, min = 0) {
+export function randomInt(max = 10, min = 0) {
 	return Math.round(Math.random() * (max - min) + min);
 }
-
-export { randomInt };

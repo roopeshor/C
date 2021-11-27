@@ -4,270 +4,6 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.Arc = Arc;
-exports.Circle = Circle;
-exports.Line = Line;
-exports.animateFill = animateFill;
-
-var _color_reader = require("../../src/color/color_reader.js");
-
-var _main = require("../../src/main.js");
-
-var _rate_functions = require("../../src/math/rate_functions.js");
-
-var _geometry = require("../../src/objects/geometry.js");
-
-var _settings = require("../../src/settings.js");
-
-var _utils = require("../../src/utils.js");
-
-const counters = {
-  Circle: 1,
-  Line: 1,
-  animateFill: 1,
-  Arc: 1
-};
-/**
- * Animates a line from point p1 to point p2.
- * @param {Object} args
- * @param {Array<number>} args.p1 The first point.
- * @param {Array<number>} args.p2 The second point.
- * @param {number} [args.dt=10] The duration of one frame in milliseconds.
- * @param {Function} [args.next] The function to call after the animation.
- */
-
-function Line(args) {
-  let defaults = {
-    name: "line-" + counters.Line++,
-    dur: 1000,
-    dTime: 10,
-    next: null,
-    rateFunction: _rate_functions.smooth
-  };
-  let {
-    p1,
-    p2,
-    name,
-    dur,
-    canvas,
-    dTime,
-    rateFunction,
-    next,
-    syncWithTime
-  } = (0, _utils.applyDefault)(defaults, args);
-  canvas = canvas || _main.C.workingContext.name;
-  let ctx = _main.C.contextList[canvas];
-  let angle = Math.atan2(p2[1] - p1[1], p2[0] - p1[0]);
-  let points = [];
-  let xDiff = p2[0] - p1[0];
-  let yDiff = p2[1] - p1[1];
-  let dt = Math.abs(Math.cos(angle) / xDiff);
-
-  if (Math.abs(Math.PI / 2 - Math.abs(angle)) < 1e-6) {
-    dt = 1 / Math.abs(yDiff);
-  }
-
-  for (let t = 0; t <= 1 + 1e-6; t += dt) {
-    points.push([p1[0] * (1 - t) + p2[0] * t, p1[1] * (1 - t) + p2[1] * t]);
-  }
-
-  return {
-    points: points,
-    // list of computed points
-    dur: dur,
-    dTime: dTime,
-    canvas: ctx,
-    rateFunction: rateFunction,
-    name: name,
-    closed: false,
-    smoothen: false,
-    fill: false,
-    next: next,
-    syncWithTime: syncWithTime
-  };
-}
-
-function Arc(args) {
-  const defaults = {
-    center: [0, 0],
-    name: "arc-" + counters.Arc++,
-    radiusX: 100,
-    radiusY: 100,
-    dur: 1000,
-    dTime: 16,
-    fill: false,
-    fillTime: 500,
-    next: null,
-    rateFunction: _rate_functions.smooth,
-    closed: false,
-    startAngle: 0,
-    angle: Math.PI / 2,
-    clockwise: false
-  };
-  let {
-    name,
-    dur,
-    center,
-    canvas,
-    dTime,
-    fill: fillColor,
-    fillTime,
-    next,
-    closed,
-    rateFunction,
-    startAngle,
-    angle,
-    radiusX,
-    radiusY,
-    clockwise
-  } = Object.assign(defaults, args);
-  canvas = canvas || _main.C.workingContext.name;
-  let ctx = _main.C.contextList[canvas];
-  let points = [];
-
-  if (args.radius) {
-    radiusX = args.radius;
-    radiusY = args.radius;
-  }
-
-  let dt = 2 / (_main.C.dpr * (radiusX + radiusY));
-  let start = startAngle;
-  let end = angle + startAngle + 1e-6;
-
-  function pushPoint(t) {
-    const x1 = Math.cos(t) * radiusX + center[0];
-    const y1 = Math.sin(t) * radiusY + center[1];
-    points.push([x1, y1]);
-  }
-
-  if (clockwise) for (let t = end; t >= start; t -= dt) pushPoint(t);else for (let t = start; t <= end; t += dt) pushPoint(t);
-  let rx = radiusX;
-  let ry = radiusY;
-
-  if (ctx.doStroke) {
-    rx -= ctx.lineWidth / 2;
-    ry -= ctx.lineWidth / 2;
-  }
-
-  console.log(points);
-  return {
-    points: points,
-    // list of computed points
-    dur: dur,
-    dTime: dTime,
-    canvas: ctx,
-    rateFunction: rateFunction,
-    name: name,
-    closed: closed,
-    smoothen: true,
-    tension: 1,
-    fill: fillColor,
-    fillTime: fillTime,
-    next: next,
-    rx: rx,
-    ry: ry,
-    filler: function () {
-      (0, _geometry.ellipse)(center[0], center[1], rx, ry, 0, startAngle, angle);
-    }
-  };
-}
-/**
- * animate filling of a given shape
- * ! Has some flaws !
- * @param {string} name name of animation. Optional
- * @param {string} canvasName ID of canvas
- * @param {string|Array<number>} FILL color of canvas
- * @param {Function} f funciton that draws the shape
- * @param {number} [dur=1000] dur to run
- * @param {number} [dt=10] dur for each frame
- * @param {Function} [next=null] function to run after filling
- */
-
-
-function animateFill(name, canvasName, FILL, f, dur = 1000, dt = 10, next = null) {
-  let _fill = (0, _color_reader.readColor)(FILL).rgbaA;
-  const ctx = _main.C.contextList[canvasName];
-  let previousT = -dur / dt;
-  (0, _settings.loop)("filling " + name, t => {
-    if (t >= dur) {
-      (0, _settings.noLoop)(canvasName, t);
-      if (typeof next == "function") next();
-    }
-
-    ctx.fillStyle = (0, _color_reader.readColor)(_fill[0], _fill[1], _fill[2], _fill[3] / (t - previousT)).hex8;
-    f();
-    previousT = t;
-  }, canvasName, dt, 1000, {}, dur);
-}
-/**
- * Animates drawing of a point.
- * @param {Object} args object containing configs
- *
- * @param {string} [args.name] Name of the animation. Default: "point-" + counters.Circle
- * @param {number} [args.radius = 3] radius of circle
- * @param {number} [args.dur = 1000] duration of animation
- * @param {number} [args.dTime = 1] duration of each frame
- * @param {boolean|string} [args.fill = false] if false, no fill. Else a color to fill with.
- * @param {number} [args.fillTime = 500] time to fill inside circle.
- * @param {funciton} [args.next = null] function to run after animation ends.
- * @param {funciton} [args.rateFunction = smooth] function to use for rate.
- * @param {Array<number>} args.center center of the circle
- * @param {string} args.canvas name of canvas in which the animation is rendered
- */
-
-
-function Circle(args) {
-  let defaults = {
-    name: "point-" + counters.Circle++,
-    radius: 100,
-    dur: 1000,
-    dTime: 16,
-    fill: false,
-    fillTime: 500,
-    next: null,
-    rateFunction: _rate_functions.smooth,
-    startAngle: 0,
-    angle: Math.PI * 2
-  };
-  args = Object.assign(defaults, args);
-  let center = args.center,
-      {
-    points,
-    dur,
-    dTime,
-    canvas,
-    rateFunction,
-    fill: fillColor,
-    fillTime,
-    next,
-    rx
-  } = Arc(args);
-  return {
-    points: points,
-    // list of computed points
-    dur: dur,
-    dTime: dTime,
-    canvas: canvas,
-    rateFunction: rateFunction,
-    name: args.name,
-    closed: true,
-    smoothen: true,
-    tension: 1,
-    fill: fillColor,
-    fillTime: fillTime,
-    next: next,
-    filler: function () {
-      (0, _geometry.point)(center[0], center[1], rx * 2, false);
-    }
-  };
-}
-
-},{"../../src/color/color_reader.js":7,"../../src/main.js":17,"../../src/math/rate_functions.js":22,"../../src/objects/geometry.js":28,"../../src/settings.js":32,"../../src/utils.js":33}],2:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
 exports.m4 = void 0;
 
 /**
@@ -593,7 +329,7 @@ class m4 {
 
 exports.m4 = m4;
 
-},{}],3:[function(require,module,exports){
+},{}],2:[function(require,module,exports){
 "use strict";
 
 var _color_reader = require("../color/color_reader.js");
@@ -936,7 +672,7 @@ _webgl.WebGL.prototype.perspective = function (fov, aspect, near, far) {
 
 };
 
-},{"../color/color_reader.js":7,"./m4.js":2,"./webgl.js":4}],4:[function(require,module,exports){
+},{"../color/color_reader.js":7,"./m4.js":1,"./webgl.js":3}],3:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1289,104 +1025,411 @@ class WebGL {
 
 exports.WebGL = WebGL;
 
-},{"../main.js":17,"../utils.js":33,"./m4.js":2}],5:[function(require,module,exports){
+},{"../main.js":17,"../utils.js":32,"./m4.js":1}],4:[function(require,module,exports){
 "use strict";
 
+var _C = _interopRequireWildcard(require("./c.js"));
+
 var _utils = require("./utils.js");
-
-var MathConsts = _interopRequireWildcard(require("./constants/math.js"));
-
-var COLORLIST = _interopRequireWildcard(require("./constants/colors.js"));
-
-var DrawingConstants = _interopRequireWildcard(require("./constants/drawing.js"));
-
-var ColorPalettes = _interopRequireWildcard(require("./constants/color_palettes.js"));
-
-var Gradients = _interopRequireWildcard(require("./color/gradients.js"));
-
-var Color_Random = _interopRequireWildcard(require("./color/random.js"));
-
-var Color_Reader = _interopRequireWildcard(require("./color/color_reader.js"));
-
-var Interpolation = _interopRequireWildcard(require("./color/interpolation.js"));
-
-var Color_Converters = _interopRequireWildcard(require("./color/color_converters.js"));
-
-var ImageDrawings = _interopRequireWildcard(require("./image/image.js"));
-
-var ImageProcessing = _interopRequireWildcard(require("./image/processing.js"));
-
-var Tex = _interopRequireWildcard(require("./objects/tex.js"));
-
-var Settings = _interopRequireWildcard(require("./settings.js"));
-
-var Text = _interopRequireWildcard(require("./objects/text.js"));
-
-var Braces = _interopRequireWildcard(require("./objects/braces.js"));
-
-var Arrows = _interopRequireWildcard(require("./objects/arrows.js"));
-
-var Geometry = _interopRequireWildcard(require("./objects/geometry.js"));
-
-var Functions = _interopRequireWildcard(require("./objects/functions.js"));
-
-var CoordinateSystems = _interopRequireWildcard(require("./objects/coordinate_systems.js"));
-
-var MoreShapes = _interopRequireWildcard(require("./objects/more_shapes.js"));
-
-var Basic = _interopRequireWildcard(require("./math/basic.js"));
-
-var Points = _interopRequireWildcard(require("./math/points.js"));
-
-var Math_Random = _interopRequireWildcard(require("./math/random.js"));
-
-var Arithmeics = _interopRequireWildcard(require("./math/aritmetics.js"));
-
-var RateFunctions = _interopRequireWildcard(require("./math/rate_functions.js"));
-
-var _main = require("./main.js");
-
-var WebGL = _interopRequireWildcard(require("./WebGL/webgl.js"));
-
-var WebGLSettings = _interopRequireWildcard(require("./WebGL/settings.js"));
 
 function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
 
 function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
-(0, _utils.defineProperties)(COLORLIST);
-(0, _utils.defineProperties)(DrawingConstants);
-(0, _utils.defineProperties)(MathConsts);
-(0, _utils.defineProperties)(ColorPalettes);
-(0, _utils.defineProperties)(Color_Converters);
-(0, _utils.defineProperties)(Color_Reader);
-(0, _utils.defineProperties)(Gradients);
-(0, _utils.defineProperties)(Color_Random);
-(0, _utils.defineProperties)(Interpolation);
-(0, _utils.defineProperties)(ImageProcessing);
-(0, _utils.defineProperties)(ImageDrawings);
-(0, _utils.defineProperties)(Geometry);
-(0, _utils.defineProperties)(Settings);
-(0, _utils.defineProperties)(Text);
-(0, _utils.defineProperties)(Tex);
-(0, _utils.defineProperties)(CoordinateSystems);
-(0, _utils.defineProperties)(Braces);
-(0, _utils.defineProperties)(Arrows);
-(0, _utils.defineProperties)(Functions);
-(0, _utils.defineProperties)(MoreShapes);
-(0, _utils.defineProperties)(Arithmeics);
-(0, _utils.defineProperties)(Basic);
-(0, _utils.defineProperties)(Points);
-(0, _utils.defineProperties)(Math_Random);
-(0, _utils.defineProperties)(RateFunctions);
-(0, _utils.defineProperties)(MathConsts);
-(0, _utils.defineProperties)(_utils.defineProperties);
-(0, _utils.defineProperties)(COLORLIST, _main.C.COLORLIST); //! Experimental features
+(0, _utils.defineProperties)(_C);
 
-(0, _utils.defineProperties)(WebGL);
-(0, _utils.defineProperties)(WebGLSettings);
+},{"./c.js":5,"./utils.js":32}],5:[function(require,module,exports){
+"use strict";
 
-},{"./WebGL/settings.js":3,"./WebGL/webgl.js":4,"./color/color_converters.js":6,"./color/color_reader.js":7,"./color/gradients.js":8,"./color/interpolation.js":9,"./color/random.js":10,"./constants/color_palettes.js":11,"./constants/colors.js":12,"./constants/drawing.js":13,"./constants/math.js":14,"./image/image.js":15,"./image/processing.js":16,"./main.js":17,"./math/aritmetics.js":18,"./math/basic.js":19,"./math/points.js":20,"./math/random.js":21,"./math/rate_functions.js":22,"./objects/arrows.js":24,"./objects/braces.js":25,"./objects/coordinate_systems.js":26,"./objects/functions.js":27,"./objects/geometry.js":28,"./objects/more_shapes.js":29,"./objects/tex.js":30,"./objects/text.js":31,"./settings.js":32,"./utils.js":33}],6:[function(require,module,exports){
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var _exportNames = {
+  defineProperties: true,
+  C: true
+};
+Object.defineProperty(exports, "C", {
+  enumerable: true,
+  get: function () {
+    return _main.C;
+  }
+});
+Object.defineProperty(exports, "defineProperties", {
+  enumerable: true,
+  get: function () {
+    return _utils.defineProperties;
+  }
+});
+
+var _utils = require("./utils.js");
+
+var _settings = require("./settings.js");
+
+Object.keys(_settings).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _settings[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _settings[key];
+    }
+  });
+});
+
+var _main = require("./main.js");
+
+var _math = require("./constants/math.js");
+
+Object.keys(_math).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _math[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _math[key];
+    }
+  });
+});
+
+var _drawing = require("./constants/drawing.js");
+
+Object.keys(_drawing).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _drawing[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _drawing[key];
+    }
+  });
+});
+
+var _color_palettes = require("./constants/color_palettes.js");
+
+Object.keys(_color_palettes).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _color_palettes[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _color_palettes[key];
+    }
+  });
+});
+
+var _gradients = require("./color/gradients.js");
+
+Object.keys(_gradients).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _gradients[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _gradients[key];
+    }
+  });
+});
+
+var _random = require("./color/random.js");
+
+Object.keys(_random).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _random[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _random[key];
+    }
+  });
+});
+
+var _color_reader = require("./color/color_reader.js");
+
+Object.keys(_color_reader).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _color_reader[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _color_reader[key];
+    }
+  });
+});
+
+var _interpolation = require("./color/interpolation.js");
+
+Object.keys(_interpolation).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _interpolation[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _interpolation[key];
+    }
+  });
+});
+
+var _color_converters = require("./color/color_converters.js");
+
+Object.keys(_color_converters).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _color_converters[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _color_converters[key];
+    }
+  });
+});
+
+var _image = require("./image/image.js");
+
+Object.keys(_image).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _image[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _image[key];
+    }
+  });
+});
+
+var _processing = require("./image/processing.js");
+
+Object.keys(_processing).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _processing[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _processing[key];
+    }
+  });
+});
+
+var _tex = require("./objects/tex.js");
+
+Object.keys(_tex).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _tex[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _tex[key];
+    }
+  });
+});
+
+var _text = require("./objects/text.js");
+
+Object.keys(_text).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _text[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _text[key];
+    }
+  });
+});
+
+var _braces = require("./objects/braces.js");
+
+Object.keys(_braces).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _braces[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _braces[key];
+    }
+  });
+});
+
+var _arrows = require("./objects/arrows.js");
+
+Object.keys(_arrows).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _arrows[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _arrows[key];
+    }
+  });
+});
+
+var _geometry = require("./objects/geometry.js");
+
+Object.keys(_geometry).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _geometry[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _geometry[key];
+    }
+  });
+});
+
+var _functions = require("./objects/functions.js");
+
+Object.keys(_functions).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _functions[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _functions[key];
+    }
+  });
+});
+
+var _coordinate_systems = require("./objects/coordinate_systems.js");
+
+Object.keys(_coordinate_systems).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _coordinate_systems[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _coordinate_systems[key];
+    }
+  });
+});
+
+var _more_shapes = require("./objects/more_shapes.js");
+
+Object.keys(_more_shapes).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _more_shapes[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _more_shapes[key];
+    }
+  });
+});
+
+var _functions2 = require("./math/functions.js");
+
+Object.keys(_functions2).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _functions2[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _functions2[key];
+    }
+  });
+});
+
+var _points = require("./math/points.js");
+
+Object.keys(_points).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _points[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _points[key];
+    }
+  });
+});
+
+var _random2 = require("./math/random.js");
+
+Object.keys(_random2).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _random2[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _random2[key];
+    }
+  });
+});
+
+var _aritmetics = require("./math/aritmetics.js");
+
+Object.keys(_aritmetics).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _aritmetics[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _aritmetics[key];
+    }
+  });
+});
+
+var _rate_functions = require("./math/rate_functions.js");
+
+Object.keys(_rate_functions).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _rate_functions[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _rate_functions[key];
+    }
+  });
+});
+
+var _webgl = require("./WebGL/webgl.js");
+
+Object.keys(_webgl).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _webgl[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _webgl[key];
+    }
+  });
+});
+
+var _settings2 = require("./WebGL/settings.js");
+
+Object.keys(_settings2).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _settings2[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _settings2[key];
+    }
+  });
+});
+
+},{"./WebGL/settings.js":2,"./WebGL/webgl.js":3,"./color/color_converters.js":6,"./color/color_reader.js":7,"./color/gradients.js":8,"./color/interpolation.js":9,"./color/random.js":10,"./constants/color_palettes.js":11,"./constants/drawing.js":13,"./constants/math.js":14,"./image/image.js":15,"./image/processing.js":16,"./main.js":17,"./math/aritmetics.js":18,"./math/functions.js":19,"./math/points.js":20,"./math/random.js":21,"./math/rate_functions.js":22,"./objects/arrows.js":23,"./objects/braces.js":24,"./objects/coordinate_systems.js":25,"./objects/functions.js":26,"./objects/geometry.js":27,"./objects/more_shapes.js":28,"./objects/tex.js":29,"./objects/text.js":30,"./settings.js":31,"./utils.js":32}],6:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1396,6 +1439,7 @@ exports.HSLToRGB = HSLToRGB;
 exports.HSVToRGB = HSVToRGB;
 exports.RGBToHSL = RGBToHSL;
 exports.RGBToHSV = RGBToHSV;
+exports.hue2RGB = hue2RGB;
 
 function hue2RGB(p, q, t) {
   if (t < 0) t += 1;
@@ -1534,11 +1578,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.readColor = readColor;
 
-var Colors = _interopRequireWildcard(require("../constants/colors.js"));
-
-function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
-
-function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+var _colors = require("../constants/colors.js");
 
 // adapeted from p5.js
 // Full color string patterns. The capture groups are necessary.
@@ -1592,7 +1632,7 @@ function readColor(...color) {
     // Adapted from p5.js
     let str = c1.replace(/\s/g, "").toLowerCase(); // convert string to array if it is a named colour.
 
-    if (Colors[str]) result = readColor(Colors[str]).rgbaA;else if (HEX3.test(str)) {
+    if (_colors.Colors[str]) result = readColor(_colors.Colors[str]).rgbaA;else if (HEX3.test(str)) {
       result = HEX3.exec(str).slice(1).map(color => parseInt(color + color, 16));
       result[3] = 1;
     } else if (HEX6.test(str)) {
@@ -1722,7 +1762,7 @@ function linearGradient(initialPoint, finalPoint, colStops) {
   return gradient;
 }
 
-},{"../main.js":17,"../utils.js":33}],9:[function(require,module,exports){
+},{"../main.js":17,"../utils.js":32}],9:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1834,15 +1874,11 @@ Object.defineProperty(exports, "__esModule", {
 exports.randomColor = randomColor;
 exports.randomDefinedColor = randomDefinedColor;
 
-var COLORLIST = _interopRequireWildcard(require("../constants/colors.js"));
+var _colors = require("../constants/colors.js");
 
 var _random = require("../math/random.js");
 
-function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
-
-function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
-
-let definedColorList = Object.keys(COLORLIST);
+let definedColorList = Object.keys(_colors.Colors);
 const TR_INDEX = definedColorList.indexOf("TRANSPARENT");
 definedColorList = definedColorList.slice(0, TR_INDEX).concat(definedColorList.slice(TR_INDEX + 1));
 /**
@@ -1868,7 +1904,7 @@ function randomColor() {
 
 
 function randomDefinedColor() {
-  return COLORLIST[definedColorList[(0, _random.randomInt)(definedColorList.length - 1)]];
+  return _colors.Colors[definedColorList[(0, _random.randomInt)(definedColorList.length - 1)]];
 }
 
 },{"../constants/colors.js":12,"../math/random.js":21}],11:[function(require,module,exports){
@@ -1928,7 +1964,7 @@ let colorPalettes = {
 };
 
 for (var p in colorPalettes) colorPalettes[p] = colorPalettes[p].split(" ");
-/** @type {Object.<string, Array<string>>} ColorPalette */
+/** @type {Object<string, Array<string>>} ColorPalette */
 
 
 const ColorPalettes = colorPalettes;
@@ -1940,309 +1976,160 @@ exports.ColorPalettes = ColorPalettes;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.moccasin = exports.mistyrose = exports.mintcream = exports.midnightblue = exports.mediumvioletred = exports.mediumturquoise = exports.mediumspringgreen = exports.mediumslateblue = exports.mediumseagreen = exports.mediumpurple = exports.mediumorchid = exports.mediumblue = exports.mediumaquamarine = exports.maroon = exports.magenta = exports.linen = exports.limegreen = exports.lime = exports.lightyellow = exports.lightsteelblue = exports.lightslategrey = exports.lightslategray = exports.lightskyblue = exports.lightseagreen = exports.lightsalmon = exports.lightpink = exports.lightgrey = exports.lightgreen = exports.lightgray = exports.lightgoldenrodyellow = exports.lightcyan = exports.lightcoral = exports.lightblue = exports.lemonchiffon = exports.lawngreen = exports.lavenderblush = exports.lavender = exports.khaki = exports.ivory = exports.indigo = exports.indianred = exports.hotpink = exports.honeydew = exports.grey = exports.greenyellow = exports.green = exports.gray = exports.goldenrod = exports.gold = exports.ghostwhite = exports.gainsboro = exports.fuchsia = exports.forestgreen = exports.floralwhite = exports.firebrick = exports.dodgerblue = exports.dimgrey = exports.dimgray = exports.deepskyblue = exports.deeppink = exports.darkviolet = exports.darkturquoise = exports.darkslategrey = exports.darkslategray = exports.darkslateblue = exports.darkseagreen = exports.darksalmon = exports.darkred = exports.darkorchid = exports.darkorange = exports.darkolivegreen = exports.darkmagenta = exports.darkkhaki = exports.darkgrey = exports.darkgreen = exports.darkgray = exports.darkgoldenrod = exports.darkcyan = exports.darkblue = exports.cyan = exports.crimson = exports.cornsilk = exports.cornflowerblue = exports.coral = exports.chocolate = exports.chartreuse = exports.cadetblue = exports.burlywood = exports.brown = exports.blueviolet = exports.blue = exports.blanchedalmond = exports.black = exports.bisque = exports.beige = exports.azure = exports.aquamarine = exports.aqua = exports.antiquewhite = exports.aliceblue = void 0;
-exports.yellowgreen = exports.yellow = exports.whitesmoke = exports.white = exports.wheat = exports.violet = exports.turquoise = exports.tomato = exports.thistle = exports.teal = exports.tan = exports.steelblue = exports.springgreen = exports.snow = exports.slategrey = exports.slategray = exports.slateblue = exports.skyblue = exports.silver = exports.sienna = exports.seashell = exports.seagreen = exports.sandybrown = exports.salmon = exports.saddlebrown = exports.royalblue = exports.rosybrown = exports.red = exports.rebeccapurple = exports.purple = exports.powderblue = exports.plum = exports.pink = exports.peru = exports.peachpuff = exports.papayawhip = exports.palevioletred = exports.paleturquoise = exports.palegreen = exports.palegoldenrod = exports.orchid = exports.orangered = exports.orange = exports.olivedrab = exports.olive = exports.oldlace = exports.navy = exports.navajowhite = exports.moccasin = exports.mistyrose = exports.mintcream = exports.midnightblue = exports.mediumvioletred = exports.mediumturquoise = exports.mediumspringgreen = exports.mediumslateblue = exports.mediumseagreen = exports.mediumpurple = exports.mediumorchid = exports.mediumblue = exports.mediumaquamarine = exports.maroon = exports.magenta = exports.linen = exports.limegreen = exports.lime = exports.lightyellow = exports.lightsteelblue = exports.lightslategrey = exports.lightslategray = exports.lightskyblue = exports.lightseagreen = exports.lightsalmon = exports.lightpink = exports.lightgrey = exports.lightgreen = exports.lightgray = exports.lightgoldenrodyellow = exports.lightcyan = exports.lightcoral = exports.lightblue = exports.lemonchiffon = exports.lawngreen = exports.lavenderblush = exports.lavender = exports.khaki = exports.ivory = exports.indigo = exports.indianred = exports.hotpink = exports.honeydew = exports.grey = exports.greenyellow = exports.green = exports.gray = exports.goldenrod = exports.gold = exports.ghostwhite = exports.gainsboro = exports.fuchsia = exports.forestgreen = exports.floralwhite = exports.firebrick = exports.dodgerblue = exports.dimgrey = exports.dimgray = exports.deepskyblue = exports.deeppink = exports.darkviolet = exports.darkturquoise = exports.darkslategrey = exports.darkslategray = exports.darkslateblue = exports.darkseagreen = exports.darksalmon = exports.darkred = exports.darkorchid = exports.darkorange = exports.darkolivegreen = exports.darkmagenta = exports.darkkhaki = exports.darkgrey = exports.darkgreen = exports.darkgray = exports.darkgoldenrod = exports.darkcyan = exports.darkblue = exports.cyan = exports.crimson = exports.cornsilk = exports.cornflowerblue = exports.coral = exports.chocolate = exports.chartreuse = exports.cadetblue = exports.burlywood = exports.brown = exports.blueviolet = exports.blue = exports.blanchedalmond = exports.black = exports.bisque = exports.beige = exports.azure = exports.aquamarine = exports.aqua = exports.antiquewhite = exports.aliceblue = void 0;
+exports.Colors = void 0;
 
 /* List of named CSS colors  */
-const aliceblue = "#f0f8ff",
-      antiquewhite = "#faebd7",
-      aqua = "#00ffff",
-      aquamarine = "#7fffd4",
-      azure = "#f0ffff",
-      beige = "#f5f5dc",
-      bisque = "#ffe4c4",
-      black = "#000000",
-      blanchedalmond = "#ffebcd",
-      blue = "#0000ff",
-      blueviolet = "#8a2be2",
-      brown = "#a52a2a",
-      burlywood = "#deb887",
-      cadetblue = "#5f9ea0",
-      chartreuse = "#7fff00",
-      chocolate = "#d2691e",
-      coral = "#ff7f50",
-      cornflowerblue = "#6495ed",
-      cornsilk = "#fff8dc",
-      crimson = "#dc143c",
-      cyan = "#00ffff",
-      darkblue = "#00008b",
-      darkcyan = "#008b8b",
-      darkgoldenrod = "#b8860b",
-      darkgray = "#a9a9a9",
-      darkgreen = "#006400",
-      darkgrey = "#a9a9a9",
-      darkkhaki = "#bdb76b",
-      darkmagenta = "#8b008b",
-      darkolivegreen = "#556b2f",
-      darkorange = "#ff8c00",
-      darkorchid = "#9932cc",
-      darkred = "#8b0000",
-      darksalmon = "#e9967a",
-      darkseagreen = "#8fbc8f",
-      darkslateblue = "#483d8b",
-      darkslategray = "#2f4f4f",
-      darkslategrey = "#2f4f4f",
-      darkturquoise = "#00ced1",
-      darkviolet = "#9400d3",
-      deeppink = "#ff1493",
-      deepskyblue = "#00bfff",
-      dimgray = "#696969",
-      dimgrey = "#696969",
-      dodgerblue = "#1e90ff",
-      firebrick = "#b22222",
-      floralwhite = "#fffaf0",
-      forestgreen = "#228b22",
-      fuchsia = "#ff00ff",
-      gainsboro = "#dcdcdc",
-      ghostwhite = "#f8f8ff",
-      gold = "#ffd700",
-      goldenrod = "#daa520",
-      gray = "#808080",
-      green = "#008000",
-      greenyellow = "#adff2f",
-      grey = "#808080",
-      honeydew = "#f0fff0",
-      hotpink = "#ff69b4",
-      indianred = "#cd5c5c",
-      indigo = "#4b0082",
-      ivory = "#fffff0",
-      khaki = "#f0e68c",
-      lavender = "#e6e6fa",
-      lavenderblush = "#fff0f5",
-      lawngreen = "#7cfc00",
-      lemonchiffon = "#fffacd",
-      lightblue = "#add8e6",
-      lightcoral = "#f08080",
-      lightcyan = "#e0ffff",
-      lightgoldenrodyellow = "#fafad2",
-      lightgray = "#d3d3d3",
-      lightgreen = "#90ee90",
-      lightgrey = "#d3d3d3",
-      lightpink = "#ffb6c1",
-      lightsalmon = "#ffa07a",
-      lightseagreen = "#20b2aa",
-      lightskyblue = "#87cefa",
-      lightslategray = "#778899",
-      lightslategrey = "#778899",
-      lightsteelblue = "#b0c4de",
-      lightyellow = "#ffffe0",
-      lime = "#00ff00",
-      limegreen = "#32cd32",
-      linen = "#faf0e6",
-      magenta = "#ff00ff",
-      maroon = "#800000",
-      mediumaquamarine = "#66cdaa",
-      mediumblue = "#0000cd",
-      mediumorchid = "#ba55d3",
-      mediumpurple = "#9370db",
-      mediumseagreen = "#3cb371",
-      mediumslateblue = "#7b68ee",
-      mediumspringgreen = "#00fa9a",
-      mediumturquoise = "#48d1cc",
-      mediumvioletred = "#c71585",
-      midnightblue = "#191970",
-      mintcream = "#f5fffa",
-      mistyrose = "#ffe4e1",
-      moccasin = "#ffe4b5",
-      navajowhite = "#ffdead",
-      navy = "#000080",
-      oldlace = "#fdf5e6",
-      olive = "#808000",
-      olivedrab = "#6b8e23",
-      orange = "#ffa500",
-      orangered = "#ff4500",
-      orchid = "#da70d6",
-      palegoldenrod = "#eee8aa",
-      palegreen = "#98fb98",
-      paleturquoise = "#afeeee",
-      palevioletred = "#db7093",
-      papayawhip = "#ffefd5",
-      peachpuff = "#ffdab9",
-      peru = "#cd853f",
-      // LIGHT_BROWM
-pink = "#ffc0cb",
-      plum = "#dda0dd",
-      powderblue = "#b0e0e6",
-      purple = "#800080",
-      rebeccapurple = "#663399",
-      red = "#ff0000",
-      rosybrown = "#bc8f8f",
-      royalblue = "#4169e1",
-      saddlebrown = "#8b4513",
-      // DARK_BROWN
-salmon = "#fa8072",
-      sandybrown = "#f4a460",
-      seagreen = "#2e8b57",
-      seashell = "#fff5ee",
-      sienna = "#a0522d",
-      silver = "#c0c0c0",
-      skyblue = "#87ceeb",
-      slateblue = "#6a5acd",
-      slategray = "#708090",
-      slategrey = "#708090",
-      snow = "#fffafa",
-      springgreen = "#00ff7f",
-      steelblue = "#4682b4",
-      tan = "#d2b48c",
-      teal = "#008080",
-      thistle = "#d8bfd8",
-      tomato = "#ff6347",
-      turquoise = "#40e0d0",
-      violet = "#ee82ee",
-      wheat = "#f5deb3",
-      white = "#ffffff",
-      whitesmoke = "#f5f5f5",
-      yellow = "#ffff00",
-      // YELLOW_C / YELLOW
-yellowgreen = "#9acd32";
-exports.yellowgreen = yellowgreen;
-exports.yellow = yellow;
-exports.whitesmoke = whitesmoke;
-exports.white = white;
-exports.wheat = wheat;
-exports.violet = violet;
-exports.turquoise = turquoise;
-exports.tomato = tomato;
-exports.thistle = thistle;
-exports.teal = teal;
-exports.tan = tan;
-exports.steelblue = steelblue;
-exports.springgreen = springgreen;
-exports.snow = snow;
-exports.slategrey = slategrey;
-exports.slategray = slategray;
-exports.slateblue = slateblue;
-exports.skyblue = skyblue;
-exports.silver = silver;
-exports.sienna = sienna;
-exports.seashell = seashell;
-exports.seagreen = seagreen;
-exports.sandybrown = sandybrown;
-exports.salmon = salmon;
-exports.saddlebrown = saddlebrown;
-exports.royalblue = royalblue;
-exports.rosybrown = rosybrown;
-exports.red = red;
-exports.rebeccapurple = rebeccapurple;
-exports.purple = purple;
-exports.powderblue = powderblue;
-exports.plum = plum;
-exports.pink = pink;
-exports.peru = peru;
-exports.peachpuff = peachpuff;
-exports.papayawhip = papayawhip;
-exports.palevioletred = palevioletred;
-exports.paleturquoise = paleturquoise;
-exports.palegreen = palegreen;
-exports.palegoldenrod = palegoldenrod;
-exports.orchid = orchid;
-exports.orangered = orangered;
-exports.orange = orange;
-exports.olivedrab = olivedrab;
-exports.olive = olive;
-exports.oldlace = oldlace;
-exports.navy = navy;
-exports.navajowhite = navajowhite;
-exports.moccasin = moccasin;
-exports.mistyrose = mistyrose;
-exports.mintcream = mintcream;
-exports.midnightblue = midnightblue;
-exports.mediumvioletred = mediumvioletred;
-exports.mediumturquoise = mediumturquoise;
-exports.mediumspringgreen = mediumspringgreen;
-exports.mediumslateblue = mediumslateblue;
-exports.mediumseagreen = mediumseagreen;
-exports.mediumpurple = mediumpurple;
-exports.mediumorchid = mediumorchid;
-exports.mediumblue = mediumblue;
-exports.mediumaquamarine = mediumaquamarine;
-exports.maroon = maroon;
-exports.magenta = magenta;
-exports.linen = linen;
-exports.limegreen = limegreen;
-exports.lime = lime;
-exports.lightyellow = lightyellow;
-exports.lightsteelblue = lightsteelblue;
-exports.lightslategrey = lightslategrey;
-exports.lightslategray = lightslategray;
-exports.lightskyblue = lightskyblue;
-exports.lightseagreen = lightseagreen;
-exports.lightsalmon = lightsalmon;
-exports.lightpink = lightpink;
-exports.lightgrey = lightgrey;
-exports.lightgreen = lightgreen;
-exports.lightgray = lightgray;
-exports.lightgoldenrodyellow = lightgoldenrodyellow;
-exports.lightcyan = lightcyan;
-exports.lightcoral = lightcoral;
-exports.lightblue = lightblue;
-exports.lemonchiffon = lemonchiffon;
-exports.lawngreen = lawngreen;
-exports.lavenderblush = lavenderblush;
-exports.lavender = lavender;
-exports.khaki = khaki;
-exports.ivory = ivory;
-exports.indigo = indigo;
-exports.indianred = indianred;
-exports.hotpink = hotpink;
-exports.honeydew = honeydew;
-exports.grey = grey;
-exports.greenyellow = greenyellow;
-exports.green = green;
-exports.gray = gray;
-exports.goldenrod = goldenrod;
-exports.gold = gold;
-exports.ghostwhite = ghostwhite;
-exports.gainsboro = gainsboro;
-exports.fuchsia = fuchsia;
-exports.forestgreen = forestgreen;
-exports.floralwhite = floralwhite;
-exports.firebrick = firebrick;
-exports.dodgerblue = dodgerblue;
-exports.dimgrey = dimgrey;
-exports.dimgray = dimgray;
-exports.deepskyblue = deepskyblue;
-exports.deeppink = deeppink;
-exports.darkviolet = darkviolet;
-exports.darkturquoise = darkturquoise;
-exports.darkslategrey = darkslategrey;
-exports.darkslategray = darkslategray;
-exports.darkslateblue = darkslateblue;
-exports.darkseagreen = darkseagreen;
-exports.darksalmon = darksalmon;
-exports.darkred = darkred;
-exports.darkorchid = darkorchid;
-exports.darkorange = darkorange;
-exports.darkolivegreen = darkolivegreen;
-exports.darkmagenta = darkmagenta;
-exports.darkkhaki = darkkhaki;
-exports.darkgrey = darkgrey;
-exports.darkgreen = darkgreen;
-exports.darkgray = darkgray;
-exports.darkgoldenrod = darkgoldenrod;
-exports.darkcyan = darkcyan;
-exports.darkblue = darkblue;
-exports.cyan = cyan;
-exports.crimson = crimson;
-exports.cornsilk = cornsilk;
-exports.cornflowerblue = cornflowerblue;
-exports.coral = coral;
-exports.chocolate = chocolate;
-exports.chartreuse = chartreuse;
-exports.cadetblue = cadetblue;
-exports.burlywood = burlywood;
-exports.brown = brown;
-exports.blueviolet = blueviolet;
-exports.blue = blue;
-exports.blanchedalmond = blanchedalmond;
-exports.black = black;
-exports.bisque = bisque;
-exports.beige = beige;
-exports.azure = azure;
-exports.aquamarine = aquamarine;
-exports.aqua = aqua;
-exports.antiquewhite = antiquewhite;
-exports.aliceblue = aliceblue;
+const Colors = {
+  aliceblue: "#f0f8ff",
+  antiquewhite: "#faebd7",
+  aqua: "#00ffff",
+  aquamarine: "#7fffd4",
+  azure: "#f0ffff",
+  beige: "#f5f5dc",
+  bisque: "#ffe4c4",
+  black: "#000000",
+  blanchedalmond: "#ffebcd",
+  blue: "#0000ff",
+  blueviolet: "#8a2be2",
+  brown: "#a52a2a",
+  burlywood: "#deb887",
+  cadetblue: "#5f9ea0",
+  chartreuse: "#7fff00",
+  chocolate: "#d2691e",
+  coral: "#ff7f50",
+  cornflowerblue: "#6495ed",
+  cornsilk: "#fff8dc",
+  crimson: "#dc143c",
+  cyan: "#00ffff",
+  darkblue: "#00008b",
+  darkcyan: "#008b8b",
+  darkgoldenrod: "#b8860b",
+  darkgray: "#a9a9a9",
+  darkgreen: "#006400",
+  darkgrey: "#a9a9a9",
+  darkkhaki: "#bdb76b",
+  darkmagenta: "#8b008b",
+  darkolivegreen: "#556b2f",
+  darkorange: "#ff8c00",
+  darkorchid: "#9932cc",
+  darkred: "#8b0000",
+  darksalmon: "#e9967a",
+  darkseagreen: "#8fbc8f",
+  darkslateblue: "#483d8b",
+  darkslategray: "#2f4f4f",
+  darkslategrey: "#2f4f4f",
+  darkturquoise: "#00ced1",
+  darkviolet: "#9400d3",
+  deeppink: "#ff1493",
+  deepskyblue: "#00bfff",
+  dimgray: "#696969",
+  dimgrey: "#696969",
+  dodgerblue: "#1e90ff",
+  firebrick: "#b22222",
+  floralwhite: "#fffaf0",
+  forestgreen: "#228b22",
+  fuchsia: "#ff00ff",
+  gainsboro: "#dcdcdc",
+  ghostwhite: "#f8f8ff",
+  gold: "#ffd700",
+  goldenrod: "#daa520",
+  gray: "#808080",
+  green: "#008000",
+  greenyellow: "#adff2f",
+  grey: "#808080",
+  honeydew: "#f0fff0",
+  hotpink: "#ff69b4",
+  indianred: "#cd5c5c",
+  indigo: "#4b0082",
+  ivory: "#fffff0",
+  khaki: "#f0e68c",
+  lavender: "#e6e6fa",
+  lavenderblush: "#fff0f5",
+  lawngreen: "#7cfc00",
+  lemonchiffon: "#fffacd",
+  lightblue: "#add8e6",
+  lightcoral: "#f08080",
+  lightcyan: "#e0ffff",
+  lightgoldenrodyellow: "#fafad2",
+  lightgray: "#d3d3d3",
+  lightgreen: "#90ee90",
+  lightgrey: "#d3d3d3",
+  lightpink: "#ffb6c1",
+  lightsalmon: "#ffa07a",
+  lightseagreen: "#20b2aa",
+  lightskyblue: "#87cefa",
+  lightslategray: "#778899",
+  lightslategrey: "#778899",
+  lightsteelblue: "#b0c4de",
+  lightyellow: "#ffffe0",
+  lime: "#00ff00",
+  limegreen: "#32cd32",
+  linen: "#faf0e6",
+  magenta: "#ff00ff",
+  maroon: "#800000",
+  mediumaquamarine: "#66cdaa",
+  mediumblue: "#0000cd",
+  mediumorchid: "#ba55d3",
+  mediumpurple: "#9370db",
+  mediumseagreen: "#3cb371",
+  mediumslateblue: "#7b68ee",
+  mediumspringgreen: "#00fa9a",
+  mediumturquoise: "#48d1cc",
+  mediumvioletred: "#c71585",
+  midnightblue: "#191970",
+  mintcream: "#f5fffa",
+  mistyrose: "#ffe4e1",
+  moccasin: "#ffe4b5",
+  navajowhite: "#ffdead",
+  navy: "#000080",
+  oldlace: "#fdf5e6",
+  olive: "#808000",
+  olivedrab: "#6b8e23",
+  orange: "#ffa500",
+  orangered: "#ff4500",
+  orchid: "#da70d6",
+  palegoldenrod: "#eee8aa",
+  palegreen: "#98fb98",
+  paleturquoise: "#afeeee",
+  palevioletred: "#db7093",
+  papayawhip: "#ffefd5",
+  peachpuff: "#ffdab9",
+  peru: "#cd853f",
+  pink: "#ffc0cb",
+  plum: "#dda0dd",
+  powderblue: "#b0e0e6",
+  purple: "#800080",
+  rebeccapurple: "#663399",
+  red: "#ff0000",
+  rosybrown: "#bc8f8f",
+  royalblue: "#4169e1",
+  saddlebrown: "#8b4513",
+  salmon: "#fa8072",
+  sandybrown: "#f4a460",
+  seagreen: "#2e8b57",
+  seashell: "#fff5ee",
+  sienna: "#a0522d",
+  silver: "#c0c0c0",
+  skyblue: "#87ceeb",
+  slateblue: "#6a5acd",
+  slategray: "#708090",
+  slategrey: "#708090",
+  snow: "#fffafa",
+  springgreen: "#00ff7f",
+  steelblue: "#4682b4",
+  tan: "#d2b48c",
+  teal: "#008080",
+  thistle: "#d8bfd8",
+  tomato: "#ff6347",
+  turquoise: "#40e0d0",
+  violet: "#ee82ee",
+  wheat: "#f5deb3",
+  white: "#ffffff",
+  whitesmoke: "#f5f5f5",
+  yellow: "#ffff00",
+  yellowgreen: "#9acd32"
+};
+exports.Colors = Colors;
 
 },{}],13:[function(require,module,exports){
 "use strict";
@@ -2946,7 +2833,7 @@ defineConstant({
 
 window["C"] = C;
 
-},{"./utils.js":33}],18:[function(require,module,exports){
+},{"./utils.js":32}],18:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3021,7 +2908,9 @@ function lcmArray(list) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.tanh = exports.tan = exports.sqrt = exports.sin = exports.sgn = exports.round = exports.random = exports.pow = exports.min = exports.max = exports.log2 = exports.log10 = exports.log = exports.floor = exports.exp = exports.cosh = exports.cos = exports.ceil = exports.cbrt = exports.atan2 = exports.atan = exports.asin = exports.acos = exports.abs = void 0;
+exports.sgn = exports.round = exports.random = exports.pow = exports.min = exports.max = exports.log2 = exports.log10 = exports.log = exports.floor = exports.exp = exports.cosh = exports.cos = exports.ceil = exports.cbrt = exports.atan2 = exports.atan = exports.asin = exports.acos = exports.abs = void 0;
+exports.sigmoid = sigmoid;
+exports.tanh = exports.tan = exports.sqrt = exports.sin = void 0;
 const {
   abs,
   acos,
@@ -3072,6 +2961,10 @@ exports.atan = atan;
 exports.asin = asin;
 exports.acos = acos;
 exports.abs = abs;
+
+function sigmoid(t) {
+  return 1.0 / (1 + Math.exp(-t));
+}
 
 },{}],20:[function(require,module,exports){
 "use strict";
@@ -3266,7 +3159,7 @@ exports.thereAndBack = thereAndBack;
 exports.thereAndBackWithPause = thereAndBackWithPause;
 exports.wiggle = wiggle;
 
-var _simple_functions = require("./simple_functions.js");
+var _functions = require("./functions.js");
 
 /**
  * Rate functions. From https://easings.net .
@@ -3406,8 +3299,8 @@ function easeInOutBounce(t) {
 
 
 function smooth(t, inflection = 10.0) {
-  let error = (0, _simple_functions.sigmoid)(-inflection / 2);
-  return Math.min(Math.max(((0, _simple_functions.sigmoid)(inflection * (t - 0.5)) - error) / (1 - 2 * error), 0), 1);
+  let error = (0, _functions.sigmoid)(-inflection / 2);
+  return Math.min(Math.max(((0, _functions.sigmoid)(inflection * (t - 0.5)) - error) / (1 - 2 * error), 0), 1);
 }
 
 function rushInto(t, inflection = 10.0) {
@@ -3456,23 +3349,11 @@ function lingering(t) {
 
 function exponentialDecay(t, halfLife = 0.1) {
   return 1 - Math.exp(-t / halfLife);
-} // function runningStart(t, pullFactor = -0.5) {
+} // export function runningStart(t, pullFactor = -0.5) {
 // 	return bezier([0, 0, pullFactor, pullFactor, 1, 1, 1])(t);
 // }
 
-},{"./simple_functions.js":23}],23:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.sigmoid = sigmoid;
-
-function sigmoid(t) {
-  return 1.0 / (1 + Math.exp(-t));
-}
-
-},{}],24:[function(require,module,exports){
+},{"./functions.js":19}],23:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3819,7 +3700,7 @@ function curvedDoubleArrowBetweenPoints(p1, p2, radius, tipWidth = DEFAULT_TIP_W
   return center;
 }
 
-},{"../constants/drawing.js":13,"../main.js":17,"../math/points.js":20,"../settings.js":32,"../utils.js":33,"./text.js":31}],25:[function(require,module,exports){
+},{"../constants/drawing.js":13,"../main.js":17,"../math/points.js":20,"../settings.js":31,"../utils.js":32,"./text.js":30}],24:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3905,7 +3786,7 @@ function arcBrace(x, y, radius = 100, angle = Math.PI / 2, startAngle = 0, small
   return [(largerRadius + extender) * Math.cos(angle / 2 + startAngle) + x, (largerRadius + extender) * Math.sin(angle / 2 + startAngle) + y];
 }
 
-},{"../main.js":17}],26:[function(require,module,exports){
+},{"../main.js":17}],25:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3914,8 +3795,6 @@ Object.defineProperty(exports, "__esModule", {
 exports.axes = axes;
 exports.numberLine = numberLine;
 exports.numberPlane = numberPlane;
-
-var _colors = require("../constants/colors.js");
 
 var _main = require("../main.js");
 
@@ -4089,8 +3968,8 @@ const TEXT_DIR = [0, -0.8];
  * @param {number} [args.textRotation = 0] Amount to rotate text
  * @param {number} args.decimalPlaces Number of decimal places in text. By default value is number of decimals in step
  *
- * @param {string} [args.color = grey] Color of axis and ticks
- * @param {string} [args.textColor = white] Color of text
+ * @param {string} [args.color = "grey"] Color of axis and ticks
+ * @param {string} [args.textColor = "white"] Color of text
  *
  * @returns {Object} configurations about the number line
  *
@@ -4124,8 +4003,8 @@ function numberLine(args = {}) {
     includeLeftTip: false,
     includeRightTip: false,
     excludeOriginTick: false,
-    color: _colors.grey,
-    textColor: _colors.white
+    color: "grey",
+    textColor: "white"
   };
   args = (0, _utils.applyDefault)(defaultConfigs, args);
   const {
@@ -4309,7 +4188,7 @@ function numberPlane(args = {}) {
       lineWidth: 1,
       subgridLineWidth: 0.7,
       color: BLUE + "a0",
-      subgridLineColor: _colors.grey + "50"
+      subgridLineColor: "#88888850"
     },
     center: ORIGIN
   }; // configurations
@@ -4444,7 +4323,7 @@ function numberPlane(args = {}) {
   return Object.assign(ret, getPlotterList(unitSpace, unitValue, ret));
 }
 
-},{"../constants/colors.js":12,"../main.js":17,"../settings.js":32,"../utils.js":33,"./arrows.js":24,"./functions.js":27,"./geometry.js":28,"./text.js":31}],27:[function(require,module,exports){
+},{"../main.js":17,"../settings.js":31,"../utils.js":32,"./arrows.js":23,"./functions.js":26,"./geometry.js":27,"./text.js":30}],26:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4742,7 +4621,7 @@ function heatPlot(args) {
   };
 }
 
-},{"../color/color_reader.js":7,"../main.js":17,"../settings.js":32,"../utils.js":33,"./geometry.js":28}],28:[function(require,module,exports){
+},{"../color/color_reader.js":7,"../main.js":17,"../settings.js":31,"../utils.js":32,"./geometry.js":27}],27:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5319,7 +5198,7 @@ function regularPolygonWithRadius(x, y, sides, radius, rotation = 0) {
   if (ctx.doStroke) ctx.stroke();
 }
 
-},{"../main.js":17,"../math/points.js":20,"../utils.js":33}],29:[function(require,module,exports){
+},{"../main.js":17,"../math/points.js":20,"../utils.js":32}],28:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5390,7 +5269,7 @@ function lens(c1, r1, c2, r2) {
   ctx.closePath();
 }
 
-},{"../main.js":17,"../math/points.js":20}],30:[function(require,module,exports){
+},{"../main.js":17,"../math/points.js":20}],29:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5492,7 +5371,7 @@ function tex(input, x, y) {
   return image;
 }
 
-},{"../constants/drawing.js":13,"../main.js":17}],31:[function(require,module,exports){
+},{"../constants/drawing.js":13,"../main.js":17}],30:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5574,7 +5453,7 @@ function strokeText(text, x = 0, y = 0, maxwidth = undefined) {
   if (ctx.yAxisInverted) (0, _settings.scale)(1, -1);
 }
 
-},{"../main.js":17,"../settings.js":32}],32:[function(require,module,exports){
+},{"../main.js":17,"../settings.js":31}],31:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5621,17 +5500,9 @@ exports.textBaseline = textBaseline;
 exports.transform = transform;
 exports.translate = translate;
 
-var _constructs = require("../Extensions/Animations/constructs.js");
-
 var _color_reader = require("./color/color_reader.js");
 
 var _main = require("./main.js");
-
-var _rate_functions = require("./math/rate_functions.js");
-
-var _coordinate_systems = require("./objects/coordinate_systems.js");
-
-var _geometry = require("./objects/geometry.js");
 
 var _utils = require("./utils.js");
 
@@ -6365,7 +6236,7 @@ function textBaseline(baseline) {
   _main.C.workingContext.textBaseline = baseline;
 }
 
-},{"../Extensions/Animations/constructs.js":1,"./color/color_reader.js":7,"./main.js":17,"./math/rate_functions.js":22,"./objects/coordinate_systems.js":26,"./objects/geometry.js":28,"./utils.js":33}],33:[function(require,module,exports){
+},{"./color/color_reader.js":7,"./main.js":17,"./utils.js":32}],32:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6480,4 +6351,4 @@ function approximateIndexInArray(val, array, epsilon = 1e-6) {
 
 window["applyDefault"] = applyDefault;
 
-},{"./main.js":17}]},{},[5]);
+},{"./main.js":17}]},{},[4]);

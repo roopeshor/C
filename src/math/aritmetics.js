@@ -5,7 +5,7 @@
  * @param {number} b
  * @return number
  */
-function gcd(a, b) {
+export function gcd(a, b) {
 	while (b != 0) {
 		let ra = b;
 		b = a % b;
@@ -19,7 +19,7 @@ function gcd(a, b) {
  *
  * @return number
  */
-function gcdArray(list) {
+export function gcdArray(list) {
 	let array = Array.isArray(list) ? list : arguments,
 		n = array[0];
 	for (let i = 1; i < array.length; ++i) n = gcd(array[i], n);
@@ -33,7 +33,7 @@ function gcdArray(list) {
  * @param {number} b
  * @return number
  */
-function lcm(a, b) {
+export function lcm(a, b) {
 	return (a * b) / gcd(a, b);
 }
 
@@ -41,11 +41,9 @@ function lcm(a, b) {
  * Returns least common multiple of a list of integers given explictly or as array.
  * @return number
  */
-function lcmArray(list) {
+export function lcmArray(list) {
 	let n = 1,
 		array = Array.isArray(list) ? list : arguments;
 	for (let i = 0; i < array.length; ++i) n = lcm(array[i], n);
 	return n;
 }
-
-export { gcd, gcdArray, lcm, lcmArray };

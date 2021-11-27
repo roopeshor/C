@@ -1,14 +1,4 @@
-
 import { TAU } from "../../src/constants/math.js";
-import {
-	blue,
-	green,
-	orange,
-	purple,
-	red,
-	white,
-	yellow
-} from "../../src/constants/colors.js";
 import { C } from "../../src/main.js";
 import { extendFromOrigin } from "../../src/math/points.js";
 import { generatePointsInArc } from "../../src/misc/point_generator.js";
@@ -19,9 +9,9 @@ C(
 	() => {
 		centreCanvas();
 		background(0);
-		stroke(yellow);
+		stroke("yellow");
 		let pointArr = [],
-			colors = [purple, blue, green, yellow, orange, red, white],
+			colors = ["purple", "blue", "green", "yellow", "orange", "red", "white"],
 			dAngle = TAU / 50; // points per circle
 		for (let i = 0; i < 7; i++) {
 			pointArr.push(

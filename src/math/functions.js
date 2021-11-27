@@ -24,3 +24,7 @@ export const {
 	tan,
 	tanh,
 } = Math;
+
+export function sigmoid(t) {
+	return 1.0 / (1 + Math.exp(-t));
+}

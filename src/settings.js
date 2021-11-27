@@ -1,10 +1,6 @@
-import { animateFill } from "../Extensions/Animations/constructs.js";
 import { readColor } from "./color/color_reader.js";
 import { C } from "./main.js";
-import { smooth } from "./math/rate_functions.js";
-import { numberPlane } from "./objects/coordinate_systems.js";
-import { getBezierControlPoints } from "./objects/geometry.js";
-import { defineProperties, type } from "./utils.js";
+import { defineProperties } from "./utils.js";
 
 // for debuggingF
 let counter = {

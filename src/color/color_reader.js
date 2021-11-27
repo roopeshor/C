@@ -1,4 +1,4 @@
-import * as Colors from "../constants/colors.js";
+import {Colors} from "../constants/colors.js";
 
 // adapeted from p5.js
 // Full color string patterns. The capture groups are necessary.
@@ -33,7 +33,7 @@ let
  *
  * @return {Object} color string/array
  */
-function readColor(...color) {
+export function readColor(...color) {
 	let result;
 	if (Array.isArray(color[0])) color = color[0];
 	let c1 = color[0];
@@ -127,4 +127,3 @@ function readColor(...color) {
 		hsl: `hsl(${result[0]}, ${result[1]}, ${result[2]})`,
 	};
 }
-export { readColor };
