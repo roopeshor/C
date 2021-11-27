@@ -23,6 +23,7 @@
 	"devDependencies": {
 		"esmify": "^2.1.1",
 		"google-closure-compiler": "^20211107.0.0",
+		"grunt": "^1.4.1",
 		"grunt-browserify": "^6.0.0",
 		"grunt-contrib-uglify": "^5.0.1"
 	}
