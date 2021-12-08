@@ -168,6 +168,7 @@ export function strokeWidth(w) {
  */
 export function scale(x, y = x) {
 	C.workingContext.scale(x, y);
+	if (y < 0) C.workingContext.yAxisInverted = true;
 }
 
 /**

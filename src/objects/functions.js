@@ -39,7 +39,7 @@ const UNIT_VEC = [1, 1];
  * * draw    <function> : Function that draws the plot
  * * animate <function> : Function that animates the drawing of the shape. Accept argument `duration` which is the duration of animation.
  */
-function parametricFunction(args) {
+export function parametricFunction(args) {
 	let defaultConfigs = {
 		tension: 1,
 
@@ -174,7 +174,7 @@ function parametricFunction(args) {
  * Draws graph of funciton
  * See {@link parametricFunction} For arguments
  */
-function functionGraph(args) {
+export function functionGraph(args) {
 	let paramFunction = args.paramFunction;
 	args.paramFunction = (x) => [x, paramFunction(x)];
 	return parametricFunction(args);
@@ -196,7 +196,7 @@ function functionGraph(args) {
  * @param {Function} [args.interpolator = linear] function to interpolate color.
  * @return {Object} metadatas
  */
-function heatPlot(args) {
+export function heatPlot(args) {
 	let defaultConfigs = {
 		min: [-4, -4],
 		max: [4, 4],
@@ -267,4 +267,36 @@ function heatPlot(args) {
 		colors: colors,
 	};
 }
-export { parametricFunction, functionGraph, heatPlot };
+
+/**
+ * Plots a list of points
+ * @param {Object} args arguments
+ * @param {Array<Object<x:number, y:number, radius?: number, fill?: string, stroke?: string>>} args.points list of points
+ *
+ */
+export function plotPoints(args) {
+	let defaultConfigs = {
+		unitValue: UNIT_VEC,
+		unitSpace: UNIT_VEC,
+		fill: "white",
+		stroke: "#0000",
+		radius: 7
+	};
+	args = applyDefault(defaultConfigs, args);
+	let { points, unitValue, unitSpace } = args;
+	let ctx = C.workingContext;
+	for (let i = 0; i < points.length; i++) {
+		let p = points[i],
+			fill = p.fill || args.fill || ctx.fillStyle,
+			stroke = p.stroke || args.stroke || ctx.strokeStyle,
+			x = p.x * unitSpace[0] / unitValue[0],
+			y = p.y * unitSpace[1] / unitValue[1];
+		ctx.beginPath();
+		ctx.fillStyle = fill;
+		ctx.strokeStyle = stroke;
+		ctx.arc(x, y, p.radius || args.radius, 0, Math.PI * 2);
+		ctx.fill();
+		ctx.stroke();
+	}
+	ctx.closePath();
+}
