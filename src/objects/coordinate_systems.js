@@ -321,8 +321,8 @@ export function axes(configs = {}) {
 		originPosition: configs.originPosition, // originPosition of axis as [x, y] in px
 		xAxis: xAxisLine, // x axis confiurations from numberLine
 		yAxis: yAxisLine, // y axis confiurations from numberLine
-		unitValue: [xAxisLine.unitSpace, yAxisLine.unitSpace], // space between two ticks in pixels
-		unitSpace: [xAxisLine.unitValue, yAxisLine.unitValue], // value between two close ticks
+		unitSpace: [xAxisLine.unitSpace, yAxisLine.unitSpace], // space between two ticks in pixels
+		unitValue: [xAxisLine.unitValue, yAxisLine.unitValue], // value between two close ticks
 	});
 }
 
@@ -420,21 +420,28 @@ export function numberPlane(configs = {}) {
 	ctx.restore();
 	function drawGridLines() {
 		// major grid lines
-		ctx.translate(xRange[0], 0);
 		ctx.beginPath();
 		ctx.lineWidth = gridStrokeWidth;
 		ctx.strokeStyle = gridStrokeColor;
 		// vertical grid lines
 		let max = yRange[1] - (yRange[1] % yRange[2]);
-		for (let i = 0; i <= xNums; i++) {
-			if (i == xAxis.range[0]) continue;
+		for (let i = xRange[0]; i <= xRange[1]; i++) {
+			if (
+			(xAxis.excludeOriginTick && i == 0) ||
+			(xAxis.includeLeftTip && i == xRange[0]) ||
+			(xAxis.includeRightTip && i == xRange[1])
+		) continue;
 			ctx.moveTo(i * xRange[2], yRange[0]);
 			ctx.lineTo(i * xRange[2], max);
 		}
 		// horizontal grid lines
 		max = xRange[1] - (xRange[1] % xRange[2]);
-		for (let i = 0; i <= yNums; i++) {
-			if (i == yAxis.range[0]) continue;
+		for (let i = yRange[0]; i <= yRange[1]; i++) {
+			if (
+			(yAxis.excludeOriginTick && i == 0) ||
+			(yAxis.includeLeftTip && i == yRange[0]) ||
+			(yAxis.includeRightTip && i == yRange[1])
+		) continue;
 			ctx.moveTo(xRange[0], i * yRange[2]);
 			ctx.lineTo(max, i * yRange[2]);
 		}
