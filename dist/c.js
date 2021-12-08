@@ -3475,213 +3475,119 @@ var _geometry = require("./geometry.js");
 
 var _text = require("./text.js");
 
-const BLUE = "#58c4dd";
-
-function isArray(o) {
-  return Array.isArray(o);
-} // list of plotters
-
-
-function getPlotterList(unitSpace, unitValue, cfgs = {}) {
-  return {
+// list of plotters
+function getPlotterList(cfgs = {}) {
+  return Object.assign(cfgs, {
     getParametricFunction: function (configs) {
-      configs.unitSpace = unitSpace;
-      configs.unitValue = unitValue;
+      configs.unitSpace = configs.unitSpace;
+      configs.unitValue = configs.unitValue;
       return (0, _functions.parametricFunction)(configs);
     },
     getFunctionGraph: function (configs) {
-      configs.unitSpace = unitSpace;
-      configs.unitValue = unitValue;
+      configs.unitSpace = configs.unitSpace;
+      configs.unitValue = configs.unitValue;
       return (0, _functions.functionGraph)(configs);
     },
     getHeatPlot: function (configs) {
-      configs.unitSpace = unitSpace;
-      configs.unitValue = unitValue;
+      configs.unitSpace = configs.unitSpace;
+      configs.unitValue = configs.unitValue;
       configs.min = configs.min || [cfgs.xAxis.range[0], cfgs.yAxis.range[0]];
       configs.max = configs.max || [cfgs.xAxis.range[1], cfgs.yAxis.range[1]];
       return (0, _functions.heatPlot)(configs);
+    },
+    plotPoints: function (configs) {
+      configs.unitValue = configs.unitValue;
+      configs.unitSpace = configs.unitSpace;
+      return (0, _functions.plotPoints)(configs);
     }
-  };
+  });
 }
 
 const ORIGIN = [0, 0];
 /**
- * Creates a axes.
- * @param {Object} args
- * Possible configurations are:
- *
- * @param {Object} args.xAxis Configurations for x axis. (See {@link numberLine} for more configurations)
- * @param {Object} args.yAxis Configurations for y axis. (See {@link numberLine} for more configurations)
- * @param {Array<number>} [args.center = ORIGIN] center of axes
- *
- * @returns {Object} object that contains following properties:
- * * xAxis                 <object>   : x axis confiurations from numberLine (See {@link numberLine} for those configurations).
- * * yAxis                 <object>   : y axis confiurations from numberLine (See {@link numberLine} for those configurations).
- * * unitValue             <array>    : How much a unit is in its value in x and y directions.
- * * unitSpace            <array>    : How much a unit is in px in x and y directions.
- * * getParametricFunction <function> : Draws a parametric function whose unit sizing are predefined by the axes. see {@link parametricFunction} to see possible configurations.
- * * getFunctionGraph      <function> : Draws a function graph whose unit sizing are predefined by the axes. see {@link functionGraph} to see possible configurations.
- */
-
-function axes(args = {}) {
-  const ctx = _main.C.workingContext;
-  const cvs = _main.C.workingCanvas; // default configurations
-
-  const defaultConfigs = {
-    xAxis: {
-      length: cvs.rWidth,
-      includeTick: true,
-      includeLeftTip: true,
-      includeRightTip: true,
-      excludeOriginTick: true,
-      includeNumbers: false
-    },
-    yAxis: {
-      length: cvs.rHeight,
-      rotation: Math.PI / 2,
-      textRotation: -Math.PI / 2,
-      textDirection: [0, 0.4],
-      includeTick: true,
-      includeLeftTip: true,
-      includeRightTip: true,
-      excludeOriginTick: true,
-      includeNumbers: false
-    },
-    center: ORIGIN
-  }; // configurations
-
-  args = (0, _utils.applyDefault)(defaultConfigs, args);
-  const {
-    xAxis,
-    yAxis
-  } = args; // other configurations
-
-  const center = args.center; // range of ticks in each axis
-
-  const xRange = xAxis.range;
-  const yRange = yAxis.range; // unit length of each axis
-  // got by dividing length of axis by number of ticks
-
-  const xDX = xAxis.length / ((xRange[1] - xRange[0]) / xRange[2]);
-  const yDX = yAxis.length / ((yRange[1] - yRange[0]) / yRange[2]); // coordinates of bounding rectangle of the graph
-
-  const xMin = xRange[0] / xRange[2] * xDX;
-  const yMin = yRange[0] / yRange[2] * yDX; // variables to shift 0 ticks of axes to center
-
-  const xShift = xAxis.length / 2 + xMin;
-  const yShift = yAxis.length / 2 + yMin;
-  ctx.save();
-  ctx.beginPath(); // translate to center
-
-  ctx.translate(center[0], center[1]); // draws axes
-  // x-axis
-
-  ctx.translate(xShift, 0);
-  const xAxisLine = numberLine(xAxis); // draw x axis
-  // reverse the effect of shift for drawing y-axis
-
-  ctx.translate(-xShift, yShift); // y-axis
-
-  const yAxisLine = numberLine(yAxis); // draw y axis
-  // size of a unit cell
-
-  const unitSpace = [xAxisLine.unitSpace, yAxisLine.unitSpace];
-  const unitValue = [xAxisLine.unitValue, yAxisLine.unitValue]; // reverse the effect of overall shift
-
-  ctx.translate(-center[0], -center[1] - yShift);
-  ctx.closePath();
-  ctx.restore();
-  const ret = {
-    center: center,
-    // center of axis as [x, y] in px
-    xAxis: xAxisLine,
-    // x axis confiurations from numberLine
-    yAxis: yAxisLine,
-    // y axis confiurations from numberLine
-    unitValue: unitValue,
-    // how much a unit is as [x, y] in its value
-    unitSpace: unitSpace // how much a unit is as [x, y] in px
-
-  };
-  return Object.assign(ret, getPlotterList(unitSpace, unitValue, ret));
-}
-
-const TEXT_DIR = [0, -0.8];
-/**
  * Creates a numberLine with parameters in a object
- * @param {Object} args configuration object
+ * @param {Object} configs configuration object
  *
- * @param {Array<number>} [args.point1] starting point of line. Default: [-ctx.width / 2, 0]
- * @param {Array<number>} [args.point2] ending point of line. Default: [ctx.width / 2, 0]
- * @param {Array<number>} [args.range] range of numbers to draw ticks and numbers. Default: [-5, 5, 1]
- * @param {Array<number>} [args.numbersToInclude] list of numbers to be displayed
- * @param {Array<number>} [args.numbersToExclude] list of numbers that shouldn't be displayed
- * @param {Array<number>} [args.numbersWithElongatedTicks] list of numbers where tick line should be longer
- * @param {Array<number>} [args.textDirection = TEXT_DIR] Direction of text relative to nearby tick
+ * @param {number} [configs.tipWidth = 13] width of arrow tip in px
+ * @param {number} [configs.tipHeight = 10] height/width of tip
+ * @param {number} [configs.longerTickMultiple = 1.5] Factor to increase height of ticks at elongated ticks
+ * @param {number} [configs.tickHeight = 10] Height of ticks in px
+ * @param {number} [configs.fontSize = 17] Font size of text
+ * @param {number} [configs.textRotation = 0] Amount to rotate text
+ * @param {number} [configs.decimalPlaces] Number of decimal places in text. By default value is number of decimals in step
+ * @param {number} [configs.rotation = 0] Amound to rotate the numberline from origin
+ * @param {number} [configs.strokeWidth = 2] Width of lines in px
+ * @param {number} [configs.length] Total length of numberline in pixels. Default is the widht of canvas
  *
- * @param {boolean} [args.includeLeftTip = false] whether to add an arrow tip at left
- * @param {boolean} [args.includeRightTip = false] whether to add an arrow tip at right
- * @param {boolean} [args.includeTick = true] Whether ticks should be added
- * @param {boolean} [args.excludeOriginTick = false] Whether exclude ticks at origin
+ * @param {string} [configs.strokeColor = "grey"] Color of axis and ticks
+ * @param {string} [configs.textColor = "white"] Color of text
  *
- * @param {number} [args.tipWidth = 20] width of arrow tip in px
- * @param {number} [args.tipHeight = 1] height/width of tip
- * @param {number} [args.lineWidth = 32] Width of lines in px
- * @param {number} [args.longerTickMultiple = 2] Factor to increase height of ticks at elongated ticks
- * @param {number} [args.tickHeight = 15] Height of ticks in px
- * @param {number} [args.textSize = 17] Font size of text
- * @param {number} [args.textRotation = 0] Amount to rotate text
- * @param {number} args.decimalPlaces Number of decimal places in text. By default value is number of decimals in step
+ * @param {Array<number>} [configs.textDirection = TEXT_DIR] Direction of text relative to nearby tick
+ * @param {Array<number>} [configs.numbersWithElongatedTicks] list of numbers where tick line should be longer
+ * @param {Array<number>} [configs.originPosition = ORIGIN] position of the origin of number line in pixels.
+ * @param {Array<number>} [configs.range] range of numbers to draw ticks and numbers. Default: [-5, 5, 1]
+ * @param {Array<number>} [configs.numbersToInclude] list of labels to be displayed instead of default numbers
+ * @param {Array<number>} [configs.numbersToExclude] list of numbers that shouldn't be displayed
+ * @param {Array<number>} [configs.textDirection = [0, -1]]
+
+ * @param {boolean} [configs.includeTick = true] Whether ticks should be added
+ * @param {boolean} [configs.includeLeftTip = false] whether to add an arrow tip at left
+ * @param {boolean} [configs.includeRightTip = false] whether to add an arrow tip at right
+ * @param {boolean} [configs.excludeOriginTick = false] Whether exclude ticks at origin
+ * @param {boolean} [configs.includeNumbers = true] whether to display labels
  *
- * @param {string} [args.color = "grey"] Color of axis and ticks
- * @param {string} [args.textColor = "white"] Color of text
+ * @param {string} [configs.fontFamily = "serif"] font Family to use
+ * @param {string} [configs.textAlign = "center"] to align text in x-axis
+ * @param {string} [configs.textBaseline = "middle"] to align text in y-axis
  *
+ * @param {function} [configs.textRenderer = fillText] function that is used to render text.
+ *
+ * * You can adjust textAlign and textBaseline if you want to adjust alignment of labels.
  * @returns {Object} configurations about the number line
  *
- * * center     {Array<number>} Center of the number line in px
+ * * originPosition     {Array<number>} Center of the number line in px
  * * tickList   {Array<number>} List of tick inervals
  * * unitValue  {Array<number>} How much a unit is in its value in x and y directions.
  * * unitSpace {Array<number>} How much a unit is in px in x and y directions.
  */
 
-function numberLine(args = {}) {
+function numberLine(configs = {}) {
   const ctx = _main.C.workingContext;
   const cvs = _main.C.workingCanvas;
-  const defaultConfigs = {
+  configs = (0, _utils.applyDefault)({
     rotation: 0,
-    lineWidth: 2,
-    tipWidth: 13,
-    textSize: 17,
-    tipHeight: 10,
-    tickHeight: 10,
-    textRotation: 0,
-    length: parseInt(cvs.rWidth),
-    longerTickMultiple: 1.5,
-    center: ORIGIN,
+    strokeWidth: 2,
+    length: parseInt(cvs.width),
+    originPosition: ORIGIN,
     range: [-5, 5, 1],
+    strokeColor: "grey",
+    tipWidth: 13,
+    tipHeight: 10,
+    fontSize: 17,
+    fontFamily: "serif",
+    textRenderer: _text.fillText,
+    textAlign: "center",
+    textBaseline: "middle",
+    textColor: "white",
+    textRotation: 0,
+    textDirection: [0, -1],
+    tickHeight: 10,
+    longerTickMultiple: 1.5,
     numbersToInclude: [],
     numbersToExclude: [],
-    textDirection: [-0.3, -0.0],
     numbersWithElongatedTicks: [],
     includeTick: true,
     includeNumbers: true,
     includeLeftTip: false,
     includeRightTip: false,
-    excludeOriginTick: false,
-    color: "grey",
-    textColor: "white"
-  };
-  args = (0, _utils.applyDefault)(defaultConfigs, args);
-  const {
-    color,
-    center,
-    rotation,
+    excludeOriginTick: false
+  }, configs);
+  let {
+    strokeColor,
     tipWidth,
-    textSize,
-    lineWidth,
+    strokeWidth,
+    fontSize,
     tipHeight,
-    length: lineLength,
-    tickHeight,
     textRotation,
     textDirection,
     includeLeftTip,
@@ -3690,47 +3596,66 @@ function numberLine(args = {}) {
     numbersToInclude,
     excludeOriginTick,
     longerTickMultiple,
-    numbersWithElongatedTicks
-  } = args;
-  let {
+    numbersWithElongatedTicks,
     range,
     decimalPlaces
-  } = args;
+  } = configs;
 
-  if (Array.isArray(range) && range.length === 2) {
-    range = [range[0], range[1], 1];
-  } // if number of decimal places is not defined
-  // find it using `step`
+  if (Array.isArray(range) && range.length) {
+    if (range.length === 1) {
+      range = [0, range[0], 1];
+    }
+
+    if (range.length === 2) {
+      range = [range[0], range[1], 1];
+    }
+  } else {
+    throw new Error("range must be a array that have atleast one item. Got: " + range.toString());
+  } // if number of decimal places is not defined, find it using `step`
 
 
-  if (isNaN(decimalPlaces)) {
+  if (isNaN(decimalPlaces) && decimalPlaces >= 0) {
     decimalPlaces = (range[2].toString().split(".")[1] || []).length || 0;
   }
 
-  const min = range[0];
-  const max = range[1];
-  const step = range[2];
-  const totalTicks = (max - min) / step;
-  const ds = lineLength / totalTicks;
-  const list = getTickList();
+  const min = range[0],
+        max = range[1],
+        step = range[2],
+
+  /** Total number of ticks */
+  totalTicks = (max - min) / step,
+
+  /** Space between two ticks in pixels*/
+  unitSpace = configs.length / totalTicks / step,
+
+  /** A list of numbers that'll be displayed if no labels are given through numberToInclude */
+  tickList = getTickList(); // scale everyting down
+
+  strokeWidth /= unitSpace;
+  tipWidth /= unitSpace;
+  fontSize /= unitSpace;
+  tipHeight /= unitSpace;
+  configs.tickHeight /= unitSpace;
   ctx.beginPath();
-  (0, _settings.save)();
-  (0, _settings.translate)(center[0] * ds, center[1] * ds);
-  (0, _settings.rotate)(rotation);
-  (0, _settings.translate)(-lineLength / 2, 0);
-  if (args.includeTick) drawTicks();
-  if (args.includeNumbers) drawNumbers();
-  (0, _settings.translate)(lineLength / 2, 0);
+  (0, _settings.save)(); // shfit to origin position
+
+  ctx.translate(configs.originPosition[0], configs.originPosition[1]); // scale up by unitspace
+
+  ctx.scale(unitSpace, unitSpace); // rotate entire canvas
+
+  ctx.rotate(configs.rotation);
+  if (configs.includeTick) drawTicks();
+  if (configs.includeNumbers) drawNumbers();
   drawAxis();
   ctx.closePath();
 
   function drawAxis() {
-    (0, _settings.stroke)(color);
-    ctx.lineWidth = lineWidth;
-    (0, _settings.fill)(color);
+    ctx.strokeStyle = strokeColor;
+    ctx.lineWidth = strokeWidth;
+    ctx.fillStyle = strokeColor;
     const r = Math.atan(tipHeight / 2);
-    let x1 = -lineLength / 2;
-    let x2 = lineLength / 2;
+    let x1 = tickList[0];
+    let x2 = tickList[tickList.length - 1];
 
     if (includeLeftTip) {
       (0, _arrows.arrowTip)(x1 + tipWidth, 0, x1, 0, tipWidth, tipHeight);
@@ -3746,42 +3671,55 @@ function numberLine(args = {}) {
   }
 
   function drawTicks() {
-    (0, _settings.stroke)(color);
-    ctx.lineWidth = lineWidth;
+    ctx.strokeStyle = strokeColor;
+    ctx.lineWidth = strokeWidth;
     const from = includeLeftTip ? 1 : 0;
-    const to = includeRightTip ? list.length - 1 : list.length;
+    const to = includeRightTip ? tickList.length - 1 : tickList.length;
 
-    for (let i = from; i < to && numbersToExclude.indexOf(list[0][i]) < 0; i++) {
-      const tick = list[i];
+    for (let i = from; i < to && numbersToExclude.indexOf(tickList[0][i]) < 0; i++) {
+      const tick = tickList[i];
       if (Number(tick) === 0 && excludeOriginTick) continue;
-      let TH = tickHeight;
+      let TH = configs.tickHeight;
 
       if (numbersWithElongatedTicks.indexOf(tick) > -1) {
         TH *= longerTickMultiple;
       }
 
-      (0, _geometry.line)(ds * i, -TH / 2, ds * i, TH / 2);
+      (0, _geometry.line)(tick, -TH / 2, tick, TH / 2);
     }
   }
 
   function drawNumbers() {
-    const numbers = numbersToInclude.length > 0 ? numbersToInclude : list;
-    (0, _settings.fill)(args.textColor);
-    (0, _settings.fontSize)(textSize);
-    const yShift = -textSize / 3 * Math.cos(textRotation) + textDirection[1] * textSize;
-    const from = includeLeftTip ? 1 : 0;
-    const to = includeRightTip ? numbers.length - 1 : numbers.length;
+    const labels = numbersToInclude.length > 0 ? numbersToInclude : tickList;
+    ctx.fillStyle = configs.textColor;
+    ctx.font = fontSize + "px " + configs.fontFamily;
+    ctx.textAlign = configs.textAlign;
+    ctx.textBaseline = configs.textBaseline;
+    const start = includeLeftTip ? 1 : 0;
+    const end = includeRightTip ? tickList.length - 1 : tickList.length;
+    const textRenderer = configs.textRenderer;
 
-    for (let i = from; i < to && numbersToExclude.indexOf(numbers[i]) < 0; i++) {
-      const tick = typeof numbers[i] == "number" ? numbers[i].toFixed(decimalPlaces) : numbers[i];
-      if (Number(tick) === 0 && excludeOriginTick) continue;
+    for (let i = start; i < end; i++) {
+      if (i >= labels.length) break;
+      const tick = typeof labels[i] == "number" ? labels[i].toFixed(decimalPlaces) : labels[i];
+
+      if (tickList[i] == 0 && excludeOriginTick || // exclude origin tick
+      numbersToExclude.indexOf(tickList[i]) > -1 // exclude ticks that were said to ignore explictly.
+      ) {
+        continue;
+      }
+
       const width = ctx.measureText(tick).width;
-      const xShift = -width / 2 * Math.cos(textRotation) + textDirection[0] * textSize + textSize / 2 * Math.sin(textRotation);
-      (0, _settings.translate)(ds * i + xShift, yShift - width * Math.sin(textRotation));
-      (0, _settings.rotate)(textRotation);
-      (0, _text.fillText)(tick, 0, 0);
-      (0, _settings.rotate)(-textRotation);
-      (0, _settings.translate)(-(ds * i + xShift), -(yShift - width * Math.sin(textRotation)));
+      const xShift = tickList[i] - // tick position
+      textDirection[0] * width; // shift by text direction
+
+      const yShift = textDirection[1] * fontSize; // shift by text direction
+
+      ctx.save();
+      ctx.translate(xShift, yShift);
+      ctx.rotate(textRotation);
+      textRenderer(tick, 0, 0);
+      ctx.restore();
     }
   }
 
@@ -3792,29 +3730,94 @@ function numberLine(args = {}) {
   (0, _settings.restore)();
   return {
     range: range,
-    center: center,
-    tickList: list,
+    originPosition: configs.originPosition,
+    tickList: tickList,
     unitValue: step,
-    unitSpace: ds
+    unitSpace: unitSpace
   };
 }
 /**
+ * Creates a axes.
+ * @param {Object} configs
+ * Possible configurations are:
+ *
+ * @param {Object} configs.xAxis Configurations for x axis. (See {@link numberLine} for more configurations)
+ * @param {Object} configs.yAxis Configurations for y axis. (See {@link numberLine} for more configurations)
+ * @param {Array<number>} [configs.originPosition = ORIGIN] originPosition of axes
+ *
+ * @returns {Object} object that contains following properties:
+ * * xAxis                 <object>   : x axis confiurations from numberLine (See {@link numberLine} for those configurations).
+ * * yAxis                 <object>   : y axis confiurations from numberLine (See {@link numberLine} for those configurations).
+ * * unitValue             <array>    : How much a unit is in its value in x and y directions.
+ * * unitSpace             <array>    : How much a unit is in px in x and y directions.
+ * * getParametricFunction <function> : Draws a parametric function whose unit sizing are predefined by the axes. see {@link parametricFunction} to see possible configurations.
+ * * getFunctionGraph      <function> : Draws a function graph whose unit sizing are predefined by the axes. see {@link functionGraph} to see possible configurations.
+ */
+
+
+function axes(configs = {}) {
+  const ctx = _main.C.workingContext;
+  const cvs = _main.C.workingCanvas; // configurations
+
+  configs = (0, _utils.applyDefault)({
+    xAxis: {
+      length: cvs.width,
+      includeTick: true,
+      includeLeftTip: false,
+      includeRightTip: true,
+      excludeOriginTick: true
+    },
+    yAxis: {
+      length: cvs.height,
+      rotation: Math.PI / 2,
+      textRotation: -Math.PI / 2,
+      textDirection: [0, 0.75],
+      includeTick: true,
+      includeLeftTip: false,
+      includeRightTip: true,
+      excludeOriginTick: true
+    },
+    originPosition: ORIGIN
+  }, configs);
+  ctx.save(); // translate to originPosition
+
+  ctx.translate(configs.originPosition[0], configs.originPosition[1]); // draws axes
+
+  const xAxisLine = numberLine(configs.xAxis); // draw x axis
+
+  const yAxisLine = numberLine(configs.yAxis); // draw y axis
+
+  ctx.restore();
+  return getPlotterList({
+    originPosition: configs.originPosition,
+    // originPosition of axis as [x, y] in px
+    xAxis: xAxisLine,
+    // x axis confiurations from numberLine
+    yAxis: yAxisLine,
+    // y axis confiurations from numberLine
+    unitValue: [xAxisLine.unitSpace, yAxisLine.unitSpace],
+    // space between two ticks in pixels
+    unitSpace: [xAxisLine.unitValue, yAxisLine.unitValue] // value between two close ticks
+
+  });
+}
+/**
  * Creates a numberPlane based on following parameters inside a Object
- * @param {Object} args
+ * @param {Object} configs
  * Possible parameters:
  *
- * @param {Object} args.xAxis Configurations for x axis. See {@link numberLine} for possible configurations.
- * @param {Object} args.yAxis Configurations for y axis. See {@link numberLine} for possible configurations.
- * @param {Array<number>} args.center Center of number plane as [x, y] in px.
- * @param {Object} args.grid Set of styles to draw grid & subgrids. This can have following properties:
- *   @param {number} [args.grid.lineWidth = 1]  stroke width of grid lines
- *   @param {number} [args.grid.subgrids = 0]  number of sub-grid division to draw
- *   @param {number} [args.grid.subgridLineWidth = 0.7]  stroke width of sub-grid
- *   @param {string} [args.grid.color = "#58c4dda0"]  color of grid lines
- *   @param {string} [args.grid.subgridLineColor = "#888888a0"]  color of sub-grids
+ * @param {Object} configs.xAxis Configurations for x axis. See {@link numberLine} for possible configurations.
+ * @param {Object} configs.yAxis Configurations for y axis. See {@link numberLine} for possible configurations.
+ * @param {Array<number>} configs.originPosition Center of number plane as [x, y] in px.
+ * @param {Array<number>} [configs.subgrids] array number of sub-grid division in each axes. Default=[1,1]
+ * @param {Object} configs.grid Set of styles to draw grid & subgrids. This can have following properties:
+ * @param {number} [configs.gridStrokeWidth = 1]  stroke width of grid lines
+ * @param {number} [configs.subgridStrokeWidth = 0.7]  stroke width of sub-grid
+ * @param {string} [configs.gridStrokeColor = "#58c4dda0"]  color of grid lines
+ * @param {string} [configs.subgridStrokeColor = "#888888a0"]  color of sub-grids
  * @returns {Object} configurations of number plane. Those are :
  *
- * * center                <array>   : Center of number plane as [x, y] in px.
+ * * originPosition                <array>   : Center of number plane as [x, y] in px.
  * * unitValue             <array>   : How much a unit is in its value in x and y directions.
  * * unitSpace            <array>   : How much a unit is in px in x and y directions.
  * * subgridUnit           <array>   : How much a sub-grid is in px in x and y directions.
@@ -3825,12 +3828,13 @@ function numberLine(args = {}) {
  */
 
 
-function numberPlane(args = {}) {
-  const cvs = _main.C.workingCanvas; // default configurations
+function numberPlane(configs = {}) {
+  const cvs = _main.C.workingCanvas;
+  const ctx = _main.C.workingContext; // default configurations
 
   const defaultConfigs = {
     xAxis: {
-      length: parseInt(cvs.rWidth),
+      length: parseInt(cvs.style.width),
       includeTick: true,
       includeNumbers: true,
       includeLeftTip: false,
@@ -3848,132 +3852,106 @@ function numberPlane(args = {}) {
       includeRightTip: false,
       excludeOriginTick: true
     },
-    grid: {
-      subgrids: 1,
-      lineWidth: 1,
-      subgridLineWidth: 0.7,
-      color: BLUE + "a0",
-      subgridLineColor: "#88888850"
-    },
-    center: ORIGIN
+    subgrids: [1, 1],
+    gridStrokeWidth: 1.3,
+    subgridStrokeWidth: 0.8,
+    gridStrokeColor: "#58c4dddd",
+    subgridStrokeColor: "#88888850",
+    originPosition: ORIGIN
   }; // configurations
 
-  args = (0, _utils.applyDefault)(defaultConfigs, args);
-  const {
+  configs = (0, _utils.applyDefault)(defaultConfigs, configs);
+  let {
     xAxis,
     yAxis,
-    grid
-  } = args; // other configurations
+    originPosition,
+    subgrids,
+    gridStrokeWidth,
+    subgridStrokeWidth,
+    gridStrokeColor
+  } = configs; // range of ticks in each axis
 
-  const subgrids = grid.subgrids;
-  const center = args.center;
-
-  if (!isArray(xAxis.range)) {
-    // find range from unitSpace
-    let extrema = xAxis.length / xAxis.unitSpace / 2;
-    xAxis.range = [-extrema, extrema, 1];
-  } else {
-    if (isNaN(xAxis.range[2])) xAxis.range[2] = 1;
-    xAxis.unitSpace = xAxis.length / ((xAxis.range[1] - xAxis.range[0]) / xAxis.range[2]);
-  }
-
-  if (!isArray(yAxis.range)) {
-    // find range from unitSpace
-    let extrema = yAxis.length / yAxis.unitSpace / 2;
-    yAxis.range = [-extrema, extrema, 1];
-  } else {
-    if (isNaN(yAxis.range[2])) yAxis.range[2] = 1;
-    yAxis.unitSpace = yAxis.length / ((yAxis.range[1] - yAxis.range[0]) / yAxis.range[2]);
-  } // range of ticks in each axis
-
-
-  const xRange = xAxis.range;
-  const yRange = yAxis.range; // number of ticks in each
-
-  const xNums = (xRange[1] - xRange[0]) / xRange[2];
-  const yNums = (yRange[1] - yRange[0]) / yRange[2]; // unit length of each axis
-
-  const xDX = xAxis.unitSpace;
-  const yDX = yAxis.unitSpace; // coordinates of bounding rectangle of the graph
-
-  const xMin = xRange[0] / xRange[2] * xDX;
-  const xMax = xRange[1] / xRange[2] * xDX;
-  const yMin = yRange[0] / yRange[2] * yDX;
-  const yMax = yRange[1] / yRange[2] * yDX; // size of a subgrid unit cell
-
-  const subgridUnit = [xDX / subgrids, yDX / subgrids];
-  (0, _settings.save)(); // translate to center
-
-  center[0] *= xDX;
-  center[1] *= yDX;
-  (0, _settings.translate)(center[0], center[1]); // draw grids
-  // draws axes
-
+  ctx.save();
   const axesLines = axes({
     xAxis: xAxis,
     yAxis: yAxis
   });
-  drawGridLines(); // size of a unit cell
+  const xRange = axesLines.xAxis.range;
+  const yRange = axesLines.yAxis.range; // number of ticks in each axes
+
+  const xNums = (xRange[1] - xRange[0]) / xRange[2];
+  const yNums = (yRange[1] - yRange[0]) / yRange[2]; // draw grids
 
   const unitSpace = axesLines.unitSpace;
   const unitValue = axesLines.unitValue;
+  ctx.scale(unitSpace[0], unitSpace[1]);
+  gridStrokeWidth /= unitSpace[1];
+  subgridStrokeWidth /= unitSpace[1];
+  drawGridLines(); // size of a unit cell
+
+  ctx.restore();
 
   function drawGridLines() {
     // major grid lines
-    (0, _settings.translate)(xMin, 0);
-    const subgridxDX = subgridUnit[0];
-    const subgridyDX = subgridUnit[1]; // horizontal grid lines
+    ctx.translate(xRange[0], 0);
+    ctx.beginPath();
+    ctx.lineWidth = gridStrokeWidth;
+    ctx.strokeStyle = gridStrokeColor; // vertical grid lines
+
+    let max = yRange[1] - yRange[1] % yRange[2];
 
     for (let i = 0; i <= xNums; i++) {
-      if (i == xAxis.center - xAxis.range[0]) continue; // draw major grid lines
+      if (i == xAxis.range[0]) continue;
+      ctx.moveTo(i * xRange[2], yRange[0]);
+      ctx.lineTo(i * xRange[2], max);
+    } // horizontal grid lines
 
-      drawMajor(i * xDX, // x - shift
-      0, // y - shift
-      0, yMin, 0, yMax); // draw subgrid grid lines
 
-      for (let k = 1; k <= subgrids && i < xNums; k++) {
-        drawMinor(k * subgridxDX, yMin, k * subgridxDX, yMax);
-      }
-
-      (0, _settings.translate)(-i * xDX);
-    }
-
-    (0, _settings.translate)(-xMin, yMin); // vertical grid lines
+    max = xRange[1] - xRange[1] % xRange[2];
 
     for (let i = 0; i <= yNums; i++) {
-      if (i == yAxis.center - yAxis.range[0]) continue; // draw major grid lines
+      if (i == yAxis.range[0]) continue;
+      ctx.moveTo(xRange[0], i * yRange[2]);
+      ctx.lineTo(max, i * yRange[2]);
+    }
 
-      drawMajor(0, // x - shift
-      i * yDX, // y - shift
-      xMin, 0, xMax, 0); // draw subgrid grid lines
+    ctx.stroke();
+    ctx.closePath(); // draw subgrid grid lines
 
-      for (let k = 1; k <= subgrids && i < yNums; k++) {
-        drawMinor(xMin, k * subgridyDX, xMax, k * subgridyDX);
+    ctx.lineWidth = subgridStrokeWidth;
+    ctx.strokeStyle = configs.subgridStrokeColor;
+    let spacing = 2 / (subgrids[0] + 1),
+        // space between two subgrids
+    totalSubGrids = xNums * (subgrids[0] + 1); // vertical subgrids
+
+    for (let k = xRange[0]; k <= totalSubGrids; k++) {
+      if (k % (subgrids[0] + 1) == 0) {
+        continue;
       }
 
-      (0, _settings.translate)(0, -i * yDX);
+      ctx.moveTo(k * spacing, yRange[0]);
+      ctx.lineTo(k * spacing, yRange[1]);
     }
 
-    (0, _settings.translate)(0, -yMin);
+    spacing = 2 / (subgrids[1] + 1);
+    totalSubGrids = yNums * (subgrids[1] + 1); // horizontal subgrids
 
-    function drawMajor(shiftX, shiftY, x1, y1, x2, y2) {
-      (0, _settings.translate)(shiftX, shiftY);
-      (0, _settings.strokeWidth)(grid.lineWidth);
-      (0, _settings.stroke)(grid.color);
-      (0, _geometry.line)(x1, y1, x2, y2);
+    for (let k = yRange[0]; k <= totalSubGrids; k++) {
+      if (k % (subgrids[1] + 1) == 0) {
+        continue;
+      }
+
+      ctx.moveTo(xRange[0], k * spacing);
+      ctx.lineTo(xRange[1], k * spacing);
     }
 
-    function drawMinor(x1, y1, x2, y2) {
-      (0, _settings.strokeWidth)(grid.subgridLineWidth);
-      (0, _settings.stroke)(grid.subgridLineColor);
-      (0, _geometry.line)(x1, y1, x2, y2);
-    }
+    ctx.stroke();
+    ctx.closePath();
   }
 
-  (0, _settings.restore)();
-  const ret = {
-    center: center,
-    // center of number plane
+  return getPlotterList({
+    originPosition: originPosition,
+    // position of origin of number plane
     unitValue: unitValue,
     // how much a unit is in its value
     unitSpace: unitSpace,
@@ -3982,10 +3960,9 @@ function numberPlane(args = {}) {
     // x axis confiurations from numberLine
     yAxis: axesLines.yAxis,
     // y axis confiurations from numberLine
-    subgridUnit: subgridUnit // subgrid unit size
+    subgridUnit: subgrids // subgrid unit size
 
-  };
-  return Object.assign(ret, getPlotterList(unitSpace, unitValue, ret));
+  });
 }
 
 },{"../main.js":16,"../settings.js":30,"../utils.js":31,"./arrows.js":22,"./functions.js":25,"./geometry.js":26,"./text.js":29}],25:[function(require,module,exports){
@@ -3997,6 +3974,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.functionGraph = functionGraph;
 exports.heatPlot = heatPlot;
 exports.parametricFunction = parametricFunction;
+exports.plotPoints = plotPoints;
 
 var _color_reader = require("../color/color_reader.js");
 
@@ -4284,6 +4262,46 @@ function heatPlot(args) {
     max: maxS,
     colors: colors
   };
+}
+/**
+ * Plots a list of points
+ * @param {Object} args arguments
+ * @param {Array<Object<x:number, y:number, radius?: number, fill?: string, stroke?: string>>} args.points list of points
+ *
+ */
+
+
+function plotPoints(args) {
+  let defaultConfigs = {
+    unitValue: UNIT_VEC,
+    unitSpace: UNIT_VEC,
+    fill: "white",
+    stroke: "#0000",
+    radius: 7
+  };
+  args = (0, _utils.applyDefault)(defaultConfigs, args);
+  let {
+    points,
+    unitValue,
+    unitSpace
+  } = args;
+  let ctx = _main.C.workingContext;
+
+  for (let i = 0; i < points.length; i++) {
+    let p = points[i],
+        fill = p.fill || args.fill || ctx.fillStyle,
+        stroke = p.stroke || args.stroke || ctx.strokeStyle,
+        x = p.x * unitSpace[0] / unitValue[0],
+        y = p.y * unitSpace[1] / unitValue[1];
+    ctx.beginPath();
+    ctx.fillStyle = fill;
+    ctx.strokeStyle = stroke;
+    ctx.arc(x, y, p.radius || args.radius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+  }
+
+  ctx.closePath();
 }
 
 },{"../color/color_reader.js":6,"../main.js":16,"../settings.js":30,"../utils.js":31,"./geometry.js":26}],26:[function(require,module,exports){
@@ -5350,6 +5368,8 @@ function strokeWidth(w) {
 
 function scale(x, y = x) {
   _main.C.workingContext.scale(x, y);
+
+  if (y < 0) _main.C.workingContext.yAxisInverted = true;
 }
 /**
  * Rotates the canvas

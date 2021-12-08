@@ -2116,6 +2116,8 @@ function strokeWidth(w) {
 
 function scale(x, y = x) {
   _main.C.workingContext.scale(x, y);
+
+  if (y < 0) _main.C.workingContext.yAxisInverted = true;
 }
 /**
  * Rotates the canvas
