@@ -157,8 +157,8 @@ export function getBezierControlPoints(
  * @param {Array<Array<number>>} points array of points as [x, y]
  * @param {number} tension tension of the curve
  */
-export function smoothCurveThroughPointsTo(points, tension = 1, closed = true) {
-	for (let i = 0; i < points.length - 1; i++) {
+export function smoothCurveThroughPointsTo(points, tension = 1, closed = true, offset = 0) {
+	for (let i = 0; i < points.length - 1 - offset; i++) {
 		let recentPoint = i > 0 ? points[i - 1] : closed ? points[points.length - 2] : points[0],
 			currentPoint = points[i],
 			nextPoint = points[i + 1],
@@ -174,11 +174,11 @@ export function smoothCurveThroughPointsTo(points, tension = 1, closed = true) {
  * @param {Array<Array<number>>} points array of points as [x, y]
  * @param {number} tension tension of the curve
  */
-export function smoothCurveThroughPoints(points, tension = 1, closed = true) {
+export function smoothCurveThroughPoints(points, tension = 1, closed = true, offset = 0) {
 	let ctx = C.workingContext;
 	ctx.beginPath();
 	ctx.moveTo(points[0][0], points[0][1]);
-	smoothCurveThroughPointsTo(points, tension, closed);
+	smoothCurveThroughPointsTo(points, tension, closed, offset);
 	if (ctx.doFill && closed) ctx.fill();
 	if (ctx.doStroke) ctx.stroke();
 	ctx.closePath();

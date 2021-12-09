@@ -20,18 +20,18 @@ const UNIT_VEC = [1, 1];
 /**
  * Draws a parametric functions
  * This accept parameters as object.
- * @param {Object} args configuration object
+ * @param {Object} configs configuration object
  * It can have following properties:
  *
- * @param {Function} args.paramFunction function to plot. Must recieve one argument and return a array of point as [x, y]
- * @param {number} [args.tension = 1] Smoothness tension.
- * @param {Array<number>} [args.range = RANGE] Range as [min, max, dt]
- * @param {Array<number>} [args.discontinuities] Array of t where the curve discontinues.
- * @param {Array<number>} [args.unitValue = UNIT_VEC] Value of each unit space
- * @param {Array<number>} [args.unitSpace = UNIT_VEC] Length of each unit in pixels
- * @param {boolean} [args.smoothen = true] Whether to smoothen the shape.
- * @param {boolean} [args.closed = false] Whether the function draws a closed shape.
- * @param {boolean} [args.draw = true] Wheteher to draw the function graph right now.
+ * @param {Function} configs.plotter function to plot. Must recieve one argument and return a array of point as [x, y]
+ * @param {number} [configs.tension = 1] Smoothness tension.
+ * @param {Array<number>} [configs.range = RANGE] Range as [min, max, dt]
+ * @param {Array<number>} [configs.discontinuities] Array of t where the curve discontinues.
+ * @param {Array<number>} [configs.unitValue = UNIT_VEC] Value of each unit space
+ * @param {Array<number>} [configs.unitSpace = UNIT_VEC] Length of each unit in pixels
+ * @param {boolean} [configs.smoothen = true] Whether to smoothen the shape.
+ * @param {boolean} [configs.closed = false] Whether the function draws a closed shape.
+ * @param {boolean} [configs.draw = true] Wheteher to draw the function graph right now.
  *
  * @returns {Object} object that contains following properties:
  *
@@ -39,7 +39,7 @@ const UNIT_VEC = [1, 1];
  * * draw    <function> : Function that draws the plot
  * * animate <function> : Function that animates the drawing of the shape. Accept argument `duration` which is the duration of animation.
  */
-export function parametricFunction(args) {
+export function parametricFunction(configs) {
 	let defaultConfigs = {
 		tension: 1,
 
@@ -55,8 +55,8 @@ export function parametricFunction(args) {
 		// for animation
 		dur: 4000,
 	};
-	args = applyDefault(defaultConfigs, args);
-	let { paramFunction, range, smoothen, tension, discontinuities, closed } = args;
+	configs = applyDefault(defaultConfigs, configs);
+	let { plotter, range, smoothen, tension, discontinuities, closed } = configs;
 	if (Array.isArray(range) && range.length == 2) range.push((range[1] - range[0]) / 20);
 	let points = [[]],
 		min = range[0],
@@ -67,9 +67,9 @@ export function parametricFunction(args) {
 	// generate points
 	let epsilon = 1e-6,
 		row = 0,
-		noPoints = 0,
-		unitX = args.unitSpace[0] / args.unitValue[0],
-		unitY = args.unitSpace[1] / args.unitValue[1];
+		pointCount = 0,
+		unitX = configs.unitSpace[0] / configs.unitValue[0],
+		unitY = configs.unitSpace[1] / configs.unitValue[1];
 	if (step < epsilon) epsilon = step / 2;
 	for (let t = min; t <= max + epsilon; t += step) {
 		if (approximateIndexInArray(t, discontinuities, epsilon) > -1) {
@@ -79,13 +79,13 @@ export function parametricFunction(args) {
 			}
 			continue;
 		}
-		let ft = paramFunction(t);
+		let ft = plotter(t);
 		points[row].push([ft[0] * unitX, ft[1] * unitY]);
-		noPoints++;
+		pointCount++;
 	}
 
 	// draw the plot
-	if (args.draw) plot();
+	if (configs.draw) plot();
 	function plot() {
 		let ctx = C.workingContext;
 		for (let i = 0; i < points.length; i++) {
@@ -106,16 +106,16 @@ export function parametricFunction(args) {
 	let ctx = C.workingContext;
 	return {
 		points: points[0],
-		dur: args.dur,
+		dur: configs.dur,
 		name: "parametric-plot-" + counter.parametricFunction++,
-		closed: args.closed,
-		tension: args.tension || 1,
-		smoothen: args.smoothen,
-		rateFunction: args.rateFunction,
-		syncWithTime: args.syncWithTime || false,
+		closed: configs.closed,
+		tension: configs.tension || 1,
+		smoothen: configs.smoothen,
+		rateFunction: configs.rateFunction,
+		syncWithTime: configs.syncWithTime || false,
 
 		draw: function (duration = 2000) {
-			let dt = duration / noPoints;
+			let dt = duration / pointCount;
 			for (let i = 0; i < points.length; i++) {
 				var p = points[i];
 				let j = 0;
@@ -174,29 +174,29 @@ export function parametricFunction(args) {
  * Draws graph of funciton
  * See {@link parametricFunction} For arguments
  */
-export function functionGraph(args) {
-	let paramFunction = args.paramFunction;
-	args.paramFunction = (x) => [x, paramFunction(x)];
-	return parametricFunction(args);
+export function functionGraph(configs) {
+	let plotter = configs.plotter;
+	configs.plotter = (x) => [x, plotter(x)];
+	return parametricFunction(configs);
 }
 
 /**
  * Draws a heat plot of given function. The function must take atleast 2 arguments and return a number.
  * More precisely f: ℜ² → ℜ
  * All parameters should be enclosed in a object.
- * @param {Object} args
+ * @param {Object} configs
  * Possible parameters are:
  *
- * @param {Array<number>} [args.min] minimum point. Default: [-4, -4]
- * @param {Array<number>} [args.max] maximum point. Default: [4, 4]
- * @param {Object} args.colors object of color map
- * @param {Array<number>} [args.unitValue = UNIT_VEC] Value of each unit space
- * @param {Array<number>} [args.unitSpace = UNIT_VEC] Length of each unit in pixels
- * @param {number} [args.resolution = 1] resolution of plot
- * @param {Function} [args.interpolator = linear] function to interpolate color.
+ * @param {Array<number>} [configs.min] minimum point. Default: [-4, -4]
+ * @param {Array<number>} [configs.max] maximum point. Default: [4, 4]
+ * @param {Object} configs.colors object of color map
+ * @param {Array<number>} [configs.unitValue = UNIT_VEC] Value of each unit space
+ * @param {Array<number>} [configs.unitSpace = UNIT_VEC] Length of each unit in pixels
+ * @param {number} [configs.resolution = 1] resolution of plot
+ * @param {Function} [configs.interpolator = linear] function to interpolate color.
  * @return {Object} metadatas
  */
-export function heatPlot(args) {
+export function heatPlot(configs) {
 	let defaultConfigs = {
 		min: [-4, -4],
 		max: [4, 4],
@@ -214,13 +214,13 @@ export function heatPlot(args) {
 		resolution: 1,
 		interpolator: (x) => x,
 	};
-	args = applyDefault(defaultConfigs, args, false);
-	let { min, max, colors, resolution, plotFunction, interpolator } = args,
+	configs = applyDefault(defaultConfigs, configs, false);
+	let { min, max, colors, resolution, plotFunction, interpolator } = configs,
 		ctx = C.workingContext,
-		unitSizeX = args.unitSpace[0] / args.unitValue[0],
-		unitSizeY = args.unitSpace[1] / args.unitValue[1],
-		UVX = args.unitValue[0] / args.unitSpace[0],
-		UVY = args.unitValue[1] / args.unitSpace[1],
+		unitSizeX = configs.unitSpace[0] / configs.unitValue[0],
+		unitSizeY = configs.unitSpace[1] / configs.unitValue[1],
+		UVX = configs.unitValue[0] / configs.unitSpace[0],
+		UVY = configs.unitValue[1] / configs.unitSpace[1],
 		stopes = Object.keys(colors).sort();
 
 	// converting colors to rgba array
@@ -270,33 +270,154 @@ export function heatPlot(args) {
 
 /**
  * Plots a list of points
- * @param {Object} args arguments
- * @param {Array<Object<x:number, y:number, radius?: number, fill?: string, stroke?: string>>} args.points list of points
+ * @param {Object} configs arguments
+ * @param {Array<Object<x:number, y:number, radius?: number, fill?: string, stroke?: string>>} configs.points list of points
  *
  */
-export function plotPoints(args) {
-	let defaultConfigs = {
-		unitValue: UNIT_VEC,
-		unitSpace: UNIT_VEC,
-		fill: "white",
-		stroke: "#0000",
-		radius: 7
-	};
-	args = applyDefault(defaultConfigs, args);
-	let { points, unitValue, unitSpace } = args;
+export function plotPoints(configs) {
+	configs = applyDefault(
+		{
+			unitValue: UNIT_VEC,
+			unitSpace: UNIT_VEC,
+			fill: "white",
+			stroke: "#0000",
+			radius: 5,
+		},
+		configs
+	);
+	let { points, unitValue, unitSpace } = configs;
 	let ctx = C.workingContext;
 	for (let i = 0; i < points.length; i++) {
 		let p = points[i],
-			fill = p.fill || args.fill || ctx.fillStyle,
-			stroke = p.stroke || args.stroke || ctx.strokeStyle,
-			x = p.x * unitSpace[0] / unitValue[0],
-			y = p.y * unitSpace[1] / unitValue[1];
+			fill = p.fill || configs.fill || ctx.fillStyle,
+			stroke = p.stroke || configs.stroke || ctx.strokeStyle,
+			x = (p.x * unitSpace[0]) / unitValue[0],
+			y = (p.y * unitSpace[1]) / unitValue[1];
 		ctx.beginPath();
 		ctx.fillStyle = fill;
 		ctx.strokeStyle = stroke;
-		ctx.arc(x, y, p.radius || args.radius, 0, Math.PI * 2);
+		ctx.arc(x, y, p.radius || configs.radius, 0, Math.PI * 2);
 		ctx.fill();
 		ctx.stroke();
 	}
 	ctx.closePath();
+}
+
+/**
+ * Plots a bunch of points in polar plane
+ * @param {Object} configs configurations
+ * @param {Array<Object<r:number, phi:number, radius?: number, fill?: string, stroke?: string>>} configs.points list of points
+ */
+export function plotPolarPoints(configs) {
+	configs = applyDefault(
+		{
+			radialSpacing: 2,
+			fill: "white",
+			stroke: "#0000",
+			radius: 5,
+			points: [],
+		},
+		configs
+	);
+	let ctx = C.workingContext;
+	let { points, radialSpacing } = configs;
+	ctx.save();
+	for (let i = 0; i < points.length; i++) {
+		let p = points[i],
+			fill = p.fill || configs.fill || ctx.fillStyle,
+			stroke = p.stroke || configs.stroke || ctx.strokeStyle,
+			x = p.r * Math.cos(p.phi) * radialSpacing,
+			y = p.r * Math.sin(p.phi) * radialSpacing;
+		ctx.beginPath();
+		ctx.fillStyle = fill;
+		ctx.strokeStyle = stroke;
+		ctx.arc(x, y, p.radius || configs.radius, 0, Math.PI * 2);
+		ctx.fill();
+		ctx.stroke();
+	}
+	ctx.closePath();
+	ctx.restore();
+}
+
+export function polarParametricFunction(configs) {
+	configs = applyDefault(
+		{
+			tension: 1,
+			radialSpacing: 1,
+			range: [0, Math.PI * 2, Math.PI / 50],
+			discontinuities: [],
+
+			smoothen: true,
+			closed: false,
+			strokeWidth: 2,
+			plotter: (t) => [0, 0],
+		},
+		configs
+	);
+	let { plotter, range, radialSpacing, smoothen, tension, discontinuities, closed } = configs;
+	if (Array.isArray(range) && range.length == 2) range.push((range[1] - range[0]) / 20);
+	let points = [[]],
+		min = range[0],
+		max = range[1],
+		step = range[2];
+	if (!Array.isArray(discontinuities)) discontinuities = [];
+
+	// generate points
+	let epsilon = 1e-6,
+		row = 0;
+	if (step < epsilon) epsilon = step / 2;
+	// we add one more point to make the graph more accurate when applying smoothening technique.
+	for (let t = min; t <= max + epsilon + step; t += step) {
+		if (approximateIndexInArray(t, discontinuities, epsilon) > -1) {
+			if (approximateIndexInArray(t + step, discontinuities, epsilon) > -1) {
+				row++;
+				points.push([]);
+			}
+			continue;
+		}
+		let ft = plotter(t);
+		points[row].push([
+			ft[0] * Math.cos(ft[1]) * radialSpacing,
+			ft[0] * Math.sin(ft[1]) * radialSpacing,
+		]);
+	}
+
+	let ctx = C.workingContext;
+	for (let i = 0; i < points.length; i++) {
+		let p = points[i];
+		ctx.lineWidth = configs.strokeWidth;
+
+		// add offset to remove last point
+		let offset = i == points.length - 1 ? 1: 0;
+		if (smoothen) {
+			smoothCurveThroughPoints(p, tension, closed, offset);
+		} else {
+			ctx.beginPath();
+			ctx.moveTo(p[0][0], p[0][1]);
+			for (let j = 1; j < p.length - offset; j++) {
+				ctx.lineTo(p[j][0], p[j][1]);
+			}
+			if (ctx.doFill && closed) ctx.fill();
+			if (ctx.doStroke) ctx.stroke();
+			ctx.closePath();
+		}
+
+		// remove last excess point
+		if (offset) {
+			points[i] = points[i].slice(0, -1);
+		}
+		console.log(ctx.lineCap);
+	}
+	return {
+		points: points,
+		closed: configs.closed,
+		tension: configs.tension || 1,
+		smoothen: configs.smoothen,
+	};
+}
+
+export function polarFuntionGraph(configs) {
+	let plotter = configs.plotter;
+	configs.plotter = (t) => [t, plotter(t)];
+	return polarParametricFunction(configs);
 }

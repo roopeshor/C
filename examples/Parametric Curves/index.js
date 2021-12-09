@@ -56,7 +56,7 @@ C(
 		}
 		drawAxis()
 			.getParametricFunction({
-				paramFunction: ft,
+				plotter: ft,
 				range: [0, TAU, TAU / 400],
 				closed: true,
 				draw: false,
@@ -80,7 +80,7 @@ C(
 		}
 		drawAxis(-8, 8, 1)
 			.getParametricFunction({
-				paramFunction: ft,
+				plotter: ft,
 				range: [0, limit, limit / 100],
 				closed: true,
 				draw: false,
@@ -101,7 +101,7 @@ C(
 		}
 		drawAxis(-5, 5, 1)
 			.getParametricFunction({
-				paramFunction: ft,
+				plotter: ft,
 				range: [0, TAU, PI / 40],
 
 				closed: true,
@@ -123,7 +123,7 @@ C(
 		}
 		drawAxis(-4, 4, 1)
 			.getParametricFunction({
-				paramFunction: ft,
+				plotter: ft,
 				range: [-TAU * 2, TAU * 2, 0.1],
 				closed: false,
 				draw: false,

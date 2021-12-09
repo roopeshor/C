@@ -193,7 +193,7 @@ export function save() {
 
 /**
  * Set the type of line end
- * Options: BUTT, ROUND, SQUARE
+ * Options: butt, round, square
  *
  * @param {string} capType
  */
