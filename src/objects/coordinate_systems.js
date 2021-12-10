@@ -1,6 +1,6 @@
 import { C } from "../main.js";
 import { restore, save } from "../settings.js";
-import { applyDefault, arange } from "../utils.js";
+import { applyDefault, arange, fraction } from "../utils.js";
 import { arrowTip } from "./arrows.js";
 import {
 	functionGraph,
@@ -12,11 +12,11 @@ import {
 	polarParametricFunction
 } from "./functions.js";
 import { line } from "./geometry.js";
+import { tex } from "./tex.js";
 import { fillText } from "./text.js";
 
 // list of plotters
 function getCartasianPlotters(configs) {
-	console.log(configs);
 	return Object.assign(configs, {
 		getParametricFunction: function (cfg) {
 			cfg.unitSpace = configs.unitSpace;
@@ -84,11 +84,11 @@ const ORIGIN = [0, 0];
  * @param {Array<number>} [configs.numbersWithElongatedTicks] list of numbers where tick line should be longer
  * @param {Array<number>} [configs.originPosition = ORIGIN] position of the origin of number line in pixels.
  * @param {Array<number>} [configs.range] range of numbers to draw ticks and numbers. Default: [-5, 5, 1]
- * @param {Array<number>} [configs.numbersToInclude] list of labels to be displayed instead of default numbers
+ * @param {Array<number>} [configs.labelsToInclude] list of labels to be displayed instead of default numbers
  * @param {Array<number>} [configs.numbersToExclude] list of numbers that shouldn't be displayed
  * @param {Array<number>} [configs.textDirection = [0, -1]]
 
- * @param {boolean} [configs.includeTick = true] Whether ticks should be added
+ * @param {boolean} [configs.includeTicks = true] Whether ticks should be added
  * @param {boolean} [configs.includeLeftTip = false] whether to add an arrow tip at left
  * @param {boolean} [configs.includeRightTip = false] whether to add an arrow tip at right
  * @param {boolean} [configs.excludeOriginTick = false] Whether exclude ticks at origin
@@ -134,11 +134,11 @@ export function numberLine(configs = {}) {
 
 			tickHeight: 10,
 			longerTickMultiple: 1.5,
-			numbersToInclude: [],
-			numbersToExclude: [],
+			labelsToInclude: [],
+			numbersToExclude: [0],
 			numbersWithElongatedTicks: [],
 
-			includeTick: true,
+			includeTicks: true,
 			includeLabels: true,
 			includeLeftTip: false,
 			includeRightTip: false,
@@ -157,7 +157,7 @@ export function numberLine(configs = {}) {
 		includeLeftTip,
 		includeRightTip,
 		numbersToExclude,
-		numbersToInclude,
+		labelsToInclude,
 		excludeOriginTick,
 		longerTickMultiple,
 		numbersWithElongatedTicks,
@@ -207,7 +207,7 @@ export function numberLine(configs = {}) {
 	// rotate entire canvas
 	ctx.rotate(configs.rotation);
 
-	if (configs.includeTick) drawTicks();
+	if (configs.includeTicks) drawTicks();
 	if (configs.includeLabels) drawNumbers();
 	drawAxis();
 	ctx.closePath();
@@ -248,7 +248,7 @@ export function numberLine(configs = {}) {
 	}
 
 	function drawNumbers() {
-		const labels = numbersToInclude.length > 0 ? numbersToInclude : tickList;
+		const labels = labelsToInclude.length > 0 ? labelsToInclude : tickList;
 		ctx.fillStyle = configs.textColor;
 		ctx.font = fontSize + "px " + configs.fontFamily;
 		ctx.textAlign = configs.textAlign;
@@ -317,7 +317,7 @@ export function axes(configs = {}) {
 		{
 			xAxis: {
 				length: cvs.width,
-				includeTick: true,
+				includeTicks: true,
 				includeLeftTip: false,
 				includeRightTip: true,
 				excludeOriginTick: true,
@@ -327,7 +327,7 @@ export function axes(configs = {}) {
 				rotation: Math.PI / 2,
 				textRotation: -Math.PI / 2,
 				textDirection: [0, 0.75],
-				includeTick: true,
+				includeTicks: true,
 				includeLeftTip: false,
 				includeRightTip: true,
 				excludeOriginTick: true,
@@ -385,7 +385,7 @@ export function numberPlane(configs = {}) {
 	const defaultConfigs = {
 		xAxis: {
 			length: parseInt(cvs.style.width),
-			includeTick: true,
+			includeTicks: true,
 			includeLabels: true,
 			includeLeftTip: false,
 			includeRightTip: false,
@@ -396,7 +396,7 @@ export function numberPlane(configs = {}) {
 			length: parseInt(cvs.style.height),
 			textRotation: -Math.PI / 2,
 			unitSpace: 50,
-			includeTick: true,
+			includeTicks: true,
 			includeLabels: true,
 			includeLeftTip: false,
 			includeRightTip: false,
@@ -528,19 +528,20 @@ export function numberPlane(configs = {}) {
  *  * "gradians": 40
  * @param {number} [azimuthDivisions = 0]  The number of divisions in the azimuth (also known as the angular coordinate or polar angle). If None is specified then it will use the default specified by azimuthUnit
  * @param {Array<*>} [radialLabels = []] Labels for the radial axis. If nothing is specified then the labels will be automatically generated using the radialStep.
+ * @param {string} [azimuthDirection = "ccw"] direction of the azimuthal labels. This can be either 'ccw' or 'cw'
 
- * @param {Object} [radial] radial axis configurations
- * @param {string} [radial.strokeColor = "#fff"] stroke color of the radial axis
- * @param {string} [radial.fontFamily = "serif"] font family of the radial axis labels
- * @param {string} [radial.textAlign = "center"] text align of the radial axis labels
- * @param {string} [radial.textBaseline = "middle"] text baseline of the radial axis labels
- * @param {number} [radial.strokeWidth = 2] stroke width of the radial axis in pixels
- * @param {number} [radial.fontSize = 22] font size of the radial axis in pixels
- * @param {number} [radial.decimalPoints = 0] number of decimal points to show up in the radial axis labels
- * @param {function} [radial.textRenderer = fillText] function that renders text. you can use strokeText to get stroked text, or something else to get custom text
- * @param {Array<number>} [radial.textDirection = [-1.4, -1.2]] direction of the radial axis label. This'll align labels correctly in the position.
- * @param {Array<number>} [radial.labelAxis = [1, 0]] axis to labels
- * @param {boolean} [radial.includeLabels = true] whether to draw radial labels or not
+ * @param {Object} [radiusConfigs] radial axis configurations
+ * @param {string} [radiusConfigs.strokeColor = "#fff"] stroke color of the radial axis
+ * @param {string} [radiusConfigs.fontFamily = "serif"] font family of the radial axis labels
+ * @param {string} [radiusConfigs.textAlign = "center"] text align of the radial axis labels
+ * @param {string} [radiusConfigs.textBaseline = "middle"] text baseline of the radial axis labels
+ * @param {number} [radiusConfigs.strokeWidth = 2] stroke width of the radial axis in pixels
+ * @param {number} [radiusConfigs.fontSize = 22] font size of the radial axis in pixels
+ * @param {number} [radiusConfigs.decimalPoints = 0] number of decimal points to show up in the radial axis labels
+ * @param {function} [radiusConfigs.textRenderer = fillText] function that renders text. you can use strokeText to get stroked text, or something else to get custom text
+ * @param {Array<number>} [radiusConfigs.textDirection = [-1.4, -1.2]] direction of the radial axis label. This'll align labels correctly in the position.
+ * @param {Array<number>} [radiusConfigs.labelAxis = [1, 0]] axis to labels
+ * @param {boolean} [radiusConfigs.includeLabels = true] whether to draw radial labels or not
 
  * @param {Object} [azimuth] azimuth line configurations
  * @param {boolean} [azimuth.compactFraction = true] whether to show the azimuthal fraction as compact or not
@@ -549,7 +550,6 @@ export function numberPlane(configs = {}) {
  * @param {number} [azimuth.fontSize = 17] font size of the azimuthal labels
  * @param {number} [azimuth.strokeWidth = 1.5] stroke width of the azimuthal lines
  * @param {number} [azimuth.decimalPoints = 0] number of decimal points to show up in the azimuthal labels
- * @param {string} [azimuth.direction = "ccw"] direction of the azimuthal labels. This can be either 'ccw' or 'cw'
  * @param {string} [azimuth.fontFamily = "serif"] font family of the azimuthal labels
  * @param {string} [azimuth.strokeColor = "#58c4dddd"] stroke color of the azimuthal labels
  * @param {function} [azimuth.textRenderer = fillText] function that renders text. you can use strokeText to get stroked text, or something else to get custom text
@@ -571,136 +571,225 @@ export function polarPlane(configs = {}) {
 			maxRadius: 4.0,
 			size: Math.min(parseInt(cvs.style.width), parseInt(cvs.style.height)) * 0.8,
 			radiusStep: 1,
-			azimuthUnit: "degrees",
+			azimuthUnit: "PI radians",
 			azimuthDivisions: 0,
-			radialLabels: [],
-			radial: {
+			azimuthCompactFraction: true,
+			azimuthDirection: "ccw",
+			azimuthoffset: 0,
+			fadedLines: 1,
+			radiusConfigs: {
 				includeLabels: true,
+				includeTicks: false,
+				includeRightTip: false,
 				strokeColor: "#fff",
 				strokeWidth: 2,
 				fontSize: 22,
 				fontFamily: "serif",
+				textDirection: [0.8, -0.75],
+				labelAxis: [1],
+				numbersToExclude: [0],
+			},
+			azimuthConfigs: {
+				includeLabels: true,
+				labelBuff: 0.45,
+				fontSize: 15,
+				fontFamily: "serif",
 				textAlign: "center",
 				textBaseline: "middle",
+				strokeColor: "#58c4ddaa",
+				strokeWidth: 1.3,
 				textRenderer: fillText,
 				decimalPoints: 0,
-				textDirection: [-1.4, -1.2],
-				labelAxis: [1, 0],
 			},
-			azimuth: {
-				includeLabels: true,
-				compactFraction: true,
-				offset: 0,
-				direction: "ccw",
-				labelBuff: 0.45,
-				fontSize: 17,
-				fontFamily: "serif",
-				strokeColor: "#58c4dddd",
-				strokeWidth: 1.5,
-				textRenderer: fillText,
-				decimalPoints: 0,
+			fadedLineConfigs: {
+				strokeColor: "#8888",
+				strokeWidth: 1,
 			},
 		},
 		configs
 	);
 	let {
-		radial,
-		azimuth,
-		azimuthUnit,
-		maxRadius,
-		radiusStep,
-		size,
 		originPosition,
-		radialLabels,
+		maxRadius,
+		size,
+		radiusStep,
+		azimuthUnit,
 		azimuthDivisions,
+		azimuthCompactFraction,
+		azimuthDirection,
+		radiusConfigs,
+		azimuthConfigs,
+		fadedLines,
+		fadedLineConfigs,
+		azimuthoffset,
 	} = configs;
 	azimuthUnit = azimuthUnit.toLowerCase();
+	// error catching
+	if (azimuthUnitsDict[azimuthUnit] != undefined) {
+		azimuthUnit = azimuthUnit;
+	} else {
+		throw new Error(
+			"Invalid azimuth units. Expected one of: PI radians, TAU radians, degrees, gradians."
+		);
+	}
 	if (azimuthDivisions == 0) {
 		azimuthDivisions = azimuthUnitsDict[azimuthUnit] || 20;
 	}
+
 	save();
 	ctx.translate(originPosition[0], originPosition[1]);
 	let tickList = arange(0, maxRadius, radiusStep),
 		radialSpacing = size / maxRadius / 2;
+	azimuthConfigs.strokeWidth /= radialSpacing;
+	fadedLineConfigs.strokeWidth /= radialSpacing;
+	azimuthConfigs.fontSize /= radialSpacing;
+	let /** @type {Array} */
+		labels = Array.isArray(radiusConfigs.labelsToInclude)
+			? radiusConfigs.labelsToInclude
+			: tickList,
+		xLabels = [],
+		yLabels = [];
+	// find labels for each wings of axis
+	if (radiusConfigs.labelAxis.indexOf(3) > -1) {
+		// add left wing of x-axis
+		xLabels = labels.reverse();
+	} else {
+		xLabels = new Array(maxRadius).fill("");
+	}
+
+	if (radiusConfigs.labelAxis.indexOf(1) > -1) {
+		// add right wing of x-axis
+		xLabels = xLabels.concat(labels);
+	} else {
+		xLabels.push(...new Array(maxRadius).fill(""));
+	}
+
+	if (radiusConfigs.labelAxis.indexOf(2) > -1) {
+		// add top wing of y-axis
+		yLabels = labels.reverse();
+	} else {
+		yLabels = new Array(maxRadius).fill("");
+	}
+
+	if (radiusConfigs.labelAxis.indexOf(4) > -1) {
+		// add bottom wing of y-axis
+		yLabels = yLabels.concat(labels.reverse());
+	} else {
+		yLabels.push(...new Array(maxRadius).fill(""));
+	}
+
+	radiusConfigs.range = [-maxRadius, maxRadius, radiusStep];
+	radiusConfigs.length = size;
+
+	let xAxisCfgs = applyDefault(radiusConfigs, {
+			labelsToInclude: xLabels,
+		}),
+		yAxisCfgs = applyDefault(radiusConfigs, {
+			labelsToInclude: yLabels,
+		});
 	ctx.scale(radialSpacing, radialSpacing);
-	radial.strokeWidth /= radialSpacing;
-	azimuth.strokeWidth /= radialSpacing;
-	radial.fontSize /= radialSpacing;
-	azimuth.fontSize /= radialSpacing;
 	drawAzimuthalLines();
-	drawAxes();
 	restore();
+	axes({
+		xAxis: xAxisCfgs,
+		yAxis: yAxisCfgs,
+	});
 
 	function drawAzimuthalLines() {
-		ctx.strokeStyle = azimuth.strokeColor;
-		ctx.lineWidth = azimuth.strokeWidth;
-		ctx.font = `${radial.fontSize}px ${radial.fontFamily}`;
-		ctx.textAlign = radial.textAlign;
-		ctx.textBaseline = radial.textBaseline;
-		let labels = radialLabels.length == 0 ? tickList : radialLabels;
-		// radiating circles
-		for (let i = 0; i < tickList.length; i++) {
-			let radius = tickList[i];
-			ctx.beginPath();
-			ctx.arc(0, 0, radius, 0, Math.PI * 2);
-			ctx.stroke();
-			ctx.beginPath();
-			// draw radial labels
-			if (i != 0 && radial.includeLabels) {
-				let width = ctx.measureText(labels[i]).width;
-				radial.textRenderer(
-					labels[i],
-					radial.labelAxis[0] * i + (radial.textDirection[0] * width) / 2,
-					radial.labelAxis[1] * i + (radial.textDirection[1] * radial.fontSize) / 2
-				);
+		fadedLines++;
+
+		// draw azimuthal divisions
+		let labels = [];
+		ctx.font = `${azimuthConfigs.fontSize}px ${azimuthConfigs.fontFamily}`;
+		ctx.textAlign = azimuthConfigs.textAlign;
+		ctx.textBaseline = azimuthConfigs.textBaseline;
+
+		// generate labels
+		if (azimuthUnit == "pi radians" || azimuthUnit == "tau radians") {
+			let numerator = 1,
+				denominator = azimuthDivisions;
+			azimuthConfigs.textRenderer = tex;
+			let post = azimuthUnit == "tau radians" ? "\\tau" : "\\pi";
+			ctx.font = `${azimuthConfigs.fontSize * radialSpacing}px ${azimuthConfigs.fontFamily}`;
+			for (let division = 0; division < azimuthDivisions; division++) {
+				labels.push(fraction(numerator * division, denominator, azimuthCompactFraction, post));
 			}
-		}
-		// azimuthal divisions
-		labels = [];
-		ctx.font = `${azimuth.fontSize}px ${azimuth.fontFamily}`;
-		ctx.textAlign = azimuth.textAlign;
-		ctx.textBaseline = azimuth.textBaseline;
-		for (let i = 0; i < azimuthDivisions; i++) {
-			if (azimuthUnit == "pi radians") {
-				// yet to implement
-			} else if (azimuthUnit == "tau radians") {
-				// yet to implement
-			} else if (azimuthUnit == "degrees") {
-				labels.push(((i * 360) / azimuthDivisions).toFixed(azimuth.decimalPoints) + "°");
-			} else if (azimuthUnit == "gradians") {
-				labels.push(((i * 400) / azimuthDivisions).toFixed(azimuth.decimalPoints) + "ᵍ");
+		} else if (azimuthUnit == "degrees") {
+			// Use Tex parser to generate fractions
+			for (let i = 0; i < azimuthDivisions; i++) {
+				labels.push(((i * 360) / azimuthDivisions).toFixed(azimuthConfigs.decimalPoints) + "°");
+			}
+		} else if (azimuthUnit == "gradians") {
+			for (let i = 0; i < azimuthDivisions; i++) {
+				labels.push(((i * 400) / azimuthDivisions).toFixed(azimuthConfigs.decimalPoints) + "ᵍ");
 			}
 		}
 
 		let angleIncrementor = (Math.PI * 2) / azimuthDivisions,
 			angle = 0;
-		if (azimuth.direction.toLowerCase() == "cw") angleIncrementor *= -1;
-		for (let i = 0; i < azimuthDivisions; i++) {
-			// draw azimuthal lines
-			if (angle % (Math.PI / 2) != 0) {
-				ctx.beginPath();
-				ctx.moveTo(0, 0);
-				ctx.lineTo(Math.cos(angle) * maxRadius, Math.sin(angle) * maxRadius);
-				ctx.stroke();
+		if (azimuthDirection.toLowerCase() == "cw") angleIncrementor *= -1;
+		let scalar = 1;
+		if (azimuthUnit == "pi radians" || azimuthUnit == "tau radians") {
+			scalar = radialSpacing;
+		}
+
+		// draw radiating circles
+
+		ctx.doFill = false;
+		ctx.doStroke = true;
+		if (fadedLines > 1) {
+			// draw faded ones
+			ctx.strokeStyle = fadedLineConfigs.strokeColor;
+			ctx.lineWidth = fadedLineConfigs.strokeWidth;
+			let step = 1 / fadedLines;
+			let max = tickList.length / step - fadedLines;
+			ctx.beginPath();
+			ctx.moveTo(0, 0);
+			for (let i = 0; i < max; i++) {
+				ctx.arc(0, 0, i * step, 0, Math.PI * 2);
 			}
 
-			// draw azimuthal labels
-			if (azimuth.includeLabels)
-				azimuth.textRenderer(
-					labels[i],
-					Math.cos(angle + azimuth.offset) * (maxRadius + azimuth.labelBuff),
-					Math.sin(angle + azimuth.offset) * (maxRadius + azimuth.labelBuff)
+			max = azimuthDivisions / step / step;
+			ctx.lineWidth = fadedLineConfigs.strokeWidth;
+			for (let i = 0; i < max; i += step) {
+				let angle = i * angleIncrementor;
+				ctx.moveTo(0, 0);
+				ctx.lineTo(
+					Math.cos(angle + azimuthoffset) * maxRadius,
+					Math.sin(angle + azimuthoffset) * maxRadius
 				);
-			angle += angleIncrementor;
+			}
+			ctx.stroke();
 		}
-	}
 
-	function drawAxes() {
-		ctx.strokeStyle = radial.strokeColor;
-		ctx.lineWidth = radial.strokeWidth;
-		ctx.fillStyle = radial.strokeColor;
-		line(-maxRadius, 0, maxRadius, 0);
-		line(0, -maxRadius, 0, maxRadius);
+		// and majors
+		ctx.beginPath();
+		ctx.strokeStyle = azimuthConfigs.strokeColor;
+		ctx.lineWidth = azimuthConfigs.strokeWidth;
+		ctx.moveTo(0, 0);
+		for (let i = 0; i < tickList.length; i++) {
+			ctx.arc(0, 0, i, 0, Math.PI * 2);
+		}
+		for (let i = 0; i < azimuthDivisions; i++) {
+			// draw azimuthal lines only if it isn't over axis lines
+			let angle = i * angleIncrementor + azimuthoffset;
+			if (angle % (Math.PI / 2) != 0) {
+				ctx.moveTo(0, 0);
+				ctx.lineTo(Math.cos(angle) * maxRadius, Math.sin(angle) * maxRadius);
+			}
+		}
+		ctx.stroke();
+		// draw azimuthal labels
+		if (azimuthConfigs.includeLabels) {
+			for (let i = 0; i < azimuthDivisions; i++) {
+				angle = i * angleIncrementor + azimuthoffset;
+				azimuthConfigs.textRenderer(
+					labels[i],
+					Math.cos(angle) * (maxRadius + azimuthConfigs.labelBuff) * scalar,
+					Math.sin(angle) * (maxRadius + azimuthConfigs.labelBuff) * scalar
+				);
+			}
+		}
 	}
 	return getPolarPlotters({
 		azimuthAnglularSpace: (2 * Math.PI) / azimuthDivisions,

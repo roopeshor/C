@@ -21,7 +21,7 @@ const plots = [
 			yAxis: [-TAU, TAU, PI / 2],
 		},
 		includeNumbers: true,
-		numbersToInclude: [
+		labelsToInclude: [
 			"-2π",
 			"-3π/2",
 			"-π",
@@ -60,7 +60,7 @@ const plots = [
 			yAxis: [-TAU, TAU, PI],
 		},
 		includeNumbers: true,
-		numbersToInclude: ["-2π", "-π", "0", "π", "2π"],
+		labelsToInclude: ["-2π", "-π", "0", "π", "2π"],
 		colors: getInterpolatedColorList(Spectral, -5, 5, 0.8),
 	},
 
@@ -94,12 +94,12 @@ for (var plot of plots) {
 				xAxis: {
 					range: plot.range?.xAxis,
 					includeNumbers: plot.includeNumbers,
-					numbersToInclude: plot.numbersToInclude,
+					labelsToInclude: plot.labelsToInclude,
 				},
 				yAxis: {
 					range: plot.range?.yAxis,
 					includeNumbers: plot.includeNumbers,
-					numbersToInclude: plot.numbersToInclude,
+					labelsToInclude: plot.labelsToInclude,
 				},
 			}).getHeatPlot({
 				colors: plot.colors,

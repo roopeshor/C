@@ -65,15 +65,20 @@ export function parametricFunction(configs) {
 	if (!Array.isArray(discontinuities)) discontinuities = [];
 
 	// generate points
-	let epsilon = 1e-6,
-		row = 0,
+	let row = 0,
 		pointCount = 0,
 		unitX = configs.unitSpace[0] / configs.unitValue[0],
 		unitY = configs.unitSpace[1] / configs.unitValue[1];
-	if (step < epsilon) epsilon = step / 2;
-	for (let t = min; t <= max + epsilon; t += step) {
-		if (approximateIndexInArray(t, discontinuities, epsilon) > -1) {
-			if (approximateIndexInArray(t + step, discontinuities, epsilon) > -1) {
+	let discontinuityRadius;
+	if (isNaN(configs.discontinuityRadius)) {
+		discontinuityRadius = step;
+	} else {
+		discontinuityRadius = configs.discontinuityRadius;
+	}
+	if (step < discontinuityRadius) discontinuityRadius = step / 2;
+	for (let t = min; t <= max + discontinuityRadius; t += step) {
+		if (approximateIndexInArray(t, discontinuities, discontinuityRadius) > -1) {
+			if (approximateIndexInArray(t + step, discontinuities, discontinuityRadius) > -1) {
 				row++;
 				points.push([]);
 			}
@@ -339,6 +344,12 @@ export function plotPolarPoints(configs) {
 	ctx.restore();
 }
 
+/**
+ * Plots a parametric function in polar plane
+ * @param {Object} configs
+ * @param {Function} configs.plotter function that takes one arguments t and returns a coordinate as [radius, angle]
+ * @returns
+ */
 export function polarParametricFunction(configs) {
 	configs = applyDefault(
 		{
@@ -346,7 +357,6 @@ export function polarParametricFunction(configs) {
 			radialSpacing: 1,
 			range: [0, Math.PI * 2, Math.PI / 50],
 			discontinuities: [],
-
 			smoothen: true,
 			closed: false,
 			strokeWidth: 2,
@@ -361,15 +371,18 @@ export function polarParametricFunction(configs) {
 		max = range[1],
 		step = range[2];
 	if (!Array.isArray(discontinuities)) discontinuities = [];
-
+	let discontinuityRadius;
+	if (isNaN(configs.discontinuityRadius)) {
+		discontinuityRadius = step;
+	} else {
+		discontinuityRadius = configs.discontinuityRadius;
+	}
 	// generate points
-	let epsilon = 1e-6,
-		row = 0;
-	if (step < epsilon) epsilon = step / 2;
+	let row = 0, _fix = discontinuityRadius < step ? discontinuityRadius : 0;
 	// we add one more point to make the graph more accurate when applying smoothening technique.
-	for (let t = min; t <= max + epsilon + step; t += step) {
-		if (approximateIndexInArray(t, discontinuities, epsilon) > -1) {
-			if (approximateIndexInArray(t + step, discontinuities, epsilon) > -1) {
+	for (let t = min; t <= max + step + _fix; t += step) {
+		if (approximateIndexInArray(t, discontinuities, discontinuityRadius) > -1) {
+			if (approximateIndexInArray(t + step, discontinuities, discontinuityRadius) > -1) {
 				row++;
 				points.push([]);
 			}
@@ -383,12 +396,17 @@ export function polarParametricFunction(configs) {
 	}
 
 	let ctx = C.workingContext;
+	let finalPoints = [];
+	ctx.lineWidth = configs.strokeWidth;
 	for (let i = 0; i < points.length; i++) {
 		let p = points[i];
-		ctx.lineWidth = configs.strokeWidth;
-
+		if (p.length == 0) {
+			continue;
+		} else {
+			finalPoints.push(p);
+		}
 		// add offset to remove last point
-		let offset = i == points.length - 1 ? 1: 0;
+		let offset = i == points.length - 1 ? 1 : 0;
 		if (smoothen) {
 			smoothCurveThroughPoints(p, tension, closed, offset);
 		} else {
@@ -397,8 +415,8 @@ export function polarParametricFunction(configs) {
 			for (let j = 1; j < p.length - offset; j++) {
 				ctx.lineTo(p[j][0], p[j][1]);
 			}
-			if (ctx.doFill && closed) ctx.fill();
 			if (ctx.doStroke) ctx.stroke();
+			if (ctx.doFill && closed) ctx.fill();
 			ctx.closePath();
 		}
 
@@ -406,10 +424,9 @@ export function polarParametricFunction(configs) {
 		if (offset) {
 			points[i] = points[i].slice(0, -1);
 		}
-		console.log(ctx.lineCap);
 	}
 	return {
-		points: points,
+		points: finalPoints,
 		closed: configs.closed,
 		tension: configs.tension || 1,
 		smoothen: configs.smoothen,
@@ -418,6 +435,6 @@ export function polarParametricFunction(configs) {
 
 export function polarFuntionGraph(configs) {
 	let plotter = configs.plotter;
-	configs.plotter = (t) => [t, plotter(t)];
+	configs.plotter = (t) => [plotter(t), t];
 	return polarParametricFunction(configs);
 }

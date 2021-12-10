@@ -672,7 +672,7 @@ _webgl.WebGL.prototype.perspective = function (fov, aspect, near, far) {
 
 };
 
-},{"../color/color_reader.js":6,"./m4.js":1,"./webgl.js":3}],3:[function(require,module,exports){
+},{"../color/color_reader.js":7,"./m4.js":1,"./webgl.js":3}],3:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1025,7 +1025,7 @@ class WebGL {
 
 exports.WebGL = WebGL;
 
-},{"../main.js":16,"../utils.js":31,"./m4.js":1}],4:[function(require,module,exports){
+},{"../main.js":17,"../utils.js":32,"./m4.js":1}],4:[function(require,module,exports){
 "use strict";
 
 var _utils = require("./utils.js");
@@ -1094,7 +1094,398 @@ function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && 
   C: _main.C
 }, _settings, _constants$math, _constants$drawing, _constants$color_palettes, _color$gradients, _color$random, _color$color_reader, _color$interpolation, _color$color_converters, _image$image, _image$processing, _objects$tex, _objects$text, _objects$braces, _objects$arrows, _objects$geometry, _objects$functions, _objects$coordinate_systems, _objects$more_shapes, _math$functions, _math$points, _math$random, _math$aritmetics, _math$rate_functions, _WebGL$webgl, _WebGL$settings].forEach(value => (0, _utils.defineProperties)(value));
 
-},{"./WebGL/settings.js":2,"./WebGL/webgl.js":3,"./color/color_converters.js":5,"./color/color_reader.js":6,"./color/gradients.js":7,"./color/interpolation.js":8,"./color/random.js":9,"./constants/color_palettes.js":10,"./constants/drawing.js":12,"./constants/math.js":13,"./image/image.js":14,"./image/processing.js":15,"./main.js":16,"./math/aritmetics.js":17,"./math/functions.js":18,"./math/points.js":19,"./math/random.js":20,"./math/rate_functions.js":21,"./objects/arrows.js":22,"./objects/braces.js":23,"./objects/coordinate_systems.js":24,"./objects/functions.js":25,"./objects/geometry.js":26,"./objects/more_shapes.js":27,"./objects/tex.js":28,"./objects/text.js":29,"./settings.js":30,"./utils.js":31}],5:[function(require,module,exports){
+},{"./WebGL/settings.js":2,"./WebGL/webgl.js":3,"./color/color_converters.js":6,"./color/color_reader.js":7,"./color/gradients.js":8,"./color/interpolation.js":9,"./color/random.js":10,"./constants/color_palettes.js":11,"./constants/drawing.js":13,"./constants/math.js":14,"./image/image.js":15,"./image/processing.js":16,"./main.js":17,"./math/aritmetics.js":18,"./math/functions.js":19,"./math/points.js":20,"./math/random.js":21,"./math/rate_functions.js":22,"./objects/arrows.js":23,"./objects/braces.js":24,"./objects/coordinate_systems.js":25,"./objects/functions.js":26,"./objects/geometry.js":27,"./objects/more_shapes.js":28,"./objects/tex.js":29,"./objects/text.js":30,"./settings.js":31,"./utils.js":32}],5:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var _exportNames = {
+  defineProperties: true,
+  C: true
+};
+Object.defineProperty(exports, "C", {
+  enumerable: true,
+  get: function () {
+    return _main.C;
+  }
+});
+Object.defineProperty(exports, "defineProperties", {
+  enumerable: true,
+  get: function () {
+    return _utils.defineProperties;
+  }
+});
+
+var _utils = require("./utils.js");
+
+var _settings = require("./settings.js");
+
+Object.keys(_settings).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _settings[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _settings[key];
+    }
+  });
+});
+
+var _main = require("./main.js");
+
+var _math = require("./constants/math.js");
+
+Object.keys(_math).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _math[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _math[key];
+    }
+  });
+});
+
+var _drawing = require("./constants/drawing.js");
+
+Object.keys(_drawing).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _drawing[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _drawing[key];
+    }
+  });
+});
+
+var _color_palettes = require("./constants/color_palettes.js");
+
+Object.keys(_color_palettes).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _color_palettes[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _color_palettes[key];
+    }
+  });
+});
+
+var _gradients = require("./color/gradients.js");
+
+Object.keys(_gradients).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _gradients[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _gradients[key];
+    }
+  });
+});
+
+var _random = require("./color/random.js");
+
+Object.keys(_random).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _random[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _random[key];
+    }
+  });
+});
+
+var _color_reader = require("./color/color_reader.js");
+
+Object.keys(_color_reader).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _color_reader[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _color_reader[key];
+    }
+  });
+});
+
+var _interpolation = require("./color/interpolation.js");
+
+Object.keys(_interpolation).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _interpolation[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _interpolation[key];
+    }
+  });
+});
+
+var _color_converters = require("./color/color_converters.js");
+
+Object.keys(_color_converters).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _color_converters[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _color_converters[key];
+    }
+  });
+});
+
+var _image = require("./image/image.js");
+
+Object.keys(_image).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _image[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _image[key];
+    }
+  });
+});
+
+var _processing = require("./image/processing.js");
+
+Object.keys(_processing).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _processing[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _processing[key];
+    }
+  });
+});
+
+var _tex = require("./objects/tex.js");
+
+Object.keys(_tex).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _tex[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _tex[key];
+    }
+  });
+});
+
+var _text = require("./objects/text.js");
+
+Object.keys(_text).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _text[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _text[key];
+    }
+  });
+});
+
+var _braces = require("./objects/braces.js");
+
+Object.keys(_braces).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _braces[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _braces[key];
+    }
+  });
+});
+
+var _arrows = require("./objects/arrows.js");
+
+Object.keys(_arrows).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _arrows[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _arrows[key];
+    }
+  });
+});
+
+var _geometry = require("./objects/geometry.js");
+
+Object.keys(_geometry).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _geometry[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _geometry[key];
+    }
+  });
+});
+
+var _functions = require("./objects/functions.js");
+
+Object.keys(_functions).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _functions[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _functions[key];
+    }
+  });
+});
+
+var _coordinate_systems = require("./objects/coordinate_systems.js");
+
+Object.keys(_coordinate_systems).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _coordinate_systems[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _coordinate_systems[key];
+    }
+  });
+});
+
+var _more_shapes = require("./objects/more_shapes.js");
+
+Object.keys(_more_shapes).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _more_shapes[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _more_shapes[key];
+    }
+  });
+});
+
+var _functions2 = require("./math/functions.js");
+
+Object.keys(_functions2).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _functions2[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _functions2[key];
+    }
+  });
+});
+
+var _points = require("./math/points.js");
+
+Object.keys(_points).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _points[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _points[key];
+    }
+  });
+});
+
+var _random2 = require("./math/random.js");
+
+Object.keys(_random2).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _random2[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _random2[key];
+    }
+  });
+});
+
+var _aritmetics = require("./math/aritmetics.js");
+
+Object.keys(_aritmetics).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _aritmetics[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _aritmetics[key];
+    }
+  });
+});
+
+var _rate_functions = require("./math/rate_functions.js");
+
+Object.keys(_rate_functions).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _rate_functions[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _rate_functions[key];
+    }
+  });
+});
+
+var _webgl = require("./WebGL/webgl.js");
+
+Object.keys(_webgl).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _webgl[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _webgl[key];
+    }
+  });
+});
+
+var _settings2 = require("./WebGL/settings.js");
+
+Object.keys(_settings2).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _settings2[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _settings2[key];
+    }
+  });
+});
+
+},{"./WebGL/settings.js":2,"./WebGL/webgl.js":3,"./color/color_converters.js":6,"./color/color_reader.js":7,"./color/gradients.js":8,"./color/interpolation.js":9,"./color/random.js":10,"./constants/color_palettes.js":11,"./constants/drawing.js":13,"./constants/math.js":14,"./image/image.js":15,"./image/processing.js":16,"./main.js":17,"./math/aritmetics.js":18,"./math/functions.js":19,"./math/points.js":20,"./math/random.js":21,"./math/rate_functions.js":22,"./objects/arrows.js":23,"./objects/braces.js":24,"./objects/coordinate_systems.js":25,"./objects/functions.js":26,"./objects/geometry.js":27,"./objects/more_shapes.js":28,"./objects/tex.js":29,"./objects/text.js":30,"./settings.js":31,"./utils.js":32}],6:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1235,7 +1626,7 @@ function HSVToRGB(hue, saturation, value) {
   return [r, g, b];
 }
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1305,8 +1696,10 @@ function readColor(...color) {
       result[3] = 1;
     } else if (HEX4.test(str)) {
       result = HEX4.exec(str).slice(1).map(color => parseInt(color + color, 16));
+      result[3] /= 255;
     } else if (HEX8.test(str)) {
       result = HEX8.exec(str).slice(1).map(color => parseInt(color, 16));
+      result[3] /= 255;
     } else if (RGB.test(str)) {
       result = RGB.exec(str).slice(1).map(color => parseInt(color, 10));
       result[3] = 1;
@@ -1316,8 +1709,7 @@ function readColor(...color) {
         return parseInt(color, 10);
       });
     } else {
-      console.log(str);
-      throw new Error("Given color is not valid");
+      throw new Error("Given color is not valid: " + str);
     }
   } else {
     result = c1;
@@ -1360,7 +1752,7 @@ function readColor(...color) {
   };
 }
 
-},{"../constants/colors.js":11}],7:[function(require,module,exports){
+},{"../constants/colors.js":12}],8:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1427,7 +1819,7 @@ function linearGradient(initialPoint, finalPoint, colStops) {
   return gradient;
 }
 
-},{"../main.js":16,"../utils.js":31}],8:[function(require,module,exports){
+},{"../main.js":17,"../utils.js":32}],9:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1530,7 +1922,7 @@ function getInterpolatedColorList(colorPalatte, min = 0, max = 5, alpha) {
   return colorObj;
 }
 
-},{"./color_reader.js":6}],9:[function(require,module,exports){
+},{"./color_reader.js":7}],10:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1572,7 +1964,7 @@ function randomDefinedColor() {
   return _colors.Colors[definedColorList[(0, _random.randomInt)(definedColorList.length - 1)]];
 }
 
-},{"../constants/colors.js":11,"../math/random.js":20}],10:[function(require,module,exports){
+},{"../constants/colors.js":12,"../math/random.js":21}],11:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1635,7 +2027,7 @@ for (var p in colorPalettes) colorPalettes[p] = colorPalettes[p].split(" ");
 const ColorPalettes = colorPalettes;
 exports.ColorPalettes = ColorPalettes;
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1796,7 +2188,7 @@ const Colors = {
 };
 exports.Colors = Colors;
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1892,7 +2284,7 @@ exports.ROUND = ROUND;
 exports.SQUARE = SQUARE;
 exports.BUTT = BUTT;
 
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1929,7 +2321,7 @@ exports.LN10 = LN10;
 exports.LN2 = LN2;
 exports.E = E;
 
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2027,7 +2419,7 @@ function loadImagePromise(url) {
   });
 }
 
-},{"../main.js":16}],15:[function(require,module,exports){
+},{"../main.js":17}],16:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2205,7 +2597,7 @@ function imageToData(image, x, y, width, height, smoothen = false) {
   return ctx.getImageData(x, y, width, height);
 }
 
-},{"../color/color_reader.js":6,"../main.js":16}],16:[function(require,module,exports){
+},{"../color/color_reader.js":7,"../main.js":17}],17:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2498,7 +2890,7 @@ defineConstant({
 
 window["C"] = C;
 
-},{"./utils.js":31}],17:[function(require,module,exports){
+},{"./utils.js":32}],18:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2567,7 +2959,7 @@ function lcmArray(list) {
   return n;
 }
 
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2631,7 +3023,7 @@ function sigmoid(t) {
   return 1.0 / (1 + Math.exp(-t));
 }
 
-},{}],19:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2755,7 +3147,7 @@ function extendFromOrigin(point, len = 10) {
   return extendFromPoint([0, 0], point, len);
 }
 
-},{}],20:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2774,7 +3166,7 @@ function randomInt(max = 10, min = 0) {
   return Math.round(Math.random() * (max - min) + min);
 }
 
-},{}],21:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3018,7 +3410,7 @@ function exponentialDecay(t, halfLife = 0.1) {
 // 	return bezier([0, 0, pullFactor, pullFactor, 1, 1, 1])(t);
 // }
 
-},{"./functions.js":18}],22:[function(require,module,exports){
+},{"./functions.js":19}],23:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3365,7 +3757,7 @@ function curvedDoubleArrowBetweenPoints(p1, p2, radius, tipWidth = DEFAULT_TIP_W
   return center;
 }
 
-},{"../constants/drawing.js":12,"../main.js":16,"../math/points.js":19,"../settings.js":30,"../utils.js":31,"./text.js":29}],23:[function(require,module,exports){
+},{"../constants/drawing.js":13,"../main.js":17,"../math/points.js":20,"../settings.js":31,"../utils.js":32,"./text.js":30}],24:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3451,7 +3843,7 @@ function arcBrace(x, y, radius = 100, angle = Math.PI / 2, startAngle = 0, small
   return [(largerRadius + extender) * Math.cos(angle / 2 + startAngle) + x, (largerRadius + extender) * Math.sin(angle / 2 + startAngle) + y];
 }
 
-},{"../main.js":16}],24:[function(require,module,exports){
+},{"../main.js":17}],25:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3460,6 +3852,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.axes = axes;
 exports.numberLine = numberLine;
 exports.numberPlane = numberPlane;
+exports.polarPlane = polarPlane;
 
 var _main = require("../main.js");
 
@@ -3473,34 +3866,53 @@ var _functions = require("./functions.js");
 
 var _geometry = require("./geometry.js");
 
+var _tex = require("./tex.js");
+
 var _text = require("./text.js");
 
 // list of plotters
-function getPlotterList(cfgs = {}) {
-  return Object.assign(cfgs, {
-    getParametricFunction: function (configs) {
-      configs.unitSpace = configs.unitSpace;
-      configs.unitValue = configs.unitValue;
-      return (0, _functions.parametricFunction)(configs);
+function getCartasianPlotters(configs) {
+  return Object.assign(configs, {
+    getParametricFunction: function (cfg) {
+      cfg.unitSpace = configs.unitSpace;
+      cfg.unitValue = configs.unitValue;
+      return (0, _functions.parametricFunction)(cfg);
     },
-    getFunctionGraph: function (configs) {
-      configs.unitSpace = configs.unitSpace;
-      configs.unitValue = configs.unitValue;
-      return (0, _functions.functionGraph)(configs);
+    getFunctionGraph: function (cfg) {
+      cfg.unitSpace = configs.unitSpace;
+      cfg.unitValue = configs.unitValue;
+      return (0, _functions.functionGraph)(cfg);
     },
-    getHeatPlot: function (configs) {
-      configs.unitSpace = configs.unitSpace;
-      configs.unitValue = configs.unitValue;
-      configs.min = configs.min || [cfgs.xAxis.range[0], cfgs.yAxis.range[0]];
-      configs.max = configs.max || [cfgs.xAxis.range[1], cfgs.yAxis.range[1]];
-      return (0, _functions.heatPlot)(configs);
+    getHeatPlot: function (cfg) {
+      cfg.unitSpace = configs.unitSpace;
+      cfg.unitValue = configs.unitValue;
+      cfg.min = configs.min || [configs.xAxis.range[0], configs.yAxis.range[0]];
+      cfg.max = configs.max || [configs.xAxis.range[1], configs.yAxis.range[1]];
+      return (0, _functions.heatPlot)(cfg);
     },
-    plotPoints: function (configs) {
-      configs.unitValue = configs.unitValue;
-      configs.unitSpace = configs.unitSpace;
-      return (0, _functions.plotPoints)(configs);
+    plotPoints: function (cfg) {
+      cfg.unitValue = configs.unitValue;
+      cfg.unitSpace = configs.unitSpace;
+      return (0, _functions.plotPoints)(cfg);
     }
   });
+}
+
+function getPolarPlotters(configs) {
+  return {
+    plotPoints: function (cfg) {
+      cfg.radialSpacing = cfg.radialSpacing || configs.radialSpacing;
+      (0, _functions.plotPolarPoints)(cfg);
+    },
+    parametricFunction: function (cfg) {
+      cfg.radialSpacing = cfg.radialSpacing || configs.radialSpacing;
+      return (0, _functions.polarParametricFunction)(cfg);
+    },
+    functionGraph: function (cfg) {
+      cfg.radialSpacing = cfg.radialSpacing || configs.radialSpacing;
+      return (0, _functions.polarFuntionGraph)(cfg);
+    }
+  };
 }
 
 const ORIGIN = [0, 0];
@@ -3519,22 +3931,22 @@ const ORIGIN = [0, 0];
  * @param {number} [configs.strokeWidth = 2] Width of lines in px
  * @param {number} [configs.length] Total length of numberline in pixels. Default is the widht of canvas
  *
- * @param {string} [configs.strokeColor = "grey"] Color of axis and ticks
+ * @param {string} [configs.strokeColor = "white"] Color of axis and ticks
  * @param {string} [configs.textColor = "white"] Color of text
  *
  * @param {Array<number>} [configs.textDirection = TEXT_DIR] Direction of text relative to nearby tick
  * @param {Array<number>} [configs.numbersWithElongatedTicks] list of numbers where tick line should be longer
  * @param {Array<number>} [configs.originPosition = ORIGIN] position of the origin of number line in pixels.
  * @param {Array<number>} [configs.range] range of numbers to draw ticks and numbers. Default: [-5, 5, 1]
- * @param {Array<number>} [configs.numbersToInclude] list of labels to be displayed instead of default numbers
+ * @param {Array<number>} [configs.labelsToInclude] list of labels to be displayed instead of default numbers
  * @param {Array<number>} [configs.numbersToExclude] list of numbers that shouldn't be displayed
  * @param {Array<number>} [configs.textDirection = [0, -1]]
 
- * @param {boolean} [configs.includeTick = true] Whether ticks should be added
+ * @param {boolean} [configs.includeTicks = true] Whether ticks should be added
  * @param {boolean} [configs.includeLeftTip = false] whether to add an arrow tip at left
  * @param {boolean} [configs.includeRightTip = false] whether to add an arrow tip at right
  * @param {boolean} [configs.excludeOriginTick = false] Whether exclude ticks at origin
- * @param {boolean} [configs.includeNumbers = true] whether to display labels
+ * @param {boolean} [configs.includeLabels = true] whether to display labels
  *
  * @param {string} [configs.fontFamily = "serif"] font Family to use
  * @param {string} [configs.textAlign = "center"] to align text in x-axis
@@ -3560,7 +3972,7 @@ function numberLine(configs = {}) {
     length: parseInt(cvs.width),
     originPosition: ORIGIN,
     range: [-5, 5, 1],
-    strokeColor: "grey",
+    strokeColor: "white",
     tipWidth: 13,
     tipHeight: 10,
     fontSize: 17,
@@ -3573,11 +3985,11 @@ function numberLine(configs = {}) {
     textDirection: [0, -1],
     tickHeight: 10,
     longerTickMultiple: 1.5,
-    numbersToInclude: [],
-    numbersToExclude: [],
+    labelsToInclude: [],
+    numbersToExclude: [0],
     numbersWithElongatedTicks: [],
-    includeTick: true,
-    includeNumbers: true,
+    includeTicks: true,
+    includeLabels: true,
     includeLeftTip: false,
     includeRightTip: false,
     excludeOriginTick: false
@@ -3593,7 +4005,7 @@ function numberLine(configs = {}) {
     includeLeftTip,
     includeRightTip,
     numbersToExclude,
-    numbersToInclude,
+    labelsToInclude,
     excludeOriginTick,
     longerTickMultiple,
     numbersWithElongatedTicks,
@@ -3644,8 +4056,8 @@ function numberLine(configs = {}) {
   ctx.scale(unitSpace, unitSpace); // rotate entire canvas
 
   ctx.rotate(configs.rotation);
-  if (configs.includeTick) drawTicks();
-  if (configs.includeNumbers) drawNumbers();
+  if (configs.includeTicks) drawTicks();
+  if (configs.includeLabels) drawNumbers();
   drawAxis();
   ctx.closePath();
 
@@ -3690,7 +4102,7 @@ function numberLine(configs = {}) {
   }
 
   function drawNumbers() {
-    const labels = numbersToInclude.length > 0 ? numbersToInclude : tickList;
+    const labels = labelsToInclude.length > 0 ? labelsToInclude : tickList;
     ctx.fillStyle = configs.textColor;
     ctx.font = fontSize + "px " + configs.fontFamily;
     ctx.textAlign = configs.textAlign;
@@ -3762,7 +4174,7 @@ function axes(configs = {}) {
   configs = (0, _utils.applyDefault)({
     xAxis: {
       length: cvs.width,
-      includeTick: true,
+      includeTicks: true,
       includeLeftTip: false,
       includeRightTip: true,
       excludeOriginTick: true
@@ -3772,7 +4184,7 @@ function axes(configs = {}) {
       rotation: Math.PI / 2,
       textRotation: -Math.PI / 2,
       textDirection: [0, 0.75],
-      includeTick: true,
+      includeTicks: true,
       includeLeftTip: false,
       includeRightTip: true,
       excludeOriginTick: true
@@ -3788,16 +4200,16 @@ function axes(configs = {}) {
   const yAxisLine = numberLine(configs.yAxis); // draw y axis
 
   ctx.restore();
-  return getPlotterList({
+  return getCartasianPlotters({
     originPosition: configs.originPosition,
     // originPosition of axis as [x, y] in px
     xAxis: xAxisLine,
     // x axis confiurations from numberLine
     yAxis: yAxisLine,
     // y axis confiurations from numberLine
-    unitValue: [xAxisLine.unitSpace, yAxisLine.unitSpace],
+    unitSpace: [xAxisLine.unitSpace, yAxisLine.unitSpace],
     // space between two ticks in pixels
-    unitSpace: [xAxisLine.unitValue, yAxisLine.unitValue] // value between two close ticks
+    unitValue: [xAxisLine.unitValue, yAxisLine.unitValue] // value between two close ticks
 
   });
 }
@@ -3835,8 +4247,8 @@ function numberPlane(configs = {}) {
   const defaultConfigs = {
     xAxis: {
       length: parseInt(cvs.style.width),
-      includeTick: true,
-      includeNumbers: true,
+      includeTicks: true,
+      includeLabels: true,
       includeLeftTip: false,
       includeRightTip: false,
       excludeOriginTick: true,
@@ -3846,8 +4258,8 @@ function numberPlane(configs = {}) {
       length: parseInt(cvs.style.height),
       textRotation: -Math.PI / 2,
       unitSpace: 50,
-      includeTick: true,
-      includeNumbers: true,
+      includeTicks: true,
+      includeLabels: true,
       includeLeftTip: false,
       includeRightTip: false,
       excludeOriginTick: true
@@ -3893,26 +4305,25 @@ function numberPlane(configs = {}) {
 
   function drawGridLines() {
     // major grid lines
-    ctx.translate(xRange[0], 0);
     ctx.beginPath();
     ctx.lineWidth = gridStrokeWidth;
     ctx.strokeStyle = gridStrokeColor; // vertical grid lines
 
     let max = yRange[1] - yRange[1] % yRange[2];
 
-    for (let i = 0; i <= xNums; i++) {
-      if (i == xAxis.range[0]) continue;
-      ctx.moveTo(i * xRange[2], yRange[0]);
-      ctx.lineTo(i * xRange[2], max);
+    for (let i = xRange[0]; i <= xRange[1]; i += xRange[2]) {
+      if (xAxis.excludeOriginTick && i == 0 || xAxis.includeLeftTip && i == xRange[0] || xAxis.includeRightTip && i == xRange[1]) continue;
+      ctx.moveTo(i, yRange[0]);
+      ctx.lineTo(i, max);
     } // horizontal grid lines
 
 
     max = xRange[1] - xRange[1] % xRange[2];
 
-    for (let i = 0; i <= yNums; i++) {
-      if (i == yAxis.range[0]) continue;
-      ctx.moveTo(xRange[0], i * yRange[2]);
-      ctx.lineTo(max, i * yRange[2]);
+    for (let i = yRange[0]; i <= yRange[1]; i += yRange[2]) {
+      if (yAxis.excludeOriginTick && i == 0 || yAxis.includeLeftTip && i == yRange[0] || yAxis.includeRightTip && i == yRange[1]) continue;
+      ctx.moveTo(xRange[0], i);
+      ctx.lineTo(max, i);
     }
 
     ctx.stroke();
@@ -3949,7 +4360,7 @@ function numberPlane(configs = {}) {
     ctx.closePath();
   }
 
-  return getPlotterList({
+  return getCartasianPlotters({
     originPosition: originPosition,
     // position of origin of number plane
     unitValue: unitValue,
@@ -3964,8 +4375,286 @@ function numberPlane(configs = {}) {
 
   });
 }
+/**
+ * Creates a polar plane. change following configs to customize the plane
+ * @param {Object} configs - configurations
+ * @param {Array<number>} [originPosition = ORIGIN] position of origin of plane
+ * @param {number} [maxRadius = 4] maximum radius of the polar plane
+ * @param {number} [size] diameter of the plane in pixels. Default it will try to fit in the canvas
+ * @param {number} [radiusStep = 1] step size of radius
+ * @param {string} [azimuthUnit = "degrees"]  azimuth unit:
+ *  * "PI radians" or "TAU radians": 20
+ *  * "degrees": 36
+ *  * "gradians": 40
+ * @param {number} [azimuthDivisions = 0]  The number of divisions in the azimuth (also known as the angular coordinate or polar angle). If None is specified then it will use the default specified by azimuthUnit
+ * @param {Array<*>} [radialLabels = []] Labels for the radial axis. If nothing is specified then the labels will be automatically generated using the radialStep.
+ * @param {string} [azimuthDirection = "ccw"] direction of the azimuthal labels. This can be either 'ccw' or 'cw'
 
-},{"../main.js":16,"../settings.js":30,"../utils.js":31,"./arrows.js":22,"./functions.js":25,"./geometry.js":26,"./text.js":29}],25:[function(require,module,exports){
+ * @param {Object} [radiusConfigs] radial axis configurations
+ * @param {string} [radiusConfigs.strokeColor = "#fff"] stroke color of the radial axis
+ * @param {string} [radiusConfigs.fontFamily = "serif"] font family of the radial axis labels
+ * @param {string} [radiusConfigs.textAlign = "center"] text align of the radial axis labels
+ * @param {string} [radiusConfigs.textBaseline = "middle"] text baseline of the radial axis labels
+ * @param {number} [radiusConfigs.strokeWidth = 2] stroke width of the radial axis in pixels
+ * @param {number} [radiusConfigs.fontSize = 22] font size of the radial axis in pixels
+ * @param {number} [radiusConfigs.decimalPoints = 0] number of decimal points to show up in the radial axis labels
+ * @param {function} [radiusConfigs.textRenderer = fillText] function that renders text. you can use strokeText to get stroked text, or something else to get custom text
+ * @param {Array<number>} [radiusConfigs.textDirection = [-1.4, -1.2]] direction of the radial axis label. This'll align labels correctly in the position.
+ * @param {Array<number>} [radiusConfigs.labelAxis = [1, 0]] axis to labels
+ * @param {boolean} [radiusConfigs.includeLabels = true] whether to draw radial labels or not
+
+ * @param {Object} [azimuth] azimuth line configurations
+ * @param {boolean} [azimuth.compactFraction = true] whether to show the azimuthal fraction as compact or not
+ * @param {number} [azimuth.offset = 0] radial offset of the azimuthal labels
+ * @param {number} [azimuth.labelBuff = 0.5] buffer between the outermost azimuthal circle and the azimuthal labels
+ * @param {number} [azimuth.fontSize = 17] font size of the azimuthal labels
+ * @param {number} [azimuth.strokeWidth = 1.5] stroke width of the azimuthal lines
+ * @param {number} [azimuth.decimalPoints = 0] number of decimal points to show up in the azimuthal labels
+ * @param {string} [azimuth.fontFamily = "serif"] font family of the azimuthal labels
+ * @param {string} [azimuth.strokeColor = "#58c4dddd"] stroke color of the azimuthal labels
+ * @param {function} [azimuth.textRenderer = fillText] function that renders text. you can use strokeText to get stroked text, or something else to get custom text
+ * @param {boolean} [azimuth.includeLabels = true] whether to draw azimuthal labels or not
+ *
+ */
+
+
+function polarPlane(configs = {}) {
+  let ctx = _main.C.workingContext,
+      cvs = _main.C.workingCanvas,
+      azimuthUnitsDict = {
+    "pi radians": 20,
+    "tau radians": 20,
+    degrees: 24,
+    gradians: 20
+  };
+  configs = (0, _utils.applyDefault)({
+    originPosition: ORIGIN,
+    maxRadius: 4.0,
+    size: Math.min(parseInt(cvs.style.width), parseInt(cvs.style.height)) * 0.8,
+    radiusStep: 1,
+    azimuthUnit: "PI radians",
+    azimuthDivisions: 0,
+    azimuthCompactFraction: true,
+    azimuthDirection: "ccw",
+    azimuthoffset: 0,
+    fadedLines: 1,
+    radiusConfigs: {
+      includeLabels: true,
+      includeTicks: false,
+      includeRightTip: false,
+      strokeColor: "#fff",
+      strokeWidth: 2,
+      fontSize: 22,
+      fontFamily: "serif",
+      textDirection: [0.8, -0.75],
+      labelAxis: [1],
+      numbersToExclude: [0]
+    },
+    azimuthConfigs: {
+      includeLabels: true,
+      labelBuff: 0.45,
+      fontSize: 15,
+      fontFamily: "serif",
+      textAlign: "center",
+      textBaseline: "middle",
+      strokeColor: "#58c4ddaa",
+      strokeWidth: 1.3,
+      textRenderer: _text.fillText,
+      decimalPoints: 0
+    },
+    fadedLineConfigs: {
+      strokeColor: "#8888",
+      strokeWidth: 1
+    }
+  }, configs);
+  let {
+    originPosition,
+    maxRadius,
+    size,
+    radiusStep,
+    azimuthUnit,
+    azimuthDivisions,
+    azimuthCompactFraction,
+    azimuthDirection,
+    radiusConfigs,
+    azimuthConfigs,
+    fadedLines,
+    fadedLineConfigs,
+    azimuthoffset
+  } = configs;
+  azimuthUnit = azimuthUnit.toLowerCase(); // error catching
+
+  if (azimuthUnitsDict[azimuthUnit] != undefined) {
+    azimuthUnit = azimuthUnit;
+  } else {
+    throw new Error("Invalid azimuth units. Expected one of: PI radians, TAU radians, degrees, gradians.");
+  }
+
+  if (azimuthDivisions == 0) {
+    azimuthDivisions = azimuthUnitsDict[azimuthUnit] || 20;
+  }
+
+  (0, _settings.save)();
+  ctx.translate(originPosition[0], originPosition[1]);
+  let tickList = (0, _utils.arange)(0, maxRadius, radiusStep),
+      radialSpacing = size / maxRadius / 2;
+  azimuthConfigs.strokeWidth /= radialSpacing;
+  fadedLineConfigs.strokeWidth /= radialSpacing;
+  azimuthConfigs.fontSize /= radialSpacing;
+  let
+  /** @type {Array} */
+  labels = Array.isArray(radiusConfigs.labelsToInclude) ? radiusConfigs.labelsToInclude : tickList,
+      xLabels = [],
+      yLabels = []; // find labels for each wings of axis
+
+  if (radiusConfigs.labelAxis.indexOf(3) > -1) {
+    // add left wing of x-axis
+    xLabels = labels.reverse();
+  } else {
+    xLabels = new Array(maxRadius).fill("");
+  }
+
+  if (radiusConfigs.labelAxis.indexOf(1) > -1) {
+    // add right wing of x-axis
+    xLabels = xLabels.concat(labels);
+  } else {
+    xLabels.push(...new Array(maxRadius).fill(""));
+  }
+
+  if (radiusConfigs.labelAxis.indexOf(2) > -1) {
+    // add top wing of y-axis
+    yLabels = labels.reverse();
+  } else {
+    yLabels = new Array(maxRadius).fill("");
+  }
+
+  if (radiusConfigs.labelAxis.indexOf(4) > -1) {
+    // add bottom wing of y-axis
+    yLabels = yLabels.concat(labels.reverse());
+  } else {
+    yLabels.push(...new Array(maxRadius).fill(""));
+  }
+
+  radiusConfigs.range = [-maxRadius, maxRadius, radiusStep];
+  radiusConfigs.length = size;
+  let xAxisCfgs = (0, _utils.applyDefault)(radiusConfigs, {
+    labelsToInclude: xLabels
+  }),
+      yAxisCfgs = (0, _utils.applyDefault)(radiusConfigs, {
+    labelsToInclude: yLabels
+  });
+  ctx.scale(radialSpacing, radialSpacing);
+  drawAzimuthalLines();
+  (0, _settings.restore)();
+  axes({
+    xAxis: xAxisCfgs,
+    yAxis: yAxisCfgs
+  });
+
+  function drawAzimuthalLines() {
+    fadedLines++; // draw azimuthal divisions
+
+    let labels = [];
+    ctx.font = `${azimuthConfigs.fontSize}px ${azimuthConfigs.fontFamily}`;
+    ctx.textAlign = azimuthConfigs.textAlign;
+    ctx.textBaseline = azimuthConfigs.textBaseline; // generate labels
+
+    if (azimuthUnit == "pi radians" || azimuthUnit == "tau radians") {
+      let numerator = 1,
+          denominator = azimuthDivisions;
+      azimuthConfigs.textRenderer = _tex.tex;
+      let post = azimuthUnit == "tau radians" ? "\\tau" : "\\pi";
+      ctx.font = `${azimuthConfigs.fontSize * radialSpacing}px ${azimuthConfigs.fontFamily}`;
+
+      for (let division = 0; division < azimuthDivisions; division++) {
+        labels.push((0, _utils.fraction)(numerator * division, denominator, azimuthCompactFraction, post));
+      }
+    } else if (azimuthUnit == "degrees") {
+      // Use Tex parser to generate fractions
+      for (let i = 0; i < azimuthDivisions; i++) {
+        labels.push((i * 360 / azimuthDivisions).toFixed(azimuthConfigs.decimalPoints) + "°");
+      }
+    } else if (azimuthUnit == "gradians") {
+      for (let i = 0; i < azimuthDivisions; i++) {
+        labels.push((i * 400 / azimuthDivisions).toFixed(azimuthConfigs.decimalPoints) + "ᵍ");
+      }
+    }
+
+    let angleIncrementor = Math.PI * 2 / azimuthDivisions,
+        angle = 0;
+    if (azimuthDirection.toLowerCase() == "cw") angleIncrementor *= -1;
+    let scalar = 1;
+
+    if (azimuthUnit == "pi radians" || azimuthUnit == "tau radians") {
+      scalar = radialSpacing;
+    } // draw radiating circles
+
+
+    ctx.doFill = false;
+    ctx.doStroke = true;
+
+    if (fadedLines > 1) {
+      // draw faded ones
+      ctx.strokeStyle = fadedLineConfigs.strokeColor;
+      ctx.lineWidth = fadedLineConfigs.strokeWidth;
+      let step = 1 / fadedLines;
+      let max = tickList.length / step - fadedLines;
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+
+      for (let i = 0; i < max; i++) {
+        ctx.arc(0, 0, i * step, 0, Math.PI * 2);
+      }
+
+      max = azimuthDivisions / step / step;
+      ctx.lineWidth = fadedLineConfigs.strokeWidth;
+
+      for (let i = 0; i < max; i += step) {
+        let angle = i * angleIncrementor;
+        ctx.moveTo(0, 0);
+        ctx.lineTo(Math.cos(angle + azimuthoffset) * maxRadius, Math.sin(angle + azimuthoffset) * maxRadius);
+      }
+
+      ctx.stroke();
+    } // and majors
+
+
+    ctx.beginPath();
+    ctx.strokeStyle = azimuthConfigs.strokeColor;
+    ctx.lineWidth = azimuthConfigs.strokeWidth;
+    ctx.moveTo(0, 0);
+
+    for (let i = 0; i < tickList.length; i++) {
+      ctx.arc(0, 0, i, 0, Math.PI * 2);
+    }
+
+    for (let i = 0; i < azimuthDivisions; i++) {
+      // draw azimuthal lines only if it isn't over axis lines
+      let angle = i * angleIncrementor + azimuthoffset;
+
+      if (angle % (Math.PI / 2) != 0) {
+        ctx.moveTo(0, 0);
+        ctx.lineTo(Math.cos(angle) * maxRadius, Math.sin(angle) * maxRadius);
+      }
+    }
+
+    ctx.stroke(); // draw azimuthal labels
+
+    if (azimuthConfigs.includeLabels) {
+      for (let i = 0; i < azimuthDivisions; i++) {
+        angle = i * angleIncrementor + azimuthoffset;
+        azimuthConfigs.textRenderer(labels[i], Math.cos(angle) * (maxRadius + azimuthConfigs.labelBuff) * scalar, Math.sin(angle) * (maxRadius + azimuthConfigs.labelBuff) * scalar);
+      }
+    }
+  }
+
+  return getPolarPlotters({
+    azimuthAnglularSpace: 2 * Math.PI / azimuthDivisions,
+    radialSpacing: radialSpacing
+  });
+}
+
+},{"../main.js":17,"../settings.js":31,"../utils.js":32,"./arrows.js":23,"./functions.js":26,"./geometry.js":27,"./tex.js":29,"./text.js":30}],26:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3975,6 +4664,9 @@ exports.functionGraph = functionGraph;
 exports.heatPlot = heatPlot;
 exports.parametricFunction = parametricFunction;
 exports.plotPoints = plotPoints;
+exports.plotPolarPoints = plotPolarPoints;
+exports.polarFuntionGraph = polarFuntionGraph;
+exports.polarParametricFunction = polarParametricFunction;
 
 var _color_reader = require("../color/color_reader.js");
 
@@ -4000,18 +4692,18 @@ const UNIT_VEC = [1, 1];
 /**
  * Draws a parametric functions
  * This accept parameters as object.
- * @param {Object} args configuration object
+ * @param {Object} configs configuration object
  * It can have following properties:
  *
- * @param {Function} args.paramFunction function to plot. Must recieve one argument and return a array of point as [x, y]
- * @param {number} [args.tension = 1] Smoothness tension.
- * @param {Array<number>} [args.range = RANGE] Range as [min, max, dt]
- * @param {Array<number>} [args.discontinuities] Array of t where the curve discontinues.
- * @param {Array<number>} [args.unitValue = UNIT_VEC] Value of each unit space
- * @param {Array<number>} [args.unitSpace = UNIT_VEC] Length of each unit in pixels
- * @param {boolean} [args.smoothen = true] Whether to smoothen the shape.
- * @param {boolean} [args.closed = false] Whether the function draws a closed shape.
- * @param {boolean} [args.draw = true] Wheteher to draw the function graph right now.
+ * @param {Function} configs.plotter function to plot. Must recieve one argument and return a array of point as [x, y]
+ * @param {number} [configs.tension = 1] Smoothness tension.
+ * @param {Array<number>} [configs.range = RANGE] Range as [min, max, dt]
+ * @param {Array<number>} [configs.discontinuities] Array of t where the curve discontinues.
+ * @param {Array<number>} [configs.unitValue = UNIT_VEC] Value of each unit space
+ * @param {Array<number>} [configs.unitSpace = UNIT_VEC] Length of each unit in pixels
+ * @param {boolean} [configs.smoothen = true] Whether to smoothen the shape.
+ * @param {boolean} [configs.closed = false] Whether the function draws a closed shape.
+ * @param {boolean} [configs.draw = true] Wheteher to draw the function graph right now.
  *
  * @returns {Object} object that contains following properties:
  *
@@ -4020,7 +4712,7 @@ const UNIT_VEC = [1, 1];
  * * animate <function> : Function that animates the drawing of the shape. Accept argument `duration` which is the duration of animation.
  */
 
-function parametricFunction(args) {
+function parametricFunction(configs) {
   let defaultConfigs = {
     tension: 1,
     unitValue: UNIT_VEC,
@@ -4034,15 +4726,15 @@ function parametricFunction(args) {
     // for animation
     dur: 4000
   };
-  args = (0, _utils.applyDefault)(defaultConfigs, args);
+  configs = (0, _utils.applyDefault)(defaultConfigs, configs);
   let {
-    paramFunction,
+    plotter,
     range,
     smoothen,
     tension,
     discontinuities,
     closed
-  } = args;
+  } = configs;
   if (Array.isArray(range) && range.length == 2) range.push((range[1] - range[0]) / 20);
   let points = [[]],
       min = range[0],
@@ -4050,16 +4742,23 @@ function parametricFunction(args) {
       step = range[2];
   if (!Array.isArray(discontinuities)) discontinuities = []; // generate points
 
-  let epsilon = 1e-6,
-      row = 0,
-      noPoints = 0,
-      unitX = args.unitSpace[0] / args.unitValue[0],
-      unitY = args.unitSpace[1] / args.unitValue[1];
-  if (step < epsilon) epsilon = step / 2;
+  let row = 0,
+      pointCount = 0,
+      unitX = configs.unitSpace[0] / configs.unitValue[0],
+      unitY = configs.unitSpace[1] / configs.unitValue[1];
+  let discontinuityRadius;
 
-  for (let t = min; t <= max + epsilon; t += step) {
-    if ((0, _utils.approximateIndexInArray)(t, discontinuities, epsilon) > -1) {
-      if ((0, _utils.approximateIndexInArray)(t + step, discontinuities, epsilon) > -1) {
+  if (isNaN(configs.discontinuityRadius)) {
+    discontinuityRadius = step;
+  } else {
+    discontinuityRadius = configs.discontinuityRadius;
+  }
+
+  if (step < discontinuityRadius) discontinuityRadius = step / 2;
+
+  for (let t = min; t <= max + discontinuityRadius; t += step) {
+    if ((0, _utils.approximateIndexInArray)(t, discontinuities, discontinuityRadius) > -1) {
+      if ((0, _utils.approximateIndexInArray)(t + step, discontinuities, discontinuityRadius) > -1) {
         row++;
         points.push([]);
       }
@@ -4067,13 +4766,13 @@ function parametricFunction(args) {
       continue;
     }
 
-    let ft = paramFunction(t);
+    let ft = plotter(t);
     points[row].push([ft[0] * unitX, ft[1] * unitY]);
-    noPoints++;
+    pointCount++;
   } // draw the plot
 
 
-  if (args.draw) plot();
+  if (configs.draw) plot();
 
   function plot() {
     let ctx = _main.C.workingContext;
@@ -4100,15 +4799,15 @@ function parametricFunction(args) {
   let ctx = _main.C.workingContext;
   return {
     points: points[0],
-    dur: args.dur,
+    dur: configs.dur,
     name: "parametric-plot-" + counter.parametricFunction++,
-    closed: args.closed,
-    tension: args.tension || 1,
-    smoothen: args.smoothen,
-    rateFunction: args.rateFunction,
-    syncWithTime: args.syncWithTime || false,
+    closed: configs.closed,
+    tension: configs.tension || 1,
+    smoothen: configs.smoothen,
+    rateFunction: configs.rateFunction,
+    syncWithTime: configs.syncWithTime || false,
     draw: function (duration = 2000) {
-      let dt = duration / noPoints;
+      let dt = duration / pointCount;
 
       for (let i = 0; i < points.length; i++) {
         var p = points[i];
@@ -4165,32 +4864,32 @@ function parametricFunction(args) {
  */
 
 
-function functionGraph(args) {
-  let paramFunction = args.paramFunction;
+function functionGraph(configs) {
+  let plotter = configs.plotter;
 
-  args.paramFunction = x => [x, paramFunction(x)];
+  configs.plotter = x => [x, plotter(x)];
 
-  return parametricFunction(args);
+  return parametricFunction(configs);
 }
 /**
  * Draws a heat plot of given function. The function must take atleast 2 arguments and return a number.
  * More precisely f: ℜ² → ℜ
  * All parameters should be enclosed in a object.
- * @param {Object} args
+ * @param {Object} configs
  * Possible parameters are:
  *
- * @param {Array<number>} [args.min] minimum point. Default: [-4, -4]
- * @param {Array<number>} [args.max] maximum point. Default: [4, 4]
- * @param {Object} args.colors object of color map
- * @param {Array<number>} [args.unitValue = UNIT_VEC] Value of each unit space
- * @param {Array<number>} [args.unitSpace = UNIT_VEC] Length of each unit in pixels
- * @param {number} [args.resolution = 1] resolution of plot
- * @param {Function} [args.interpolator = linear] function to interpolate color.
+ * @param {Array<number>} [configs.min] minimum point. Default: [-4, -4]
+ * @param {Array<number>} [configs.max] maximum point. Default: [4, 4]
+ * @param {Object} configs.colors object of color map
+ * @param {Array<number>} [configs.unitValue = UNIT_VEC] Value of each unit space
+ * @param {Array<number>} [configs.unitSpace = UNIT_VEC] Length of each unit in pixels
+ * @param {number} [configs.resolution = 1] resolution of plot
+ * @param {Function} [configs.interpolator = linear] function to interpolate color.
  * @return {Object} metadatas
  */
 
 
-function heatPlot(args) {
+function heatPlot(configs) {
   let defaultConfigs = {
     min: [-4, -4],
     max: [4, 4],
@@ -4208,7 +4907,7 @@ function heatPlot(args) {
     resolution: 1,
     interpolator: x => x
   };
-  args = (0, _utils.applyDefault)(defaultConfigs, args, false);
+  configs = (0, _utils.applyDefault)(defaultConfigs, configs, false);
   let {
     min,
     max,
@@ -4216,12 +4915,12 @@ function heatPlot(args) {
     resolution,
     plotFunction,
     interpolator
-  } = args,
+  } = configs,
       ctx = _main.C.workingContext,
-      unitSizeX = args.unitSpace[0] / args.unitValue[0],
-      unitSizeY = args.unitSpace[1] / args.unitValue[1],
-      UVX = args.unitValue[0] / args.unitSpace[0],
-      UVY = args.unitValue[1] / args.unitSpace[1],
+      unitSizeX = configs.unitSpace[0] / configs.unitValue[0],
+      unitSizeY = configs.unitSpace[1] / configs.unitValue[1],
+      UVX = configs.unitValue[0] / configs.unitSpace[0],
+      UVY = configs.unitValue[1] / configs.unitSpace[1],
       stopes = Object.keys(colors).sort(); // converting colors to rgba array
 
   for (let stop of stopes) {
@@ -4265,46 +4964,197 @@ function heatPlot(args) {
 }
 /**
  * Plots a list of points
- * @param {Object} args arguments
- * @param {Array<Object<x:number, y:number, radius?: number, fill?: string, stroke?: string>>} args.points list of points
+ * @param {Object} configs arguments
+ * @param {Array<Object<x:number, y:number, radius?: number, fill?: string, stroke?: string>>} configs.points list of points
  *
  */
 
 
-function plotPoints(args) {
-  let defaultConfigs = {
+function plotPoints(configs) {
+  configs = (0, _utils.applyDefault)({
     unitValue: UNIT_VEC,
     unitSpace: UNIT_VEC,
     fill: "white",
     stroke: "#0000",
-    radius: 7
-  };
-  args = (0, _utils.applyDefault)(defaultConfigs, args);
+    radius: 5
+  }, configs);
   let {
     points,
     unitValue,
     unitSpace
-  } = args;
+  } = configs;
   let ctx = _main.C.workingContext;
 
   for (let i = 0; i < points.length; i++) {
     let p = points[i],
-        fill = p.fill || args.fill || ctx.fillStyle,
-        stroke = p.stroke || args.stroke || ctx.strokeStyle,
+        fill = p.fill || configs.fill || ctx.fillStyle,
+        stroke = p.stroke || configs.stroke || ctx.strokeStyle,
         x = p.x * unitSpace[0] / unitValue[0],
         y = p.y * unitSpace[1] / unitValue[1];
     ctx.beginPath();
     ctx.fillStyle = fill;
     ctx.strokeStyle = stroke;
-    ctx.arc(x, y, p.radius || args.radius, 0, Math.PI * 2);
+    ctx.arc(x, y, p.radius || configs.radius, 0, Math.PI * 2);
     ctx.fill();
     ctx.stroke();
   }
 
   ctx.closePath();
 }
+/**
+ * Plots a bunch of points in polar plane
+ * @param {Object} configs configurations
+ * @param {Array<Object<r:number, phi:number, radius?: number, fill?: string, stroke?: string>>} configs.points list of points
+ */
 
-},{"../color/color_reader.js":6,"../main.js":16,"../settings.js":30,"../utils.js":31,"./geometry.js":26}],26:[function(require,module,exports){
+
+function plotPolarPoints(configs) {
+  configs = (0, _utils.applyDefault)({
+    radialSpacing: 2,
+    fill: "white",
+    stroke: "#0000",
+    radius: 5,
+    points: []
+  }, configs);
+  let ctx = _main.C.workingContext;
+  let {
+    points,
+    radialSpacing
+  } = configs;
+  ctx.save();
+
+  for (let i = 0; i < points.length; i++) {
+    let p = points[i],
+        fill = p.fill || configs.fill || ctx.fillStyle,
+        stroke = p.stroke || configs.stroke || ctx.strokeStyle,
+        x = p.r * Math.cos(p.phi) * radialSpacing,
+        y = p.r * Math.sin(p.phi) * radialSpacing;
+    ctx.beginPath();
+    ctx.fillStyle = fill;
+    ctx.strokeStyle = stroke;
+    ctx.arc(x, y, p.radius || configs.radius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+  }
+
+  ctx.closePath();
+  ctx.restore();
+}
+/**
+ * Plots a parametric function in polar plane
+ * @param {Object} configs
+ * @param {Function} configs.plotter function that takes one arguments t and returns a coordinate as [radius, angle]
+ * @returns
+ */
+
+
+function polarParametricFunction(configs) {
+  configs = (0, _utils.applyDefault)({
+    tension: 1,
+    radialSpacing: 1,
+    range: [0, Math.PI * 2, Math.PI / 50],
+    discontinuities: [],
+    smoothen: true,
+    closed: false,
+    strokeWidth: 2,
+    plotter: t => [0, 0]
+  }, configs);
+  let {
+    plotter,
+    range,
+    radialSpacing,
+    smoothen,
+    tension,
+    discontinuities,
+    closed
+  } = configs;
+  if (Array.isArray(range) && range.length == 2) range.push((range[1] - range[0]) / 20);
+  let points = [[]],
+      min = range[0],
+      max = range[1],
+      step = range[2];
+  if (!Array.isArray(discontinuities)) discontinuities = [];
+  let discontinuityRadius;
+
+  if (isNaN(configs.discontinuityRadius)) {
+    discontinuityRadius = step;
+  } else {
+    discontinuityRadius = configs.discontinuityRadius;
+  } // generate points
+
+
+  let row = 0,
+      _fix = discontinuityRadius < step ? discontinuityRadius : 0; // we add one more point to make the graph more accurate when applying smoothening technique.
+
+
+  for (let t = min; t <= max + step + _fix; t += step) {
+    if ((0, _utils.approximateIndexInArray)(t, discontinuities, discontinuityRadius) > -1) {
+      if ((0, _utils.approximateIndexInArray)(t + step, discontinuities, discontinuityRadius) > -1) {
+        row++;
+        points.push([]);
+      }
+
+      continue;
+    }
+
+    let ft = plotter(t);
+    points[row].push([ft[0] * Math.cos(ft[1]) * radialSpacing, ft[0] * Math.sin(ft[1]) * radialSpacing]);
+  }
+
+  let ctx = _main.C.workingContext;
+  let finalPoints = [];
+  ctx.lineWidth = configs.strokeWidth;
+
+  for (let i = 0; i < points.length; i++) {
+    let p = points[i];
+
+    if (p.length == 0) {
+      continue;
+    } else {
+      finalPoints.push(p);
+    } // add offset to remove last point
+
+
+    let offset = i == points.length - 1 ? 1 : 0;
+
+    if (smoothen) {
+      (0, _geometry.smoothCurveThroughPoints)(p, tension, closed, offset);
+    } else {
+      ctx.beginPath();
+      ctx.moveTo(p[0][0], p[0][1]);
+
+      for (let j = 1; j < p.length - offset; j++) {
+        ctx.lineTo(p[j][0], p[j][1]);
+      }
+
+      if (ctx.doStroke) ctx.stroke();
+      if (ctx.doFill && closed) ctx.fill();
+      ctx.closePath();
+    } // remove last excess point
+
+
+    if (offset) {
+      points[i] = points[i].slice(0, -1);
+    }
+  }
+
+  return {
+    points: finalPoints,
+    closed: configs.closed,
+    tension: configs.tension || 1,
+    smoothen: configs.smoothen
+  };
+}
+
+function polarFuntionGraph(configs) {
+  let plotter = configs.plotter;
+
+  configs.plotter = t => [plotter(t), t];
+
+  return polarParametricFunction(configs);
+}
+
+},{"../color/color_reader.js":7,"../main.js":17,"../settings.js":31,"../utils.js":32,"./geometry.js":27}],27:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4409,7 +5259,8 @@ function circle(x, y, r) {
   let ctx = _main.C.workingContext;
   ctx.beginPath();
   ctx.arc(x, y, r, 0, Math.PI * 2);
-  (0, _utils.doFillAndStroke)(ctx);
+  if (ctx.doFill) ctx.fill();
+  if (ctx.doStroke) ctx.stroke();
 }
 /**
  * Adds an elliptical arc to the current shape if {@link startShape} was called.
@@ -4494,9 +5345,9 @@ function getBezierControlPoints(recentPoint, currentPoint, nextPoint, secondNext
  */
 
 
-function smoothCurveThroughPointsTo(points, tension = 1, closed = true) {
-  for (let i = 0; i < points.length - 1; i++) {
-    let recentPoint = i > 0 ? points[i - 1] : closed ? points[points.length - 2] : points[0],
+function smoothCurveThroughPointsTo(points, tension = 1, closed = true, offset = 0) {
+  for (let i = 0; i < points.length - 1 - offset; i++) {
+    let recentPoint = i != 0 ? points[i - 1] : points[0],
         currentPoint = points[i],
         nextPoint = points[i + 1],
         secondNextPoint = i != points.length - 2 ? points[i + 2] : closed ? points[1] : nextPoint,
@@ -4513,11 +5364,11 @@ function smoothCurveThroughPointsTo(points, tension = 1, closed = true) {
  */
 
 
-function smoothCurveThroughPoints(points, tension = 1, closed = true) {
+function smoothCurveThroughPoints(points, tension = 1, closed = true, offset = 0) {
   let ctx = _main.C.workingContext;
   ctx.beginPath();
   ctx.moveTo(points[0][0], points[0][1]);
-  smoothCurveThroughPointsTo(points, tension, closed);
+  smoothCurveThroughPointsTo(points, tension, closed, offset);
   if (ctx.doFill && closed) ctx.fill();
   if (ctx.doStroke) ctx.stroke();
   ctx.closePath();
@@ -4881,7 +5732,7 @@ function regularPolygonWithRadius(x, y, sides, radius, rotation = 0) {
   if (ctx.doStroke) ctx.stroke();
 }
 
-},{"../main.js":16,"../math/points.js":19,"../utils.js":31}],27:[function(require,module,exports){
+},{"../main.js":17,"../math/points.js":20,"../utils.js":32}],28:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4952,7 +5803,7 @@ function lens(c1, r1, c2, r2) {
   ctx.closePath();
 }
 
-},{"../main.js":16,"../math/points.js":19}],28:[function(require,module,exports){
+},{"../main.js":17,"../math/points.js":20}],29:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4977,9 +5828,10 @@ function getImageFromTex(input) {
   }
 
   let ctx = _main.C.workingContext,
-      svgOutput = window['MathJax'].tex2svg(input).getElementsByTagName("svg")[0],
+      svgOutput = window["MathJax"].tex2svg(input).getElementsByTagName("svg")[0],
       g = svgOutput.getElementsByTagName("g")[0];
   svgOutput.style.verticalAlign = "1ex";
+  svgOutput.style.fontSize = parseFloat(ctx.font) + "px";
   g.setAttribute("stroke", ctx.strokeStyle);
   g.setAttribute("fill", ctx.fillStyle);
   let outerHTML = svgOutput.outerHTML,
@@ -5054,7 +5906,7 @@ function tex(input, x, y) {
   return image;
 }
 
-},{"../constants/drawing.js":12,"../main.js":16}],29:[function(require,module,exports){
+},{"../constants/drawing.js":13,"../main.js":17}],30:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5136,7 +5988,7 @@ function strokeText(text, x = 0, y = 0, maxwidth = undefined) {
   if (ctx.yAxisInverted) (0, _settings.scale)(1, -1);
 }
 
-},{"../main.js":16,"../settings.js":30}],30:[function(require,module,exports){
+},{"../main.js":17,"../settings.js":31}],31:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5396,7 +6248,7 @@ function save() {
 }
 /**
  * Set the type of line end
- * Options: BUTT, ROUND, SQUARE
+ * Options: butt, round, square
  *
  * @param {string} capType
  */
@@ -5921,7 +6773,7 @@ function textBaseline(baseline) {
   _main.C.workingContext.textBaseline = baseline;
 }
 
-},{"./color/color_reader.js":6,"./main.js":16,"./utils.js":31}],31:[function(require,module,exports){
+},{"./color/color_reader.js":7,"./main.js":17,"./utils.js":32}],32:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5932,7 +6784,11 @@ exports.approximateIndexInArray = approximateIndexInArray;
 exports.arange = arange;
 exports.defineProperties = defineProperties;
 exports.doFillAndStroke = doFillAndStroke;
+exports.fraction = fraction;
+exports.latexToImg = latexToImg;
 exports.type = void 0;
+
+var _c = require("./c.js");
 
 var _main = require("./main.js");
 
@@ -6034,6 +6890,71 @@ function approximateIndexInArray(val, array, epsilon = 1e-6) {
   return -1;
 }
 
+function latexToImg(latex) {
+  return new Promise((resolve, reject) => {
+    let wrapper = MathJax.tex2svg(`${latex}`, {
+      em: 10,
+      ex: 5,
+      display: true
+    });
+    let mjOut = wrapper.getElementsByTagName("svg")[0]; // mjOut.setAttribute("xmlns", "http://www.w3.org/2000/svg")
+
+    let output = {
+      svg: "",
+      img: ""
+    };
+    output.svg = mjOut.outerHTML;
+    var image = new Image();
+    image.src = "data:image/svg+xml;base64," + window.btoa(unescape(encodeURIComponent(output.svg)));
+
+    image.onload = function () {
+      var canvas = document.createElement("canvas");
+      canvas.width = image.width;
+      canvas.height = image.height;
+      var context = canvas.getContext("2d");
+      context.drawImage(image, 0, 0);
+      output.img = canvas.toDataURL("image/png");
+      resolve(output.img);
+    };
+
+    image.onerror = function () {
+      reject();
+    };
+  });
+}
+/**
+ *
+ * @param {number} numerator
+ * @param {number} denominator
+ * @param {boolean} [compact=true]
+ * @param {string} [multiple]
+ * @returns {Object<numerator: <string>, denominator: <string>>}
+ */
+
+
+function fraction(numerator, denominator, compact = true, multiple = "") {
+  let _divider = (0, _c.gcd)(numerator, denominator);
+
+  numerator /= _divider;
+  denominator /= _divider;
+  let tex = "";
+
+  if (numerator == 0) {
+    tex = "0";
+  } else if (denominator == 1) {
+    tex = numerator + multiple;
+  } else {
+    if (!compact && multiple != "") {
+      tex = `\\frac{${numerator}}{${denominator}}${multiple}`;
+    } else {
+      if (numerator == 1) numerator = "";
+      tex = `\\frac{${numerator}${multiple}}{${denominator}}`;
+    }
+  }
+
+  return tex;
+}
+
 window["applyDefault"] = applyDefault;
 
-},{"./main.js":16}]},{},[4]);
+},{"./c.js":5,"./main.js":17}]},{},[4]);

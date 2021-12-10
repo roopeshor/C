@@ -66,7 +66,8 @@ export function circle(x, y, r) {
 	let ctx = C.workingContext;
 	ctx.beginPath();
 	ctx.arc(x, y, r, 0, Math.PI * 2);
-	doFillAndStroke(ctx);
+	if (ctx.doFill) ctx.fill();
+	if (ctx.doStroke) ctx.stroke();
 }
 
 /**
@@ -159,7 +160,7 @@ export function getBezierControlPoints(
  */
 export function smoothCurveThroughPointsTo(points, tension = 1, closed = true, offset = 0) {
 	for (let i = 0; i < points.length - 1 - offset; i++) {
-		let recentPoint = i > 0 ? points[i - 1] : closed ? points[points.length - 2] : points[0],
+		let recentPoint = i != 0 ? points[i - 1] : points[0],
 			currentPoint = points[i],
 			nextPoint = points[i + 1],
 			secondNextPoint = i != points.length - 2 ? points[i + 2] : closed ? points[1] : nextPoint,
@@ -179,6 +180,7 @@ export function smoothCurveThroughPoints(points, tension = 1, closed = true, off
 	ctx.beginPath();
 	ctx.moveTo(points[0][0], points[0][1]);
 	smoothCurveThroughPointsTo(points, tension, closed, offset);
+
 	if (ctx.doFill && closed) ctx.fill();
 	if (ctx.doStroke) ctx.stroke();
 	ctx.closePath();

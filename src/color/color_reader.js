@@ -1,9 +1,8 @@
-import {Colors} from "../constants/colors.js";
+import { Colors } from "../constants/colors.js";
 
 // adapeted from p5.js
 // Full color string patterns. The capture groups are necessary.
-let
-	// Matching format: #XXX
+let // Matching format: #XXX
 	HEX3 = /^#([a-f0-9])([a-f0-9])([a-f0-9])$/i,
 	// Matching format: #XXXX
 	HEX4 = /^#([a-f0-9])([a-f0-9])([a-f0-9])([a-f0-9])$/i,
@@ -51,7 +50,6 @@ export function readColor(...color) {
 		// Adapted from p5.js
 		let str = c1.replace(/\s/g, "").toLowerCase();
 		// convert string to array if it is a named colour.
-
 		if (Colors[str]) result = readColor(Colors[str]).rgbaA;
 		else if (HEX3.test(str)) {
 			result = HEX3.exec(str)
@@ -67,10 +65,12 @@ export function readColor(...color) {
 			result = HEX4.exec(str)
 				.slice(1)
 				.map((color) => parseInt(color + color, 16));
+			result[3] /= 255;
 		} else if (HEX8.test(str)) {
 			result = HEX8.exec(str)
 				.slice(1)
 				.map((color) => parseInt(color, 16));
+			result[3] /= 255;
 		} else if (RGB.test(str)) {
 			result = RGB.exec(str)
 				.slice(1)
@@ -84,8 +84,7 @@ export function readColor(...color) {
 					return parseInt(color, 10);
 				});
 		} else {
-			console.log(str);
-			throw new Error("Given color is not valid");
+			throw new Error("Given color is not valid: " + str);
 		}
 	} else {
 		result = c1;

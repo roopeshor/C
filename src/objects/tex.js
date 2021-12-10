@@ -14,9 +14,10 @@ function getImageFromTex(input) {
 		throw new Error("MathJax is not found. Please include it.");
 	}
 	let ctx = C.workingContext,
-		svgOutput = window['MathJax'].tex2svg(input).getElementsByTagName("svg")[0],
+		svgOutput = window["MathJax"].tex2svg(input).getElementsByTagName("svg")[0],
 		g = svgOutput.getElementsByTagName("g")[0];
 	svgOutput.style.verticalAlign = "1ex";
+	svgOutput.style.fontSize = parseFloat(ctx.font) + "px";
 	g.setAttribute("stroke", ctx.strokeStyle);
 	g.setAttribute("fill", ctx.fillStyle);
 	let outerHTML = svgOutput.outerHTML,

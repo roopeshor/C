@@ -1,9 +1,9 @@
 // important functions & constants
-import { defineProperties } from "./utils.js";
+import * as Utils from "./utils.js";
 import { C } from "./main.js";
 import * as Settings from "./settings.js";
 
-import * as Math from "./constants/math.js";
+import * as _Math from "./constants/math.js";
 import * as Drawing from "./constants/drawing.js";
 
 import * as Gradients from "./color/gradients.js";
@@ -19,9 +19,10 @@ import { dist } from "./math/points.js";
 import * as Random from "./math/random.js";
 
 [
-	{ defineProperties, C, dist },
+	{ C, dist },
+	Utils,
 	Settings,
-	Math,
+	_Math,
 	Drawing,
 	Gradients,
 	Interpolation,
@@ -30,4 +31,4 @@ import * as Random from "./math/random.js";
 	Geometry,
 	Functions,
 	Random,
-].forEach((value) => defineProperties(value));
+].forEach((value) => Utils.defineProperties(value));

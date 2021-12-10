@@ -75,13 +75,14 @@ export function lerpColorArray(colorArr, v, min = 0, max = 1) {
  * @returns {Object} color object
  */
 export function getInterpolatedColorList(colorPalatte, min = 0, max = 5, alpha) {
-	if (colorPalatte.length == 1) throw new Error("Atleast 2 colors are needed to create interpolatable object");
+	if (colorPalatte.length == 1)
+		throw new Error("Atleast 2 colors are needed to create interpolatable object");
 	let step = (max - min) / (colorPalatte.length - 1),
 		colorObj = {};
 
 	for (let i = 0; i < colorPalatte.length; i++) {
 		let value = min + i * step,
-		color = readColor(colorPalatte[i]).rgbaA;
+			color = readColor(colorPalatte[i]).rgbaA;
 		color[3] = isNaN(alpha) ? color[3] : alpha;
 		colorObj[value] = color;
 	}

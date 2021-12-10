@@ -1,4 +1,3 @@
-
 import { BEVEL, CENTER, MIDDLE } from "../constants/drawing.js";
 import { C } from "../main.js";
 import { circleIntersection } from "../math/points.js";

@@ -40,8 +40,8 @@ function polygonWithRatioOfCentralAngles(x, y, radius, ratios, rotation = 0) {
 function lens(c1, r1, c2, r2) {
 	// find intersectionPoint
 	let p = circleIntersection(c1, r1, c2, r2),
-	pa = p[0],
-	pb = p[1];
+		pa = p[0],
+		pb = p[1];
 	// angles to the points
 	let c1a1 = Math.atan2(pa[1] - c1[1], pa[0] - c1[0]),
 		c1a2 = Math.atan2(pb[1] - c1[1], pb[0] - c1[0]),

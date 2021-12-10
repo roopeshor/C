@@ -46,4 +46,5 @@ module.exports = function (grunt) {
 		"browserify:core",
 		"uglify:core",
 	]);
+	grunt.registerTask("core", ["browserify:core", "uglify:core"]);
 };

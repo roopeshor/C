@@ -1,3 +1,4 @@
+import { gcd } from "./c.js";
 import { C } from "./main.js";
 
 /**
@@ -86,5 +87,59 @@ export function approximateIndexInArray(val, array, epsilon = 1e-6) {
 	}
 	return -1;
 }
+
+export function latexToImg(latex) {
+	return new Promise((resolve, reject) => {
+		let wrapper = MathJax.tex2svg(`${latex}`, { em: 10, ex: 5, display: true });
+		let mjOut = wrapper.getElementsByTagName("svg")[0];
+		// mjOut.setAttribute("xmlns", "http://www.w3.org/2000/svg")
+		let output = { svg: "", img: "" };
+		output.svg = mjOut.outerHTML;
+		var image = new Image();
+		image.src =
+			"data:image/svg+xml;base64," + window.btoa(unescape(encodeURIComponent(output.svg)));
+		image.onload = function () {
+			var canvas = document.createElement("canvas");
+			canvas.width = image.width;
+			canvas.height = image.height;
+			var context = canvas.getContext("2d");
+			context.drawImage(image, 0, 0);
+			output.img = canvas.toDataURL("image/png");
+			resolve(output.img);
+		};
+		image.onerror = function () {
+			reject();
+		};
+	});
+}
+
+/**
+ *
+ * @param {number} numerator
+ * @param {number} denominator
+ * @param {boolean} [compact=true]
+ * @param {string} [multiple]
+ * @returns {Object<numerator: <string>, denominator: <string>>}
+ */
+export function fraction (numerator, denominator, compact=true, multiple="") {
+	let _divider = gcd(numerator, denominator);
+	numerator /= _divider;
+	denominator /= _divider;
+	let tex = "";
+	if (numerator == 0) {
+		tex = "0";
+	} else if (denominator == 1) {
+		tex = numerator + multiple;
+	} else {
+		if (!compact && multiple != "") {
+			tex = `\\frac{${numerator}}{${denominator}}${multiple}`
+		} else {
+			if (numerator == 1) numerator = "";
+			tex = `\\frac{${numerator}${multiple}}{${denominator}}`
+		}
+	}
+	return tex;
+}
+
 
 window["applyDefault"] = applyDefault;
