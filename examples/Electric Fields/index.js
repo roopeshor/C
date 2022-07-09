@@ -25,34 +25,46 @@ import {
 const W = 432,
 	H = 432,
 	{ TEAL, GREEN, RED, PURPLE, BLUE, YELLOW, DARK_BROWN } = Manim;
-	
+let k = -2;
 let charges = [
   {
 		x: -2,
 		y: -2,
-		charge: -1
+		vx: 0,
+		vy: 0,
+		charge: -1,
+		mass: 5
   },
   {
     x: 2,
     y: -1,
-    charge: +3
+    vx: 0,
+		vy: 0,
+    charge: +3,
+    mass: 5
   },
   {
     x: 0,
     y: 2,
-    charge: -2
+    vx: 0,
+    vy: 0,
+    charge: -2,
+    mass: 5
   },
   {
     x: 0,
     y: 0,
-    charge: +2
+    vx: 0,
+    vy: 0,
+    charge: +2,
+    mass: 5
   }]
 C(
 	() => {
 	  background (0);
 	  centreCanvas();
 		scale(1,-1);
-		let range =[-4, 4, .25];
+		let range =[-6, 6, .5];
 		let a = axes({
 		  xAxis: {
 		    range: range,
@@ -64,28 +76,54 @@ C(
 		  }
 		});
 		let [sx, sy] = a.unitSpace;
-		background(0);
 		textAlign("center");
 		textBaseline("middle");
 		fontSize(25)
-		tinyDrag(C.workingContext, charges, {
-      onDrag: () => {
-        background(0);
-        let VF = computeVectorField(charges, range);
-		    drawVectors(VF);
-	    	drawCharges(charges);
-      }
-    });
-		let VF = computeVectorField(charges, range);
-		drawVectors(VF.vec, VF.max);
-		drawCharges(charges);
+		let dt = 0.01;
+		/* loop(
+		  () => {
+		    background(0);
+		    draw()
+	    	for (let i = 0; i < charges.length; i++) {
+	    	  let fx = 0, fy = 0, a = charges[i];
+	    	  for (let j = 0; j < charges.length; j++) {
+	    	    if (i == j) continue;
+	    	    let b = charges[j];
+	    	    let rij2 = (b.x - a.x) ** 2 + (b.y - a.y) ** 2;
+	    	    
+	    	    fx += b.charge / rij2
+	    	        * (b.x - a.x) / rij2 ** 0.5;
+	    	    fy += b.charge / rij2
+	    	        * (b.y - a.y) / rij2 ** 0.5;
+	    	  }
+	    	  fx *= k * a.charge;
+	    	  fy *= k * a.charge;
+	    	  
+	    	  let ax = fx / a.mass,
+	    	      ay = fy / a.mass;
+	    	  
+	    	  a.vx += ax * dt;
+	    	  a.vy += ay * dt;
+	    	  
+	    	  a.x += a.vx * dt;
+	    	  a.y += a.vy * dt;
+	    	}
+		  },
+		  "t",
+		  dt
+		) */
+		function draw () {
+		  let VF = computeVectorField(charges, range);
+		  drawVectors(VF.vec, VF.max);
+	    drawCharges(charges);
+		}
 		function drawCharges(charges) {
 		  for (let ch of charges) {
 		    if (ch.charge <  0) fill(BLUE);
 		    else fill(RED)
-		    point(ch.x * sx, ch.y * sy, abs(15 * ch.charge));
+		    point(ch.x * sx, ch.y * sy, abs(5 * ch.charge));
 		    fill("#fff")
-		    fontSize(abs(20 * ch.charge)**0.8)
+		    fontSize(abs(14 * ch.charge)**0.8)
 		    fillText(
 		      (ch.charge > 0? "+" : "") + ch.charge,
 		      ch.x * sx,
@@ -93,13 +131,12 @@ C(
 		    )
 		  }
 		}
-		
 		function drawVectors(vf, max) {
 		  for (let v of vf) {
-		    let i = sigmoid(v.color - 1.75 );
-		    let col = lerpColorArray(ColorPalettes.RdYlGn, i)
+		    let i = sigmoid(v.color - 1.75);
+		    let col = lerpColorArray(ColorPalettes.Jet, i)
 		    col = readColor(col).rgbaA;
-		    col[3] = sigmoid(v.color- .75);
+		    col[3] = sigmoid(v.color- .1);
 		    col = readColor(col).hex8
 		    stroke(col)
 		    fill(col)
@@ -143,8 +180,8 @@ function computeVectorField(charges, range) {
       if (max < n) max = n;
       
       n = n * 3
-      v[0] = v[0] / n * sigmoid(n - .5);
-      v[1] = v[1] / n * sigmoid(n - .5);
+      v[0] = v[0] / n * sigmoid(n - -.5);
+      v[1] = v[1] / n * sigmoid(n - -.5);
       //v[0] = log(v[0])
       //v[1] = log(v[1])
       vec.push({
