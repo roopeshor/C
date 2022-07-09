@@ -57,10 +57,10 @@ function C(fx, container, cfgs = {}) {
 	} else if (!(container instanceof HTMLElement)) {
 		container = document.body;
 	}
-
 	// initialize canvas
 	let c = container.querySelector("canvas");
-	if (c) canvas = c;
+	let canvasExists = c && c.id == configs.name;
+	if (canvasExists) canvas = c;
 	else canvas = C.makeCanvas(configs);
 
 	if (typeof container.CID !== "number") container.CID = 1;
@@ -88,7 +88,7 @@ function C(fx, container, cfgs = {}) {
 	canvas.classList.add(canvasName);
 	// add canvas to container
 	container.appendChild(canvas);
-	if (c) C.workingContext = canvas.context;
+	if (canvasExists) C.workingContext = canvas.context;
 	else prepareCanvas();
 	C.contextList[canvasName] = canvas.context;
 

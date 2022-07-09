@@ -187,7 +187,7 @@ export function numberLine(configs = {}) {
 		/** Total number of ticks */
 		totalTicks = (max - min) / step,
 		/** Space between two ticks in pixels*/
-		unitSpace = configs.length / totalTicks / step,
+		unitSpace = configs.length / totalTicks,
 		/** A list of numbers that'll be displayed if no labels are given through numberToInclude */
 		tickList = getTickList();
 

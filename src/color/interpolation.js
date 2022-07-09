@@ -75,7 +75,7 @@ export function lerpColorArray(colorArr, v, min = 0, max = 1) {
  * @returns {Object} color object
  */
 export function getInterpolatedColorList(colorPalatte, min = 0, max = 5, alpha) {
-	if (colorPalatte.length == 1)
+	if (colorPalatte.length < 2)
 		throw new Error("Atleast 2 colors are needed to create interpolatable object");
 	let step = (max - min) / (colorPalatte.length - 1),
 		colorObj = {};
