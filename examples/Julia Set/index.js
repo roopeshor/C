@@ -1,3 +1,4 @@
+import { log } from "../../src/c.js";
 import { translate } from "../../src/settings.js";
 
 let coeffs = [
@@ -16,19 +17,18 @@ let coeffs = [
 		[-0.1, 0.651],
 		[-0.512511498387847167, 0.521295573094847167],
 	],
-	coeff = coeffs[2],
-	s = 1 / 4,
-	W = 400,
-	H = 400,
-	// W = 1980 * s,
-	// H = 1080 * s,
-	maxIterations = 200,
+	coeff = coeffs[13],
+	s = 1,
+	W = 500,
+	H = 500,
+	maxIterations = 300,
 	cx = coeff[0],
 	cy = coeff[1],
+	[offX, offY] = [.1, -.6],
 	R = sqrt(cx ** 2 + cy ** 2) + 90 ** 2,
 	R2 = R ** 2,
 	unit = H,
-	pat = ColorPalettes.Jet,
+	pat = ColorPalettes.Blues,
 	iterCount = 0;
 C(
 	() => {
@@ -54,8 +54,8 @@ iterations/px: ${Math.round(iterCount / (W * H))}`
 				}
 
 				for (var y = -H / 2; y < H / 2; y += px) {
-					let zx = x / unit,
-						zy = y / unit,
+					let zx = (x / unit + offX) * s,
+						zy = (y / unit + offY) * s,
 						iteration = 0,
 						x2 = zx ** 2,
 						y2 = zy ** 2,
