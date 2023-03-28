@@ -55,12 +55,13 @@ let charges = [
 		mass: 5,
 	},
 ];
+
 let dt = 0.01;
 let sx = W / abs(range[1] - range[0]) * Math.round(window.devicePixelRatio),
 	sy = H / abs(range[1] - range[0]) * Math.round(window.devicePixelRatio);
-let P  = getInterpolatedColorList(ColorPalettes.Heat, 0, 3, 0.2);
+let P	= getInterpolatedColorList(ColorPalettes.Heat, 0, 3, 0.2);
 console.log(P);
-C(
+/*C(
 	() => {
 		centreCanvas();
 		let a = axes({
@@ -100,53 +101,56 @@ C(
 		height: H,
 		name: "t2",
 	}
-);
+);*/
 C(
 	() => {
-		clear(0);
 		centreCanvas();
-		scale(1, -1);
+		scale(sx, -sy);
 		textAlign("center");
 		textBaseline("middle");
+		draw()
+		tinyDrag(
+			C.workingContext,
+			charges,
+			{
+				onSelect: (i) => console.log(i),
+				onDrag: draw
+			}
+		);
 		/* loop(
-		  () => {
-		    background(0);
-		    draw()
-	    	for (let i = 0; i < charges.length; i++) {
-	    	  let fx = 0, fy = 0, a = charges[i];
-	    	  for (let j = 0; j < charges.length; j++) {
-	    	    if (i == j) continue;
-	    	    let b = charges[j];
-	    	    let rij2 = (b.x - a.x) ** 2 + (b.y - a.y) ** 2;
+			() => {
+				background(0);
+				draw()
+				for (let i = 0; i < charges.length; i++) {
+					let fx = 0, fy = 0, a = charges[i];
+					for (let j = 0; j < charges.length; j++) {
+						if (i == j) continue;
+						let b = charges[j];
+						let rij2 = (b.x - a.x) ** 2 + (b.y - a.y) ** 2;
 
-	    	    fx += b.q / rij2
-	    	        * (b.x - a.x) / rij2 ** 0.5;
-	    	    fy += b.q / rij2
-	    	        * (b.y - a.y) / rij2 ** 0.5;
-	    	  }
-	    	  fx *= k * a.q;
-	    	  fy *= k * a.q;
+						fx += b.q / rij2
+								* (b.x - a.x) / rij2 ** 0.5;
+						fy += b.q / rij2
+								* (b.y - a.y) / rij2 ** 0.5;
+					}
+					fx *= k * a.q;
+					fy *= k * a.q;
 
-	    	  let ax = fx / a.mass,
-	    	      ay = fy / a.mass;
+					let ax = fx / a.mass,
+							ay = fy / a.mass;
 
-	    	  a.vx += ax * dt;
-	    	  a.vy += ay * dt;
+					a.vx += ax * dt;
+					a.vy += ay * dt;
 
-	    	  a.x += a.vx * dt;
-	    	  a.y += a.vy * dt;
-	    	}
-		  },
-		  "t",
-		  dt
+					a.x += a.vx * dt;
+					a.y += a.vy * dt;
+				}
+			},
+			"t",
+			dt
 		) */
 
-		draw();
-		function draw() {
-			let VF = computeVectorField(charges, range);
-			drawVectors(VF.vec, VF.max);
-			drawCharges(charges);
-		}
+		
 	},
 	".cvs",
 	{
@@ -156,14 +160,20 @@ C(
 	}
 );
 
+function draw() {
+			clear(0);
+			let VF = computeVectorField(charges, range);
+			drawVectors(VF.vec, VF.max);
+			drawCharges(charges);
+		}
 function drawCharges(charges) {
 	for (let ch of charges) {
 		if (ch.q < 0) fill(BLUE);
 		else fill(RED);
-		point(ch.x * sx, ch.y * sy, abs(20 * ch.q));
+		point(ch.x, ch.y, abs(ch.q));
 		fill("#000");
-		fontSize(abs(20 * ch.q) ** 0.8);
-		fillText((ch.q > 0 ? "+" : "") + ch.q, ch.x * sx, ch.y * sy);
+		fontSize(abs(ch.q) ** 0.8);
+		fillText((ch.q > 0 ? "+" : "") + ch.q, ch.x, ch.y);
 	}
 }
 
@@ -178,14 +188,14 @@ function drawVectors(vf, max) {
 		col = readColor(col).hex8;
 		stroke(col);
 		fill(col);
-		strokeWidth(1.3 * sigmoid(v.mag + 1));
+		strokeWidth(1.3 * sigmoid(v.mag + 1)/sx);
 		noStroke();
 		arrow(
-			v.start[0] * sx,
-			v.start[1] * sy,
-			(v.start[0] + v.end[0] * sigmoid(v.mag / max * 2 - .5)) * sx,
-			(v.start[1] + v.end[1] * sigmoid(v.mag / max * 2 - .5)) * sy,
-			6 * sigmoid(v.mag - 0.5)
+			v.start[0],
+			v.start[1],
+			(v.start[0] + v.end[0] * sigmoid(v.mag / max * 2 - .5)),
+			(v.start[1] + v.end[1] * sigmoid(v.mag / max * 2 - .5)),
+			6 * sigmoid(v.mag - 0.5)/sx
 		);
 	}
 }
