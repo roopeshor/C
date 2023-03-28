@@ -28,7 +28,7 @@ let coeffs = [
 	R = sqrt(cx ** 2 + cy ** 2) + 90 ** 2,
 	R2 = R ** 2,
 	unit = H,
-	pat = ColorPalettes.Inferno,
+	pat = ColorPalettes.Jet,
 	iterCount = 0;
 C(
 	() => {
