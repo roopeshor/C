@@ -22,12 +22,12 @@ window["tinyDrag"] = function tinyDrag(context, points, options) {
 	canvas.addEventListener("mousedown", start);
 	document.addEventListener("mouseup", end);
 	canvas.addEventListener("mousemove", move);
-	
+
 	canvas.addEventListener("touchstart", start);
 	document.addEventListener("touchend", end);
 	canvas.addEventListener("touchmove", move);
 	function start(e) {
-		e.preventDefault()
+		e.preventDefault();
 		let x = e.changedTouches[0].pageX,
 			y = e.changedTouches[1].pageY,
 			tr = context.getTransform(),
@@ -37,17 +37,16 @@ window["tinyDrag"] = function tinyDrag(context, points, options) {
 			scaleY = tr.d,
 			targetIndex = -1,
 			dist = Infinity,
-			defaultR2 = (10/scaleX)**2;
-		console.log(x,y);
+			defaultR2 = (10 / scaleX) ** 2;
+		console.log(x, y);
 		x = (x - translateX) / scaleX;
 		y = (y - translateY) / scaleY;
 		mousedown = true;
-		
+
 		for (let i = 0; i < points.length; i++) {
 			let point = points[i],
 				radius2 = point.radius * point.radius || defaultR2,
-				d = (x - point.x) ** 2 +
-						(y - point.y) ** 2
+				d = (x - point.x) ** 2 + (y - point.y) ** 2;
 			if (d <= radius2 && d < dist) {
 				targetIndex = i;
 				dist = d;

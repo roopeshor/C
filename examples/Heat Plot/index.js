@@ -21,17 +21,7 @@ const plots = [
 			yAxis: [-TAU, TAU, PI / 2],
 		},
 		includeNumbers: true,
-		labelsToInclude: [
-			"-2π",
-			"-3π/2",
-			"-π",
-			"-π/2",
-			"0",
-			"π/2",
-			"π",
-			"3π/2",
-			"2π",
-		],
+		labelsToInclude: ["-2π", "-3π/2", "-π", "-π/2", "0", "π/2", "π", "3π/2", "2π"],
 		colors: getInterpolatedColorList(Spectral, -2, 2, 0.8),
 	},
 

@@ -1,8 +1,5 @@
 import { loadImagePromise } from "../../src/image/image.js";
-import {
-	imageToData,
-	replaceColorInImage
-} from "../../src/image/processing.js";
+import { imageToData, replaceColorInImage } from "../../src/image/processing.js";
 import { C } from "../../src/main.js";
 import { rect } from "../../src/objects/geometry.js";
 import { background, putImageData, setImageSmoothing, translate } from "../../src/settings.js";

@@ -1,6 +1,6 @@
 import { point } from "../../src/c.js";
 import { C } from "../../src/main.js";
-import { background, fill, loop, noLoop } from "../../src/settings.js";
+import { background, fill, loop } from "../../src/settings.js";
 let seed = [
 	{
 		pos: [200, 200],

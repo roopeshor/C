@@ -1,13 +1,7 @@
-import {
-	Circle,
-	Line
-} from "../../Extensions/Animations/constructs.js";
+import { Circle, Line } from "../../Extensions/Animations/constructs.js";
 import { C } from "../../src/main.js";
 import { circleIntersection, lineIntersection } from "../../src/math/points.js";
-import {
-	background,
-	strokeWidth,
-} from "../../src/settings.js";
+import { background, strokeWidth } from "../../src/settings.js";
 
 const W = 300;
 const H = 300;

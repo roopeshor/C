@@ -10,7 +10,7 @@ import {
 	permaBackground,
 	stroke,
 	strokeWidth,
-	translate
+	translate,
 } from "../../src/settings.js";
 
 const W = 300;
@@ -19,12 +19,10 @@ const CFG = {
 	width: W,
 	height: H,
 };
-const {
-	GREEN
-} = Manim;
+const { GREEN } = Manim;
 function drawAxis(min = -4, max = 4, dx = 1) {
 	background(0);
-	translate(CENTERX, CENTERY)
+	translate(CENTERX, CENTERY);
 	strokeWidth(2);
 	stroke(GREEN);
 	noFill();
@@ -94,10 +92,7 @@ C(
 	() => {
 		const n = 3;
 		function ft(t) {
-			return [
-				abs(cos(t)) ** (2 / n) * 4 * sgn(cos(t)),
-				abs(sin(t)) ** (2 / n) * 3 * sgn(sin(t)),
-			];
+			return [abs(cos(t)) ** (2 / n) * 4 * sgn(cos(t)), abs(sin(t)) ** (2 / n) * 3 * sgn(sin(t))];
 		}
 		drawAxis(-5, 5, 1)
 			.getParametricFunction({

@@ -2,20 +2,11 @@ import { C } from "../../src/main.js";
 import { numberPlane } from "../../src/objects/coordinate_systems.js";
 import { point } from "../../src/objects/geometry.js";
 import { text } from "../../src/objects/text.js";
-import {
-	background,
-	clear,
-	fontSize,
-	permaBackground,
-	translate,
-} from "../../src/settings.js";
+import { background, clear, fontSize, permaBackground, translate } from "../../src/settings.js";
 import { createWebGL } from "../../src/WebGL/webgl.js";
 import {} from "../../src/WebGL/settings.js";
 
-
-themeToggler(document.querySelector("#themeSelector"), {
-
-});
+themeToggler(document.querySelector("#themeSelector"), {});
 
 // compute points
 let points = [],
@@ -73,11 +64,15 @@ let juliaSet = {
 				z.x * z.x * (z.x * z.x - z.y * z.y - 2.0 * z.y * z.y) - z.y * z.y * (2.0 * z.x * z.x + z.x * z.x - z.y * z.y),
 				z.y * z.x * (2.0 * z.x * z.x + z.x * z.x - z.y * z.y) + z.x * z.y * (z.x * z.x - z.y * z.y - 2.0 * z.y * z.y)
 			) + c;`,
-		5: var_declarations + `z = vec2(
+		5:
+			var_declarations +
+			`z = vec2(
 				z.x * xy22 - y2 * z.x * (xym2 + xy2),
 				z.y * xy22 + x2 * z.y * (xym2 + xy2)
 			) + c;`,
-		6: var_declarations + `z = vec2(
+		6:
+			var_declarations +
+			`z = vec2(
 				x2 * xy22 - y2 * x2 * (xym2 + xy2) - y2 * xy22 - y2 * x2 * (xym2 + xy2),
 				z.x * z.y * (xy22 + x2 * (xym2 + xy2) + xy22 - y2 * (xym2 + xy2))
 			) + c;`,

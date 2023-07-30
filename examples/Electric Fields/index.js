@@ -57,9 +57,9 @@ let charges = [
 ];
 
 let dt = 0.01;
-let sx = W / abs(range[1] - range[0]) * Math.round(window.devicePixelRatio),
-	sy = H / abs(range[1] - range[0]) * Math.round(window.devicePixelRatio);
-let P	= getInterpolatedColorList(ColorPalettes.Heat, 0, 3, 0.2);
+let sx = (W / abs(range[1] - range[0])) * Math.round(window.devicePixelRatio),
+	sy = (H / abs(range[1] - range[0])) * Math.round(window.devicePixelRatio);
+let P = getInterpolatedColorList(ColorPalettes.Heat, 0, 3, 0.2);
 console.log(P);
 /*C(
 	() => {
@@ -108,15 +108,11 @@ C(
 		scale(sx, -sy);
 		textAlign("center");
 		textBaseline("middle");
-		draw()
-		tinyDrag(
-			C.workingContext,
-			charges,
-			{
-				onSelect: (i) => console.log(i),
-				onDrag: draw
-			}
-		);
+		draw();
+		tinyDrag(C.workingContext, charges, {
+			onSelect: (i) => console.log(i),
+			onDrag: draw,
+		});
 		/* loop(
 			() => {
 				background(0);
@@ -149,8 +145,6 @@ C(
 			"t",
 			dt
 		) */
-
-		
 	},
 	".cvs",
 	{
@@ -161,11 +155,11 @@ C(
 );
 
 function draw() {
-			clear(0);
-			let VF = computeVectorField(charges, range);
-			drawVectors(VF.vec, VF.max);
-			drawCharges(charges);
-		}
+	clear(0);
+	let VF = computeVectorField(charges, range);
+	drawVectors(VF.vec, VF.max);
+	drawCharges(charges);
+}
 function drawCharges(charges) {
 	for (let ch of charges) {
 		if (ch.q < 0) fill(BLUE);
@@ -188,14 +182,14 @@ function drawVectors(vf, max) {
 		col = readColor(col).hex8;
 		stroke(col);
 		fill(col);
-		strokeWidth(1.3 * sigmoid(v.mag + 1)/sx);
+		strokeWidth((1.3 * sigmoid(v.mag + 1)) / sx);
 		noStroke();
 		arrow(
 			v.start[0],
 			v.start[1],
-			(v.start[0] + v.end[0] * sigmoid(v.mag / max * 2 - .5)),
-			(v.start[1] + v.end[1] * sigmoid(v.mag / max * 2 - .5)),
-			6 * sigmoid(v.mag - 0.5)/sx
+			v.start[0] + v.end[0] * sigmoid((v.mag / max) * 2 - 0.5),
+			v.start[1] + v.end[1] * sigmoid((v.mag / max) * 2 - 0.5),
+			(6 * sigmoid(v.mag - 0.5)) / sx
 		);
 	}
 }

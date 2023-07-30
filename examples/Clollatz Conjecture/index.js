@@ -1,4 +1,3 @@
-import { lerpColorArray } from "../../src/color/interpolation.js";
 import { ColorPalettes } from "../../src/constants/color_palettes.js";
 import { pixel } from "../../src/image/image.js";
 import { C } from "../../src/main.js";
@@ -107,10 +106,10 @@ C(
 			},
 			yAxis: {
 				range: [-2, 2],
-				textDirection: [-.6, -1],
-				excludeOriginTick: false
+				textDirection: [-0.6, -1],
+				excludeOriginTick: false,
 			},
-			center: [-2, 0]
+			center: [-2, 0],
 		});
 
 		let h_W = 400 / 2;
@@ -136,8 +135,8 @@ C(
 					a = 0.25 + a - (c1 * ccsh - (b / 2) * ssnh);
 					b = b - (c1 * ssnh + (b / 2) * ccsh);
 				}
-				ColorPalettes
-				pixel(x, y, `hsl(${(1- i / iters) * 360}, 50%, 50%, 50%)`, 0.5);
+				ColorPalettes;
+				pixel(x, y, `hsl(${(1 - i / iters) * 360}, 50%, 50%, 50%)`, 0.5);
 			}
 		}
 		console.timeEnd("cl");

@@ -2,7 +2,6 @@ import { C } from "../../src/main.js";
 import { line } from "../../src/objects/geometry.js";
 import { initContrastedCanvas, stroke } from "../../src/settings.js";
 
-
 C(
 	function () {
 		initContrastedCanvas();
@@ -11,9 +10,10 @@ C(
 
 		stroke("orange");
 		line(0, 0, -150, 80);
-	}, ".container",
+	},
+	".container",
 	{
 		width: 400,
-		height: 300
+		height: 300,
 	}
 );

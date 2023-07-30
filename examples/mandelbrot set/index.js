@@ -8,7 +8,7 @@ C(
 		let h_H = 400 / 2;
 		console.time("cl");
 		background(0);
-		translate(CENTERX, CENTERY)
+		translate(CENTERX, CENTERY);
 		numberPlane({
 			xAxis: {
 				range: [-2, 2],

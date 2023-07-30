@@ -2,12 +2,7 @@ import { DEG } from "../../src/constants/math.js";
 import { C } from "../../src/main.js";
 import { cos, sin } from "../../src/math/functions.js";
 import { line, point } from "../../src/objects/geometry.js";
-import {
-  background,
-  loop,
-	stroke,
-	translate
-} from "../../src/settings.js";
+import { background, loop, stroke, translate } from "../../src/settings.js";
 const W = 400;
 const H = 400;
 
@@ -15,7 +10,7 @@ C(
 	() => {
 		background(0);
 		translate(CENTERX, CENTERY);
-		stroke("yellow")
+		stroke("yellow");
 		var vertex = [
 			[-50, -50, -50],
 			[50, -50, -50],
@@ -50,11 +45,7 @@ C(
 			for (let pt of points) {
 				let y = pt[1];
 				let z = pt[2];
-				_points.push([
-					pt[0],
-					y * cosTheta - z * sinTheta,
-					z * cosTheta + y * sinTheta,
-				]);
+				_points.push([pt[0], y * cosTheta - z * sinTheta, z * cosTheta + y * sinTheta]);
 			}
 			return _points;
 		}
@@ -66,11 +57,7 @@ C(
 			for (let pt of points) {
 				let x = pt[0];
 				let y = pt[1];
-				_points.push([
-					x * cosTheta - y * sinTheta,
-					y * cosTheta + x * sinTheta,
-					pt[2],
-				]);
+				_points.push([x * cosTheta - y * sinTheta, y * cosTheta + x * sinTheta, pt[2]]);
 			}
 			return _points;
 		}
@@ -82,16 +69,14 @@ C(
 			for (var pt of points) {
 				var x = pt[0];
 				var z = pt[2];
-				_points.push([
-					x * cosTheta + z * sinTheta,
-					pt[1],
-					z * cosTheta - x * sinTheta,
-				]);
+				_points.push([x * cosTheta + z * sinTheta, pt[1], z * cosTheta - x * sinTheta]);
 			}
 			return _points;
 		}
 
-		let phi = 0, theta = 0, eps = 0;
+		let phi = 0,
+			theta = 0,
+			eps = 0;
 		loop(() => {
 			background(0);
 			phi += 1 * DEG;
