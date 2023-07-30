@@ -42,72 +42,82 @@ But you acn apply styles to this.
 
 ### configs (optionl)
 
-Configuration object which contains all about canvas and can be used to manipulate canvas
-contains:
+Configuration object which contains all about canvas and can be used to manipulate canvas.  
+Possible configurations [with default values]
 
-* `width`: Width of canvas in pixels. (default=`200`)
-* `height`: Width of canvas in pixels. (default=`200`)
-* `dpr`: device pixel ratio of canvas (default=`window.devicePixelRatio`).
-* `doFill`: Whether to fill (default=`true`)
-* `doStroke`: Whether to stroke (default=`true`)
-* `pathStarted`: Whether a shape has begun to draw (default=`false`)
-* `yAxisInverted`: Whether y axis of canvas was inverted (default=`false`)
+* `width[=200]`: Width of canvas in pixels.
+* `height[=200]`: Width of canvas in pixels.
+* `dpr[=window.devicePixelRatio]`: device pixel ratio of canvas.
+* `doFill[=true]`: Whether to fill.
+* `doStroke[=true]`: Whether to stroke.
+* `pathStarted[=false]`: Whether a shape has begun to draw.
+* `yAxisInverted[=false]`: Whether y axis of canvas was inverted.
 
-* `textAlign` : textv align property of canvas (default=`"start"`)
-* `textBaseline` : textv baseline property of canvas (default=`"alphabetic"`)
+<br>
 
-* `fillStyle`: color to fill (default=`"#ffffff"`)
-* `strokeStyle`: color to stroke (default=`"#000000"`)
-* `colorMode`: mode of color (default=`"rgba"`)
-* `lineWidth`: width of line (default=`1`)
+* `textAlign[="start"]` : textv align property of canvas.
+* `textBaseline[="alphabetic"]` : textv baseline property of canvas.
 
-* `fontSize`: font size (default=`"20px"`)
-* `fontFamily`: font family (default=`"serif"`)
-* `fontStyle`: font style (default=`"normal"`)
-* `fontVariant`: font variant (default=`"normal"`)
-* `fontWeight`: font weight (default=`"normal"`)
-* `fontStretch`: font stretch (default=`"normal"`)
-* `lineHeight`: line height (default=`"1.2"`)
-* `font`: explict font of canvas (default=`"20px serif"`)
+<br>
+
+* `fillStyle[="#ffffff"]`: color to fill.
+* `strokeStyle[="#000000"]`: color to stroke.
+* `colorMode[="rgba"]`: mode of color.
+* `lineWidth[=1]`: width of line.
+
+<br>
+
+* `fontSize[="20px"]`: font size.
+* `fontFamily[="serif"]`: font family.
+* `fontStyle[="normal"]`: font style.
+* `fontVariant[="normal"]`: font variant.
+* `fontWeight[="normal"]`: font weight.
+* `fontStretch[="normal"]`: font stretch.
+* `lineHeight[="1.2"]`: line height.
+* `font[="20px serif"]`: explict font of canvas.
 
 ## Inside drawFunction (Documentation)
 
-Documentation are comming soon.
+External documentation not yet generated
 
 ## Bundling
 
-Because the entire `c.js` file is relatively large, it can delay the loading of site. You can make a bundled file that only include your drawing functions and c functions that are used to draw things. Use google-closure-compiler. Use [gcc-custom.conf](./gcc-custom.conf) as a template compile the files. Edit it and save it. Run `npx google-closure-compiler --flagfile <your-custom-gcc-conf>.conf` or `npm run gcc-custom` and include the output as delayed script.
+All source files are compiled to [dist/c.js](./dist/c.js) with minified version [dist/c.min.js](./dist/c.min.js). You can make a custom bundle that only include your imported functions. You can use google-closure-compiler wtih template config file [gcc-custom.conf](./gcc-custom.conf).
+
+Run 
+```bash
+npx google-closure-compiler --flagfile <your-custom-gcc-conf>.conf
+```
+or run (it will use [./gcc-custom.conf](./gcc-custom.conf)) 
+```bash
+npm run gcc-custom
+```
+
+
 
 ## Extensions
 
 ### Creating an extension
 
-Wrap your all functions in a object and pass it to `C.addExtension` function, like this:
+Wrap your all functions in a object and pass it to `C.addExtension` function
 
 ```js
- C.addExtension({
-	 extFunction1: function (args) {...},
-	 extFunction2: function (args) {...},
-	 extFunction3: function (args) {...},
-	 //...
- })
- ```
- Or like this: 
-```js
-const ext = {
+const Ext = {
 	fx1: function () {},
 	fx2: function () {},
 	fx3: function () {},
 	//...
 }
-C.addExtension(ext)
+C.addExtension(Ext)
  ```
-Once extension is registered it is accessible via
+
+Once extension is added it is accessible via
 `window`, `C.extensions` or by calling name of function/constant directly
+
 ### Using extensions
 
-Call function/variable direcly from anywhere in the declared scope.
-eg. :
+Extension functions are globally scoped. So can be accessed from anywhere.
+
 ```js
 C (
 	function () {
