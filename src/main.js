@@ -136,7 +136,7 @@ C.workingCanvas;
 
 /**
  * device pixel ratio applied to current working canvas.
- ** Note: this property is not explictly defined in C.workingContext for the sake of GCC
+ ** Note: this property is not explictly defined in C.workingContext because it will get pruned in GCC compilation
  * @type {number}
  */
 C.dpr;

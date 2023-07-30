@@ -5,7 +5,7 @@ import { readColor } from "./color_reader.js";
  *
  * @param {string} color1 color
  * @param {string} color2 color
- * @param {number} v should be between 0 and 1.
+ * @param {number} v should be between 0 and 1. This function may not work for values outside 0 & 1.
  */
 export function lerpColor(color1, color2, v) {
 	const c1 = readColor(color1).rgbaA;
