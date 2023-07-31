@@ -1,22 +1,17 @@
 # C
 
-> A p5.js like library that brings some of the powers of Manim in to the web.
+> A [p5.js](https://p5js.org) inspired library that brings some of the powers of [Manim](https://www.manim.community) in to the web.
 
-This library can be used for drawing figures & diagrams and also for animating them. You could later save the canvas as image.
+This library can be used for drawing figures & diagrams and also for animating them.
 
-## Installation
+## Add to your project
 
-### Choose specific version
-
-see [releases](https://github.com/Roopesh2/C/releases) for files
-
-### Choose latest version
-
-Use [production](dist/c.min.js) or [developer](dist/c.js) version
+See [releases](https://github.com/Roopesh2/C/releases) for stable releases.
+Alternatively you can use uptodate untested [production](dist/c.min.js) or [developer](dist/c.js) version
 
 ### Google closure compiled
 
-[c.gcc.js](dist/c.gcc.js) is a recompiled verion of library using [google-closure-compiler](https://www.npmjs.com/package/google-closure-compiler). This is even smaller file and it's structure is entirely different from other builds. But still provides the same functionality and performace
+[c.gcc.js](dist/c.gcc.js) is a recompiled verion of library using [google-closure-compiler](https://www.npmjs.com/package/google-closure-compiler). This is even smaller file and it's structure is entirely different from other builds. But still provides the same functionality and performace.
 
 ## Using
 
@@ -24,7 +19,7 @@ Use [production](dist/c.min.js) or [developer](dist/c.js) version
 C(
 	drawFunction,
 	containerElement,
-	[configs] // optional
+	[configs], // optional
 );
 ```
 
@@ -127,6 +122,6 @@ C(
 	container,
 	{
 		/* configs */
-	}
+	},
 );
 ```

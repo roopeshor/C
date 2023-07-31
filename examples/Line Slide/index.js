@@ -14,7 +14,7 @@ function createAxis(canvasID, xAxis, yAxis) {
 			p1: yAxis[0],
 			p2: yAxis[1],
 			dTime: 10,
-		})
+		}),
 	);
 	showCreation(
 		Line({
@@ -22,7 +22,7 @@ function createAxis(canvasID, xAxis, yAxis) {
 			p1: xAxis[0],
 			p2: xAxis[1],
 			dTime: 10,
-		})
+		}),
 	);
 }
 
@@ -40,7 +40,7 @@ C(
 			[
 				[0, H / 2],
 				[0, -H / 2],
-			]
+			],
 		);
 		let baseLinePoints = [
 				[0, 0],
@@ -62,7 +62,7 @@ C(
 				p2: baseLinePoints[1],
 				dTime: 14,
 				time: 1000,
-			})
+			}),
 		);
 		stroke(RED);
 		showCreation(
@@ -75,7 +75,7 @@ C(
 				dur: 1000,
 				dTime: 10,
 				clockwise: true,
-			})
+			}),
 		);
 
 		// parallel lines
@@ -96,7 +96,7 @@ C(
 					dTime: 10,
 					time: 500,
 					syncWithTime: false,
-				})
+				}),
 			);
 		}
 	},
@@ -105,5 +105,5 @@ C(
 		name: "main",
 		width: W,
 		height: H,
-	}
+	},
 );

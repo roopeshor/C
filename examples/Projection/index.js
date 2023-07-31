@@ -97,5 +97,5 @@ C(
 	{
 		width: W,
 		height: H,
-	}
+	},
 );

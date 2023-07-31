@@ -21,8 +21,8 @@ C(
 					i * 20 + 40,
 					i * (dAngle / 2),
 					TAU + (i - 1) * (dAngle / 2),
-					dAngle
-				)
+					dAngle,
+				),
 			);
 
 			// draw beziers
@@ -48,5 +48,5 @@ C(
 	{
 		width: 400,
 		height: 400,
-	}
+	},
 );

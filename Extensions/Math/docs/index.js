@@ -57,11 +57,7 @@ const examples = {
 	},
 };
 
-for (
-	let i = 0, _functions = Object.keys(examples);
-	i < _functions.length;
-	i++
-) {
+for (let i = 0, _functions = Object.keys(examples); i < _functions.length; i++) {
 	let example = examples[_functions[i]];
 	C(
 		function () {
@@ -70,6 +66,6 @@ for (
 			example.fx();
 		},
 		"." + _functions[i],
-		Object.assign(example.configs, { name: _functions[i] })
+		Object.assign(example.configs, { name: _functions[i] }),
 	);
 }

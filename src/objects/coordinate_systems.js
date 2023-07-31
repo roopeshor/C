@@ -9,7 +9,7 @@ import {
 	plotPoints,
 	plotPolarPoints,
 	polarFuntionGraph,
-	polarParametricFunction
+	polarParametricFunction,
 } from "./functions.js";
 import { line } from "./geometry.js";
 import { tex } from "./tex.js";
@@ -144,7 +144,7 @@ export function numberLine(configs = {}) {
 			includeRightTip: false,
 			excludeOriginTick: false,
 		},
-		configs
+		configs,
 	);
 	let {
 		strokeColor,
@@ -334,7 +334,7 @@ export function axes(configs = {}) {
 			},
 			originPosition: ORIGIN,
 		},
-		configs
+		configs,
 	);
 	ctx.save();
 	// translate to originPosition
@@ -606,7 +606,7 @@ export function polarPlane(configs = {}) {
 				strokeWidth: 1,
 			},
 		},
-		configs
+		configs,
 	);
 	let {
 		originPosition,
@@ -629,7 +629,7 @@ export function polarPlane(configs = {}) {
 		azimuthUnit = azimuthUnit;
 	} else {
 		throw new Error(
-			"Invalid azimuth units. Expected one of: PI radians, TAU radians, degrees, gradians."
+			"Invalid azimuth units. Expected one of: PI radians, TAU radians, degrees, gradians.",
 		);
 	}
 	if (azimuthDivisions == 0) {
@@ -756,7 +756,7 @@ export function polarPlane(configs = {}) {
 				ctx.moveTo(0, 0);
 				ctx.lineTo(
 					Math.cos(angle + azimuthoffset) * maxRadius,
-					Math.sin(angle + azimuthoffset) * maxRadius
+					Math.sin(angle + azimuthoffset) * maxRadius,
 				);
 			}
 			ctx.stroke();
@@ -786,7 +786,7 @@ export function polarPlane(configs = {}) {
 				azimuthConfigs.textRenderer(
 					labels[i],
 					Math.cos(angle) * (maxRadius + azimuthConfigs.labelBuff) * scalar,
-					Math.sin(angle) * (maxRadius + azimuthConfigs.labelBuff) * scalar
+					Math.sin(angle) * (maxRadius + azimuthConfigs.labelBuff) * scalar,
 				);
 			}
 		}

@@ -74,7 +74,7 @@ C(
 		name: "cs",
 		width: W,
 		height: H,
-	}
+	},
 );
 C(
 	() => {
@@ -117,7 +117,7 @@ C(
 		name: "lli",
 		width: W,
 		height: H,
-	}
+	},
 );
 C(
 	() => {
@@ -146,5 +146,5 @@ C(
 		width: W,
 		height: H,
 		name: "t",
-	}
+	},
 );

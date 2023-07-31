@@ -121,7 +121,7 @@ export function latexToImg(latex) {
  * @param {string} [multiple]
  * @returns {Object<numerator: <string>, denominator: <string>>}
  */
-export function fraction (numerator, denominator, compact=true, multiple="") {
+export function fraction(numerator, denominator, compact = true, multiple = "") {
 	let _divider = gcd(numerator, denominator);
 	numerator /= _divider;
 	denominator /= _divider;
@@ -132,14 +132,13 @@ export function fraction (numerator, denominator, compact=true, multiple="") {
 		tex = numerator + multiple;
 	} else {
 		if (!compact && multiple != "") {
-			tex = `\\frac{${numerator}}{${denominator}}${multiple}`
+			tex = `\\frac{${numerator}}{${denominator}}${multiple}`;
 		} else {
 			if (numerator == 1) numerator = "";
-			tex = `\\frac{${numerator}${multiple}}{${denominator}}`
+			tex = `\\frac{${numerator}${multiple}}{${denominator}}`;
 		}
 	}
 	return tex;
 }
-
 
 window["applyDefault"] = applyDefault;

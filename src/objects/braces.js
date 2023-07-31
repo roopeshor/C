@@ -66,7 +66,7 @@ function arcBrace(
 	startAngle = 0,
 	smallerLineLength = 10,
 	tipLineLength = smallerLineLength,
-	extender = 10
+	extender = 10,
 ) {
 	const ctx = C.workingContext,
 		smallerRadius = radius - smallerLineLength,

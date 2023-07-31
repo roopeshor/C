@@ -35,7 +35,7 @@ export function linearGradient(initialPoint, finalPoint, colStops) {
 		initialPoint[0],
 		initialPoint[1],
 		finalPoint[0],
-		finalPoint[1]
+		finalPoint[1],
 	);
 	if (type(colStops) == "Array") {
 		const stops = {};

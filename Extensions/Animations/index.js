@@ -23,7 +23,7 @@ import { animateFill } from "./constructs.js";
 					time,
 					500,
 					{},
-					time
+					time,
 				);
 			},
 			showCreation: function () {
@@ -73,7 +73,7 @@ import { animateFill } from "./constructs.js";
 													currentPoint,
 													nextPoint,
 													secondNextPoint,
-													tension
+													tension,
 												);
 											ctx.beginPath();
 											if (closed)
@@ -90,7 +90,7 @@ import { animateFill } from "./constructs.js";
 										dTime,
 										50,
 										{},
-										dur
+										dur,
 									);
 								} else {
 									loop(
@@ -112,7 +112,7 @@ import { animateFill } from "./constructs.js";
 										dTime,
 										50,
 										{},
-										dur
+										dur,
 									);
 								}
 							} else {
@@ -127,7 +127,7 @@ import { animateFill } from "./constructs.js";
 								animation.filler,
 								animation.fillTime,
 								10,
-								next
+								next,
 							);
 						}
 					} else {
@@ -135,7 +135,7 @@ import { animateFill } from "./constructs.js";
 							i +
 								1 +
 								(i == 0 ? "st" : i == 1 ? "nd" : i == 2 ? "rd" : "th") +
-								" argument provided is not a object."
+								" argument provided is not a object.",
 						);
 					}
 				}

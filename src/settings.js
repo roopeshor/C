@@ -322,7 +322,7 @@ export function loop(
 	timeDelay,
 	timeDelaysToRemember = 100,
 	settings = {},
-	dur
+	dur,
 ) {
 	let ctx;
 
@@ -454,7 +454,7 @@ export function noLoop(canvasName, time) {
 			toWork.timeDelay,
 			toWork.timeDelaysToRememberm,
 			toWork.settings,
-			toWork.dur
+			toWork.dur,
 		);
 	}
 }

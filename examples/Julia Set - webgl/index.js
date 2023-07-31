@@ -123,7 +123,7 @@ window.onload = () =>
 				mousemove: drawEvent,
 				click: drawEvent,
 			},
-		}
+		},
 	);
 
 window.onkeydown = function (evt) {

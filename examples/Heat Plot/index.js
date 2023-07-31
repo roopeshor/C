@@ -101,6 +101,6 @@ for (var plot of plots) {
 		{
 			width: W,
 			height: H,
-		}
+		},
 	);
 }

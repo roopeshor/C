@@ -17,7 +17,7 @@ function createWebGL(configs) {
 			width: cv.rWidth,
 			height: cv.rHeight,
 		},
-		configs
+		configs,
 	);
 	let container = c.canvas.parentElement;
 	let cvs = C.makeCanvas(configs);
@@ -147,7 +147,7 @@ class WebGL {
 		gl.uniform2f(
 			this.program.uniforms.resolution,
 			canvas.width / 2 / this.dpr,
-			canvas.height / 2 / this.dpr
+			canvas.height / 2 / this.dpr,
 		);
 		this.styles = {
 			/** Color to fill inside the shape */
@@ -165,7 +165,7 @@ class WebGL {
 			this.gl.uniform2f(
 				this.program.uniforms.resolution,
 				this.canvas.width / 2 / this.dpr,
-				this.canvas.height / 2 / this.dpr
+				this.canvas.height / 2 / this.dpr,
 			);
 		} else if (program.program) {
 			this.program = program;
@@ -249,7 +249,7 @@ class WebGL {
 			type,
 			normalize,
 			stride,
-			offset
+			offset,
 		);
 		gl.enableVertexAttribArray(this.program.attributes.vertexPosition);
 		// Tell WebGL how to pull out the colors from the color buffer
@@ -266,7 +266,7 @@ class WebGL {
 			type,
 			normalize,
 			stride,
-			offset
+			offset,
 		);
 	}
 
@@ -315,7 +315,7 @@ class WebGL {
 		type = this.gl.FLOAT,
 		normalize = false,
 		stride = 0,
-		offset = 0
+		offset = 0,
 	) {
 		this.gl.enableVertexAttribArray(position);
 		this.gl.vertexAttribPointer(
@@ -324,7 +324,7 @@ class WebGL {
 			type, // type of the data
 			normalize, // whether normalize the data
 			stride, // 0 = move forward size * sizeof(type) each iteration to get the next position
-			offset // where to start
+			offset, // where to start
 		);
 	}
 }

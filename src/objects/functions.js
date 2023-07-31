@@ -129,14 +129,14 @@ export function parametricFunction(configs) {
 						"parametric-plot-" + counter.parametricFunction++,
 						smoothed(j),
 						C.workingContext.name,
-						dt
+						dt,
 					);
 				} else {
 					loop(
 						"parametric-plot-" + counter.parametricFunction++,
 						nonSmoothed(j),
 						C.workingContext.name,
-						dt
+						dt,
 					);
 				}
 			}
@@ -288,7 +288,7 @@ export function plotPoints(configs) {
 			stroke: "#0000",
 			radius: 5,
 		},
-		configs
+		configs,
 	);
 	let { points, unitValue, unitSpace } = configs;
 	let ctx = C.workingContext;
@@ -322,7 +322,7 @@ export function plotPolarPoints(configs) {
 			radius: 5,
 			points: [],
 		},
-		configs
+		configs,
 	);
 	let ctx = C.workingContext;
 	let { points, radialSpacing } = configs;
@@ -362,7 +362,7 @@ export function polarParametricFunction(configs) {
 			strokeWidth: 2,
 			plotter: (t) => [0, 0],
 		},
-		configs
+		configs,
 	);
 	let { plotter, range, radialSpacing, smoothen, tension, discontinuities, closed } = configs;
 	if (Array.isArray(range) && range.length == 2) range.push((range[1] - range[0]) / 20);
@@ -378,7 +378,8 @@ export function polarParametricFunction(configs) {
 		discontinuityRadius = configs.discontinuityRadius;
 	}
 	// generate points
-	let row = 0, _fix = discontinuityRadius < step ? discontinuityRadius : 0;
+	let row = 0,
+		_fix = discontinuityRadius < step ? discontinuityRadius : 0;
 	// we add one more point to make the graph more accurate when applying smoothening technique.
 	for (let t = min; t <= max + step + _fix; t += step) {
 		if (approximateIndexInArray(t, discontinuities, discontinuityRadius) > -1) {

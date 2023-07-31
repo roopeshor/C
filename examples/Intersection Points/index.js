@@ -23,7 +23,7 @@ C(
 				radius: radius,
 				dur: 1000,
 				dTime: 10,
-			})
+			}),
 		);
 		wait(500);
 		showCreation(
@@ -33,7 +33,7 @@ C(
 				radius: radius,
 				dur: 1000,
 				dTime: 10,
-			})
+			}),
 		);
 		const pts = circleIntersection(c1, radius, c2, radius);
 		wait(300);
@@ -47,7 +47,7 @@ C(
 				dTime: 10,
 				fill: "green",
 				fillTime: 500,
-			})
+			}),
 		);
 		showCreation(
 			Circle({
@@ -58,7 +58,7 @@ C(
 				dTime: 10,
 				fill: "green",
 				fillTime: 500,
-			})
+			}),
 		);
 	},
 	".container",
@@ -66,7 +66,7 @@ C(
 		name: "cci",
 		width: W,
 		height: H,
-	}
+	},
 );
 C(
 	() => {
@@ -88,7 +88,7 @@ C(
 				dur: 500,
 				fill: "green",
 				fillTime: 500,
-			})
+			}),
 		);
 		showCreation(
 			Line({
@@ -96,7 +96,7 @@ C(
 				p1: [p1[0] + dx, p1[1] + dy],
 				p2: [p2[0] - dx + Math.cos(angle), p2[1] - dy + Math.sin(angle)],
 				dTime: 10,
-			})
+			}),
 		);
 		showCreation(
 			Circle({
@@ -106,7 +106,7 @@ C(
 				dur: 500,
 				fill: "blue",
 				fillTime: 500,
-			})
+			}),
 		);
 		wait(500);
 		showCreation(
@@ -117,7 +117,7 @@ C(
 				dur: 500,
 				fill: "green",
 				fillTime: 500,
-			})
+			}),
 		);
 		showCreation(
 			Line({
@@ -125,7 +125,7 @@ C(
 				p1: [p4[0] - dx, p4[1] + dy],
 				p2: [p3[0] + dx + Math.cos(angle), p3[1] - dy + Math.sin(angle)],
 				dTime: 10,
-			})
+			}),
 		);
 		showCreation(
 			Circle({
@@ -135,7 +135,7 @@ C(
 				dur: 500,
 				fill: "green",
 				fillTime: 500,
-			})
+			}),
 		);
 		wait(500);
 		strokeWidth(0.5);
@@ -148,7 +148,7 @@ C(
 				dur: 1000,
 				fill: "orange",
 				fillTime: 500,
-			})
+			}),
 		);
 	},
 	".container",
@@ -156,5 +156,5 @@ C(
 		name: "lli",
 		width: W,
 		height: H,
-	}
+	},
 );

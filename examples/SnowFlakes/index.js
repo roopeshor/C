@@ -64,7 +64,7 @@ C(
 				}
 			},
 			"SnowFlakes",
-			0
+			0,
 		);
 	},
 	".container",
@@ -72,5 +72,5 @@ C(
 		name: "SnowFlakes",
 		width: 400,
 		height: 400,
-	}
+	},
 );

@@ -70,7 +70,7 @@ function arrow(
 	tipWidth = DEFAULT_TIP_WIDTH,
 	tipHeight = tipWidth / 1.2,
 	arrowCurving = 0,
-	spacing = 0
+	spacing = 0,
 ) {
 	const angle = Math.atan2(y2 - y1, x2 - x1); // angle from plain
 	const yDiff = Math.sin(angle) * spacing;
@@ -115,7 +115,7 @@ function doubleArrow(
 	tipWidth = DEFAULT_TIP_WIDTH,
 	tipHeight = tipWidth / 1.2,
 	arrowCurving = 0,
-	spacing = 0
+	spacing = 0,
 ) {
 	const angle = Math.atan2(y2 - y1, x2 - x1);
 
@@ -182,7 +182,7 @@ function measurement(args) {
 		args.tipWidth,
 		args.tipHeight,
 		args.arrowCurving,
-		args.outerPadding
+		args.outerPadding,
 	);
 	arrow(
 		center[0] + innerPadding[0],
@@ -192,7 +192,7 @@ function measurement(args) {
 		args.tipWidth,
 		args.tipHeight,
 		args.arrowCurving,
-		args.outerPadding
+		args.outerPadding,
 	);
 
 	save();
@@ -228,7 +228,7 @@ function curvedArrow(
 	tipHeight = tipWidth / 1.2,
 	arrowCurving = 0,
 	tipOffset = 0,
-	reverse = false
+	reverse = false,
 ) {
 	const ctx = C.workingContext;
 
@@ -249,7 +249,7 @@ function curvedArrow(
 			x + radius * Math.cos(startAngle + tipOffset),
 			y + radius * Math.sin(startAngle + tipOffset),
 			tipWidth,
-			tipHeight
+			tipHeight,
 		);
 	} else {
 		angle -= tipOffset;
@@ -262,7 +262,7 @@ function curvedArrow(
 			x + radius * Math.cos(startAngle + angle),
 			y + radius * Math.sin(startAngle + angle),
 			tipWidth,
-			tipHeight
+			tipHeight,
 		);
 	}
 	ctx.restore();
@@ -290,7 +290,7 @@ function curvedDoubleArrow(
 	tipWidth = DEFAULT_TIP_WIDTH,
 	tipHeight = tipWidth / 1.2,
 	arrowCurving = 0,
-	tipOffset = 0
+	tipOffset = 0,
 ) {
 	const ctx = C.workingContext;
 	ctx.save();
@@ -310,7 +310,7 @@ function curvedDoubleArrow(
 		tipWidth,
 		tipHeight,
 		arrowCurving,
-		tipOffset
+		tipOffset,
 	);
 
 	arrowTip(
@@ -319,7 +319,7 @@ function curvedDoubleArrow(
 		Math.cos(startAngle) * radius + tipWidth * tangent[0],
 		Math.sin(startAngle) * radius + tipWidth * tangent[1],
 		tipWidth,
-		tipHeight
+		tipHeight,
 	);
 	ctx.restore();
 }
@@ -347,7 +347,7 @@ function curvedArrowBetweenPoints(
 	arrowCurving = 0,
 	tipOffset = 0,
 	otherArc = false,
-	reverse = false
+	reverse = false,
 ) {
 	const ctx = C.workingContext;
 	const pathStarted = ctx.pathStarted;
@@ -378,7 +378,7 @@ function curvedArrowBetweenPoints(
 		tipHeight,
 		arrowCurving,
 		tipOffset,
-		reverse
+		reverse,
 	);
 	if (!pathStarted) ctx.closePath();
 	ctx.restore();
@@ -406,7 +406,7 @@ function curvedDoubleArrowBetweenPoints(
 	tipHeight = tipWidth / 1.2,
 	arrowCurving = 0,
 	tipOffset = 0,
-	otherArc = false
+	otherArc = false,
 ) {
 	const ctx = C.workingContext;
 	ctx.save();
@@ -436,7 +436,7 @@ function curvedDoubleArrowBetweenPoints(
 		tipWidth,
 		tipHeight,
 		arrowCurving * radius,
-		tipOffset
+		tipOffset,
 	);
 	let padding = tipAngularDiameter - arrowCurving + tipOffset;
 	startAngle -= tipAngularDiameter;
@@ -446,7 +446,7 @@ function curvedDoubleArrowBetweenPoints(
 		center[0] + radius * Math.cos(startAngle + tipOffset),
 		center[1] + radius * Math.sin(startAngle + tipOffset),
 		tipWidth,
-		tipHeight
+		tipHeight,
 	);
 	ctx.restore();
 	return center;

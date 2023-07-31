@@ -16,7 +16,7 @@ function generatePointsInArc(
 	startAngle = 0,
 	endAngle = Math.PI / 2,
 	dA = 0.01,
-	clockwise = false
+	clockwise = false,
 ) {
 	let points = [];
 	dA = Math.abs(dA || (endAngle - startAngle) / 10);

@@ -46,5 +46,5 @@ C(
 		width: W,
 		height: H,
 		name: "t",
-	}
+	},
 );

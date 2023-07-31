@@ -62,7 +62,7 @@ C(
 			.draw(5000);
 	},
 	".lissajous",
-	CFG
+	CFG,
 );
 C(
 	() => {
@@ -86,7 +86,7 @@ C(
 			.draw(2000);
 	},
 	".hypotrochoid",
-	CFG
+	CFG,
 );
 C(
 	() => {
@@ -106,7 +106,7 @@ C(
 			.draw(2000);
 	},
 	".superellipse",
-	CFG
+	CFG,
 );
 C(
 	() => {
@@ -126,5 +126,5 @@ C(
 			.draw(5000);
 	},
 	".butterfly-curve",
-	CFG
+	CFG,
 );

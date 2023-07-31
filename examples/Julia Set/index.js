@@ -48,7 +48,7 @@ C(
 total iteration: ${iterCount}
 total rendered points: ${W * H}
 iterations/s: ${Math.round((iterCount / time) * 1000)}
-iterations/px: ${Math.round(iterCount / (W * H))}`
+iterations/px: ${Math.round(iterCount / (W * H))}`,
 					);
 					noLoop();
 				}
@@ -84,7 +84,7 @@ iterations/px: ${Math.round(iterCount / (W * H))}`
 				x += px;
 			},
 			"main",
-			0
+			0,
 		);
 	},
 	".container",
@@ -92,5 +92,5 @@ iterations/px: ${Math.round(iterCount / (W * H))}`
 		name: "main",
 		width: W,
 		height: H,
-	}
+	},
 );

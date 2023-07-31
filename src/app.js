@@ -57,4 +57,4 @@ import * as _WebGL$settings from "./WebGL/settings.js";
 	_math$rate_functions,
 	_WebGL$webgl,
 	_WebGL$settings,
-].forEach(value => defineProperties(value));
+].forEach((value) => defineProperties(value));

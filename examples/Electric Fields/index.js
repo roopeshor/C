@@ -151,7 +151,7 @@ C(
 		width: W,
 		height: H,
 		name: "t",
-	}
+	},
 );
 
 function draw() {
@@ -189,7 +189,7 @@ function drawVectors(vf, max) {
 			v.start[1],
 			v.start[0] + v.end[0] * sigmoid((v.mag / max) * 2 - 0.5),
 			v.start[1] + v.end[1] * sigmoid((v.mag / max) * 2 - 0.5),
-			(6 * sigmoid(v.mag - 0.5)) / sx
+			(6 * sigmoid(v.mag - 0.5)) / sx,
 		);
 	}
 }

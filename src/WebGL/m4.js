@@ -19,7 +19,6 @@ export class m4 {
 	 * @param {...number|Array<number>|m4|Float32Array} [array] of numbers
 	 */
 	constructor(array) {
-
 		this.mat = readMatrix(arguments);
 		return this;
 	}

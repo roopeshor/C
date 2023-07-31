@@ -141,7 +141,7 @@ export function getBezierControlPoints(
 	currentPoint,
 	nextPoint,
 	secondNextPoint,
-	tension = 1
+	tension = 1,
 ) {
 	return [
 		currentPoint[0] + ((nextPoint[0] - recentPoint[0]) / 6) * tension,
@@ -265,7 +265,16 @@ export function annulusSector(x, y, innerRadius, outerRadius, angle, startAngle)
  * @param {number} angleDir there can be four angle in a line intersection. Choose a number from 1 to 4.
  * @returns {Object} coordinate of point in the middle of angle as array of point as [x, y] and angle between them
  */
-export function angle(p1, p2, p3, p4, radius = 20, extender = 10, otherAngle = false, angleDir = 1) {
+export function angle(
+	p1,
+	p2,
+	p3,
+	p4,
+	radius = 20,
+	extender = 10,
+	otherAngle = false,
+	angleDir = 1,
+) {
 	let p = lineIntersection(p1, p2, p3, p4),
 		x = p[0],
 		y = p[1],

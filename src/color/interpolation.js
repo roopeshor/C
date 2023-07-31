@@ -14,7 +14,7 @@ export function lerpColor(color1, color2, v) {
 		Math.min(Math.max(0, (c2[0] - c1[0]) * v + c1[0]), 255),
 		Math.min(Math.max(0, (c2[1] - c1[1]) * v + c1[1]), 255),
 		Math.min(Math.max(0, (c2[2] - c1[2]) * v + c1[2]), 255),
-		Math.min(Math.max(0, (c2[3] - c1[3]) * v + c1[3]), 255)
+		Math.min(Math.max(0, (c2[3] - c1[3]) * v + c1[3]), 255),
 	).hex8;
 }
 

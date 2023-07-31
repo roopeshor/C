@@ -43,7 +43,7 @@ C(
 				if (offset >= count / 2) noLoop();
 			},
 			"inward",
-			100
+			100,
 		);
 	},
 	".inward",
@@ -51,7 +51,7 @@ C(
 		name: "inward",
 		width: WIDTH,
 		height: HEIGHT,
-	}
+	},
 );
 C(
 	() => {
@@ -62,7 +62,7 @@ C(
 			dA = TAU / count, // angle between two points
 			r = WIDTH / 4 - 10, // radius of each circles,
 			points = generatePointsInArc(-r, 0, r, 0, PI * 2, dA, true).concat(
-				generatePointsInArc(r, 0, r, PI, (PI * 6) / 2, dA)
+				generatePointsInArc(r, 0, r, PI, (PI * 6) / 2, dA),
 			),
 			dist = 24;
 
@@ -81,7 +81,7 @@ C(
 		name: "infinite",
 		width: WIDTH,
 		height: HEIGHT,
-	}
+	},
 );
 
 function generatePointsInArc(
@@ -91,7 +91,7 @@ function generatePointsInArc(
 	startAngle = 0,
 	endAngle = PI / 2,
 	dA = 0.01,
-	clockwise = false
+	clockwise = false,
 ) {
 	let points = [];
 	dA = Math.abs(dA || (endAngle - startAngle) / 10);

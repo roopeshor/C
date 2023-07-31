@@ -136,7 +136,7 @@ function linePairs(i) {
 			act[0] * points[i % l][0],
 			act[1] * points[i % l][1],
 			act[2] * points[(i + drawingConfigs.shift) % l][0],
-			act[3] * points[(i + drawingConfigs.shift) % l][1]
+			act[3] * points[(i + drawingConfigs.shift) % l][1],
 		);
 	}
 }
@@ -234,12 +234,12 @@ C(
 		translate(CENTERX, CENTERY);
 	},
 	Static,
-	staticDrawingCfg
+	staticDrawingCfg,
 );
 C(
 	() => {
 		translate(CENTERX, CENTERY);
 	},
 	animated,
-	animatedDrawingCfg
+	animatedDrawingCfg,
 );

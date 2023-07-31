@@ -36,7 +36,7 @@ C(
 					`hsl(${(Math.atan2(b, a) * 180) / Math.PI},
 					100%,
 					${(ra / (ra + 1)) * 100}%, 100%)`,
-					1
+					1,
 				);
 			}
 		}
@@ -46,7 +46,7 @@ C(
 	{
 		width: 400,
 		height: 400,
-	}
+	},
 );
 
 function cmul(p, x, y) {

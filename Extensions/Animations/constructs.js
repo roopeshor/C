@@ -30,7 +30,7 @@ export function Line(args) {
 	};
 	let { p1, p2, name, dur, canvas, dTime, rateFunction, next, syncWithTime } = applyDefault(
 		defaults,
-		args
+		args,
 	);
 	canvas = canvas || C.workingContext.name;
 	let ctx = C.contextList[canvas];
@@ -172,7 +172,7 @@ export function animateFill(name, canvasName, FILL, f, dur = 1000, dt = 10, next
 		dt,
 		1000,
 		{},
-		dur
+		dur,
 	);
 }
 

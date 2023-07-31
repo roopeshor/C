@@ -42,7 +42,7 @@ WebGL.prototype.clear = function () {
 WebGL.prototype.putBufferData = function (
 	data,
 	type = this.gl.ARRAY_BUFFER,
-	usage = this.gl.STATIC_DRAW
+	usage = this.gl.STATIC_DRAW,
 ) {
 	// Create a buffer to put stuffs in
 	var buffer = this.gl.createBuffer();
@@ -67,7 +67,7 @@ WebGL.prototype.setGeometry = function (
 	offset = 0,
 	primitiveType = this.gl.TRIANGLES,
 	bufferTarget = this.gl.ARRAY_BUFFER,
-	bufferUsage = this.gl.STATIC_DRAW
+	bufferUsage = this.gl.STATIC_DRAW,
 ) {
 	let gl = this.gl,
 		program = this.program;
@@ -89,7 +89,7 @@ WebGL.prototype.setGeometry = function (
 		gl.FLOAT, // type of the data is 32bit floats
 		false, // don't normalize the data
 		0, // 0 = move forward size * sizeof(type) each iteration to get the next position
-		0 // start at the beginning of the buffer
+		0, // start at the beginning of the buffer
 	);
 	// Draw the geometry.
 	gl.drawArrays(primitiveType, offset, count);
@@ -143,7 +143,7 @@ WebGL.prototype.line = function () {
 				y1 - dy,
 				0,
 			],
-			6
+			6,
 		);
 	}
 	this.styles.fillColor = fill;
@@ -369,7 +369,7 @@ WebGL.prototype.cube = function (size = 200) {
 		gl.FLOAT, // type
 		false, // normalize
 		0, // stride
-		0 // offset
+		0, // offset
 	);
 	gl.enableVertexAttribArray(this.program.attributes.vertexPosition);
 
@@ -381,7 +381,7 @@ WebGL.prototype.cube = function (size = 200) {
 		gl.FLOAT, // type
 		false, // normalize
 		0, // stride
-		0 // offset
+		0, // offset
 	);
 
 	// Tell WebGL which indices to use to index the vertices
@@ -410,4 +410,3 @@ WebGL.prototype.perspective = function (fov, aspect, near, far) {
 	m4.perspective(this.projectionMatrix, fov, aspect, near, far);
 	// this.computeMatrix();
 };
-
