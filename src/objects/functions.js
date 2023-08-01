@@ -433,7 +433,11 @@ export function polarParametricFunction(configs) {
 		smoothen: configs.smoothen,
 	};
 }
-
+/**
+ * Wrapper for polarParametricFunction
+ * @param {Object} configs
+ * @returns
+ */
 export function polarFuntionGraph(configs) {
 	let plotter = configs.plotter;
 	configs.plotter = (t) => [plotter(t), t];

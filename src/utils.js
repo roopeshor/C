@@ -30,6 +30,15 @@ export function defineProperties(source, target = window, assignToC = false) {
 	if (assignToC) Object.assign(C.functions, source);
 }
 
+/**
+ * Returns a array of numbers from `start` to `end` with each element having difference of `step`
+ *
+ * @param {number} start
+ * @param {number} end
+ * @param {number} step
+ * @param {boolean} [rev=false] return in reverse order
+ * @return {Array}
+ */
 export function arange(start, end, step, rev = false) {
 	let arr = [];
 	if (rev) for (let i = end; i >= start; i -= step) arr.push(i);
@@ -78,6 +87,15 @@ export function doFillAndStroke(ctx) {
 	if (ctx.doStroke) ctx.stroke();
 }
 
+
+/**
+ * Returns index of first element that is close to ```val```
+ *
+ * @param {number} val value to search for
+ * @param {Array} array
+ * @param {number} [epsilon=1e-6] maximum difference
+ * @return {number}
+ */
 export function approximateIndexInArray(val, array, epsilon = 1e-6) {
 	for (let i = 0; i < array.length; i++) {
 		let k = array[i];
@@ -87,6 +105,13 @@ export function approximateIndexInArray(val, array, epsilon = 1e-6) {
 	}
 	return -1;
 }
+
+/**
+ * convert tex to image using MathJax
+ *
+ * @param {string} latex
+ * @return {Promise}
+ */
 
 export function latexToImg(latex) {
 	return new Promise((resolve, reject) => {
@@ -114,9 +139,7 @@ export function latexToImg(latex) {
 }
 
 /**
- * simplifies a given frqction and generates tex code for it.
- * @example
- * fraction(4, 5) // -> "\frac{4}{5}"
+ * Generates tex code for given fraction.
  *
  * @param {number} numerator numerator of fraction
  * @param {number} denominator denominator of fraction
@@ -124,12 +147,27 @@ export function latexToImg(latex) {
  * @param {boolean} [compact=true] whether to add ```multiple``` with numerator or simply append it to end of string
  * @param {string} [multiple=""] an multiple
  * @returns {string}
+ *
+ * @example
+ * fraction(5, 10, false) // -> \frac{5}{10}
+ * fraction(5, 10, true) // -> \frac{1}{2}
+ * fraction(5, 10, true, true, "π") // -> \frac{π}{2}
+ * fraction(5, 10, true, false, "π") // -> \frac{1}{2}π
+ * fraction(5, 10, false, false, "π") // -> \frac{5}{10}π
+ * fraction(5, 10, false, true, "π") // -> \frac{5π}{10}
+ *
  */
-export function fraction(numerator, denominator, simplifyFraction=true, compact = true, multiple = "") {
+export function fraction(
+	numerator,
+	denominator,
+	simplifyFraction = true,
+	compact = true,
+	multiple = "",
+) {
 	if (simplifyFraction) {
-			let _divider = gcd(numerator, denominator);
-			numerator /= _divider;
-			denominator /= _divider;
+		let _divider = gcd(numerator, denominator);
+		numerator /= _divider;
+		denominator /= _divider;
 	}
 	let tex = "";
 	if (numerator == 0) {

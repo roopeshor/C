@@ -712,7 +712,9 @@ export function polarPlane(configs = {}) {
 			let post = azimuthUnit == "tau radians" ? "\\tau" : "\\pi";
 			ctx.font = `${azimuthConfigs.fontSize * radialSpacing}px ${azimuthConfigs.fontFamily}`;
 			for (let division = 0; division < azimuthDivisions; division++) {
-				labels.push(fraction(numerator * division, denominator, true, azimuthCompactFraction, post));
+				labels.push(
+					fraction(numerator * division, denominator, true, azimuthCompactFraction, post),
+				);
 			}
 		} else if (azimuthUnit == "degrees") {
 			// Use Tex parser to generate fractions

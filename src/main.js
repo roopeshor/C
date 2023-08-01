@@ -144,6 +144,7 @@ C.dpr;
 /**
  * Default configurations
  */
+
 /**
  * return inner width of container tag
  * @param {HTMLElement} [container=document.body]
