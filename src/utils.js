@@ -114,28 +114,35 @@ export function latexToImg(latex) {
 }
 
 /**
+ * simplifies a given frqction and generates tex code for it.
+ * @example
+ * fraction(4, 5) // -> "\frac{4}{5}"
  *
- * @param {number} numerator
- * @param {number} denominator
- * @param {boolean} [compact=true]
- * @param {string} [multiple]
- * @returns {Object<numerator: <string>, denominator: <string>>}
+ * @param {number} numerator numerator of fraction
+ * @param {number} denominator denominator of fraction
+ * @param {boolean} [simplifyFraction=true] whether to simplify fraction by dividing numerator and denominator by gcd
+ * @param {boolean} [compact=true] whether to add ```multiple``` with numerator or simply append it to end of string
+ * @param {string} [multiple=""] an multiple
+ * @returns {string}
  */
-export function fraction(numerator, denominator, compact = true, multiple = "") {
-	let _divider = gcd(numerator, denominator);
-	numerator /= _divider;
-	denominator /= _divider;
+export function fraction(numerator, denominator, simplifyFraction=true, compact = true, multiple = "") {
+	if (simplifyFraction) {
+			let _divider = gcd(numerator, denominator);
+			numerator /= _divider;
+			denominator /= _divider;
+	}
 	let tex = "";
 	if (numerator == 0) {
 		tex = "0";
 	} else if (denominator == 1) {
 		tex = numerator + multiple;
 	} else {
-		if (!compact && multiple != "") {
-			tex = `\\frac{${numerator}}{${denominator}}${multiple}`;
-		} else {
-			if (numerator == 1) numerator = "";
+		if (compact) {
+			// if numerator is 1 and there is a multiple, add multiple without numerator
+			if (numerator == 1 && multiple != "") numerator = "";
 			tex = `\\frac{${numerator}${multiple}}{${denominator}}`;
+		} else {
+			tex = `\\frac{${numerator}}{${denominator}}${multiple}`;
 		}
 	}
 	return tex;
