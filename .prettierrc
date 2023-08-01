@@ -1,6 +1,6 @@
-{
-	"useTabs": true,
-	"singleQuote": false,
-	"printWidth": 100,
-	"semi": true
-}
+useTabs: true
+singleQuote: false
+printWidth: 100
+semi: true
+bracketSameLine: true
+endOfLine: "lf"
