@@ -3,6 +3,7 @@
 	"version": "2.0.0",
 	"description": "JavaScript library for drawing figures & diagrams and also for animating them.",
 	"main": "src/c.js",
+	"type": "module",
 	"scripts": {
 		"test": "echo \"No test specified\" && exit 0",
 		"build": "grunt && npm run gcc-main && npm run gcc-core",
