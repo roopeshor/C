@@ -53,9 +53,9 @@ export function readColor(...color) {
 		if (Colors[str]) {
 			result = Colors[str];
 			result = [
-				parseInt(result.substr(0, 2), 16),
-				parseInt(result.substr(2, 2), 16),
-				parseInt(result.substr(4, 2), 16),
+				parseInt(result.substr(1, 2), 16),
+				parseInt(result.substr(3, 2), 16),
+				parseInt(result.substr(5, 2), 16),
 				1,
 			];
 		} else if (HEX3.test(str)) {
