@@ -1,0 +1,12 @@
+testing <file>/<function>
+  ✔️ 3ms | test 1 pass: fx(arg) -> output1
+  ❌ 2ms | test 2 fail: fx(arg) -> outupu2
+      expected: output2
+
+  ✔️ 9ms | test 3 pass: fx(arg) -> output3
+  !❌    | test 4 fail: fx(arg) ->
+      exception: ...
+
+Total pass: 2/4
+avg time: 4.7ms
+

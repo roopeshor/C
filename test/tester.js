@@ -1,4 +1,5 @@
-let _typeof = (o) => Object.prototype.toString.call([]).replace(/(\[object |\])/g, "");
+let _typeof = (o) => Object.prototype.toString.call(o).replace(/(\[object |\])/g, "");
+let _isStruct = (o) => _typeof(o) == "Array" || _typeof(o) == "Object";
 /**
  * Tests given function against set of data
  * data scheme:
@@ -29,28 +30,37 @@ export function test(fx, data, count = 1) {
 	};
 	for (let k = 0; k < count; k++) {
 		for (let i = 0; i < data.length; i++) {
-			let result,
-				time,
+			let functionOutput,
+				execTime,
 				functionExecuted = true,
-				checkData;
+				status,
+				message,
+				functionArgs = data[i].args;
 			try {
-				time = performance.now();
-				result = fx(...data[i].args);
-				time = performance.now() - time;
+				execTime = performance.now();
+				functionOutput = fx(...functionArgs);
+				execTime = performance.now() - execTime;
 			} catch (err) {
-				result = err;
+				functionOutput = null;
 				functionExecuted = false;
+				status = "fail";
+				message = err;
 			}
 			testResult.totalExec++;
 			if (functionExecuted) {
-				testResult.avgTime += time;
+				testResult.avgTime += execTime;
 				testResult.succesfulExec++;
-				checkData = check(result, data[i].expect);
+				let c = check(functionOutput, data[i].expect);
+				status = c.status;
+				message = c.message;
 			}
 			testResult.tests.push({
-				result,
-				time,
-				checkData,
+				functionArgs,
+				functionOutput,
+				functionExecuted,
+				execTime,
+				status,
+				message,
 			});
 		}
 	}
@@ -59,36 +69,81 @@ export function test(fx, data, count = 1) {
 }
 
 function check(result, data) {
-	let checkData = [],
-		mismatch = 0;
-	if (_typeof(result) == "Array") {
-		if (data.length != result.length) {
-			checkData.push({
-				message: "Array length missmatch",
-			});
-		}
-		let l = Math.min(data.length, result.length);
-		for (let i = 0; i < l; i++) {
-			checkData.push(equal(data[i], result[i]));
+	let status = "pass",
+		message = "";
+	if (_typeof(result) == "Array" || _typeof(result) == "Object") {
+		if (JSON.stringify(result) !== JSON.stringify(data)) {
+			status = "fail";
+			message = `${_typeof(result)} mismatch! expected: ` + format(data, "    ", "    ");
 		}
 	} else {
-		let e = equal(result, data);
-		checkData.push(e[0]);
-	}
-
-	function equal(r, d) {
-		let equal = r == d;
-		let dequal = r === d;
-		mismatch += !(equal && dequal);
-		return [
-			{
-				equal,
-				dequal,
-			},
-		];
+		if (result !== data) {
+			status = "fail";
+			message = "Value mismatch! expected: " + data;
+		}
 	}
 	return {
-		checkData,
-		mismatch,
+		status,
+		message,
 	};
+}
+
+/**
+ * Wrapper around {@link test}. Prints results to console.
+ *
+ * @param {Function} fx
+ * @param {string} file
+ * @param {Array<Object>} data
+ * @param {number} [count=1]
+ * @returns {Object}
+ */
+export function testFunction(fx, file, data, count = 1, printArray = false) {
+	let results = test(fx, data, count);
+	let { functionExecuted, avgTime, succesfulExec, totalExec, tests } = results;
+	console.log(`Testing ${file}/${fx.name}`);
+	for (let i = 0; i < tests.length; i++) {
+		let test = tests[i];
+		let { functionArgs, functionOutput, functionExecuted, execTime, status, message } = test;
+		let _out = format(functionOutput),
+			outputType = _typeof(functionOutput),
+			passed = status == "pass";
+
+		let fxlog = !passed
+			? `\x1b[37m${fx.name}(\x1b[36m${functionArgs}\x1b[37m)`
+			: `${fx.name}(${functionArgs})`;
+		let icon = passed ? "\x1b[32m✔️" : "\x1b[31m❌";
+		let logMessage = `${icon} ${execTime.toFixed(3)}ms | test ${i} ${status}: ${fxlog} -> ${
+			outputType == "Array" || outputType == "Object"
+				? printArray || !passed
+					? _out
+					: `<${outputType}[${Object.keys(functionOutput).length}]>`
+				: _out
+		}${!passed ? "\n" + message + "\n" : ""}\x1b[37m`;
+		console.log(logMessage);
+	}
+}
+
+function format(data, intent = "    ", initial = "    ") {
+	let output = ``;
+	if (_typeof(data) == "Array") {
+		output = "[";
+		for (let a of data) {
+			if (_typeof(a) == "String") a = "\x1b[33m" + a
+			else if (_typeof(a) == "Number") a = "\x1b[36m" + a
+			output += a + "\x1b[37m, ";
+		}
+		output = output.substring(0, output.length - 2) + "]";
+	} else if (_typeof(data) == "Object") {
+		output = "{\n";
+		for (let k of Object.keys(data)) {
+			output += initial + intent + k + ": ";
+			if (_isStruct(data[k])) output += format(data[k], intent, initial + intent) + ",\n";
+			else if (_typeof(data[k]) == "String") output += '\x1b[33m"' + data[k] + '"\x1b[37m,\n';
+			else output += "\x1b[36m" + data[k] + "\x1b[37m,\n";
+		}
+		output += initial + "}";
+	} else {
+		output = initial + JSON.stringify(data);
+	}
+	return output;
 }
