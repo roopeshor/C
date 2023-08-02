@@ -87,7 +87,6 @@ export function doFillAndStroke(ctx) {
 	if (ctx.doStroke) ctx.stroke();
 }
 
-
 /**
  * Returns index of first element that is close to ```val```
  *

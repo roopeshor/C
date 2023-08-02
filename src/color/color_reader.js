@@ -2,17 +2,17 @@ import { Colors } from "../constants/colors.js";
 
 // adapeted from p5.js
 // Full color string patterns. The capture groups are necessary.
-let // Matching format: #XXX
+let // Matches: #XXX
 	HEX3 = /^#([a-f0-9])([a-f0-9])([a-f0-9])$/i,
-	// Matching format: #XXXX
+	// Matches: #XXXX
 	HEX4 = /^#([a-f0-9])([a-f0-9])([a-f0-9])([a-f0-9])$/i,
-	// Matching format: #xxxxxx
+	// Matches: #xxxxxx
 	HEX6 = /^#([a-f0-9]{2})([a-f0-9]{2})([a-f0-9]{2})$/i,
-	// Matching format: #XXXXXXXX
+	// Matches: #XXXXXXXX
 	HEX8 = /^#([a-f0-9]{2})([a-f0-9]{2})([a-f0-9]{2})([a-f0-9]{2})$/i,
-	// Matching format: rgb(R, G, B)
+	// Matches: rgb(R, G, B)
 	RGB = /^rgb\((\d{1,3}),(\d{1,3}),(\d{1,3})\)$/i,
-	// Matching format: rgb(R, G, B, A)
+	// Matches: rgb(R, G, B, A)
 	RGBA = /^rgba\((\d{1,3}),(\d{1,3}),(\d{1,3}),(?:(\d+(?:\.\d+)?)|(?:\.\d+))\)$/i;
 /**
  * Reads the argument and returns color in the prefered colorMode.
@@ -50,8 +50,15 @@ export function readColor(...color) {
 		// Adapted from p5.js
 		let str = c1.replace(/\s/g, "").toLowerCase();
 		// convert string to array if it is a named colour.
-		if (Colors[str]) result = readColor(Colors[str]).rgbaA;
-		else if (HEX3.test(str)) {
+		if (Colors[str]) {
+			result = Colors[str];
+			result = [
+				parseInt(result.substr(0, 2), 16),
+				parseInt(result.substr(2, 2), 16),
+				parseInt(result.substr(4, 2), 16),
+				1,
+			];
+		} else if (HEX3.test(str)) {
 			result = HEX3.exec(str)
 				.slice(1)
 				.map((color) => parseInt(color + color, 16));
@@ -84,7 +91,7 @@ export function readColor(...color) {
 					return parseInt(color, 10);
 				});
 		} else {
-			throw new Error("Given color is not valid: " + str);
+			throw new Error("Cannot convert given value to color: " + str);
 		}
 	} else {
 		result = c1;
