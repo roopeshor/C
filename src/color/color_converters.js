@@ -43,8 +43,8 @@ export function RGBToHSL(r, g, b) {
 /**
  * Converts an HSL color value to RGB. Conversion formula
  * adapted from http://en.wikipedia.org/wiki/HSL_color_space.
- * Assumes values of hue is between 0 and 360, saturation and lightness are between 0 & 1 and
- * returns red, green, and blue values between 0 & 1
+ * Assumes hue is between 0 and 360, saturation and lightness are between 0 & 1 and
+ * returns red, green, and blue values in the range 0 to 1
  *
  * @param {number} hue The hue
  * @param {number} saturation The saturation
@@ -80,7 +80,7 @@ export function HSLToRGB(hue, saturation, lightness) {
  * @param {number} r The red color value
  * @param {number} g The green color value
  * @param {number} b The blue color value
- * @return {Array<number>} The HSV representation
+ * @return {Array<number>} HSV representation
  */
 export function RGBToHSV(r, g, b) {
 	let max = Math.max(r, g, b), // val
@@ -105,13 +105,13 @@ export function RGBToHSV(r, g, b) {
 /**
  * Converts an HSV color value to RGB. Conversion formula
  * adapted from http://en.wikipedia.org/wiki/HSV_color_space.
- * Assumes values of hue is between 0 to 360, saturation, and value are between 0 & 1 and
+ * hue is between 0 to 360, saturation and value are between 0 & 1 and
  * returns red, green, and blue in range 0 to 1
  *
- * @param {number} hue The hue
- * @param {number} saturation The saturation
- * @param {number} value The value
- * @return {Array<number>} The RGB representation
+ * @param {number} hue
+ * @param {number} saturation
+ * @param {number} value Also knwon as brightness
+ * @return {Array<number>} RGB representation of color
  */
 export function HSVToRGB(hue, saturation, value) {
 	let r,
