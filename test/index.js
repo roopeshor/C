@@ -37,7 +37,7 @@ let data = [
 					rgba: "rgba(255, 200, 100, 1)",
 					hex6: "#ffc864",
 					hex8: "#ffc864ff",
-					hex: "#ffc864ff",
+					hex: "#ffc864f",
 					hsl: "hsl(255, 200, 100)",
 				},
 			},

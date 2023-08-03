@@ -1,5 +1,12 @@
 let _typeof = (o) => Object.prototype.toString.call(o).replace(/(\[object |\])/g, "");
-let _isStruct = (o) => _typeof(o) == "Array" || _typeof(o) == "Object";
+let isStruct = (dt) => dt == "Array" || dt == "Object";
+let isString = (s) => _typeof(s) == "String";
+let isNumber = (s) => _typeof(s) == "Number";
+const WHITE = "\x1b[37m",
+	GREEN = "\x1b[32m",
+	RED = "\x1b[31m",
+	BLUE = "\x1b[36m",
+	YELLOW = "\x1b[33m";
 /**
  * Tests given function against set of data
  * data scheme:
@@ -21,70 +28,65 @@ let _isStruct = (o) => _typeof(o) == "Array" || _typeof(o) == "Object";
  * @param {number} [count=1]
  * @returns {Object}
  */
-export function test(fx, data, count = 1) {
-	let testResult = {
-		tests: [],
-		avgTime: 0,
-		totalExec: 0,
-		succesfulExec: 0,
-	};
-	for (let k = 0; k < count; k++) {
-		for (let i = 0; i < data.length; i++) {
-			let functionOutput,
-				execTime,
-				functionExecuted = true,
-				status,
-				message,
-				functionArgs = data[i].args;
-			try {
-				execTime = performance.now();
-				functionOutput = fx(...functionArgs);
-				execTime = performance.now() - execTime;
-			} catch (err) {
-				functionOutput = null;
-				functionExecuted = false;
-				status = "fail";
-				message = err;
-			}
-			testResult.totalExec++;
-			if (functionExecuted) {
-				testResult.avgTime += execTime;
-				testResult.succesfulExec++;
-				let c = check(functionOutput, data[i].expect);
-				status = c.status;
-				message = c.message;
-			}
-			testResult.tests.push({
-				functionArgs,
-				functionOutput,
-				functionExecuted,
-				execTime,
-				status,
-				message,
-			});
-		}
+export function test(fx, args, expect) {
+	let output,
+		execTime,
+		functionExecuted = true,
+		passed = true,
+		message = "",
+		errorIndexes = [];
+	try {
+		execTime = performance.now();
+		output = fx(...args);
+		execTime = performance.now() - execTime;
+	} catch (err) {
+		output = null;
+		functionExecuted = false;
+		passed = false;
+		message = err;
 	}
-	testResult.avgTime /= testResult.succesfulExec;
-	return testResult;
+	if (functionExecuted) {
+		let c = check(output, expect);
+		passed = c.passed;
+		message = c.message;
+		message = c.message;
+		errorIndexes = c.errorIndexes;
+	}
+	return {
+		args,
+		name: fx.name,
+		output,
+		functionExecuted,
+		execTime,
+		passed,
+		message,
+		errorIndexes,
+	};
 }
 
 function check(result, data) {
-	let status = "pass",
-		message = "";
-	if (_typeof(result) == "Array" || _typeof(result) == "Object") {
+	let passed = true,
+		message = "",
+		errorIndexes = [],
+		resType = _typeof(result);
+	if (resType == "Array" || resType == "Object") {
 		if (JSON.stringify(result) !== JSON.stringify(data)) {
-			status = "fail";
-			message = `${_typeof(result)} mismatch! expected: ` + format(data, "    ", "    ");
+			passed = false;
+			errorIndexes = detectMismatchedElement(result, data);
+			message =
+				`${resType} mismatch! expected: ` + format(data, resType, errorIndexes, "    ", "    ");
 		}
 	} else {
 		if (result !== data) {
-			status = "fail";
+			passed = false;
 			message = "Value mismatch! expected: " + data;
+			errorIndexes = [-2]; // for singular values there isn't any index.
 		}
 	}
 	return {
-		status,
+		passed,
 		message,
+		errorIndexes,
 	};
 }
 
@@ -97,53 +99,103 @@ function check(result, data) {
  * @param {number} [count=1]
  * @returns {Object}
  */
-export function testFunction(fx, file, data, count = 1, printArray = false) {
-	let results = test(fx, data, count);
-	let { functionExecuted, avgTime, succesfulExec, totalExec, tests } = results;
+export function testFunction(fx, file, data, count = 1, printStructs = false) {
+	let tests = [],
+		avgTime = 0,
+		totalExec = 0,
+		succesfulExec = 0;
 	console.log(`Testing ${file}/${fx.name}`);
-	for (let i = 0; i < tests.length; i++) {
-		let test = tests[i];
-		let { functionArgs, functionOutput, functionExecuted, execTime, status, message } = test;
-		let _out = format(functionOutput),
-			outputType = _typeof(functionOutput),
-			passed = status == "pass";
+	for (let k = 0; k < count; k++) {
+		console.log("pass " + (k + 1));
+		for (let i = 0; i < data.length; i++) {
+			let result = test(fx, data[i].args, data[i].expect);
+			console.log(generateReport(result, i, printStructs));
 
-		let fxlog = !passed
-			? `\x1b[37m${fx.name}(\x1b[36m${functionArgs}\x1b[37m)`
-			: `${fx.name}(${functionArgs})`;
-		let icon = passed ? "\x1b[32m✔️" : "\x1b[31m❌";
-		let logMessage = `${icon} ${execTime.toFixed(3)}ms | test ${i} ${status}: ${fxlog} -> ${
-			outputType == "Array" || outputType == "Object"
-				? printArray || !passed
-					? _out
-					: `<${outputType}[${Object.keys(functionOutput).length}]>`
-				: _out
-		}${!passed ? "\n" + message + "\n" : ""}\x1b[37m`;
-		console.log(logMessage);
+			tests.push(result);
+			avgTime += result.execTime;
+			succesfulExec += result.passed;
+			totalExec++;
+		}
 	}
+	avgTime /= succesfulExec;
+	console.log(
+		`${succesfulExec}/${totalExec} tests successfully finished
+Average time: ${avgTime.toFixed(3)}ms`
+	);
+	return {
+		tests,
+		avgTime,
+		totalExec,
+		succesfulExec,
+	};
 }
 
-function format(data, intent = "    ", initial = "    ") {
-	let output = ``;
-	if (_typeof(data) == "Array") {
-		output = "[";
+function format(data, dataType, errorIndexes, intent = "    ", initial = "    ") {
+	let formattedText = ``,
+		hasMismatch = errorIndexes.length > 0;
+	if (dataType == "Array") {
+		formattedText = "[";
+
 		for (let a of data) {
-			if (_typeof(a) == "String") a = "\x1b[33m" + a
-			else if (_typeof(a) == "Number") a = "\x1b[36m" + a
-			output += a + "\x1b[37m, ";
+			if (hasMismatch)
+				if (isString(a)) a = YELLOW + a;
+				else if (isNumber(a)) a = BLUE + a;
+			formattedText += a + WHITE + ", ";
 		}
-		output = output.substring(0, output.length - 2) + "]";
-	} else if (_typeof(data) == "Object") {
-		output = "{\n";
+		formattedText = formattedText.substring(0, formattedText.length - 2) + "]";
+	} else if (dataType == "Object") {
+		formattedText = "{\n";
+
 		for (let k of Object.keys(data)) {
-			output += initial + intent + k + ": ";
-			if (_isStruct(data[k])) output += format(data[k], intent, initial + intent) + ",\n";
-			else if (_typeof(data[k]) == "String") output += '\x1b[33m"' + data[k] + '"\x1b[37m,\n';
-			else output += "\x1b[36m" + data[k] + "\x1b[37m,\n";
+			formattedText += initial + intent + k + ": ";
+			if (isStruct(dataType)) {
+				formattedText += format(data[k], _typeof(data[k]), [], intent, initial + intent) + ",\n";
+			} else if (dataType == "String") {
+				formattedText += YELLOW + '"' + data[k] + `"${WHITE},\n`;
+			} else formattedText += BLUE + data[k] + WHITE + ",\n";
 		}
-		output += initial + "}";
+
+		formattedText += initial + "}";
 	} else {
-		output = initial + JSON.stringify(data);
+		formattedText = initial + JSON.stringify(data);
 	}
-	return output;
+	return formattedText;
+}
+
+function generateReport(result, testIndex, printStructs) {
+	let { name, args, output, execTime, passed, message, errorIndexes } = result;
+	let outputType = _typeof(output),
+		formattedOutput = format(
+			output,
+			outputType,
+			errorIndexes,
+			message.split(" ").splice(1, 2) == "mismatch"
+		),
+		status = passed ? "Passed" : "Failed";
+
+	let formattedFunction = passed
+		? name + `(${args})`
+		: "(" + WHITE + name + BLUE + args + WHITE + ")";
+
+	let icon = passed ? GREEN + "✔️" : RED + "❌";
+	return `${icon} ${execTime.toFixed(3)}ms | test ${testIndex} ${status}: ${formattedFunction} -> ${
+		isStruct(outputType) && (printStructs || !passed)
+			? formattedOutput
+			: `<${outputType}[${Object.keys(output).length}]>`
+	}${passed ? "" : "\n\n" + message + "\n"}${WHITE}`;
+}
+
+function detectMismatchedElement(result, source) {
+	let resKeys = Object.keys(result),
+		srcKeys = Object.keys(source),
+		mismatches = [];
+	let l = Math.max(resKeys.length, srcKeys.length);
+	for (let i = 0; i < l; i++) {
+		resValue = JSON.stringify(result[resKeys[i]]);
+		srcValue = JSON.stringify(source[srcKeys[i]]);
+		if (resKeys != srcKeys) {
+			mismatches.push(resKeys[i]);
+		}
+	}
+	return mismatches;
 }

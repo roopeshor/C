@@ -5,7 +5,7 @@
 	"main": "src/c.js",
 	"type": "module",
 	"scripts": {
-		"test": "echo \"No test specified\" && exit 0",
+		"test": "node test/index.js",
 		"build": "grunt && npm run gcc-main && npm run gcc-core",
 		"gcc-main": "npx google-closure-compiler --entry_point \"./src/app.js\" --js_output_file \"./dist/c.gcc.js\" --flagfile gcc.conf ",
 		"gcc-core": "npx google-closure-compiler --entry_point \"./src/core.js\" --js_output_file \"./dist/c.core.gcc.js\" --flagfile gcc.conf ",
