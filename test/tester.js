@@ -120,7 +120,7 @@ export function testFunction(fx, file, data, count = 1, printStructs = false) {
 	avgTime /= succesfulExec;
 	console.log(
 		`${succesfulExec}/${totalExec} tests successfully finished
-Average time: ${avgTime.toFixed(3)}ms`
+Average time: ${avgTime.toFixed(3)}ms`,
 	);
 	return {
 		tests,
@@ -136,11 +136,12 @@ function format(data, dataType, errorIndexes, intent = "    ", initial = "    ")
 		formattedText = "[";
 
 		for (let i = 0; i < data.length; i++) {
-			let a = data[i], color;
+			let a = data[i],
+				color;
 			if (errorIndexes.indexOf(i) > -1) color = RED;
 			else if (isString(a)) color = YELLOW;
 			else if (isNumber(a)) color = BLUE;
-			
+
 			formattedText += color + a + WHITE + ", ";
 		}
 		formattedText = formattedText.substring(0, formattedText.length - 2) + "]";
@@ -150,7 +151,7 @@ function format(data, dataType, errorIndexes, intent = "    ", initial = "    ")
 		for (let k of Object.keys(data)) {
 			formattedText += initial;
 			if (errorIndexes.indexOf(k) > -1) {
-				formattedText += ">"
+				formattedText += ">";
 			}
 			formattedText += intent + k + ": ";
 			if (isStruct(dataType)) {
@@ -174,7 +175,7 @@ function generateReport(result, testIndex, printStructs) {
 			output,
 			outputType,
 			errorIndexes,
-			message.split(" ").splice(1, 2) == "mismatch"
+			message.split(" ").splice(1, 2) == "mismatch",
 		),
 		status = passed ? "Passed" : "Failed";
 
@@ -193,13 +194,15 @@ function generateReport(result, testIndex, printStructs) {
 function detectMismatchedElement(result, source) {
 	let resKeys = Object.keys(result),
 		srcKeys = Object.keys(source),
-		mismatches = [], l, dict;
+		mismatches = [],
+		l,
+		dict;
 	if (resKeys.length >= srcKeys.length) {
 		l = resKeys.length;
-		dict = resKeys
+		dict = resKeys;
 	} else {
 		l = srcKeys.length;
-		dict = srcKeys
+		dict = srcKeys;
 	}
 	for (let i = 0; i < l; i++) {
 		let resValue = JSON.stringify(result[dict[i]]),

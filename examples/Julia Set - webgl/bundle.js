@@ -467,7 +467,13 @@
 				let r = `${c}: ${a} %crunning`,
 					t = ["color: yellow;"];
 				void 0 != k && ((r += `%c for %c${k}ms`), t.push("color: #adacdf;", "color: #9afcad;"));
-				D.da.push({ canvas: h, animationName: a, state: "running", ha: y, N: k });
+				D.da.push({
+					canvas: h,
+					animationName: a,
+					state: "running",
+					ha: y,
+					N: k,
+				});
 				console.log(r, ...t);
 			}
 			h.qa = window.performance.now();
@@ -493,7 +499,12 @@
 		b.K = void 0;
 		D.X &&
 			(console.log(`${a}: ${b.ea} %cfinished`, ...["color: #3aff5f;"]),
-			D.da.push({ canvas: b, animationName: b.ea, state: "finished", endTime: void 0 }));
+			D.da.push({
+				canvas: b,
+				animationName: b.ea,
+				state: "finished",
+				endTime: void 0,
+			}));
 		0 < b.fa.length && ((a = b.fa.shift()), xa(a.name, a.wa, a.ta, a.Qa, a.Pd, a.ha, a.N));
 	}
 	function za(a) {
@@ -896,8 +907,23 @@
 		a = x(
 			{
 				A: { length: b.canvas.width, T: !0, R: !0, P: !1, S: !1, O: !0, l: 50 },
-				B: { length: b.canvas.height, ja: -Math.PI / 2, l: 50, T: !0, R: !0, P: !1, S: !1, O: !0 },
-				xa: { La: 1, lineWidth: 1, Ka: 0.7, color: "#58c4dda0", Ja: "#88888850" },
+				B: {
+					length: b.canvas.height,
+					ja: -Math.PI / 2,
+					l: 50,
+					T: !0,
+					R: !0,
+					P: !1,
+					S: !1,
+					O: !0,
+				},
+				xa: {
+					La: 1,
+					lineWidth: 1,
+					Ka: 0.7,
+					color: "#58c4dda0",
+					Ja: "#88888850",
+				},
 				v: La,
 			},
 			a,
@@ -1093,7 +1119,11 @@
 			new Q();
 			this.oa = new Q();
 			b.uniform2f(this.s.u.U, a.width / 2 / this.o, a.height / 2 / this.o);
-			this.ma = { fillColor: [1, 0, 1, 1], strokeColor: [1, 1, 0, 1], lineWidth: 1 };
+			this.ma = {
+				fillColor: [1, 0, 1, 1],
+				strokeColor: [1, 1, 0, 1],
+				lineWidth: 1,
+			};
 		}
 		useProgram(a) {
 			if (this.L[a])
