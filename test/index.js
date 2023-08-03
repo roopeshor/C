@@ -142,5 +142,5 @@ let data = [
 // 	console.log(JSON.stringify(t.args), JSON.stringify(readColor(...t.args)));
 // }
 for (let entry of data) {
-	testFunction(entry.fx, entry.path, entry.tests, 1);
+	testFunction(entry.fx, entry.path, entry.tests, 3);
 }

@@ -7,28 +7,16 @@ const WHITE = "\x1b[37m",
 	RED = "\x1b[31m",
 	BLUE = "\x1b[36m",
 	YELLOW = "\x1b[33m";
+
 /**
- * Tests given function against set of data
- * data scheme:
- * ```js
- * [
- * 	{
- * 	args: [1, true],
- * 	expect: [1,1,1,1],
- * 	},
- * {
- * 	args: [255, 100],
- * 	expect: "rgba(255,100,0,1)",
- * 	},
- * ...
- * ]
- * ```
+ * Tests a function with a parameter against a expected output
+ *
  * @param {Function} fx
  * @param {Array} args
  * @param {*} expect
- * @returns {Object}
+ * @return {Object}
  */
-export function test(fx, args, expect) {
+function test(fx, args, expect) {
 	let output,
 		execTime,
 		functionExecuted = true,
@@ -49,7 +37,6 @@ export function test(fx, args, expect) {
 		let c = check(output, expect);
 		passed = c.passed;
 		message = c.message;
-		message = c.message;
 		errorIndexes = c.errorIndexes;
 	}
 	return {
@@ -64,6 +51,13 @@ export function test(fx, args, expect) {
 	};
 }
 
+/**
+ * Checks equivalency of two objects with JSON.stringify
+ *
+ * @param {*} result
+ * @param {*} data
+ * @return {Object}
+ */
 function check(result, data) {
 	let passed = true,
 		message = "",
@@ -92,13 +86,29 @@ function check(result, data) {
 }
 
 /**
- * Wrapper around {@link test}. Prints results to console.
+ * Tests a function with given set of data and outputs them to console.
+ * Data scheme:
+ * ```js
+ * [
+ * 	{
+ * 	args: [1, true],
+ * 	expect: [1,1,1,1],
+ * 	},
+ * {
+ * 	args: [255, 100],
+ * 	expect: "rgba(255,100,0,1)",
+ * 	},
+ * ...
+ * ]
+ * ```
  *
- * @param {Function} fx
- * @param {string} file
- * @param {Array<Object>} data
- * @param {number} [reruns=1]
- * @returns {Object}
+ * @param {Function} fx function to be tested
+ * @param {string} file filepath in which function is situated
+ * @param {Array} data Array of arguments and expected values
+ * @param {number} [reruns=1] Number of times given test set to be run.
+ * @param {boolean} [printStructs=false] Whether to print output arrays and objects as it is even if test has passed
+ * @param {boolean} [printAllReruns=false] Whether to print all reruns
+ * @return {Object}
  */
 export function testFunction(
 	fx,
@@ -112,20 +122,23 @@ export function testFunction(
 		avgTime = 0,
 		totalExec = 0,
 		succesfulExec = 0;
-	console.log(`Testing ${file}/${fx.name}`);
+
+	console.log(`Testing \x1b[94m${file}/${fx.name}`);
+
 	for (let k = 0; k < reruns; k++) {
-		console.log("pass " + (k + 1));
+		console.log(WHITE + "pass " + (k + 1));
+
 		for (let i = 0; i < data.length; i++) {
 			let result = test(fx, data[i].args, data[i].expect);
 			if (k < 1 || printAllReruns) {
 				console.log(generateReport(result, i, printStructs));
 			}
-
 			tests.push(result);
 			avgTime += result.execTime;
 			succesfulExec += result.passed;
 			totalExec++;
 		}
+		console.log("\n");
 	}
 	avgTime /= succesfulExec;
 	console.log(
