@@ -149,16 +149,23 @@ function format(data, dataType, errorIndexes, intent = "    ", initial = "    ")
 		formattedText = "{\n";
 
 		for (let k of Object.keys(data)) {
-			formattedText += initial;
+			let dt = _typeof(k);
 			if (errorIndexes.indexOf(k) > -1) {
-				formattedText += ">";
+				formattedText += ">\x1b[41m";
 			}
+			formattedText += initial;
 			formattedText += intent + k + ": ";
-			if (isStruct(dataType)) {
-				formattedText += format(data[k], _typeof(data[k]), [], intent, initial + intent) + ",\n";
-			} else if (dataType == "String") {
-				formattedText += YELLOW + '"' + data[k] + `"${WHITE},\n`;
-			} else formattedText += BLUE + data[k] + WHITE + ",\n";
+			if (isStruct(dt)) {
+				formattedText += format(data[k], _typeof(data[k]), [], intent, initial + intent);
+			} else if (dt == "String") {
+				formattedText += YELLOW + '"' + data[k] + `"${WHITE}`;
+			} else {
+				formattedText += BLUE + data[k] + WHITE;
+			}
+			if (errorIndexes.indexOf(k) > -1) {
+				formattedText += "\x1b[40m"
+			}
+			formattedText += ",\n"
 		}
 
 		formattedText += initial + "}";
@@ -171,17 +178,12 @@ function format(data, dataType, errorIndexes, intent = "    ", initial = "    ")
 function generateReport(result, testIndex, printStructs) {
 	let { name, args, output, execTime, passed, message, errorIndexes } = result;
 	let outputType = _typeof(output),
-		formattedOutput = format(
-			output,
-			outputType,
-			errorIndexes,
-			message.split(" ").splice(1, 2) == "mismatch",
-		),
+		formattedOutput = format(output, outputType, errorIndexes),
 		status = passed ? "Passed" : "Failed";
 
 	let formattedFunction = passed
 		? name + `(${args})`
-		: "(" + WHITE + name + BLUE + args + WHITE + ")";
+		: WHITE + name + "(" + BLUE + args + WHITE + ")";
 
 	let icon = passed ? GREEN + "✔️" : RED + "❌";
 	return `${icon} ${execTime.toFixed(3)}ms | test ${testIndex} ${status}: ${formattedFunction} -> ${
