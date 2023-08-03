@@ -131,23 +131,28 @@ Average time: ${avgTime.toFixed(3)}ms`
 }
 
 function format(data, dataType, errorIndexes, intent = "    ", initial = "    ") {
-	let formattedText = ``,
-		hasMismatch = errorIndexes.length > 0;
+	let formattedText = "";
 	if (dataType == "Array") {
 		formattedText = "[";
 
-		for (let a of data) {
-			if (hasMismatch)
-				if (isString(a)) a = YELLOW + a;
-				else if (isNumber(a)) a = BLUE + a;
-			formattedText += a + WHITE + ", ";
+		for (let i = 0; i < data.length; i++) {
+			let a = data[i], color;
+			if (errorIndexes.indexOf(i) > -1) color = RED;
+			else if (isString(a)) color = YELLOW;
+			else if (isNumber(a)) color = BLUE;
+			
+			formattedText += color + a + WHITE + ", ";
 		}
 		formattedText = formattedText.substring(0, formattedText.length - 2) + "]";
 	} else if (dataType == "Object") {
 		formattedText = "{\n";
 
 		for (let k of Object.keys(data)) {
-			formattedText += initial + intent + k + ": ";
+			formattedText += initial;
+			if (errorIndexes.indexOf(k) > -1) {
+				formattedText += ">"
+			}
+			formattedText += intent + k + ": ";
 			if (isStruct(dataType)) {
 				formattedText += format(data[k], _typeof(data[k]), [], intent, initial + intent) + ",\n";
 			} else if (dataType == "String") {
@@ -188,13 +193,19 @@ function generateReport(result, testIndex, printStructs) {
 function detectMismatchedElement(result, source) {
 	let resKeys = Object.keys(result),
 		srcKeys = Object.keys(source),
-		mismatches = [];
-	let l = Math.max(resKeys.length, srcKeys.length);
+		mismatches = [], l, dict;
+	if (resKeys.length >= srcKeys.length) {
+		l = resKeys.length;
+		dict = resKeys
+	} else {
+		l = srcKeys.length;
+		dict = srcKeys
+	}
 	for (let i = 0; i < l; i++) {
-		resValue = JSON.stringify(result[resKeys[i]]);
-		srcValue = JSON.stringify(source[srcKeys[i]]);
-		if (resKeys != srcKeys) {
-			mismatches.push(resKeys[i]);
+		let resValue = JSON.stringify(result[dict[i]]),
+			srcValue = JSON.stringify(source[dict[i]]);
+		if (resValue != srcValue) {
+			mismatches.push(dict[i]);
 		}
 	}
 	return mismatches;
