@@ -6,7 +6,14 @@ import { C } from "../../src/main.js";
 import { rotateAroundOrigin } from "../../src/math/points.js";
 import { doubleArrow, measurement } from "../../src/objects/arrows.js";
 import { arcBrace } from "../../src/objects/braces.js";
-import { angle, circle, circularSegment, line, point, sector } from "../../src/objects/geometry.js";
+import {
+	angle,
+	circle,
+	circularSegment,
+	line,
+	point,
+	sector,
+} from "../../src/objects/geometry.js";
 import { fillText, text } from "../../src/objects/text.js";
 import {
 	background,
@@ -125,7 +132,11 @@ C(
 		centreCanvas();
 		stroke(GREEN);
 		var r = 120;
-		const color = linearGradient([-r, 0], [r, 0], [BLUE, GREEN, RED, YELLOW, PURPLE, DARK_BROWN]);
+		const color = linearGradient(
+			[-r, 0],
+			[r, 0],
+			[BLUE, GREEN, RED, YELLOW, PURPLE, DARK_BROWN],
+		);
 		stroke(color);
 		fill(color);
 		noFill();

@@ -35,7 +35,11 @@ export function lerpColorObject(colorObj, v) {
 	for (let i = 0; i < stopes.length - 1; i++) {
 		let a = stopes[i];
 		if (v > a) {
-			color = lerpColor(colorObj[a], colorObj[stopes[i + 1]], (v - a) / (stopes[i + 1] - a));
+			color = lerpColor(
+				colorObj[a],
+				colorObj[stopes[i + 1]],
+				(v - a) / (stopes[i + 1] - a),
+			);
 			break;
 		} else if (v == a) {
 			color = colorObj[a];

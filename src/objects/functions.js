@@ -151,7 +151,12 @@ export function parametricFunction(configs) {
 						currentPoint = p[j],
 						nextPoint = p[j + 1],
 						secondNextPoint = j != p.length - 2 ? p[j + 2] : closed ? p[1] : nextPoint,
-						cp = getBezierControlPoints(recentPoint, currentPoint, nextPoint, secondNextPoint);
+						cp = getBezierControlPoints(
+							recentPoint,
+							currentPoint,
+							nextPoint,
+							secondNextPoint,
+						);
 					j++;
 					ctx.beginPath();
 					ctx.moveTo(currentPoint[0], currentPoint[1]);
@@ -364,7 +369,8 @@ export function polarParametricFunction(configs) {
 		},
 		configs,
 	);
-	let { plotter, range, radialSpacing, smoothen, tension, discontinuities, closed } = configs;
+	let { plotter, range, radialSpacing, smoothen, tension, discontinuities, closed } =
+		configs;
 	if (Array.isArray(range) && range.length == 2) range.push((range[1] - range[0]) / 20);
 	let points = [[]],
 		min = range[0],

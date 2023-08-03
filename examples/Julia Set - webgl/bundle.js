@@ -466,7 +466,8 @@
 			if (D.X) {
 				let r = `${c}: ${a} %crunning`,
 					t = ["color: yellow;"];
-				void 0 != k && ((r += `%c for %c${k}ms`), t.push("color: #adacdf;", "color: #9afcad;"));
+				void 0 != k &&
+					((r += `%c for %c${k}ms`), t.push("color: #adacdf;", "color: #9afcad;"));
 				D.da.push({
 					canvas: h,
 					animationName: a,
@@ -505,7 +506,8 @@
 				state: "finished",
 				endTime: void 0,
 			}));
-		0 < b.fa.length && ((a = b.fa.shift()), xa(a.name, a.wa, a.ta, a.Qa, a.Pd, a.ha, a.N));
+		0 < b.fa.length &&
+			((a = b.fa.shift()), xa(a.name, a.wa, a.ta, a.Qa, a.Pd, a.ha, a.N));
 	}
 	function za(a) {
 		let b = D.g;

@@ -10,7 +10,10 @@ let seed = [
 
 for (let i = 0; i < 6; i++) {
 	seed.push({
-		pos: [200 + Math.cos((i * 2 * Math.PI) / 6) * 5, 200 + Math.sin((i * 2 * Math.PI) / 6) * 5],
+		pos: [
+			200 + Math.cos((i * 2 * Math.PI) / 6) * 5,
+			200 + Math.sin((i * 2 * Math.PI) / 6) * 5,
+		],
 		stopped: true,
 	});
 }

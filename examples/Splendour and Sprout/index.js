@@ -103,7 +103,8 @@ function computePoints() {
 	points = [];
 	const ratio = 1 / drawingConfigs.pointInRadius;
 	// points in a vertical radius line
-	for (let i = 0; i <= drawingConfigs.pointInRadius; i++) points.push([0, i * radius * ratio]);
+	for (let i = 0; i <= drawingConfigs.pointInRadius; i++)
+		points.push([0, i * radius * ratio]);
 
 	// points on a arc
 	for (let i = 0; i <= (PI * drawingConfigs.pointInRadius) / 2; i++) {
@@ -113,7 +114,8 @@ function computePoints() {
 	}
 
 	// points in a horizontal radius line
-	for (let i = -drawingConfigs.pointInRadius; i <= 0; i++) points.push([i * radius * ratio, 0]);
+	for (let i = -drawingConfigs.pointInRadius; i <= 0; i++)
+		points.push([i * radius * ratio, 0]);
 }
 
 computePoints();

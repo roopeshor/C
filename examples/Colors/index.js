@@ -51,7 +51,16 @@ C(
 				["MAROON_A", "MAROON_B", "MAROON", "MAROON_D", "MAROON_E"],
 				["PURPLE_A", "PURPLE_B", "PURPLE", "PURPLE_D", "PURPLE_E"],
 			];
-			const stopNames = ["Blue", "Teal", "Green", "Yellow", "Gold", "Red", "Maroon", "Purple"];
+			const stopNames = [
+				"Blue",
+				"Teal",
+				"Green",
+				"Yellow",
+				"Gold",
+				"Red",
+				"Maroon",
+				"Purple",
+			];
 			const colorIntensities = ["A", "B", "C", "D", "E"];
 
 			noFill();
@@ -73,7 +82,11 @@ C(
 					fill(Colors.black);
 
 					// name of color
-					text(stopNames[i].toUpperCase() + "_" + colorIntensities[k], 100 + k * w + 7, h - 18);
+					text(
+						stopNames[i].toUpperCase() + "_" + colorIntensities[k],
+						100 + k * w + 7,
+						h - 18,
+					);
 					col[k] = Manim[col[k]];
 				}
 				translate(0, h);

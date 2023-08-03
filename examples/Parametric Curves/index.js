@@ -92,7 +92,10 @@ C(
 	() => {
 		const n = 3;
 		function ft(t) {
-			return [abs(cos(t)) ** (2 / n) * 4 * sgn(cos(t)), abs(sin(t)) ** (2 / n) * 3 * sgn(sin(t))];
+			return [
+				abs(cos(t)) ** (2 / n) * 4 * sgn(cos(t)),
+				abs(sin(t)) ** (2 / n) * 3 * sgn(sin(t)),
+			];
 		}
 		drawAxis(-5, 5, 1)
 			.getParametricFunction({

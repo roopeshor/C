@@ -29,7 +29,10 @@ function arrowTip(x1, y1, x2, y2, width, height) {
 	if (distance > width) t = t + Math.PI;
 	let angleFromXAxis = Math.atan2(y2 - y1, x2 - x1);
 	let A = [x1 - Math.cos(t + angleFromXAxis) * r, y1 - Math.sin(t + angleFromXAxis) * r];
-	let B = [x1 - Math.cos(-t + angleFromXAxis) * r, y1 - Math.sin(-t + angleFromXAxis) * r];
+	let B = [
+		x1 - Math.cos(-t + angleFromXAxis) * r,
+		y1 - Math.sin(-t + angleFromXAxis) * r,
+	];
 	if (ctx.doStroke && ctx.lineJoin != BEVEL) {
 		// correcting tip
 		x2 -= Math.cos(angleFromXAxis) * thickness;

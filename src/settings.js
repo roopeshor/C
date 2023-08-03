@@ -488,7 +488,15 @@ export function endShape() {
 export function getFont(detailed = false) {
 	let ctx = C.workingContext;
 	if (detailed) {
-		let { fontStyle, fontVariant, fontWeight, fontStretch, fontSize, lineHeight, fontFamily } = ctx;
+		let {
+			fontStyle,
+			fontVariant,
+			fontWeight,
+			fontStretch,
+			fontSize,
+			lineHeight,
+			fontFamily,
+		} = ctx;
 		return `${fontStyle} ${fontVariant} ${fontWeight} ${fontStretch} ${fontSize}/${lineHeight} ${fontFamily}`;
 	} else {
 		return ctx.font;

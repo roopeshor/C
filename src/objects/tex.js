@@ -9,7 +9,10 @@ import { C } from "../main.js";
  */
 function getImageFromTex(input) {
 	if (
-		!(typeof window["MathJax"] == "object" && typeof window["MathJax"]["tex2svg"] == "function")
+		!(
+			typeof window["MathJax"] == "object" &&
+			typeof window["MathJax"]["tex2svg"] == "function"
+		)
 	) {
 		throw new Error("MathJax is not found. Please include it.");
 	}

@@ -82,7 +82,15 @@ export function circle(x, y, r) {
  * @param {number} [startAngle=0] The angle at which the ellipse starts, measured clockwise from the positive x-axis and expressed in radians.
  * @param {number} [angle=6.28318530717958] central angle of ellipse. Use negative values to rotate it anticlockwise
  */
-export function ellipse(x, y, radius1, radius2, rotation = 0, startAngle = 0, angle = Math.PI * 2) {
+export function ellipse(
+	x,
+	y,
+	radius1,
+	radius2,
+	rotation = 0,
+	startAngle = 0,
+	angle = Math.PI * 2,
+) {
 	let ctx = C.workingContext;
 	if (!ctx.pathStarted) ctx.beginPath();
 	ctx.ellipse(x, y, radius1, radius2, rotation, startAngle, startAngle + angle);
@@ -158,14 +166,33 @@ export function getBezierControlPoints(
  * @param {Array<Array<number>>} points array of points as [x, y]
  * @param {number} tension tension of the curve
  */
-export function smoothCurveThroughPointsTo(points, tension = 1, closed = true, offset = 0) {
+export function smoothCurveThroughPointsTo(
+	points,
+	tension = 1,
+	closed = true,
+	offset = 0,
+) {
 	for (let i = 0; i < points.length - 1 - offset; i++) {
 		let recentPoint = i != 0 ? points[i - 1] : points[0],
 			currentPoint = points[i],
 			nextPoint = points[i + 1],
-			secondNextPoint = i != points.length - 2 ? points[i + 2] : closed ? points[1] : nextPoint,
-			cp = getBezierControlPoints(recentPoint, currentPoint, nextPoint, secondNextPoint, tension);
-		C.workingContext.bezierCurveTo(cp[0], cp[1], cp[2], cp[3], nextPoint[0], nextPoint[1]);
+			secondNextPoint =
+				i != points.length - 2 ? points[i + 2] : closed ? points[1] : nextPoint,
+			cp = getBezierControlPoints(
+				recentPoint,
+				currentPoint,
+				nextPoint,
+				secondNextPoint,
+				tension,
+			);
+		C.workingContext.bezierCurveTo(
+			cp[0],
+			cp[1],
+			cp[2],
+			cp[3],
+			nextPoint[0],
+			nextPoint[1],
+		);
 	}
 }
 
@@ -353,7 +380,14 @@ export function arcBetweenPoints(x1, y1, x2, y2, radius, otherArc = false) {
 		ctx.save();
 		ctx.beginPath();
 	}
-	ctx.arc(center[0], center[1], radius, angleFromXAxis, centralAngle + angleFromXAxis, !otherArc);
+	ctx.arc(
+		center[0],
+		center[1],
+		radius,
+		angleFromXAxis,
+		centralAngle + angleFromXAxis,
+		!otherArc,
+	);
 	if (!ctx.pathStarted) {
 		doFillAndStroke(ctx);
 		ctx.restore();
@@ -519,7 +553,10 @@ export function regularPolygonWithRadius(x, y, sides, radius, rotation = 0) {
 	ctx.beginPath();
 	ctx.moveTo(initial[0], initial[1]);
 	while (i++ < sides) {
-		ctx.lineTo(Math.cos(i * e + rotation) * radius + x, Math.sin(i * e + rotation) * radius + y);
+		ctx.lineTo(
+			Math.cos(i * e + rotation) * radius + x,
+			Math.sin(i * e + rotation) * radius + y,
+		);
 	}
 	ctx.lineTo(initial[0], initial[1]);
 	ctx.closePath();

@@ -28,10 +28,8 @@ export function Line(args) {
 		next: null,
 		rateFunction: smooth,
 	};
-	let { p1, p2, name, dur, canvas, dTime, rateFunction, next, syncWithTime } = applyDefault(
-		defaults,
-		args,
-	);
+	let { p1, p2, name, dur, canvas, dTime, rateFunction, next, syncWithTime } =
+		applyDefault(defaults, args);
 	canvas = canvas || C.workingContext.name;
 	let ctx = C.contextList[canvas];
 
@@ -164,7 +162,12 @@ export function animateFill(name, canvasName, FILL, f, dur = 1000, dt = 10, next
 				noLoop(canvasName, t);
 				if (typeof next == "function") next();
 			}
-			ctx.fillStyle = readColor(_fill[0], _fill[1], _fill[2], _fill[3] / (t - previousT)).hex8;
+			ctx.fillStyle = readColor(
+				_fill[0],
+				_fill[1],
+				_fill[2],
+				_fill[3] / (t - previousT),
+			).hex8;
 			f();
 			previousT = t;
 		},
@@ -206,7 +209,17 @@ export function Circle(args) {
 	};
 	args = Object.assign(defaults, args);
 	let center = args.center,
-		{ points, dur, dTime, canvas, rateFunction, fill: fillColor, fillTime, next, rx } = Arc(args);
+		{
+			points,
+			dur,
+			dTime,
+			canvas,
+			rateFunction,
+			fill: fillColor,
+			fillTime,
+			next,
+			rx,
+		} = Arc(args);
 	return {
 		points: points, // list of computed points
 		dur: dur,

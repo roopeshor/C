@@ -24,8 +24,8 @@ const WHITE = "\x1b[37m",
  * ]
  * ```
  * @param {Function} fx
- * @param {Array<Object>} data
- * @param {number} [count=1]
+ * @param {Array} args
+ * @param {*} expect
  * @returns {Object}
  */
 export function test(fx, args, expect) {
@@ -74,7 +74,8 @@ function check(result, data) {
 			passed = false;
 			errorIndexes = detectMismatchedElement(result, data);
 			message =
-				`${resType} mismatch! expected: ` + format(data, resType, errorIndexes, "    ", "    ");
+				`${resType} mismatch! expected: ` +
+				format(data, resType, errorIndexes, "    ", "    ");
 		}
 	} else {
 		if (result !== data) {
@@ -96,20 +97,29 @@ function check(result, data) {
  * @param {Function} fx
  * @param {string} file
  * @param {Array<Object>} data
- * @param {number} [count=1]
+ * @param {number} [reruns=1]
  * @returns {Object}
  */
-export function testFunction(fx, file, data, count = 1, printStructs = false) {
+export function testFunction(
+	fx,
+	file,
+	data,
+	reruns = 1,
+	printStructs = false,
+	printAllReruns = false,
+) {
 	let tests = [],
 		avgTime = 0,
 		totalExec = 0,
 		succesfulExec = 0;
 	console.log(`Testing ${file}/${fx.name}`);
-	for (let k = 0; k < count; k++) {
+	for (let k = 0; k < reruns; k++) {
 		console.log("pass " + (k + 1));
 		for (let i = 0; i < data.length; i++) {
 			let result = test(fx, data[i].args, data[i].expect);
-			console.log(generateReport(result, i, printStructs));
+			if (k < 1 || printAllReruns) {
+				console.log(generateReport(result, i, printStructs));
+			}
 
 			tests.push(result);
 			avgTime += result.execTime;
@@ -163,9 +173,9 @@ function format(data, dataType, errorIndexes, intent = "    ", initial = "    ")
 				formattedText += BLUE + data[k] + WHITE;
 			}
 			if (errorIndexes.indexOf(k) > -1) {
-				formattedText += "\x1b[40m"
+				formattedText += "\x1b[40m";
 			}
-			formattedText += ",\n"
+			formattedText += ",\n";
 		}
 
 		formattedText += initial + "}";
@@ -186,7 +196,9 @@ function generateReport(result, testIndex, printStructs) {
 		: WHITE + name + "(" + BLUE + args + WHITE + ")";
 
 	let icon = passed ? GREEN + "✔️" : RED + "❌";
-	return `${icon} ${execTime.toFixed(3)}ms | test ${testIndex} ${status}: ${formattedFunction} -> ${
+	return `${icon} ${execTime.toFixed(
+		3,
+	)}ms | test ${testIndex} ${status}: ${formattedFunction} -> ${
 		isStruct(outputType) && (printStructs || !passed)
 			? formattedOutput
 			: `<${outputType}[${Object.keys(output).length}]>`

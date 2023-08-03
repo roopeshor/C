@@ -105,7 +105,13 @@ export function hasNeighbourColor(color, pixels, x, y) {
  * @param {boolean} [matchAlpha = false] whether to check if alpha channel is same as that of toReplace.
  * @param {number} [tolerance = 0] minimum difference between each color channel
  */
-export function replaceColorInImage(image, toReplace, replaced, matchAlpha = false, tolerance = 0) {
+export function replaceColorInImage(
+	image,
+	toReplace,
+	replaced,
+	matchAlpha = false,
+	tolerance = 0,
+) {
 	let data = image.data,
 		newData = C.workingContext.createImageData(image.width, image.height);
 	const [r1, g1, b1, a1] = readColor(toReplace).rgbaA;

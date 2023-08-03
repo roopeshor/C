@@ -217,7 +217,10 @@ class WebGL {
 	 */
 	createProgramFromSource(vertexShaderSource, fragmentShaderSource) {
 		const vertexShader = this.createShader(this.gl.VERTEX_SHADER, vertexShaderSource);
-		const fragmentShader = this.createShader(this.gl.FRAGMENT_SHADER, fragmentShaderSource);
+		const fragmentShader = this.createShader(
+			this.gl.FRAGMENT_SHADER,
+			fragmentShaderSource,
+		);
 		return this.createProgram(vertexShader, fragmentShader);
 	}
 	resizeCanvas(width = 300, height = 300) {

@@ -53,7 +53,8 @@ window["tinyDrag"] = function tinyDrag(context, points, options) {
 			}
 		}
 		targetNodeIndex = targetIndex;
-		if (targetIndex == -1 && typeof options.onSelectionOut == "function") options.onSelectionOut();
+		if (targetIndex == -1 && typeof options.onSelectionOut == "function")
+			options.onSelectionOut();
 		else if (typeof options.onSelect == "function") options.onSelect(targetIndex);
 	}
 	function move(e) {

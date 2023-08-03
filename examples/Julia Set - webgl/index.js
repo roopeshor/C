@@ -2,7 +2,13 @@ import { C } from "../../src/main.js";
 import { numberPlane } from "../../src/objects/coordinate_systems.js";
 import { point } from "../../src/objects/geometry.js";
 import { text } from "../../src/objects/text.js";
-import { background, clear, fontSize, permaBackground, translate } from "../../src/settings.js";
+import {
+	background,
+	clear,
+	fontSize,
+	permaBackground,
+	translate,
+} from "../../src/settings.js";
 import { createWebGL } from "../../src/WebGL/webgl.js";
 import {} from "../../src/WebGL/settings.js";
 
@@ -159,8 +165,12 @@ function draw(re = juliaSet.c[0], im = juliaSet.c[1], assignToInputs = true) {
 
 function drawEvent(evt) {
 	if (juliaSet.drag || evt.type == "click") {
-		let re = evt.layerX / (juliaSet.scale[0] / (juliaSet.range[0] * 2)) - juliaSet.range[0],
-			im = -(evt.layerY / (juliaSet.scale[1] / (juliaSet.range[1] * 2)) - juliaSet.range[1]);
+		let re =
+				evt.layerX / (juliaSet.scale[0] / (juliaSet.range[0] * 2)) - juliaSet.range[0],
+			im = -(
+				evt.layerY / (juliaSet.scale[1] / (juliaSet.range[1] * 2)) -
+				juliaSet.range[1]
+			);
 		draw(re, im);
 	}
 }
@@ -239,7 +249,11 @@ function constructProgram() {
 
 	juliaSet.program = juliaSet.GL.createCustomProgram({
 		vertex:
-			setup_loop + function_ + boundryChecker + (juliaSet.pw == 2 ? plotSmoother : "}") + coloring,
+			setup_loop +
+			function_ +
+			boundryChecker +
+			(juliaSet.pw == 2 ? plotSmoother : "}") +
+			coloring,
 		fragment: document.getElementById("fragment"),
 		attributes: {
 			position: "position",

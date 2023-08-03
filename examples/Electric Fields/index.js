@@ -2,7 +2,10 @@ import { Manim } from "../../Extensions/Colors/importable.js";
 import { ColorPalettes, smooth } from "../../src/c.js";
 import { C } from "../../src/main.js";
 import { arrow } from "../../src/objects/arrows.js";
-import { lerpColorArray, getInterpolatedColorList } from "../../src/color/interpolation.js";
+import {
+	lerpColorArray,
+	getInterpolatedColorList,
+} from "../../src/color/interpolation.js";
 import { point } from "../../src/objects/geometry.js";
 import { fillText } from "../../src/objects/text.js";
 import {

@@ -121,7 +121,8 @@ export function latexToImg(latex) {
 		output.svg = mjOut.outerHTML;
 		var image = new Image();
 		image.src =
-			"data:image/svg+xml;base64," + window.btoa(unescape(encodeURIComponent(output.svg)));
+			"data:image/svg+xml;base64," +
+			window.btoa(unescape(encodeURIComponent(output.svg)));
 		image.onload = function () {
 			var canvas = document.createElement("canvas");
 			canvas.width = image.width;

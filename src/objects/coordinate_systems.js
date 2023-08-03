@@ -173,7 +173,9 @@ export function numberLine(configs = {}) {
 			range = [range[0], range[1], 1];
 		}
 	} else {
-		throw new Error("range must be a array that have atleast one item. Got: " + range.toString());
+		throw new Error(
+			"range must be a array that have atleast one item. Got: " + range.toString(),
+		);
 	}
 
 	// if number of decimal places is not defined, find it using `step`
@@ -258,7 +260,8 @@ export function numberLine(configs = {}) {
 		const textRenderer = configs.textRenderer;
 		for (let i = start; i < end; i++) {
 			if (i >= labels.length) break;
-			const tick = typeof labels[i] == "number" ? labels[i].toFixed(decimalPlaces) : labels[i];
+			const tick =
+				typeof labels[i] == "number" ? labels[i].toFixed(decimalPlaces) : labels[i];
 			if (
 				(tickList[i] == 0 && excludeOriginTick) || // exclude origin tick
 				numbersToExclude.indexOf(tickList[i]) > -1 // exclude ticks that were said to ignore explictly.
@@ -710,7 +713,9 @@ export function polarPlane(configs = {}) {
 				denominator = azimuthDivisions;
 			azimuthConfigs.textRenderer = tex;
 			let post = azimuthUnit == "tau radians" ? "\\tau" : "\\pi";
-			ctx.font = `${azimuthConfigs.fontSize * radialSpacing}px ${azimuthConfigs.fontFamily}`;
+			ctx.font = `${azimuthConfigs.fontSize * radialSpacing}px ${
+				azimuthConfigs.fontFamily
+			}`;
 			for (let division = 0; division < azimuthDivisions; division++) {
 				labels.push(
 					fraction(numerator * division, denominator, true, azimuthCompactFraction, post),
@@ -719,11 +724,15 @@ export function polarPlane(configs = {}) {
 		} else if (azimuthUnit == "degrees") {
 			// Use Tex parser to generate fractions
 			for (let i = 0; i < azimuthDivisions; i++) {
-				labels.push(((i * 360) / azimuthDivisions).toFixed(azimuthConfigs.decimalPoints) + "°");
+				labels.push(
+					((i * 360) / azimuthDivisions).toFixed(azimuthConfigs.decimalPoints) + "°",
+				);
 			}
 		} else if (azimuthUnit == "gradians") {
 			for (let i = 0; i < azimuthDivisions; i++) {
-				labels.push(((i * 400) / azimuthDivisions).toFixed(azimuthConfigs.decimalPoints) + "ᵍ");
+				labels.push(
+					((i * 400) / azimuthDivisions).toFixed(azimuthConfigs.decimalPoints) + "ᵍ",
+				);
 			}
 		}
 
