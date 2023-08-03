@@ -68,8 +68,7 @@ function check(result, data) {
 			passed = false;
 			errorIndexes = detectMismatchedElement(result, data);
 			message =
-				`${resType} mismatch! expected: ` +
-				format(data, resType, errorIndexes, "    ", "    ");
+				`${resType} mismatch! expected: ` + format(data, errorIndexes, "    ", "    ");
 		}
 	} else {
 		if (result !== data) {
@@ -141,10 +140,9 @@ export function testFunction(
 		console.log("\n");
 	}
 	avgTime /= succesfulExec;
-	console.log(
-		`${succesfulExec}/${totalExec} tests successfully finished
-Average time: ${avgTime.toFixed(3)}ms`,
-	);
+
+	console.log(`${succesfulExec}/${totalExec} tests successfully finished`);
+	console.log(`Average time: ${avgTime.toFixed(3)}ms`);
 	return {
 		tests,
 		avgTime,
@@ -153,8 +151,18 @@ Average time: ${avgTime.toFixed(3)}ms`,
 	};
 }
 
-function format(data, dataType, errorIndexes, intent = "    ", initial = "    ") {
+/**
+ * Mainly used for formatting Arrays & json
+ *
+ * @param {*} data
+ * @param {*} errorIndexes
+ * @param {string} [intent="    "]
+ * @param {string} [initial="    "]
+ * @return {*}
+ */
+function format(data, errorIndexes, intent = "    ", initial = "    ") {
 	let formattedText = "";
+	let dataType = _typeof(data);
 	if (dataType == "Array") {
 		formattedText = "[";
 
@@ -172,23 +180,23 @@ function format(data, dataType, errorIndexes, intent = "    ", initial = "    ")
 		formattedText = "{\n";
 
 		for (let k of Object.keys(data)) {
-			let dt = _typeof(k);
+			let dt = _typeof(data[k]);
 			if (errorIndexes.indexOf(k) > -1) {
 				formattedText += ">\x1b[41m";
 			}
 			formattedText += initial;
 			formattedText += intent + k + ": ";
 			if (isStruct(dt)) {
-				formattedText += format(data[k], _typeof(data[k]), [], intent, initial + intent);
+				formattedText += format(data[k], [], intent, initial + intent);
 			} else if (dt == "String") {
-				formattedText += YELLOW + '"' + data[k] + `"${WHITE}`;
+				formattedText += YELLOW + '"' + data[k] + '"';
 			} else {
-				formattedText += BLUE + data[k] + WHITE;
+				formattedText += BLUE + data[k];
 			}
 			if (errorIndexes.indexOf(k) > -1) {
 				formattedText += "\x1b[40m";
 			}
-			formattedText += ",\n";
+			formattedText += WHITE + ",\n";
 		}
 
 		formattedText += initial + "}";
@@ -201,12 +209,11 @@ function format(data, dataType, errorIndexes, intent = "    ", initial = "    ")
 function generateReport(result, testIndex, printStructs) {
 	let { name, args, output, execTime, passed, message, errorIndexes } = result;
 	let outputType = _typeof(output),
-		formattedOutput = format(output, outputType, errorIndexes),
+		formattedOutput = format(output, errorIndexes),
 		status = passed ? "Passed" : "Failed";
 
-	let formattedFunction = passed
-		? name + `(${args})`
-		: WHITE + name + "(" + BLUE + args + WHITE + ")";
+	// to make datatypes appear more visible
+	let formattedFunction = parseArgs(name, args, passed);
 
 	let icon = passed ? GREEN + "✔️" : RED + "❌";
 	return `${icon} ${execTime.toFixed(
@@ -239,4 +246,14 @@ function detectMismatchedElement(result, source) {
 		}
 	}
 	return mismatches;
+}
+
+function parseArgs(name, args, passed) {
+	let formatted = passed ? name + "(" : WHITE + name + "(" + BLUE;
+	for (let arg of args) {
+		if (_typeof(arg) == "String") formatted += `"${arg}", `;
+		else formatted += arg + ", ";
+	}
+	formatted = formatted.substring(0, formatted.length - 2) + WHITE + ")";
+	return formatted;
 }
