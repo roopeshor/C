@@ -1,12 +1,15 @@
-let _typeof = (o) => Object.prototype.toString.call(o).replace(/(\[object |\])/g, "");
-let isStruct = (dt) => dt == "Array" || dt == "Object";
-let isString = (s) => _typeof(s) == "String";
-let isNumber = (s) => _typeof(s) == "Number";
+let _typeof = (o) => Object.prototype.toString.call(o).replace(/(\[object |\])/g, ""),
+	_isStruct = (dt) => dt == "Array" || dt == "Object",
+	isStruct = (o) => _isStruct(_typeof(o)),
+	isString = (s) => _typeof(s) == "String",
+	pruneLast2Chars = (s) => s.substring(0, s.length - 2);
 const WHITE = "\x1b[37m",
 	GREEN = "\x1b[32m",
 	RED = "\x1b[31m",
 	BLUE = "\x1b[36m",
-	YELLOW = "\x1b[33m";
+	YELLOW = "\x1b[33m",
+	BG_RED = "\x1b[41m",
+	BG_WHITE = "\x1b[40m";
 
 /**
  * Tests a function with a parameter against a expected output
@@ -161,44 +164,31 @@ export function testFunction(
  * @return {*}
  */
 function format(data, errorIndexes, intent = "    ", initial = "    ") {
-	let formattedText = "";
-	let dataType = _typeof(data);
+	let formattedText = "",
+		dataType = _typeof(data);
 	if (dataType == "Array") {
 		formattedText = "[";
-
 		for (let i = 0; i < data.length; i++) {
-			let a = data[i],
-				color;
-			if (errorIndexes.indexOf(i) > -1) color = RED;
-			else if (isString(a)) color = YELLOW;
-			else if (isNumber(a)) color = BLUE;
-
-			formattedText += color + a + WHITE + ", ";
+			formattedText += formatElement(
+				data[i],
+				errorIndexes.indexOf(i) > -1,
+				intent,
+				initial,
+			);
 		}
-		formattedText = formattedText.substring(0, formattedText.length - 2) + "]";
+		formattedText = pruneLast2Chars(formattedText) + "]";
 	} else if (dataType == "Object") {
 		formattedText = "{\n";
 
 		for (let k of Object.keys(data)) {
-			let dt = _typeof(data[k]);
-			if (errorIndexes.indexOf(k) > -1) {
-				formattedText += ">\x1b[41m";
-			}
-			formattedText += initial;
-			formattedText += intent + k + ": ";
-			if (isStruct(dt)) {
-				formattedText += format(data[k], [], intent, initial + intent);
-			} else if (dt == "String") {
-				formattedText += YELLOW + '"' + data[k] + '"';
-			} else {
-				formattedText += BLUE + data[k];
-			}
-			if (errorIndexes.indexOf(k) > -1) {
-				formattedText += "\x1b[40m";
-			}
-			formattedText += WHITE + ",\n";
+			formattedText +=
+				initial +
+				intent +
+				k +
+				": " +
+				formatElement(data[k], errorIndexes.indexOf(k) > -1) +
+				"\n";
 		}
-
 		formattedText += initial + "}";
 	} else {
 		formattedText = initial + JSON.stringify(data);
@@ -206,25 +196,50 @@ function format(data, errorIndexes, intent = "    ", initial = "    ") {
 	return formattedText;
 }
 
-function generateReport(result, testIndex, printStructs) {
-	let { name, args, output, execTime, passed, message, errorIndexes } = result;
+/**
+ * Generates report for a test
+ *
+ * @param {Object} res result of test
+ * @param {Number} testIndex index of test
+ * @param {boolean} [printStructs=false] whether to print arrays/objects even when test has passed
+ * @return {string}
+ */
+function generateReport(res, testIndex, printStructs = false) {
+	let { output, passed } = res;
 	let outputType = _typeof(output),
-		formattedOutput = format(output, errorIndexes),
-		status = passed ? "Passed" : "Failed";
+		icon = passed ? GREEN + "✔️ " : RED + "❌ ",
+		status = passed ? " Passed" : " Failed",
+		formattedFunction = parseArgs(res.name, res.args, passed),
+		formattedOutput,
+		message = passed ? "" : "\n\n" + res.message + "\n" + WHITE;
 
-	// to make datatypes appear more visible
-	let formattedFunction = parseArgs(name, args, passed);
+	if (_isStruct(outputType) && (printStructs || !passed)) {
+		formattedOutput = format(output, res.errorIndexes);
+	} else {
+		formattedOutput = outputType + `[${Object.keys(output).length}]`;
+	}
 
-	let icon = passed ? GREEN + "✔️" : RED + "❌";
-	return `${icon} ${execTime.toFixed(
-		3,
-	)}ms | test ${testIndex} ${status}: ${formattedFunction} -> ${
-		isStruct(outputType) && (printStructs || !passed)
-			? formattedOutput
-			: `<${outputType}[${Object.keys(output).length}]>`
-	}${passed ? "" : "\n\n" + message + "\n"}${WHITE}`;
+	return (
+		icon +
+		res.execTime.toFixed(3) +
+		"ms | test " +
+		testIndex +
+		status +
+		": " +
+		formattedFunction +
+		" -> " +
+		formattedOutput +
+		message
+	);
 }
 
+/**
+ * Finds elements in `result` which doesn't matches with `source` and returns their key/index
+ *
+ * @param {Object|Array} result object/array to be tested
+ * @param {Object|Array} source
+ * @return {Array}
+ */
 function detectMismatchedElement(result, source) {
 	let resKeys = Object.keys(result),
 		srcKeys = Object.keys(source),
@@ -248,12 +263,42 @@ function detectMismatchedElement(result, source) {
 	return mismatches;
 }
 
+/**
+ * Returns a formatted function name suitable for printing to console
+ *
+ * @param {string} name function name
+ * @param {Array} args function arguments
+ * @param {boolean} passed whether function passed test
+ * @return {*}
+ */
 function parseArgs(name, args, passed) {
 	let formatted = passed ? name + "(" : WHITE + name + "(" + BLUE;
 	for (let arg of args) {
-		if (_typeof(arg) == "String") formatted += `"${arg}", `;
+		if (isString(arg)) formatted += `"${arg}", `;
 		else formatted += arg + ", ";
 	}
-	formatted = formatted.substring(0, formatted.length - 2) + WHITE + ")";
-	return formatted;
+	formatted = pruneLast2Chars(formatted);
+	return passed ? formatted + ")" : formatted + WHITE + ")";
+}
+
+/**
+ * Formats element of array/object
+ * @param {*} e element
+ * @param {boolean} isMismatch whether this is mismatched element
+ * @param {string} intent
+ * @param {string} initial
+ * @returns {string}
+ */
+function formatElement(e, isMismatch, intent, initial) {
+	let ft = "";
+	if (isMismatch) ft = BG_RED;
+	if (isStruct(e)) {
+		ft += format(e, [], intent, initial + intent);
+	} else if (isString(e)) {
+		ft += YELLOW + '"' + e + '"';
+	} else {
+		ft += BLUE + e;
+	}
+	if (isMismatch) ft += BG_WHITE;
+	return ft + WHITE + ", ";
 }
