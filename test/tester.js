@@ -65,20 +65,22 @@ function check(result, data) {
 	let passed = true,
 		message = "",
 		errorIndexes = [],
-		resType = _typeof(result);
-	if (resType == "Array" || resType == "Object") {
+		resultDataType = _typeof(result);
+	if (resultDataType == "Array" || resultDataType == "Object") {
 		if (JSON.stringify(result) !== JSON.stringify(data)) {
 			passed = false;
 			errorIndexes = detectMismatchedElement(result, data);
 			message =
-				`${resType} mismatch! expected: ` + format(data, errorIndexes, "    ", "    ");
+				resultDataType +
+				" mismatch! expected: " +
+				formatData(data, errorIndexes, "    ", "    ");
 		}
-	} else {
-		if (result !== data) {
-			passed = false;
-			message = "Value mismatch! expected: " + data;
-			errorIndexes = [-2]; // for singular values there isn't any index.
-		}
+	} else if (result !== data) {
+		passed = false;
+		message = "Value mismatch! expected: " + data;
+		// for singular values there isn't any index.
+		// TODO: Decide if this is needed
+		errorIndexes = [-2];
 	}
 	return {
 		passed,
@@ -163,36 +165,64 @@ export function testFunction(
  * @param {string} [initial="    "]
  * @return {*}
  */
-function format(data, errorIndexes, intent = "    ", initial = "    ") {
+function formatData(data, errorIndexes, intent = "    ", initial = "    ") {
 	let formattedText = "",
 		dataType = _typeof(data);
 	if (dataType == "Array") {
-		formattedText = "[";
-		for (let i = 0; i < data.length; i++) {
-			formattedText += formatElement(
-				data[i],
-				errorIndexes.indexOf(i) > -1,
-				intent,
-				initial,
-			);
-		}
-		formattedText = pruneLast2Chars(formattedText) + "]";
+		formattedText = formatArray(data, errorIndexes, intent, initial);
 	} else if (dataType == "Object") {
-		formattedText = "{\n";
-
-		for (let k of Object.keys(data)) {
-			formattedText +=
-				initial +
-				intent +
-				k +
-				": " +
-				formatElement(data[k], errorIndexes.indexOf(k) > -1) +
-				"\n";
-		}
-		formattedText += initial + "}";
+		formattedText = formatObject(data, initial, intent, errorIndexes);
 	} else {
 		formattedText = initial + JSON.stringify(data);
 	}
+	return formattedText;
+}
+
+/**
+ * Returns formatted Object
+ *
+ * @param {Object} object
+ * @param {Array} errorIndexes
+ * @param {string} initial
+ * @param {string} intent
+ * @return {string}
+ */
+function formatObject(object, errorIndexes, initial, intent) {
+	let formattedText = "{\n";
+
+	for (let k of Object.keys(object)) {
+		formattedText +=
+			initial +
+			intent +
+			k +
+			": " +
+			formatElement(object[k], errorIndexes.indexOf(k) > -1) +
+			"\n";
+	}
+	formattedText += initial + "}";
+	return formattedText;
+}
+
+/**
+ * returns a formatted Array
+ *
+ * @param {Array} array
+ * @param {Array} errorIndexes
+ * @param {string} intent
+ * @param {string} initial
+ * @return {string}
+ */
+function formatArray(array, errorIndexes, intent, initial) {
+	let formattedText = "[";
+	for (let i = 0; i < array.length; i++) {
+		formattedText += formatElement(
+			array[i],
+			errorIndexes.indexOf(i) > -1,
+			intent,
+			initial,
+		);
+	}
+	formattedText = pruneLast2Chars(formattedText) + "]";
 	return formattedText;
 }
 
@@ -214,7 +244,7 @@ function generateReport(res, testIndex, printStructs = false) {
 		message = passed ? "" : "\n\n" + res.message + "\n" + WHITE;
 
 	if (_isStruct(outputType) && (printStructs || !passed)) {
-		formattedOutput = format(output, res.errorIndexes);
+		formattedOutput = formatData(output, res.errorIndexes);
 	} else {
 		formattedOutput = outputType + `[${Object.keys(output).length}]`;
 	}
@@ -244,16 +274,20 @@ function detectMismatchedElement(result, source) {
 	let resKeys = Object.keys(result),
 		srcKeys = Object.keys(source),
 		mismatches = [],
-		l,
+		len,
 		dict;
+
+	// finds largest object and compares it to the later
+	// TODO: Check if result should be compared to source regardless of their sizes
 	if (resKeys.length >= srcKeys.length) {
-		l = resKeys.length;
+		len = resKeys.length;
 		dict = resKeys;
 	} else {
-		l = srcKeys.length;
+		len = srcKeys.length;
 		dict = srcKeys;
 	}
-	for (let i = 0; i < l; i++) {
+
+	for (let i = 0; i < len; i++) {
 		let resValue = JSON.stringify(result[dict[i]]),
 			srcValue = JSON.stringify(source[dict[i]]);
 		if (resValue != srcValue) {
@@ -292,13 +326,15 @@ function parseArgs(name, args, passed) {
 function formatElement(e, isMismatch, intent, initial) {
 	let ft = "";
 	if (isMismatch) ft = BG_RED;
+
 	if (isStruct(e)) {
-		ft += format(e, [], intent, initial + intent);
+		ft += formatData(e, [], intent, initial + intent);
 	} else if (isString(e)) {
 		ft += YELLOW + '"' + e + '"';
 	} else {
 		ft += BLUE + e;
 	}
+
 	if (isMismatch) ft += BG_WHITE;
 	return ft + WHITE + ", ";
 }
