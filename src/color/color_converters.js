@@ -1,3 +1,4 @@
+/** @module Color Converters */
 export function hue2RGB(p, q, t) {
 	if (t < 0) t += 1;
 	if (t > 1) t -= 1;
@@ -13,7 +14,6 @@ export function hue2RGB(p, q, t) {
  * Assumes values of red, green, and blue are between 0 & 1 and
  * returns hue, saturation and lightness in range 0 to 1
 
- * @global
  * @param {number} r The red color value
  * @param {number} g The green color value
  * @param {number} b The blue color value
@@ -76,7 +76,6 @@ export function HSLToRGB(hue, saturation, lightness) {
  * Assumes values of red, green, and blue are between 0 & 1 and
  * returns hue, saturation and value in range 0 to 1
  *
- * @global
  * @param {number} r The red color value
  * @param {number} g The green color value
  * @param {number} b The blue color value

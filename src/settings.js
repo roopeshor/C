@@ -1,3 +1,5 @@
+/** @module Settings */
+
 import { readColor } from "./color/color_reader.js";
 import { C } from "./main.js";
 import { defineProperties } from "./utils.js";

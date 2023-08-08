@@ -1,3 +1,5 @@
+/** @module Color Reader */
+
 import { Colors } from "../constants/colors.js";
 
 // adapeted from p5.js

@@ -1,9 +1,11 @@
+/** @module Utils */
 import { gcd } from "./c.js";
 import { C } from "./main.js";
 
 /**
  * Returns the type of object
  * @return {string}
+ * @ignore
  */
 export const type = (stuff) => Object.prototype.toString.call(stuff).slice(8, -1);
 
@@ -54,6 +56,7 @@ export function arange(start, end, step, rev = false) {
  * @param {Object} [target] target object. Default = {}.
  * @param {boolean} [deepApply=true] whether to apply defaults to deep nested objects
  * @return {Object} applied object
+ * @ignore
  */
 export function applyDefault(_default, target = {}, deepApply = true) {
 	target = Object.clone(target);
@@ -81,6 +84,7 @@ export function applyDefault(_default, target = {}, deepApply = true) {
  * fills and strokes inside the current shape if to do so.
  *
  * @param {CanvasRenderingContext2D} ctx
+ * @ignore
  */
 export function doFillAndStroke(ctx) {
 	if (ctx.doFill) ctx.fill();
@@ -94,6 +98,7 @@ export function doFillAndStroke(ctx) {
  * @param {Array} array
  * @param {number} [epsilon=1e-6] maximum difference
  * @return {number}
+ * @ignore
  */
 export function approximateIndexInArray(val, array, epsilon = 1e-6) {
 	for (let i = 0; i < array.length; i++) {
@@ -110,6 +115,7 @@ export function approximateIndexInArray(val, array, epsilon = 1e-6) {
  *
  * @param {string} latex
  * @return {Promise}
+ * @ignore
  */
 
 export function latexToImg(latex) {
@@ -155,7 +161,7 @@ export function latexToImg(latex) {
  * fraction(5, 10, true, false, "π") // -> \frac{1}{2}π
  * fraction(5, 10, false, false, "π") // -> \frac{5}{10}π
  * fraction(5, 10, false, true, "π") // -> \frac{5π}{10}
- *
+ * @ignore
  */
 export function fraction(
 	numerator,

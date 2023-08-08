@@ -1,5 +1,7 @@
+/** @module Colors */
 /* List of named CSS colors  */
 // prettier-ignore
+/** @type {Object<string, string>} */
 export const Colors = {
 	aliceblue           : "#f0f8ff",
 	antiquewhite        : "#faebd7",

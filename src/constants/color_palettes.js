@@ -1,3 +1,5 @@
+/** @module Color Palettes */
+
 // prettier-ignore
 let colorPalettes = {
 	// This product includes color specifications and designs developed by Cynthia Brewer (http://colorbrewer.org/).
@@ -51,6 +53,6 @@ let colorPalettes = {
 
 for (var p in colorPalettes) colorPalettes[p] = colorPalettes[p].split(" ");
 
-/** @type {Object<string, Array<string>>} ColorPalette */
+/** @type {Object<string, Array<string>>} */
 const ColorPalettes = colorPalettes;
 export { ColorPalettes };

@@ -1,5 +1,6 @@
 /**
  * Functions for drawing various shapes
+ * @module Geometric shapes
  */
 import { C } from "../main.js";
 import { circleIntersection, lineIntersection } from "../math/points.js";

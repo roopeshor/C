@@ -1,3 +1,4 @@
+/** @module Tex */
 import { CENTER, RIGHT } from "../constants/drawing.js";
 import { C } from "../main.js";
 

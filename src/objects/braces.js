@@ -1,3 +1,4 @@
+/** @module Braces */
 import { C } from "../main.js";
 
 /**

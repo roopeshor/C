@@ -1,3 +1,4 @@
+/** @module Image Processing */
 import { readColor } from "../color/color_reader.js";
 import { C } from "../main.js";
 

@@ -1,8 +1,18 @@
+/**@module Plottter Functions */
 import { readColor } from "../color/color_reader.js";
 import { C } from "../main.js";
 import { loop, noLoop } from "../settings.js";
 import { applyDefault, approximateIndexInArray, doFillAndStroke } from "../utils.js";
 import { getBezierControlPoints, line, smoothCurveThroughPoints } from "./geometry.js";
+
+/**
+ * @typedef {Object} Point
+ * @property {number} r
+ * @property {number} phi
+ * @property {number} [radius?]
+ * @property {string} [fill?]
+ * @property {string} [stroke?]
+ */
 
 const animationEventChain = {
 	then: function (f) {
@@ -353,7 +363,7 @@ export function plotPolarPoints(configs) {
  * Plots a parametric function in polar plane
  * @param {Object} configs
  * @param {Function} configs.plotter function that takes one arguments t and returns a coordinate as [radius, angle]
- * @returns
+ * @returns {Object}
  */
 export function polarParametricFunction(configs) {
 	configs = applyDefault(
@@ -442,7 +452,7 @@ export function polarParametricFunction(configs) {
 /**
  * Wrapper for polarParametricFunction
  * @param {Object} configs
- * @returns
+ * @returns {Object}
  */
 export function polarFuntionGraph(configs) {
 	let plotter = configs.plotter;

@@ -1,3 +1,4 @@
+/** @module Point Utils*/
 /**
  * return distance between two points
  *

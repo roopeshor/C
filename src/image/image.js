@@ -1,7 +1,7 @@
 import { C } from "../main.js";
 /**
  * This module contains function for image manipulation.
- * @module image
+ * @module Image
  */
 
 /**

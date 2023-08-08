@@ -1,3 +1,4 @@
+/** @module Coordinate systems*/
 import { C } from "../main.js";
 import { restore, save } from "../settings.js";
 import { applyDefault, arange, fraction } from "../utils.js";

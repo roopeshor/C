@@ -3,12 +3,13 @@ import { sigmoid } from "./functions.js";
 /**
  * Rate functions. From https://easings.net .
  * All Functions accept input from 0 to 1 and return output between 0 to 1
+ * @ignore
  */
-const c1 = 1.70158;
-const c2 = c1 * 1.525;
-const c3 = c1 + 1;
-const c4 = (2 * Math.PI) / 3;
-const c5 = (2 * Math.PI) / 4.5;
+const c1 = 1.70158,
+	c2 = c1 * 1.525,
+	c3 = c1 + 1,
+	c4 = (2 * Math.PI) / 3,
+	c5 = (2 * Math.PI) / 4.5;
 
 export function easeOutBounce(t) {
 	const n1 = 7.5625;

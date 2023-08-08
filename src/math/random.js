@@ -1,3 +1,4 @@
+/** @module Random functions*/
 /**
  * Returns a random integer between given range.
  *
