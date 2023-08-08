@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Module: text</title>
+    <title>JSDoc: Module: Color lear</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Module: text</h1>
+    <h1 class="page-title">Module: Color lear</h1>
 
     
 
@@ -29,8 +29,6 @@
 <header>
     
         
-            
-        
     
 </header>
 
@@ -38,84 +36,6 @@
     <div class="container-overview">
     
         
-            <div class="description">This module contains functions for drawing different types of text.</div>
-        
-
-        
-            
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="objects_text.js.html">objects/text.js</a>, <a href="objects_text.js.html#line4">line 4</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         
     
@@ -144,16 +64,12 @@
     
 
     
-    <h4 class="name" id="~fillText"><span class="type-signature">(inner) </span>fillText<span class="signature">(text, x, y<span class="signature-attributes">opt</span>, maxwidth<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id=".getInterpolatedColorList"><span class="type-signature">(static) </span>getInterpolatedColorList<span class="signature">(colorPalatte, min<span class="signature-attributes">opt</span>, max<span class="signature-attributes">opt</span>, alpha<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Object}</span></h4>
     
 
     
 
 
-
-<div class="description">
-    Draws a text without border
-</div>
 
 
 
@@ -192,13 +108,13 @@
 
         <tr>
             
-                <td class="name"><code>text</code></td>
+                <td class="name"><code>colorPalatte</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">Array.&lt;string></span>
 
 
             
@@ -220,14 +136,14 @@
                 </td>
             
 
-            <td class="description last">text to draw</td>
+            <td class="description last">Array of color palettes</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>x</code></td>
+                <td class="name"><code>min</code></td>
             
 
             <td class="type">
@@ -241,6 +157,8 @@
 
             
                 <td class="attributes">
+                
+                    &lt;optional><br>
                 
 
                 
@@ -257,14 +175,14 @@
                 </td>
             
 
-            <td class="description last">x-coord</td>
+            <td class="description last">minimum of range</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>y</code></td>
+                <td class="name"><code>max</code></td>
             
 
             <td class="type">
@@ -291,19 +209,19 @@
             
                 <td class="default">
                 
-                    x
+                    5
                 
                 </td>
             
 
-            <td class="description last">y-coord</td>
+            <td class="description last">maximum of range</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>maxwidth</code></td>
+                <td class="name"><code>alpha</code></td>
             
 
             <td class="type">
@@ -330,10 +248,12 @@
             
                 <td class="default">
                 
+                    1
+                
                 </td>
             
 
-            <td class="description last">maximum width</td>
+            <td class="description last">value of alpha channel. This value must be between 0 & 1</td>
         </tr>
 
     
@@ -374,7 +294,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="objects_text.js.html">objects/text.js</a>, <a href="objects_text.js.html#line37">line 37</a>
+        <a href="color_interpolation.js.html">color/interpolation.js</a>, <a href="color_interpolation.js.html#line82">line 82</a>
     </li></ul></dd>
     
 
@@ -399,6 +319,28 @@
 
 
 
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    color object
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Object</span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -410,7 +352,7 @@
     
 
     
-    <h4 class="name" id="~strokeText"><span class="type-signature">(inner) </span>strokeText<span class="signature">(text, x, y<span class="signature-attributes">opt</span>, maxwidth<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id=".lerpColor"><span class="type-signature">(static) </span>lerpColor<span class="signature">(color1, color2, v)</span><span class="type-signature"></span></h4>
     
 
     
@@ -418,7 +360,7 @@
 
 
 <div class="description">
-    Draws a stroked text
+    gives an interpolated color.
 </div>
 
 
@@ -442,11 +384,7 @@
         <th>Type</th>
 
         
-        <th>Attributes</th>
-        
 
-        
-        <th>Default</th>
         
 
         <th class="last">Description</th>
@@ -458,7 +396,7 @@
 
         <tr>
             
-                <td class="name"><code>text</code></td>
+                <td class="name"><code>color1</code></td>
             
 
             <td class="type">
@@ -471,29 +409,40 @@
             </td>
 
             
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
 
             
-                <td class="default">
-                
-                </td>
-            
 
-            <td class="description last">text to draw</td>
+            <td class="description last">color</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>x</code></td>
+                <td class="name"><code>color2</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">color</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>v</code></td>
             
 
             <td class="type">
@@ -506,100 +455,10 @@
             </td>
 
             
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
 
             
-                <td class="default">
-                
-                    0
-                
-                </td>
-            
 
-            <td class="description last">x-coord</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>y</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    x
-                
-                </td>
-            
-
-            <td class="description last">y-coord</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>maxwidth</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last">maximum width</td>
+            <td class="description last">should be between 0 and 1. This function may not work for values outside 0 & 1.</td>
         </tr>
 
     
@@ -640,7 +499,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="objects_text.js.html">objects/text.js</a>, <a href="objects_text.js.html#line55">line 55</a>
+        <a href="color_interpolation.js.html">color/interpolation.js</a>, <a href="color_interpolation.js.html#line11">line 11</a>
     </li></ul></dd>
     
 
@@ -676,7 +535,7 @@
     
 
     
-    <h4 class="name" id="~text"><span class="type-signature">(inner) </span>text<span class="signature">(text, x<span class="signature-attributes">opt</span>, y<span class="signature-attributes">opt</span>, maxwidth<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id=".lerpColorArray"><span class="type-signature">(static) </span>lerpColorArray<span class="signature">(colorArr, v, min<span class="signature-attributes">opt</span>, max<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {string}</span></h4>
     
 
     
@@ -684,7 +543,8 @@
 
 
 <div class="description">
-    Draws a filled & stroked text
+    Lerps across a color Array
+From <https://github.com/yuki-koyama/tinycolormap/blob/fe597277c782c583eb40362de98a08df62efc628/include/tinycolormap.hpp#L159>
 </div>
 
 
@@ -724,13 +584,13 @@
 
         <tr>
             
-                <td class="name"><code>text</code></td>
+                <td class="name"><code>colorArr</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">Array.&lt;string></span>
 
 
             
@@ -752,14 +612,49 @@
                 </td>
             
 
-            <td class="description last">text to draw</td>
+            <td class="description last">array that contains color as string</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>x</code></td>
+                <td class="name"><code>v</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">value to interpolate</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>min</code></td>
             
 
             <td class="type">
@@ -791,14 +686,14 @@
                 </td>
             
 
-            <td class="description last">x-coord</td>
+            <td class="description last">minimum value of the range</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>y</code></td>
+                <td class="name"><code>max</code></td>
             
 
             <td class="type">
@@ -825,49 +720,12 @@
             
                 <td class="default">
                 
-                    0
+                    1
                 
                 </td>
             
 
-            <td class="description last">y-coord</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>maxwidth</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last">maximum width</td>
+            <td class="description last">maximum value of the range</td>
         </tr>
 
     
@@ -908,7 +766,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="objects_text.js.html">objects/text.js</a>, <a href="objects_text.js.html#line17">line 17</a>
+        <a href="color_interpolation.js.html">color/interpolation.js</a>, <a href="color_interpolation.js.html#line62">line 62</a>
     </li></ul></dd>
     
 
@@ -933,6 +791,206 @@
 
 
 
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    lerped color
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">string</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id=".lerpColorObject"><span class="type-signature">(static) </span>lerpColorObject<span class="signature">(colorObj, v)</span><span class="type-signature"> &rarr; {string}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Lerps across a color Object
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>colorObj</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>v</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="color_interpolation.js.html">color/interpolation.js</a>, <a href="color_interpolation.js.html#line29">line 29</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">string</span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -960,7 +1018,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Tue Aug 08 2023 22:55:32 GMT+0530 (India Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Tue Aug 08 2023 22:55:31 GMT+0530 (India Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>

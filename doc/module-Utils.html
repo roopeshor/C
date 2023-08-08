@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Module: text</title>
+    <title>JSDoc: Module: Utils</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Module: text</h1>
+    <h1 class="page-title">Module: Utils</h1>
 
     
 
@@ -29,8 +29,6 @@
 <header>
     
         
-            
-        
     
 </header>
 
@@ -38,84 +36,6 @@
     <div class="container-overview">
     
         
-            <div class="description">This module contains functions for drawing different types of text.</div>
-        
-
-        
-            
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="objects_text.js.html">objects/text.js</a>, <a href="objects_text.js.html#line4">line 4</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         
     
@@ -144,7 +64,7 @@
     
 
     
-    <h4 class="name" id="~fillText"><span class="type-signature">(inner) </span>fillText<span class="signature">(text, x, y<span class="signature-attributes">opt</span>, maxwidth<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id=".arange"><span class="type-signature">(static) </span>arange<span class="signature">(start, end, step, rev<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Array}</span></h4>
     
 
     
@@ -152,7 +72,7 @@
 
 
 <div class="description">
-    Draws a text without border
+    Returns a array of numbers from `start` to `end` with each element having difference of `step`
 </div>
 
 
@@ -192,42 +112,7 @@
 
         <tr>
             
-                <td class="name"><code>text</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last">text to draw</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>x</code></td>
+                <td class="name"><code>start</code></td>
             
 
             <td class="type">
@@ -252,25 +137,93 @@
             
                 <td class="default">
                 
-                    0
-                
                 </td>
             
 
-            <td class="description last">x-coord</td>
+            <td class="description last"></td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>y</code></td>
+                <td class="name"><code>end</code></td>
             
 
             <td class="type">
             
                 
 <span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>step</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>rev</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
 
 
             
@@ -291,49 +244,12 @@
             
                 <td class="default">
                 
-                    x
+                    false
                 
                 </td>
             
 
-            <td class="description last">y-coord</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>maxwidth</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last">maximum width</td>
+            <td class="description last">return in reverse order</td>
         </tr>
 
     
@@ -374,7 +290,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="objects_text.js.html">objects/text.js</a>, <a href="objects_text.js.html#line37">line 37</a>
+        <a href="utils.js.html">utils.js</a>, <a href="utils.js.html#line44">line 44</a>
     </li></ul></dd>
     
 
@@ -399,272 +315,24 @@
 
 
 
-
-
-
-
+<h5>Returns:</h5>
 
         
-            
-
-    
-
-    
-    <h4 class="name" id="~strokeText"><span class="type-signature">(inner) </span>strokeText<span class="signature">(text, x, y<span class="signature-attributes">opt</span>, maxwidth<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
-    
-
-    
 
 
-
-<div class="description">
-    Draws a stroked text
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
         
-        <th>Name</th>
-        
+<span class="param-type">Array</span>
 
-        <th>Type</th>
 
-        
-        <th>Attributes</th>
-        
-
-        
-        <th>Default</th>
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>text</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last">text to draw</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>x</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    0
-                
-                </td>
-            
-
-            <td class="description last">x-coord</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>y</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    x
-                
-                </td>
-            
-
-            <td class="description last">y-coord</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>maxwidth</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last">maximum width</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="objects_text.js.html">objects/text.js</a>, <a href="objects_text.js.html#line55">line 55</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
+    </dd>
 </dl>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    
 
 
 
@@ -676,7 +344,7 @@
     
 
     
-    <h4 class="name" id="~text"><span class="type-signature">(inner) </span>text<span class="signature">(text, x<span class="signature-attributes">opt</span>, y<span class="signature-attributes">opt</span>, maxwidth<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id=".defineProperties"><span class="type-signature">(static) </span>defineProperties<span class="signature">(source, target<span class="signature-attributes">opt</span>, assignToC<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -684,7 +352,7 @@
 
 
 <div class="description">
-    Draws a filled & stroked text
+    defines new properties to a given Object
 </div>
 
 
@@ -724,13 +392,13 @@
 
         <tr>
             
-                <td class="name"><code>text</code></td>
+                <td class="name"><code>source</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">*</span>
 
 
             
@@ -752,20 +420,20 @@
                 </td>
             
 
-            <td class="description last">text to draw</td>
+            <td class="description last">source object</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>x</code></td>
+                <td class="name"><code>target</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type">*</span>
 
 
             
@@ -786,25 +454,25 @@
             
                 <td class="default">
                 
-                    0
+                    window
                 
                 </td>
             
 
-            <td class="description last">x-coord</td>
+            <td class="description last">target object</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>y</code></td>
+                <td class="name"><code>assignToC</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type">boolean</span>
 
 
             
@@ -825,49 +493,12 @@
             
                 <td class="default">
                 
-                    0
+                    true
                 
                 </td>
             
 
-            <td class="description last">y-coord</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>maxwidth</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last">maximum width</td>
+            <td class="description last">whether apply properties to C.</td>
         </tr>
 
     
@@ -908,7 +539,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="objects_text.js.html">objects/text.js</a>, <a href="objects_text.js.html#line17">line 17</a>
+        <a href="utils.js.html">utils.js</a>, <a href="utils.js.html#line30">line 30</a>
     </li></ul></dd>
     
 
