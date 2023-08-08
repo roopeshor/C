@@ -1004,15 +1004,15 @@ Object.keys(_settings).forEach(function (key) {
   });
 });
 var _main = require("./main.js");
-var _math = require("./constants/math.js");
-Object.keys(_math).forEach(function (key) {
+var _color_palettes = require("./constants/color_palettes.js");
+Object.keys(_color_palettes).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
   if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _math[key]) return;
+  if (key in exports && exports[key] === _color_palettes[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
     get: function () {
-      return _math[key];
+      return _color_palettes[key];
     }
   });
 });
@@ -1028,39 +1028,27 @@ Object.keys(_drawing).forEach(function (key) {
     }
   });
 });
-var _color_palettes = require("./constants/color_palettes.js");
-Object.keys(_color_palettes).forEach(function (key) {
+var _math = require("./constants/math.js");
+Object.keys(_math).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
   if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _color_palettes[key]) return;
+  if (key in exports && exports[key] === _math[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
     get: function () {
-      return _color_palettes[key];
+      return _math[key];
     }
   });
 });
-var _gradients = require("./color/gradients.js");
-Object.keys(_gradients).forEach(function (key) {
+var _color_converters = require("./color/color_converters.js");
+Object.keys(_color_converters).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
   if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _gradients[key]) return;
+  if (key in exports && exports[key] === _color_converters[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
     get: function () {
-      return _gradients[key];
-    }
-  });
-});
-var _random = require("./color/random.js");
-Object.keys(_random).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _random[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _random[key];
+      return _color_converters[key];
     }
   });
 });
@@ -1076,6 +1064,18 @@ Object.keys(_color_reader).forEach(function (key) {
     }
   });
 });
+var _gradients = require("./color/gradients.js");
+Object.keys(_gradients).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _gradients[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _gradients[key];
+    }
+  });
+});
 var _interpolation = require("./color/interpolation.js");
 Object.keys(_interpolation).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
@@ -1088,15 +1088,15 @@ Object.keys(_interpolation).forEach(function (key) {
     }
   });
 });
-var _color_converters = require("./color/color_converters.js");
-Object.keys(_color_converters).forEach(function (key) {
+var _random = require("./color/random.js");
+Object.keys(_random).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
   if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _color_converters[key]) return;
+  if (key in exports && exports[key] === _random[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
     get: function () {
-      return _color_converters[key];
+      return _random[key];
     }
   });
 });
@@ -1124,6 +1124,78 @@ Object.keys(_processing).forEach(function (key) {
     }
   });
 });
+var _arrows = require("./objects/arrows.js");
+Object.keys(_arrows).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _arrows[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _arrows[key];
+    }
+  });
+});
+var _braces = require("./objects/braces.js");
+Object.keys(_braces).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _braces[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _braces[key];
+    }
+  });
+});
+var _coordinate_systems = require("./objects/coordinate_systems.js");
+Object.keys(_coordinate_systems).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _coordinate_systems[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _coordinate_systems[key];
+    }
+  });
+});
+var _functions = require("./objects/functions.js");
+Object.keys(_functions).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _functions[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _functions[key];
+    }
+  });
+});
+var _geometry = require("./objects/geometry.js");
+Object.keys(_geometry).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _geometry[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _geometry[key];
+    }
+  });
+});
+var _more_shapes = require("./objects/more_shapes.js");
+Object.keys(_more_shapes).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _more_shapes[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _more_shapes[key];
+    }
+  });
+});
 var _tex = require("./objects/tex.js");
 Object.keys(_tex).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
@@ -1148,75 +1220,15 @@ Object.keys(_text).forEach(function (key) {
     }
   });
 });
-var _braces = require("./objects/braces.js");
-Object.keys(_braces).forEach(function (key) {
+var _aritmetics = require("./math/aritmetics.js");
+Object.keys(_aritmetics).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
   if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _braces[key]) return;
+  if (key in exports && exports[key] === _aritmetics[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
     get: function () {
-      return _braces[key];
-    }
-  });
-});
-var _arrows = require("./objects/arrows.js");
-Object.keys(_arrows).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _arrows[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _arrows[key];
-    }
-  });
-});
-var _geometry = require("./objects/geometry.js");
-Object.keys(_geometry).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _geometry[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _geometry[key];
-    }
-  });
-});
-var _functions = require("./objects/functions.js");
-Object.keys(_functions).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _functions[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _functions[key];
-    }
-  });
-});
-var _coordinate_systems = require("./objects/coordinate_systems.js");
-Object.keys(_coordinate_systems).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _coordinate_systems[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _coordinate_systems[key];
-    }
-  });
-});
-var _more_shapes = require("./objects/more_shapes.js");
-Object.keys(_more_shapes).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _more_shapes[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _more_shapes[key];
+      return _aritmetics[key];
     }
   });
 });
@@ -1256,18 +1268,6 @@ Object.keys(_random2).forEach(function (key) {
     }
   });
 });
-var _aritmetics = require("./math/aritmetics.js");
-Object.keys(_aritmetics).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _aritmetics[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _aritmetics[key];
-    }
-  });
-});
 var _rate_functions = require("./math/rate_functions.js");
 Object.keys(_rate_functions).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
@@ -1277,18 +1277,6 @@ Object.keys(_rate_functions).forEach(function (key) {
     enumerable: true,
     get: function () {
       return _rate_functions[key];
-    }
-  });
-});
-var _webgl = require("./WebGL/webgl.js");
-Object.keys(_webgl).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _webgl[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _webgl[key];
     }
   });
 });
@@ -1304,6 +1292,18 @@ Object.keys(_settings2).forEach(function (key) {
     }
   });
 });
+var _webgl = require("./WebGL/webgl.js");
+Object.keys(_webgl).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _webgl[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _webgl[key];
+    }
+  });
+});
 
 },{"./WebGL/settings.js":2,"./WebGL/webgl.js":3,"./color/color_converters.js":5,"./color/color_reader.js":6,"./color/gradients.js":7,"./color/interpolation.js":8,"./color/random.js":9,"./constants/color_palettes.js":10,"./constants/drawing.js":12,"./constants/math.js":13,"./image/image.js":15,"./image/processing.js":16,"./main.js":17,"./math/aritmetics.js":18,"./math/functions.js":19,"./math/points.js":20,"./math/random.js":21,"./math/rate_functions.js":22,"./objects/arrows.js":23,"./objects/braces.js":24,"./objects/coordinate_systems.js":25,"./objects/functions.js":26,"./objects/geometry.js":27,"./objects/more_shapes.js":28,"./objects/tex.js":29,"./objects/text.js":30,"./settings.js":31,"./utils.js":32}],5:[function(require,module,exports){
 "use strict";
@@ -1316,6 +1316,7 @@ exports.HSVToRGB = HSVToRGB;
 exports.RGBToHSL = RGBToHSL;
 exports.RGBToHSV = RGBToHSV;
 exports.hue2RGB = hue2RGB;
+/** @module Color Converters */
 function hue2RGB(p, q, t) {
   if (t < 0) t += 1;
   if (t > 1) t -= 1;
@@ -1331,7 +1332,6 @@ function hue2RGB(p, q, t) {
  * Assumes values of red, green, and blue are between 0 & 1 and
  * returns hue, saturation and lightness in range 0 to 1
 
- * @global
  * @param {number} r The red color value
  * @param {number} g The green color value
  * @param {number} b The blue color value
@@ -1386,7 +1386,6 @@ function HSLToRGB(hue, saturation, lightness) {
  * Assumes values of red, green, and blue are between 0 & 1 and
  * returns hue, saturation and value in range 0 to 1
  *
- * @global
  * @param {number} r The red color value
  * @param {number} g The green color value
  * @param {number} b The blue color value
@@ -1443,6 +1442,8 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.readColor = readColor;
 var _colors = require("../constants/colors.js");
+/** @module Color Reader */
+
 // adapeted from p5.js
 // Full color string patterns. The capture groups are necessary.
 let
@@ -1569,6 +1570,8 @@ Object.defineProperty(exports, "__esModule", {
 exports.linearGradient = linearGradient;
 var _main = require("../main.js");
 var _utils = require("../utils.js");
+/** @module Color gradient */
+
 /**
  * creates a linear gradient
  *
@@ -1630,6 +1633,8 @@ exports.lerpColor = lerpColor;
 exports.lerpColorArray = lerpColorArray;
 exports.lerpColorObject = lerpColorObject;
 var _color_reader = require("./color_reader.js");
+/** @module Color lear */
+
 /**
  * gives an interpolated color.
  *
@@ -1723,6 +1728,8 @@ exports.randomColor = randomColor;
 exports.randomDefinedColor = randomDefinedColor;
 var _colors = require("../constants/colors.js");
 var _random = require("../math/random.js");
+/** @module Random Colors */
+
 let definedColorList = Object.keys(_colors.Colors);
 const TR_INDEX = definedColorList.indexOf("TRANSPARENT");
 definedColorList = definedColorList.slice(0, TR_INDEX).concat(definedColorList.slice(TR_INDEX + 1));
@@ -1756,6 +1763,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.ColorPalettes = void 0;
+/** @module Color Palettes */
+
 // prettier-ignore
 let colorPalettes = {
   // This product includes color specifications and designs developed by Cynthia Brewer (http://colorbrewer.org/).
@@ -1806,7 +1815,7 @@ let colorPalettes = {
 };
 for (var p in colorPalettes) colorPalettes[p] = colorPalettes[p].split(" ");
 
-/** @type {Object<string, Array<string>>} ColorPalette */
+/** @type {Object<string, Array<string>>} */
 const ColorPalettes = colorPalettes;
 exports.ColorPalettes = ColorPalettes;
 
@@ -1817,8 +1826,10 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.Colors = void 0;
+/** @module Colors */
 /* List of named CSS colors  */
 // prettier-ignore
+/** @type {Object<string, string>} */
 const Colors = {
   aliceblue: "#f0f8ff",
   antiquewhite: "#faebd7",
@@ -2141,7 +2152,7 @@ exports.pixel = pixel;
 var _main = require("../main.js");
 /**
  * This module contains function for image manipulation.
- * @module image
+ * @module Image
  */
 
 /**
@@ -2228,6 +2239,8 @@ exports.imageToData = imageToData;
 exports.replaceColorInImage = replaceColorInImage;
 var _color_reader = require("../color/color_reader.js");
 var _main = require("../main.js");
+/** @module Image Processing */
+
 /**
  * returns color at a given point from ImageData
  *
@@ -2664,6 +2677,7 @@ exports.gcd = gcd;
 exports.gcdArray = gcdArray;
 exports.lcm = lcm;
 exports.lcmArray = lcmArray;
+/** @module Arithmetic functions*/
 /**
  * Computes GCD (Greatest Common Divisor) or HCF (Highest Common Factor) of two numbers
  *
@@ -2790,6 +2804,7 @@ exports.extendFromPoint = extendFromPoint;
 exports.lineIntersection = lineIntersection;
 exports.rotateAroundOrigin = rotateAroundOrigin;
 exports.rotateAroundPoint = rotateAroundPoint;
+/** @module Point Utils*/
 /**
  * return distance between two points
  *
@@ -2899,6 +2914,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.randomInt = randomInt;
+/** @module Random functions*/
 /**
  * Returns a random integer between given range.
  *
@@ -2963,12 +2979,13 @@ var _functions = require("./functions.js");
 /**
  * Rate functions. From https://easings.net .
  * All Functions accept input from 0 to 1 and return output between 0 to 1
+ * @ignore
  */
-const c1 = 1.70158;
-const c2 = c1 * 1.525;
-const c3 = c1 + 1;
-const c4 = 2 * Math.PI / 3;
-const c5 = 2 * Math.PI / 4.5;
+const c1 = 1.70158,
+  c2 = c1 * 1.525,
+  c3 = c1 + 1,
+  c4 = 2 * Math.PI / 3,
+  c5 = 2 * Math.PI / 4.5;
 function easeOutBounce(t) {
   const n1 = 7.5625;
   const d1 = 2.75;
@@ -3132,6 +3149,8 @@ var _points = require("../math/points.js");
 var _settings = require("../settings.js");
 var _utils = require("../utils.js");
 var _text = require("./text.js");
+/** @module Arrows */
+
 const DEFAULT_TIP_WIDTH = 15;
 const TRANSPARENT = "rgba(0,0,0,0)";
 /**
@@ -3443,6 +3462,8 @@ Object.defineProperty(exports, "__esModule", {
 exports.arcBrace = arcBrace;
 exports.curlyBrace = curlyBrace;
 var _main = require("../main.js");
+/** @module Braces */
+
 /**
  * Draws a curly brace
  * Code adapted from http://bl.ocks.org/alexhornbake/6005176
@@ -3538,6 +3559,8 @@ var _functions = require("./functions.js");
 var _geometry = require("./geometry.js");
 var _tex = require("./tex.js");
 var _text = require("./text.js");
+/** @module Coordinate systems*/
+
 // list of plotters
 function getCartasianPlotters(configs) {
   return Object.assign(configs, {
@@ -4290,6 +4313,17 @@ var _main = require("../main.js");
 var _settings = require("../settings.js");
 var _utils = require("../utils.js");
 var _geometry = require("./geometry.js");
+/**@module Plottter Functions */
+
+/**
+ * @typedef {Object} Point
+ * @property {number} r
+ * @property {number} phi
+ * @property {number} [radius?]
+ * @property {string} [fill?]
+ * @property {string} [stroke?]
+ */
+
 const animationEventChain = {
   then: function (f) {
     f();
@@ -4625,7 +4659,7 @@ function plotPolarPoints(configs) {
  * Plots a parametric function in polar plane
  * @param {Object} configs
  * @param {Function} configs.plotter function that takes one arguments t and returns a coordinate as [radius, angle]
- * @returns
+ * @returns {Object}
  */
 function polarParametricFunction(configs) {
   configs = (0, _utils.applyDefault)({
@@ -4714,7 +4748,7 @@ function polarParametricFunction(configs) {
 /**
  * Wrapper for polarParametricFunction
  * @param {Object} configs
- * @returns
+ * @returns {Object}
  */
 function polarFuntionGraph(configs) {
   let plotter = configs.plotter;
@@ -4757,6 +4791,7 @@ var _points = require("../math/points.js");
 var _utils = require("../utils.js");
 /**
  * Functions for drawing various shapes
+ * @module Geometric shapes
  */
 
 /**
@@ -5266,6 +5301,8 @@ exports.lens = lens;
 exports.polygonWithRatioOfCentralAngles = polygonWithRatioOfCentralAngles;
 var _main = require("../main.js");
 var _points = require("../math/points.js");
+/** @module Extra shapes*/
+
 /**
  * Draws a polygon with ratio of central angles
  *
@@ -5331,6 +5368,8 @@ exports.getImageFromTex = getImageFromTex;
 exports.tex = tex;
 var _drawing = require("../constants/drawing.js");
 var _main = require("../main.js");
+/** @module Tex */
+
 /**
  * Renders the input tex into a HTMLImageElement
  *
@@ -5529,6 +5568,8 @@ exports.translate = translate;
 var _color_reader = require("./color/color_reader.js");
 var _main = require("./main.js");
 var _utils = require("./utils.js");
+/** @module Settings */
+
 // for debugging
 let counter = {
     loop: 1
@@ -6214,9 +6255,12 @@ exports.latexToImg = latexToImg;
 exports.type = void 0;
 var _c = require("./c.js");
 var _main = require("./main.js");
+/** @module Utils */
+
 /**
  * Returns the type of object
  * @return {string}
+ * @ignore
  */
 const type = stuff => Object.prototype.toString.call(stuff).slice(8, -1);
 exports.type = type;
@@ -6264,6 +6308,7 @@ function arange(start, end, step, rev = false) {
  * @param {Object} [target] target object. Default = {}.
  * @param {boolean} [deepApply=true] whether to apply defaults to deep nested objects
  * @return {Object} applied object
+ * @ignore
  */
 function applyDefault(_default, target = {}, deepApply = true) {
   target = Object.clone(target);
@@ -6291,6 +6336,7 @@ function applyDefault(_default, target = {}, deepApply = true) {
  * fills and strokes inside the current shape if to do so.
  *
  * @param {CanvasRenderingContext2D} ctx
+ * @ignore
  */
 function doFillAndStroke(ctx) {
   if (ctx.doFill) ctx.fill();
@@ -6304,6 +6350,7 @@ function doFillAndStroke(ctx) {
  * @param {Array} array
  * @param {number} [epsilon=1e-6] maximum difference
  * @return {number}
+ * @ignore
  */
 function approximateIndexInArray(val, array, epsilon = 1e-6) {
   for (let i = 0; i < array.length; i++) {
@@ -6320,6 +6367,7 @@ function approximateIndexInArray(val, array, epsilon = 1e-6) {
  *
  * @param {string} latex
  * @return {Promise}
+ * @ignore
  */
 
 function latexToImg(latex) {
@@ -6370,7 +6418,7 @@ function latexToImg(latex) {
  * fraction(5, 10, true, false, "π") // -> \frac{1}{2}π
  * fraction(5, 10, false, false, "π") // -> \frac{5}{10}π
  * fraction(5, 10, false, true, "π") // -> \frac{5π}{10}
- *
+ * @ignore
  */
 function fraction(numerator, denominator, simplifyFraction = true, compact = true, multiple = "") {
   if (simplifyFraction) {
