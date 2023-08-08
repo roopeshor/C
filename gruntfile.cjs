@@ -38,7 +38,7 @@ module.exports = function (grunt) {
 		},
 		jsdoc: {
 			dist: {
-				src: ["src/*.js"],
+				src: ["src/**/*.js", "README.md"],
 				options: {
 					destination: "doc",
 				},
@@ -48,11 +48,14 @@ module.exports = function (grunt) {
 
 	grunt.loadNpmTasks("grunt-contrib-uglify");
 	grunt.loadNpmTasks("grunt-browserify");
+	grunt.loadNpmTasks("grunt-jsdoc");
 	grunt.registerTask("default", [
 		"browserify:main",
 		"uglify:main",
 		"browserify:core",
 		"uglify:core",
+		"jsdoc:dist",
 	]);
+	grunt.registerTask("docs", ["jsdoc:dist"]);
 	grunt.registerTask("core", ["browserify:core", "uglify:core"]);
 };
