@@ -36,6 +36,14 @@ module.exports = function (grunt) {
 				dest: "dist/c.core.min.js",
 			},
 		},
+		jsdoc: {
+			dist: {
+				src: ["src/*.js"],
+				options: {
+					destination: "doc",
+				},
+			},
+		},
 	});
 
 	grunt.loadNpmTasks("grunt-contrib-uglify");
