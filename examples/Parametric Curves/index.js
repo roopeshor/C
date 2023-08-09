@@ -7,7 +7,7 @@ import { axes } from "../../src/objects/coordinate_systems.js";
 import {
 	background,
 	noFill,
-	permaBackground,
+	cssBackground,
 	stroke,
 	strokeWidth,
 	translate,
@@ -27,7 +27,7 @@ function drawAxis(min = -4, max = 4, dx = 1) {
 	stroke(GREEN);
 	noFill();
 	background(25);
-	permaBackground();
+	cssBackground();
 	return axes({
 		xAxis: {
 			lineWidth: 1,

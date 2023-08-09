@@ -6,7 +6,7 @@ import {
 	background,
 	clear,
 	fontSize,
-	permaBackground,
+	cssBackground,
 	translate,
 } from "../../src/settings.js";
 import { createWebGL } from "../../src/WebGL/webgl.js";
@@ -104,7 +104,7 @@ window.onload = () =>
 					range: [-range[0], range[1], 0.5],
 				},
 			});
-			permaBackground();
+			cssBackground();
 			fontSize(18);
 			invertYAxis();
 			translate(-juliaSet.scale[0] / 2, -juliaSet.scale[1] / 2);

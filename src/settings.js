@@ -80,7 +80,7 @@ export function clear(x, y, width, height) {
  * sets the given image data as css background. If not given it will set current canvas drawing as the background
  * @param {string} [data] image data
  */
-export function permaBackground(data) {
+export function cssBackground(data) {
 	if (typeof data != "string") data = getCanvasData();
 	let canvasStyle = C.workingContext.canvas.style;
 	canvasStyle.background = "url('" + data + "')";
