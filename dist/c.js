@@ -1855,7 +1855,7 @@ let colorPalettes = {
 };
 for (var p in colorPalettes) colorPalettes[p] = colorPalettes[p].split(" ");
 
-/** @type {Object<string, Array<string>>} */
+/** @type {Object<string, string[]>} */
 const ColorPalettes = colorPalettes;
 exports.ColorPalettes = ColorPalettes;
 
@@ -4331,14 +4331,21 @@ var _geometry = require("./geometry.js");
 /**@module Plottter Functions */
 
 /**
- * @typedef {Object} Point
+ * @typedef {Object} CartesianPoint
+ * @property {number} x
+ * @property {number} y
+ * @property {number} [radius=5]
+ * @property {string} [fill="white"]
+ * @property {string} [stroke="transparent"]
+ */
+/**
+ * @typedef {Object} PolarPoint
  * @property {number} r
  * @property {number} phi
- * @property {number} [radius?]
- * @property {string} [fill?]
- * @property {string} [stroke?]
+ * @property {number} [radius=5]
+ * @property {string} [fill="white"]
+ * @property {string} [stroke="transparent"]
  */
-
 const animationEventChain = {
   then: function (f) {
     f();
@@ -4601,7 +4608,9 @@ function heatPlot(configs) {
 /**
  * Plots a list of points
  * @param {Object} configs arguments
- * @param {Array<Object<x:number, y:number, radius?: number, fill?: string, stroke?: string>>} configs.points list of points
+ * @param {CartesianPoint[]} configs.points list of points
+ * @param {number[]} [configs.unitValue=[1,2]] unit Value
+ * @param {number[]} [configs.unitSpace=[1,2]] unit Space
  *
  */
 function plotPoints(configs) {
@@ -4637,7 +4646,7 @@ function plotPoints(configs) {
 /**
  * Plots a bunch of points in polar plane
  * @param {Object} configs configurations
- * @param {Array<Object<r:number, phi:number, radius?: number, fill?: string, stroke?: string>>} configs.points list of points
+ * @param {PolarPoint[]} configs.points list of points
  */
 function plotPolarPoints(configs) {
   configs = (0, _utils.applyDefault)({
@@ -5542,6 +5551,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.background = background;
 exports.clear = clear;
+exports.cssBackground = cssBackground;
 exports.endShape = endShape;
 exports.fill = fill;
 exports.fontFamily = fontFamily;
@@ -5564,7 +5574,6 @@ exports.moveTo = moveTo;
 exports.noFill = noFill;
 exports.noLoop = noLoop;
 exports.noStroke = noStroke;
-exports.permaBackground = permaBackground;
 exports.putImageData = putImageData;
 exports.rest = rest;
 exports.restore = restore;
@@ -5637,8 +5646,8 @@ function background(...color) {
 }
 
 /**
- * Erases the pixels in a rectangular area by setting them to transparent black
- *
+ * Erases the pixels in a rectangular area by setting them to transparent black.
+ * TODO: explain the process
  * @param {number} [x = 0] x-axis coordinate of the rectangle's starting point.
  * @param {number} [y = 0] y-axis coordinate of the rectangle's starting point.
  * @param {number} [width = C.workingContext.width] Rectangle's width. Positive values are to the right, and negative values to the left.
@@ -5661,7 +5670,7 @@ function clear(x, y, width, height) {
  * sets the given image data as css background. If not given it will set current canvas drawing as the background
  * @param {string} [data] image data
  */
-function permaBackground(data) {
+function cssBackground(data) {
   if (typeof data != "string") data = getCanvasData();
   let canvasStyle = _main.C.workingContext.canvas.style;
   canvasStyle.background = "url('" + data + "')";
