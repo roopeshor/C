@@ -2,8 +2,8 @@
 	"plugins": ["plugins/markdown"],
 	"recurseDepth": 10,
 	"source": {
+		"incude": ["src/**/*.js", "README.md"],
 		"includePattern": ".+\\.js(doc|x)?$",
-		"incude": ["./src/functions/drawing-functions.js"],
 		"excludePattern": "(^|\\/|\\\\)_"
 	},
 	"sourceType": "module",
@@ -16,6 +16,7 @@
 		"monospaceLinks": false
 	},
 	"opts": {
+		"template": "node_modules/docdash",
 		"encoding": "utf8",
 		"destination": "./doc/",
 		"recurse": true
