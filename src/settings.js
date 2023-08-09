@@ -56,8 +56,8 @@ export function background(...color) {
 }
 
 /**
- * Erases the pixels in a rectangular area by setting them to transparent black
- *
+ * Erases the pixels in a rectangular area by setting them to transparent black.
+ * TODO: explain the process
  * @param {number} [x = 0] x-axis coordinate of the rectangle's starting point.
  * @param {number} [y = 0] y-axis coordinate of the rectangle's starting point.
  * @param {number} [width = C.workingContext.width] Rectangle's width. Positive values are to the right, and negative values to the left.
