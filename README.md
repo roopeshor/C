@@ -1,4 +1,4 @@
-# C
+# C.js
 
 > A [p5.js](https://p5js.org) inspired library that brings some of the powers of [Manim](https://www.manim.community) in to the web.
 
@@ -37,7 +37,7 @@ But you acn apply styles to this.
 
 ### configs (optionl)
 
-Configuration object which contains all about canvas and can be used to manipulate canvas.  
+Configuration object which contains all about canvas and can be used to manipulate canvas.
 Possible configurations [with default values]
 
 - `width[=200]`: Width of canvas in pixels.

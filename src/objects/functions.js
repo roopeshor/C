@@ -4,14 +4,22 @@ import { C } from "../main.js";
 import { loop, noLoop } from "../settings.js";
 import { applyDefault, approximateIndexInArray, doFillAndStroke } from "../utils.js";
 import { getBezierControlPoints, line, smoothCurveThroughPoints } from "./geometry.js";
+/**
+ * @typedef {Object} CartesianPoint
+ * @property {number} x
+ * @property {number} y
+ * @property {number} [radius=5]
+ * @property {string} [fill="white"]
+ * @property {string} [stroke="transparent"]
+ */
 
 /**
- * @typedef {Object} Point
+ * @typedef {Object} PolarPoint
  * @property {number} r
  * @property {number} phi
- * @property {number} [radius?]
- * @property {string} [fill?]
- * @property {string} [stroke?]
+ * @property {number} [radius=5]
+ * @property {string} [fill="white"]
+ * @property {string} [stroke="transparent"]
  */
 
 const animationEventChain = {
@@ -291,7 +299,9 @@ export function heatPlot(configs) {
 /**
  * Plots a list of points
  * @param {Object} configs arguments
- * @param {Array<Object<x:number, y:number, radius?: number, fill?: string, stroke?: string>>} configs.points list of points
+ * @param {CartesianPoint[]} configs.points list of points
+ * @param {number[]} [configs.unitValue=[1,2]] unit Value
+ * @param {number[]} [configs.unitSpace=[1,2]] unit Space
  *
  */
 export function plotPoints(configs) {
@@ -326,7 +336,7 @@ export function plotPoints(configs) {
 /**
  * Plots a bunch of points in polar plane
  * @param {Object} configs configurations
- * @param {Array<Object<r:number, phi:number, radius?: number, fill?: string, stroke?: string>>} configs.points list of points
+ * @param {PolarPoint[]} configs.points list of points
  */
 export function plotPolarPoints(configs) {
 	configs = applyDefault(
