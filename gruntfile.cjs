@@ -53,8 +53,8 @@ module.exports = function (grunt) {
 		"uglify:main",
 		"browserify:core",
 		"uglify:core",
-		"jsdoc:dist",
+		"jsdoc",
 	]);
-	grunt.registerTask("docs", ["jsdoc:dist"]);
+	grunt.registerTask("docs", ["jsdoc"]);
 	grunt.registerTask("core", ["browserify:core", "uglify:core"]);
 };

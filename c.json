@@ -1,10 +1,7 @@
 {
-	"plugins": ["plugins/markdown"],
 	"recurseDepth": 10,
 	"source": {
-		"incude": ["src/**/*.js", "README.md"],
-		"includePattern": ".+\\.js(doc|x)?$",
-		"excludePattern": "(^|\\/|\\\\)_"
+		"include": ["src", "README.md"]
 	},
 	"sourceType": "module",
 	"tags": {
@@ -18,7 +15,7 @@
 	"opts": {
 		"template": "node_modules/docdash",
 		"encoding": "utf8",
-		"destination": "./doc/",
+		"destination": "./docs",
 		"recurse": true
 	}
 }
