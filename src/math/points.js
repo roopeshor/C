@@ -1,4 +1,4 @@
-/** @module Point Utils*/
+/** @module Point-Utils*/
 /**
  * return distance between two points
  *
@@ -68,7 +68,7 @@ export function lineIntersection(p1, p2, p3, p4) {
  * @param {number} r1 radius of first circle
  * @param {number[]} c2 center of second circle as [x, y]
  * @param {number} r2 radius of second circle
- * @return {Array<number[]>} array of two points as [x, y]
+ * @return {number[][]} array of two points as [x, y]
  */
 export function circleIntersection(c1, r1, c2, r2) {
 	const d = dist(c1, c2);

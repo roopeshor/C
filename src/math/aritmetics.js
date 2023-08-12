@@ -1,4 +1,4 @@
-/** @module Arithmetic functions*/
+/** @module Arithmetic-Functions*/
 /**
  * Computes GCD (Greatest Common Divisor) or HCF (Highest Common Factor) of two numbers
  *

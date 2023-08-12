@@ -1,4 +1,4 @@
-/** @module Color Converters */
+/** @module Color-Converters */
 export function hue2RGB(p, q, t) {
 	if (t < 0) t += 1;
 	if (t > 1) t -= 1;

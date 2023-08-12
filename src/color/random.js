@@ -1,4 +1,4 @@
-/** @module Random Colors */
+/** @module Random-Colors */
 import { Colors } from "../constants/colors.js";
 import { randomInt } from "../math/random.js";
 

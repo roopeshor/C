@@ -1,4 +1,4 @@
-/**@module Plottter Functions */
+/**@module Plottter-Functions */
 import { readColor } from "../color/color_reader.js";
 import { C } from "../main.js";
 import { loop, noLoop } from "../settings.js";

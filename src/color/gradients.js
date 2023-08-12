@@ -1,4 +1,4 @@
-/** @module Color gradient */
+/** @module Color-Gradient */
 import { C } from "../main.js";
 import { type } from "../utils.js";
 

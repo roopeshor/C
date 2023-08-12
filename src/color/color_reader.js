@@ -1,4 +1,4 @@
-/** @module Color Reader */
+/** @module Color-Reader */
 
 import { Colors } from "../constants/colors.js";
 

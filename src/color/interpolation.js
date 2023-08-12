@@ -1,4 +1,4 @@
-/** @module Color lear */
+/** @module Color-Lerp */
 import { readColor } from "./color_reader.js";
 
 /**

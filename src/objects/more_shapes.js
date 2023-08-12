@@ -1,4 +1,4 @@
-/** @module Extra shapes*/
+/** @module Extra-Shapes*/
 import { C } from "../main.js";
 import { circleIntersection } from "../math/points.js";
 

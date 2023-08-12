@@ -1,6 +1,6 @@
 /**
  * Functions for drawing various shapes
- * @module Geometric shapes
+ * @module Geometric-Shapes
  */
 import { C } from "../main.js";
 import { circleIntersection, lineIntersection } from "../math/points.js";
@@ -164,7 +164,7 @@ export function getBezierControlPoints(
  * Adds a smooth curve passing through given points and tension using bézie curve to the current shape.
  * Taken from {@link https://stackoverflow.com/a/49371349}
  *
- * @param {Array<number[]>} points array of points as [x, y]
+ * @param {number[][]} points array of points as [x, y]
  * @param {number} tension tension of the curve
  */
 export function smoothCurveThroughPointsTo(
@@ -200,7 +200,7 @@ export function smoothCurveThroughPointsTo(
 /**
  * Draws smooth curve passing through given points and tension using bézie curve.
  *
- * @param {Array<number[]>} points array of points as [x, y]
+ * @param {number[][]} points array of points as [x, y]
  * @param {number} tension tension of the curve
  */
 export function smoothCurveThroughPoints(points, tension = 1, closed = true, offset = 0) {

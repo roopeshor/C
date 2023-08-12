@@ -1,4 +1,4 @@
-/** @module Image Processing */
+/** @module Image-Processing */
 import { readColor } from "../color/color_reader.js";
 import { C } from "../main.js";
 
@@ -19,7 +19,7 @@ export function getPixelColor(pixels, x, y) {
  * Convert image data to 2d array of colors.
  *
  * @param {ImageData} pixels
- * @returns {Array<number[]>} 2d array of colors
+ * @returns {number[][]} 2d array of colors
  */
 export function imageDataToColorArray(pixels) {
 	let w = pixels.width,

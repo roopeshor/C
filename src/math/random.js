@@ -1,4 +1,4 @@
-/** @module Random functions*/
+/** @module Random-Functions*/
 /**
  * Returns a random integer between given range.
  *

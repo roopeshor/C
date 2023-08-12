@@ -1,4 +1,4 @@
-/** @module Color Palettes */
+/** @module Color-Palettes */
 
 // prettier-ignore
 let colorPalettes = {

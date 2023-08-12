@@ -1,4 +1,4 @@
-/** @module Coordinate systems*/
+/** @module Coordinate-Systems*/
 import { C } from "../main.js";
 import { restore, save } from "../settings.js";
 import { applyDefault, arange, fraction } from "../utils.js";
@@ -532,42 +532,42 @@ export function numberPlane(configs = {}) {
 /**
  * Creates a polar plane. change following configs to customize the plane
  * @param {Object} configs - configurations
- * @param {number[]} [originPosition = ORIGIN] position of origin of plane
- * @param {number} [maxRadius = 4] maximum radius of the polar plane
- * @param {number} [size] diameter of the plane in pixels. Default it will try to fit in the canvas
- * @param {number} [radiusStep = 1] step size of radius
- * @param {string} [azimuthUnit = "degrees"]  azimuth unit:
+ * @param {number[]} [configs.originPosition = ORIGIN] position of origin of plane
+ * @param {number} [configs.maxRadius = 4] maximum radius of the polar plane
+ * @param {number} [configs.size] diameter of the plane in pixels. Default it will try to fit in the canvas
+ * @param {number} [configs.radiusStep = 1] step size of radius
+ * @param {string} [configs.azimuthUnit = "degrees"]  azimuth unit:
  *  * "PI radians" or "TAU radians": 20
  *  * "degrees": 36
  *  * "gradians": 40
- * @param {number} [azimuthDivisions = 0]  The number of divisions in the azimuth (also known as the angular coordinate or polar angle). If None is specified then it will use the default specified by azimuthUnit
- * @param {Array<*>} [radialLabels = []] Labels for the radial axis. If nothing is specified then the labels will be automatically generated using the radialStep.
- * @param {string} [azimuthDirection = "ccw"] direction of the azimuthal labels. This can be either 'ccw' or 'cw'
+ * @param {number} [configs.azimuthDivisions = 0]  The number of divisions in the azimuth (also known as the angular coordinate or polar angle). If None is specified then it will use the default specified by azimuthUnit
+ * @param {Array.<*>} [configs.radialLabels = []] Labels for the radial axis. If nothing is specified then the labels will be automatically generated using the radialStep.
+ * @param {string} [configs.azimuthDirection = "ccw"] direction of the azimuthal labels. This can be either 'ccw' or 'cw'
 
- * @param {Object} [radiusConfigs] radial axis configurations
- * @param {string} [radiusConfigs.strokeColor = "#fff"] stroke color of the radial axis
- * @param {string} [radiusConfigs.fontFamily = "serif"] font family of the radial axis labels
- * @param {string} [radiusConfigs.textAlign = "center"] text align of the radial axis labels
- * @param {string} [radiusConfigs.textBaseline = "middle"] text baseline of the radial axis labels
- * @param {number} [radiusConfigs.strokeWidth = 2] stroke width of the radial axis in pixels
- * @param {number} [radiusConfigs.fontSize = 22] font size of the radial axis in pixels
- * @param {number} [radiusConfigs.decimalPoints = 0] number of decimal points to show up in the radial axis labels
- * @param {function} [radiusConfigs.textRenderer = fillText] function that renders text. you can use strokeText to get stroked text, or something else to get custom text
- * @param {number[]} [radiusConfigs.textDirection = [-1.4, -1.2]] direction of the radial axis label. This'll align labels correctly in the position.
- * @param {number[]} [radiusConfigs.labelAxis = [1, 0]] axis to labels
- * @param {boolean} [radiusConfigs.includeLabels = true] whether to draw radial labels or not
+ * @param {Object} [configs.radiusConfigs] radial axis configurations
+ * @param {string} [configs.radiusConfigs.strokeColor = "#fff"] stroke color of the radial axis
+ * @param {string} [configs.radiusConfigs.fontFamily = "serif"] font family of the radial axis labels
+ * @param {string} [configs.radiusConfigs.textAlign = "center"] text align of the radial axis labels
+ * @param {string} [configs.radiusConfigs.textBaseline = "middle"] text baseline of the radial axis labels
+ * @param {number} [configs.radiusConfigs.strokeWidth = 2] stroke width of the radial axis in pixels
+ * @param {number} [configs.radiusConfigs.fontSize = 22] font size of the radial axis in pixels
+ * @param {number} [configs.radiusConfigs.decimalPoints = 0] number of decimal points to show up in the radial axis labels
+ * @param {function} [configs.radiusConfigs.textRenderer = fillText] function that renders text. you can use strokeText to get stroked text, or something else to get custom text
+ * @param {number[]} [configs.radiusConfigs.textDirection = [-1.4, -1.2]] direction of the radial axis label. This'll align labels correctly in the position.
+ * @param {number[]} [configs.radiusConfigs.labelAxis = [1, 0]] axis to labels
+ * @param {boolean} [configs.radiusConfigs.includeLabels = true] whether to draw radial labels or not
 
- * @param {Object} [azimuth] azimuth line configurations
- * @param {boolean} [azimuth.compactFraction = true] whether to show the azimuthal fraction as compact or not
- * @param {number} [azimuth.offset = 0] radial offset of the azimuthal labels
- * @param {number} [azimuth.labelBuff = 0.5] buffer between the outermost azimuthal circle and the azimuthal labels
- * @param {number} [azimuth.fontSize = 17] font size of the azimuthal labels
- * @param {number} [azimuth.strokeWidth = 1.5] stroke width of the azimuthal lines
- * @param {number} [azimuth.decimalPoints = 0] number of decimal points to show up in the azimuthal labels
- * @param {string} [azimuth.fontFamily = "serif"] font family of the azimuthal labels
- * @param {string} [azimuth.strokeColor = "#58c4dddd"] stroke color of the azimuthal labels
- * @param {function} [azimuth.textRenderer = fillText] function that renders text. you can use strokeText to get stroked text, or something else to get custom text
- * @param {boolean} [azimuth.includeLabels = true] whether to draw azimuthal labels or not
+ * @param {Object} [configs.azimuth] azimuth line configurations
+ * @param {boolean} [configs.azimuth.compactFraction = true] whether to show the azimuthal fraction as compact or not
+ * @param {number} [configs.azimuth.offset = 0] radial offset of the azimuthal labels
+ * @param {number} [configs.azimuth.labelBuff = 0.5] buffer between the outermost azimuthal circle and the azimuthal labels
+ * @param {number} [configs.azimuth.fontSize = 17] font size of the azimuthal labels
+ * @param {number} [configs.azimuth.strokeWidth = 1.5] stroke width of the azimuthal lines
+ * @param {number} [configs.azimuth.decimalPoints = 0] number of decimal points to show up in the azimuthal labels
+ * @param {string} [configs.azimuth.fontFamily = "serif"] font family of the azimuthal labels
+ * @param {string} [configs.azimuth.strokeColor = "#58c4dddd"] stroke color of the azimuthal labels
+ * @param {function} [configs.azimuth.textRenderer = fillText] function that renders text. you can use strokeText to get stroked text, or something else to get custom text
+ * @param {boolean} [configs.azimuth.includeLabels = true] whether to draw azimuthal labels or not
  *
  */
 export function polarPlane(configs = {}) {
