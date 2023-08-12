@@ -43,10 +43,10 @@ const UNIT_VEC = [1, 1];
  *
  * @param {Function} configs.plotter function to plot. Must recieve one argument and return a array of point as [x, y]
  * @param {number} [configs.tension = 1] Smoothness tension.
- * @param {Array<number>} [configs.range = RANGE] Range as [min, max, dt]
- * @param {Array<number>} [configs.discontinuities] Array of t where the curve discontinues.
- * @param {Array<number>} [configs.unitValue = UNIT_VEC] Value of each unit space
- * @param {Array<number>} [configs.unitSpace = UNIT_VEC] Length of each unit in pixels
+ * @param {number[]} [configs.range = RANGE] Range as [min, max, dt]
+ * @param {number[]} [configs.discontinuities] Array of t where the curve discontinues.
+ * @param {number[]} [configs.unitValue = UNIT_VEC] Value of each unit space
+ * @param {number[]} [configs.unitSpace = UNIT_VEC] Length of each unit in pixels
  * @param {boolean} [configs.smoothen = true] Whether to smoothen the shape.
  * @param {boolean} [configs.closed = false] Whether the function draws a closed shape.
  * @param {boolean} [configs.draw = true] Wheteher to draw the function graph right now.
@@ -215,11 +215,11 @@ export function functionGraph(configs) {
  * @param {Object} configs
  * Possible parameters are:
  *
- * @param {Array<number>} [configs.min] minimum point. Default: [-4, -4]
- * @param {Array<number>} [configs.max] maximum point. Default: [4, 4]
+ * @param {number[]} [configs.min] minimum point. Default: [-4, -4]
+ * @param {number[]} [configs.max] maximum point. Default: [4, 4]
  * @param {Object} configs.colors object of color map
- * @param {Array<number>} [configs.unitValue = UNIT_VEC] Value of each unit space
- * @param {Array<number>} [configs.unitSpace = UNIT_VEC] Length of each unit in pixels
+ * @param {number[]} [configs.unitValue = UNIT_VEC] Value of each unit space
+ * @param {number[]} [configs.unitSpace = UNIT_VEC] Length of each unit in pixels
  * @param {number} [configs.resolution = 1] resolution of plot
  * @param {Function} [configs.interpolator = linear] function to interpolate color.
  * @return {Object} metadatas

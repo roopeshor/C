@@ -138,12 +138,12 @@ export function sector(x, y, radius, angle = Math.PI / 2, startAngle = 0) {
 /**
  * Returns bēzier control points that passes smoothly through given points.
  *
- * @param {Array<number>} recentPoint previous point
- * @param {Array<number>} currentPoint
- * @param {Array<number>} nextPoint
- * @param {Array<number>} secondNextPoint
+ * @param {number[]} recentPoint previous point
+ * @param {number[]} currentPoint
+ * @param {number[]} nextPoint
+ * @param {number[]} secondNextPoint
  * @param {number} [tension=1]
- * @return {Array<number>} two control points as [cp1x, cp1y, cp2x, cp2y]
+ * @return {number[]} two control points as [cp1x, cp1y, cp2x, cp2y]
  */
 export function getBezierControlPoints(
 	recentPoint,
@@ -164,7 +164,7 @@ export function getBezierControlPoints(
  * Adds a smooth curve passing through given points and tension using bézie curve to the current shape.
  * Taken from {@link https://stackoverflow.com/a/49371349}
  *
- * @param {Array<Array<number>>} points array of points as [x, y]
+ * @param {Array<number[]>} points array of points as [x, y]
  * @param {number} tension tension of the curve
  */
 export function smoothCurveThroughPointsTo(
@@ -200,7 +200,7 @@ export function smoothCurveThroughPointsTo(
 /**
  * Draws smooth curve passing through given points and tension using bézie curve.
  *
- * @param {Array<Array<number>>} points array of points as [x, y]
+ * @param {Array<number[]>} points array of points as [x, y]
  * @param {number} tension tension of the curve
  */
 export function smoothCurveThroughPoints(points, tension = 1, closed = true, offset = 0) {
@@ -283,10 +283,10 @@ export function annulusSector(x, y, innerRadius, outerRadius, angle, startAngle)
 /**
  * Angle between two lines. And returns the coordinate of middle of angle
  *
- * @param {Array<number>} p1 start point of first line array of point as [x, y]
- * @param {Array<number>} p2 end point of first line array of point as [x, y]
- * @param {Array<number>} p3 start point of second line array of point as [x, y]
- * @param {Array<number>} p4 end point of second line array of point as [x, y]
+ * @param {number[]} p1 start point of first line array of point as [x, y]
+ * @param {number[]} p2 end point of first line array of point as [x, y]
+ * @param {number[]} p3 start point of second line array of point as [x, y]
+ * @param {number[]} p4 end point of second line array of point as [x, y]
  * @param {number} radius radius of angle
  * @param {number} extender extender of output point
  * @param {boolean} otherAngle whether to draw the other angle
@@ -367,7 +367,7 @@ export function angle(
  * @param {number} y2 y-coord of second point
  * @param {number} radius radius of arc
  * @param {boolean} otherArc specifies whether to use other arc of the circle.
- * @returns {Array<number>} returns the coordinate of center of the arc as [x, y]
+ * @returns {number[]} returns the coordinate of center of the arc as [x, y]
  */
 export function arcBetweenPoints(x1, y1, x2, y2, radius, otherArc = false) {
 	if (x1 == x2 && y1 == y2)
@@ -473,10 +473,10 @@ export function square(x, y, sideLength) {
 /**
  * Draws quadrilateral with four points as array of coordinate as [x, y]
  *
- * @param {Array<number>} p1 1st point
- * @param {Array<number>} p2 2nd point
- * @param {Array<number>} p3 3rd point
- * @param {Array<number>} p4 4th point
+ * @param {number[]} p1 1st point
+ * @param {number[]} p2 2nd point
+ * @param {number[]} p3 3rd point
+ * @param {number[]} p4 4th point
  */
 export function quad(p1, p2, p3, p4) {
 	let ctx = C.workingContext;
@@ -494,9 +494,9 @@ export function quad(p1, p2, p3, p4) {
 /**
  * Draws triangle with three points as array of coordinate as [x, y]
  *
- * @param {Array<number>} p1 first point
- * @param {Array<number>} p2 second point
- * @param {Array<number>} p3 third point
+ * @param {number[]} p1 first point
+ * @param {number[]} p2 second point
+ * @param {number[]} p3 third point
  */
 export function triangle(p1, p2, p3) {
 	let ctx = C.workingContext;

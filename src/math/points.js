@@ -2,8 +2,8 @@
 /**
  * return distance between two points
  *
- * @param {Array<number>} p1
- * @param {Array<number>} p2
+ * @param {number[]} p1
+ * @param {number[]} p2
  * @return number distance between p1 and p2
  */
 export function dist(p1, p2) {
@@ -13,11 +13,11 @@ export function dist(p1, p2) {
 /**
  * Returns a point rotated around a point by certain angle, exetened by a certain length
  *
- * @param {number|Array<number>} x center x or center as array of coords [x, y]
+ * @param {number|number[]} x center x or center as array of coords [x, y]
  * @param {number} y center y
  * @param {number} angle angle of rotation
  * @param {number} len length to extend the point
- * @returns {Array<number>} array of two points
+ * @returns {number[]} array of two points
  */
 export function rotateAroundPoint(x, y, angle, len = 10) {
 	if (Array.isArray(x) && x.length === 2) {
@@ -32,7 +32,7 @@ export function rotateAroundPoint(x, y, angle, len = 10) {
  *
  * @param {number} angle angle of rotation
  * @param {number} len length to extend the point
- * @returns {Array<number>} array of two points
+ * @returns {number[]} array of two points
  */
 export function rotateAroundOrigin(angle, len = 10) {
 	return rotateAroundPoint(0, 0, angle, len);
@@ -41,11 +41,11 @@ export function rotateAroundOrigin(angle, len = 10) {
 /**
  * Returns the point of intersection of two lines.
  *
- * @param {Array<number>} p1 start point of first line as [x, y]
- * @param {Array<number>} p2 end point of first line as [x, y]
- * @param {Array<number>} p3 start point of second line as [x, y]
- * @param {Array<number>} p4 end point of second line as [x, y]
- * @return {Array<number>|Iterable} intersection point of lines as [x, y]
+ * @param {number[]} p1 start point of first line as [x, y]
+ * @param {number[]} p2 end point of first line as [x, y]
+ * @param {number[]} p3 start point of second line as [x, y]
+ * @param {number[]} p4 end point of second line as [x, y]
+ * @return {number[]|Iterable} intersection point of lines as [x, y]
  */
 export function lineIntersection(p1, p2, p3, p4) {
 	const m1 = (p2[1] - p1[1]) / (p2[0] - p1[0]);
@@ -64,11 +64,11 @@ export function lineIntersection(p1, p2, p3, p4) {
  * Finds intersection of two circles.
  * Adapted from {@link https://stackoverflow.com/a/14146166}
  *
- * @param {Array<number>} c1 center of first circle as [x, y]
+ * @param {number[]} c1 center of first circle as [x, y]
  * @param {number} r1 radius of first circle
- * @param {Array<number>} c2 center of second circle as [x, y]
+ * @param {number[]} c2 center of second circle as [x, y]
  * @param {number} r2 radius of second circle
- * @return {Array<Array<number>>} array of two points as [x, y]
+ * @return {Array<number[]>} array of two points as [x, y]
  */
 export function circleIntersection(c1, r1, c2, r2) {
 	const d = dist(c1, c2);
@@ -84,10 +84,10 @@ export function circleIntersection(c1, r1, c2, r2) {
 
 /**
  * Extend a point by given length from a given center
- * @param {Array<number>} center center from the point to be extended
- * @param {Array<number>} point point to be extended
+ * @param {number[]} center center from the point to be extended
+ * @param {number[]} point point to be extended
  * @param {number} len length to extend the point
- * @returns {Array<number>}
+ * @returns {number[]}
  */
 export function extendFromPoint(center, point, len = 10) {
 	let dx = point[0] - center[0],
@@ -99,9 +99,9 @@ export function extendFromPoint(center, point, len = 10) {
 
 /**
  * Extend a point by given length from origin (0, 0)
- * @param {Array<number>} point point to be extended
+ * @param {number[]} point point to be extended
  * @param {number} len length to extend the point
- * @returns {Array<number>}
+ * @returns {number[]}
  */
 export function extendFromOrigin(point, len = 10) {
 	return extendFromPoint([0, 0], point, len);

@@ -16,7 +16,12 @@ import { line } from "./geometry.js";
 import { tex } from "./tex.js";
 import { fillText } from "./text.js";
 
-// list of plotters
+/**
+ * returns list of plotting functions based on given cartesian parameters
+ *
+ * @param {Object} configs
+ * @return {Object.<string, function>}
+ */
 function getCartasianPlotters(configs) {
 	return Object.assign(configs, {
 		getParametricFunction: function (cfg) {
@@ -44,6 +49,12 @@ function getCartasianPlotters(configs) {
 	});
 }
 
+/**
+ * returns list of plotting functions based on given polar parameters
+ *
+ * @param {Object} configs
+ * @return {Object.<string, function>}
+ */
 function getPolarPlotters(configs) {
 	return {
 		plotPoints: function (cfg) {
@@ -81,13 +92,13 @@ const ORIGIN = [0, 0];
  * @param {string} [configs.strokeColor = "white"] Color of axis and ticks
  * @param {string} [configs.textColor = "white"] Color of text
  *
- * @param {Array<number>} [configs.textDirection = TEXT_DIR] Direction of text relative to nearby tick
- * @param {Array<number>} [configs.numbersWithElongatedTicks] list of numbers where tick line should be longer
- * @param {Array<number>} [configs.originPosition = ORIGIN] position of the origin of number line in pixels.
- * @param {Array<number>} [configs.range] range of numbers to draw ticks and numbers. Default: [-5, 5, 1]
- * @param {Array<number>} [configs.labelsToInclude] list of labels to be displayed instead of default numbers
- * @param {Array<number>} [configs.numbersToExclude] list of numbers that shouldn't be displayed
- * @param {Array<number>} [configs.textDirection = [0, -1]]
+ * @param {number[]} [configs.textDirection = TEXT_DIR] Direction of text relative to nearby tick
+ * @param {number[]} [configs.numbersWithElongatedTicks] list of numbers where tick line should be longer
+ * @param {number[]} [configs.originPosition = ORIGIN] position of the origin of number line in pixels.
+ * @param {number[]} [configs.range] range of numbers to draw ticks and numbers. Default: [-5, 5, 1]
+ * @param {number[]} [configs.labelsToInclude] list of labels to be displayed instead of default numbers
+ * @param {number[]} [configs.numbersToExclude] list of numbers that shouldn't be displayed
+ * @param {number[]} [configs.textDirection = [0, -1]]
 
  * @param {boolean} [configs.includeTicks = true] Whether ticks should be added
  * @param {boolean} [configs.includeLeftTip = false] whether to add an arrow tip at left
@@ -102,12 +113,11 @@ const ORIGIN = [0, 0];
  * @param {function} [configs.textRenderer = fillText] function that is used to render text.
  *
  * * You can adjust textAlign and textBaseline if you want to adjust alignment of labels.
- * @returns {Object} configurations about the number line
- *
- * * originPosition     {Array<number>} Center of the number line in px
- * * tickList   {Array<number>} List of tick inervals
- * * unitValue  {Array<number>} How much a unit is in its value in x and y directions.
- * * unitSpace {Array<number>} How much a unit is in px in x and y directions.
+ * @returns {Object} configurations - About the number line
+ * @returns {number[]} configuration.originPosition - Center of the number line in px
+ * @returns {number[]} configuration.tickList - List of tick inervals
+ * @returns {number[]} configuration.unitValue - How much a unit is in its value in x and y directions.
+ * @returns {number[]} configuration.unitSpace - How much a unit is in px in x and y directions.
  */
 export function numberLine(configs = {}) {
 	const ctx = C.workingContext;
@@ -303,7 +313,7 @@ export function numberLine(configs = {}) {
  *
  * @param {Object} configs.xAxis Configurations for x axis. (See {@link numberLine} for more configurations)
  * @param {Object} configs.yAxis Configurations for y axis. (See {@link numberLine} for more configurations)
- * @param {Array<number>} [configs.originPosition = ORIGIN] originPosition of axes
+ * @param {number[]} [configs.originPosition = ORIGIN] originPosition of axes
  *
  * @returns {Object} object that contains following properties:
  * * xAxis                 <object>   : x axis confiurations from numberLine (See {@link numberLine} for those configurations).
@@ -364,8 +374,8 @@ export function axes(configs = {}) {
  *
  * @param {Object} configs.xAxis Configurations for x axis. See {@link numberLine} for possible configurations.
  * @param {Object} configs.yAxis Configurations for y axis. See {@link numberLine} for possible configurations.
- * @param {Array<number>} configs.originPosition Center of number plane as [x, y] in px.
- * @param {Array<number>} [configs.subgrids] array number of sub-grid division in each axes. Default=[1,1]
+ * @param {number[]} configs.originPosition Center of number plane as [x, y] in px.
+ * @param {number[]} [configs.subgrids] array number of sub-grid division in each axes. Default=[1,1]
  * @param {Object} configs.grid Set of styles to draw grid & subgrids. This can have following properties:
  * @param {number} [configs.gridStrokeWidth = 1]  stroke width of grid lines
  * @param {number} [configs.subgridStrokeWidth = 0.7]  stroke width of sub-grid
@@ -522,7 +532,7 @@ export function numberPlane(configs = {}) {
 /**
  * Creates a polar plane. change following configs to customize the plane
  * @param {Object} configs - configurations
- * @param {Array<number>} [originPosition = ORIGIN] position of origin of plane
+ * @param {number[]} [originPosition = ORIGIN] position of origin of plane
  * @param {number} [maxRadius = 4] maximum radius of the polar plane
  * @param {number} [size] diameter of the plane in pixels. Default it will try to fit in the canvas
  * @param {number} [radiusStep = 1] step size of radius
@@ -543,8 +553,8 @@ export function numberPlane(configs = {}) {
  * @param {number} [radiusConfigs.fontSize = 22] font size of the radial axis in pixels
  * @param {number} [radiusConfigs.decimalPoints = 0] number of decimal points to show up in the radial axis labels
  * @param {function} [radiusConfigs.textRenderer = fillText] function that renders text. you can use strokeText to get stroked text, or something else to get custom text
- * @param {Array<number>} [radiusConfigs.textDirection = [-1.4, -1.2]] direction of the radial axis label. This'll align labels correctly in the position.
- * @param {Array<number>} [radiusConfigs.labelAxis = [1, 0]] axis to labels
+ * @param {number[]} [radiusConfigs.textDirection = [-1.4, -1.2]] direction of the radial axis label. This'll align labels correctly in the position.
+ * @param {number[]} [radiusConfigs.labelAxis = [1, 0]] axis to labels
  * @param {boolean} [radiusConfigs.includeLabels = true] whether to draw radial labels or not
 
  * @param {Object} [azimuth] azimuth line configurations

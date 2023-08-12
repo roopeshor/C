@@ -146,8 +146,8 @@ function doubleArrow(
  * @param {Object} args parameters.
  * Possible values:
  * @param {string} args.text text
- * @param {Array<number>} args.p1 first point
- * @param {Array<number>} args.p2 second point
+ * @param {number[]} args.p1 first point
+ * @param {number[]} args.p2 second point
  * @param {number} [args.tipWidth = 15] tip width
  * @param {number} [args.tipHeight = 12.5] tip height
  * @param {number} [args.spacing = 0] spacing
@@ -332,8 +332,8 @@ function curvedDoubleArrow(
 /**
  * Draws a curved arrow between two points that wraps around a circle with a definite radius.
  *
- * @param {Array<number>} p1 start point
- * @param {Array<number>} p2 end point
+ * @param {number[]} p1 start point
+ * @param {number[]} p2 end point
  * @param {number} radius radius of circle
  * @param {number} [tipWidth=DEFAULT_TIP_WIDTH] width of tip
  * @param {number} tipHeight height of tip. Default value is tipWidth / 1.2
@@ -341,7 +341,7 @@ function curvedDoubleArrow(
  * @param {number} [tipOffset=0] offset (padding) of tip from it's defined end. Expressed in radians
  * @param {boolean} [otherArc=false] whether to use other arc
  * @param {boolean} [reverse=false] whether to reverse the direction of arrow.
- * @return {Array<number>} coordiante of the center of arc as [x, y]
+ * @return {number[]} coordiante of the center of arc as [x, y]
  */
 function curvedArrowBetweenPoints(
 	p1,
@@ -393,15 +393,15 @@ function curvedArrowBetweenPoints(
 /**
  * Draws a double tipped curved arrow between two points that wraps around a circle with a definite radius.
  *
- * @param {Array<number>} p1 start point
- * @param {Array<number>} p2 end point
+ * @param {number[]} p1 start point
+ * @param {number[]} p2 end point
  * @param {number} radius radius of circle
  * @param {number} [tipWidth=DEFAULT_TIP_WIDTH] width of tip
  * @param {number} tipHeight height of tip. Default value is tipWidth / 1.2
  * @param {number} [arrowCurving=0] arrow curving const. Expressed in pixels
  * @param {number} [tipOffset=0] offset (padding) of tip from it's defined. Expressed in radians
  * @param {boolean} [otherArc=false] whether to use other arc
- * @return {Array<number>} coordiante of the center of arc as [x, y]
+ * @return {number[]} coordiante of the center of arc as [x, y]
  */
 function curvedDoubleArrowBetweenPoints(
 	p1,

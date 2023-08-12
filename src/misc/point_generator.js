@@ -7,7 +7,7 @@
  * @param {number} endAngle end angle of circle
  * @param {number} dA angle between points
  * @param {boolean} clockwise if true returns points in clock wise direction
- * @returns {Array<Array<number>>} array of points
+ * @returns {Array<number[]>} array of points
  */
 function generatePointsInArc(
 	x,

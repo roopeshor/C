@@ -19,7 +19,7 @@ export function getPixelColor(pixels, x, y) {
  * Convert image data to 2d array of colors.
  *
  * @param {ImageData} pixels
- * @returns {Array<Array<number>>} 2d array of colors
+ * @returns {Array<number[]>} 2d array of colors
  */
 export function imageDataToColorArray(pixels) {
 	let w = pixels.width,
@@ -43,7 +43,7 @@ export function imageDataToColorArray(pixels) {
 /**
  * Returns if neighbor pixels have the same color as given.
  *
- * @param {Array<number>} color color to compare with
+ * @param {number[]} color color to compare with
  * @param {ImageData} pixels image data
  * @param {number} x x-coordinate of point
  * @param {number} y y-coordinate of point

@@ -5,8 +5,8 @@ import { type } from "../utils.js";
 /**
  * creates a linear gradient
  *
- * @param {Array<number>} initialPoint initial point as [x, y]
- * @param {Array<number>} finalPoint final point as [x, y]
+ * @param {number[]} initialPoint initial point as [x, y]
+ * @param {number[]} finalPoint final point as [x, y]
  * @param {Object|Array<*>} colStops color stops
  @example
  ```js

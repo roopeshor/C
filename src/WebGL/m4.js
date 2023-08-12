@@ -16,7 +16,7 @@ const EPSILON = 0.000001;
 export class m4 {
 	/**
 	 * Returns a 4x4 Float32Array and functions to modify them
-	 * @param {...number|Array<number>|m4|Float32Array} [array] of numbers
+	 * @param {...number|number[]|m4|Float32Array} [array] of numbers
 	 */
 	constructor(array) {
 		this.mat = readMatrix(arguments);
@@ -25,7 +25,7 @@ export class m4 {
 	/**
 	 * Multiplies a matrix by this
 	 * from p5.js
-	 * @param {...number|Array<number>|m4} mat matrix
+	 * @param {...number|number[]|m4} mat matrix
 	 */
 	multiply(mat) {
 		let m = readMatrix(arguments);
@@ -73,7 +73,7 @@ export class m4 {
 	/**
 	 * Rotate our Matrix around an axis by the given angle.
 	 * @param {number} a The angle of rotation in radians
-	 * @param {number|Array<number>} x  the axis to rotate around
+	 * @param {number|number[]} x  the axis to rotate around
 	 * adapted by p5js's p5.Matrix rotation
 	 */
 	rotate(a, x, y, z) {
@@ -184,9 +184,9 @@ export class m4 {
 	 * Generates a look-at matrix with the given eye position, focal point, and up axis.
 	 * If you want a matrix that actually makes an object look at another object, you should use targetTo instead.
 	 *
-	 * @param {Array<number>} eye Position of the viewer
-	 * @param {Array<number>} center Point the viewer is looking at
-	 * @param {Array<number>} up vec3 pointing up
+	 * @param {number[]} eye Position of the viewer
+	 * @param {number[]} center Point the viewer is looking at
+	 * @param {number[]} up vec3 pointing up
 	 * @returns {m4}
 	 */
 	static lookAt(eye, center, up) {

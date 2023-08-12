@@ -53,7 +53,7 @@ WebGL.prototype.putBufferData = function (
 
 /**
  * sets geometry of a objevt in buffer
- * @param {Array<number>} data data of positions to set
+ * @param {number[]} data data of positions to set
  * @param {number} [count=3] number of vertices to set
  * @param {number} [offset=0] offset of data to set
  * @param {number} [primitiveType=WebGLRenderingContext.TRIANGLES] type of primitive to draw
@@ -201,7 +201,7 @@ WebGL.prototype.scale = function (x, y = x, z = 1) {
 
 /**
  *
- * @param  {...number|string|Array<number>} color
+ * @param  {...number|string|number[]} color
  */
 WebGL.prototype.fill = function (...color) {
 	let c = readColor(color).rgbaA;
@@ -249,7 +249,7 @@ WebGL.prototype.lineWidth = function (w) {
 
 /**
  *
- * @param  {...number|string|Array<number>} color
+ * @param  {...number|string|number[]} color
  */
 WebGL.prototype.stroke = function (...color) {
 	let c = readColor(color).rgbaA;

@@ -8,7 +8,7 @@ import { circleIntersection } from "../math/points.js";
  * @param {number} x x coord of centre of polygon
  * @param {number} y y coord of centre of polygon
  * @param {number} radius radius of ex-circle of polygon
- * @param {Array<number>} ratios array of ratios of central angles. Must have atleast 3 elements.
+ * @param {number[]} ratios array of ratios of central angles. Must have atleast 3 elements.
  * @param {number} [rotation=0] amound to rotate the entire polygon.
  */
 function polygonWithRatioOfCentralAngles(x, y, radius, ratios, rotation = 0) {
@@ -33,9 +33,9 @@ function polygonWithRatioOfCentralAngles(x, y, radius, ratios, rotation = 0) {
 
 /**
  * Creates a lens.
- * @param {Array<number>} c1 center coordinate as array [x, y]
+ * @param {number[]} c1 center coordinate as array [x, y]
  * @param {number} r1
- * @param {Array<number>} c2 center coordinate as array [x, y]
+ * @param {number[]} c2 center coordinate as array [x, y]
  * @param {number} r2
  */
 function lens(c1, r1, c2, r2) {
