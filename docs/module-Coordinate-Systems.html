@@ -84,7 +84,7 @@
 
     
 
-    <h4 class="name" id=".axes"><span class="type-signature type-signature-static">(static) </span>axes<span class="signature">(configs)</span><span class="type-signature"> &rarr; {Object}</span></h4>
+    <h4 class="name" id=".axes"><span class="type-signature type-signature-static">(static) </span>axes<span class="signature">(configs)</span><span class="type-signature"> &rarr; {CartesianPlotters}</span></h4>
 
     
 
@@ -100,7 +100,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="objects_coordinate_systems.js.html">objects/coordinate_systems.js</a>, <a href="objects_coordinate_systems.js.html#line326">line 326</a>
+        <a href="objects_coordinate_systems.js.html">objects/coordinate_systems.js</a>, <a href="objects_coordinate_systems.js.html#line337">line 337</a>
     </li></ul></dd>
     
 
@@ -356,16 +356,6 @@
 <h5 class="h5-returns">Returns:</h5>
 
         
-<div class="param-desc">
-    object that contains following properties:
-* xAxis                 <object>   : x axis confiurations from numberLine (See numberLine for those configurations).
-* yAxis                 <object>   : y axis confiurations from numberLine (See numberLine for those configurations).
-* unitValue             <array>    : How much a unit is in its value in x and y directions.
-* unitSpace             <array>    : How much a unit is in px in x and y directions.
-* getParametricFunction <function> : Draws a parametric function whose unit sizing are predefined by the axes. see parametricFunction to see possible configurations.
-* getFunctionGraph      <function> : Draws a function graph whose unit sizing are predefined by the axes. see functionGraph to see possible configurations.
-</div>
-
 
 
 <dl class="param-type">
@@ -374,7 +364,7 @@
     </dt>
     <dd>
         
-<span class="param-type">Object</span>
+<span class="param-type">CartesianPlotters</span>
 
 
 
@@ -390,7 +380,7 @@
 
     
 
-    <h4 class="name" id=".numberLine"><span class="type-signature type-signature-static">(static) </span>numberLine<span class="signature">(configs)</span><span class="type-signature"> &rarr; {Object|Array.&lt;number>|Array.&lt;number>|Array.&lt;number>|Array.&lt;number>}</span></h4>
+    <h4 class="name" id=".numberLine"><span class="type-signature type-signature-static">(static) </span>numberLine<span class="signature">(configs)</span><span class="type-signature"> &rarr; {NumberLineConfigs}</span></h4>
 
     
 
@@ -406,7 +396,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="objects_coordinate_systems.js.html">objects/coordinate_systems.js</a>, <a href="objects_coordinate_systems.js.html#line122">line 122</a>
+        <a href="objects_coordinate_systems.js.html">objects/coordinate_systems.js</a>, <a href="objects_coordinate_systems.js.html#line141">line 141</a>
     </li></ul></dd>
     
 
@@ -1658,12 +1648,8 @@
 
 
 <h5 class="h5-returns">Returns:</h5>
-<ul>
-        <li>
-<div class="param-desc">
-    configurations - About the number line
-</div>
 
+        
 
 
 <dl class="param-type">
@@ -1672,98 +1658,14 @@
     </dt>
     <dd>
         
-<span class="param-type">Object</span>
+<span class="param-type">NumberLineConfigs</span>
 
 
 
     </dd>
 </dl>
-</li>
+
     
-        <li>
-<div class="param-desc">
-    configuration.originPosition - Center of the number line in px
-</div>
-
-
-
-<dl class="param-type">
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Array.&lt;number></span>
-
-
-
-    </dd>
-</dl>
-</li>
-    
-        <li>
-<div class="param-desc">
-    configuration.tickList - List of tick inervals
-</div>
-
-
-
-<dl class="param-type">
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Array.&lt;number></span>
-
-
-
-    </dd>
-</dl>
-</li>
-    
-        <li>
-<div class="param-desc">
-    configuration.unitValue - How much a unit is in its value in x and y directions.
-</div>
-
-
-
-<dl class="param-type">
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Array.&lt;number></span>
-
-
-
-    </dd>
-</dl>
-</li>
-    
-        <li>
-<div class="param-desc">
-    configuration.unitSpace - How much a unit is in px in x and y directions.
-</div>
-
-
-
-<dl class="param-type">
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Array.&lt;number></span>
-
-
-
-    </dd>
-</dl>
-</li>
-    </ul>
 
 
 
@@ -1772,7 +1674,7 @@
 
     
 
-    <h4 class="name" id=".numberPlane"><span class="type-signature type-signature-static">(static) </span>numberPlane<span class="signature">(configs)</span><span class="type-signature"> &rarr; {Object}</span></h4>
+    <h4 class="name" id=".numberPlane"><span class="type-signature type-signature-static">(static) </span>numberPlane<span class="signature">(configs)</span><span class="type-signature"> &rarr; {CartesianPlotters}</span></h4>
 
     
 
@@ -1788,7 +1690,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="objects_coordinate_systems.js.html">objects/coordinate_systems.js</a>, <a href="objects_coordinate_systems.js.html#line395">line 395</a>
+        <a href="objects_coordinate_systems.js.html">objects/coordinate_systems.js</a>, <a href="objects_coordinate_systems.js.html#line396">line 396</a>
     </li></ul></dd>
     
 
@@ -2274,19 +2176,6 @@
 <h5 class="h5-returns">Returns:</h5>
 
         
-<div class="param-desc">
-    configurations of number plane. Those are :
-
-* originPosition                <array>   : Center of number plane as [x, y] in px.
-* unitValue             <array>   : How much a unit is in its value in x and y directions.
-* unitSpace            <array>   : How much a unit is in px in x and y directions.
-* subgridUnit           <array>   : How much a sub-grid is in px in x and y directions.
-* xAxis                 <object>  : x axis confiurations from numberLine (See numberLine for those configurations).
-* yAxis                 <object>  : y axis confiurations from numberLine (See numberLine for those configurations).
-* getParametricFunction <function>: Draws a parametric function whose unit sizing are predefined by the axes. see parametricFunction to see possible configurations.
-* getFunctionGraph      <function>: Draws a function graph whose unit sizing are predefined by the axes. see functionGraph to see possible configurations.
-</div>
-
 
 
 <dl class="param-type">
@@ -2295,7 +2184,7 @@
     </dt>
     <dd>
         
-<span class="param-type">Object</span>
+<span class="param-type">CartesianPlotters</span>
 
 
 
@@ -2311,7 +2200,7 @@
 
     
 
-    <h4 class="name" id=".polarPlane"><span class="type-signature type-signature-static">(static) </span>polarPlane<span class="signature">(configs)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id=".polarPlane"><span class="type-signature type-signature-static">(static) </span>polarPlane<span class="signature">(configs)</span><span class="type-signature"> &rarr; {PolarPlotters}</span></h4>
 
     
 
@@ -2327,7 +2216,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="objects_coordinate_systems.js.html">objects/coordinate_systems.js</a>, <a href="objects_coordinate_systems.js.html#line573">line 573</a>
+        <a href="objects_coordinate_systems.js.html">objects/coordinate_systems.js</a>, <a href="objects_coordinate_systems.js.html#line575">line 575</a>
     </li></ul></dd>
     
 
@@ -3765,6 +3654,25 @@
 
 
 
+<h5 class="h5-returns">Returns:</h5>
+
+        
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">PolarPlotters</span>
+
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -3773,7 +3681,7 @@
 
     
 
-    <h4 class="name" id="~getCartasianPlotters"><span class="type-signature type-signature-inner">(inner) </span>getCartasianPlotters<span class="signature">(configs)</span><span class="type-signature"> &rarr; {Object.&lt;string, function()>}</span></h4>
+    <h4 class="name" id="~getCartasianPlotters"><span class="type-signature type-signature-inner">(inner) </span>getCartasianPlotters<span class="signature">(configs)</span><span class="type-signature"> &rarr; {CartesianPlotters}</span></h4>
 
     
 
@@ -3789,7 +3697,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="objects_coordinate_systems.js.html">objects/coordinate_systems.js</a>, <a href="objects_coordinate_systems.js.html#line25">line 25</a>
+        <a href="objects_coordinate_systems.js.html">objects/coordinate_systems.js</a>, <a href="objects_coordinate_systems.js.html#line48">line 48</a>
     </li></ul></dd>
     
 
@@ -3911,7 +3819,7 @@
     </dt>
     <dd>
         
-<span class="param-type">Object.&lt;string, function()></span>
+<span class="param-type">CartesianPlotters</span>
 
 
 
@@ -3927,7 +3835,7 @@
 
     
 
-    <h4 class="name" id="~getPolarPlotters"><span class="type-signature type-signature-inner">(inner) </span>getPolarPlotters<span class="signature">(configs)</span><span class="type-signature"> &rarr; {Object.&lt;string, function()>}</span></h4>
+    <h4 class="name" id="~getPolarPlotters"><span class="type-signature type-signature-inner">(inner) </span>getPolarPlotters<span class="signature">(configs)</span><span class="type-signature"> &rarr; {PolarPlotters}</span></h4>
 
     
 
@@ -3943,7 +3851,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="objects_coordinate_systems.js.html">objects/coordinate_systems.js</a>, <a href="objects_coordinate_systems.js.html#line58">line 58</a>
+        <a href="objects_coordinate_systems.js.html">objects/coordinate_systems.js</a>, <a href="objects_coordinate_systems.js.html#line81">line 81</a>
     </li></ul></dd>
     
 
@@ -4065,7 +3973,7 @@
     </dt>
     <dd>
         
-<span class="param-type">Object.&lt;string, function()></span>
+<span class="param-type">PolarPlotters</span>
 
 
 
@@ -4079,6 +3987,581 @@
         
     
 
+    
+        <h3 class="subsection-title">Type Definitions</h3>
+
+        
+                
+<h4 class="name" id="~CartesianPlotters">CartesianPlotters</h4>
+
+
+
+
+
+<dl class="details">
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="objects_coordinate_systems.js.html">objects/coordinate_systems.js</a>, <a href="objects_coordinate_systems.js.html#line26">line 26</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>getParametricFunction</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">see parametricFunction</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>getFunctionGraph</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">see functionGraph</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>getHeatPlot</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">see heatPlot</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>plotPoints</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">see plotPoints</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+    <h5 class="h5-types">Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Object</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+
+            
+                
+<h4 class="name" id="~NumberLineConfigs">NumberLineConfigs</h4>
+
+
+
+
+
+<dl class="details">
+    
+    <dt class="tag-description">Description:</dt>
+    <dd class="tag-description"><ul class="dummy"><li>configurations about the number line</li></ul></dd>
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="objects_coordinate_systems.js.html">objects/coordinate_systems.js</a>, <a href="objects_coordinate_systems.js.html#line34">line 34</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>originPosition</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;number></span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Center of the number line in px</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>tickList</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;number></span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">List of tick inervals</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>unitValue</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;number></span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">How much a unit is in its value in x and y directions.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>unitSpace</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;number></span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">How much a unit is in px in x and y directions.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<div class="description usertext">
+    configurations about the number line
+</div>
+
+
+
+    <h5 class="h5-types">Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Object</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+
+            
+                
+<h4 class="name" id="~PolarPlotters">PolarPlotters</h4>
+
+
+
+
+
+<dl class="details">
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="objects_coordinate_systems.js.html">objects/coordinate_systems.js</a>, <a href="objects_coordinate_systems.js.html#line19">line 19</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>plotPoints</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">see plotPolarPoints</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>parametricFunction</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">see polarParametricFunction</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>functionGraph</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">see polarFuntionGraph</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+    <h5 class="h5-types">Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Object</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+
+            
     
 
     
@@ -4096,7 +4579,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.11</a> on Sat Aug 12 2023 22:31:28 GMT+0530 (India Standard Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.11</a> on Sat Aug 12 2023 23:10:11 GMT+0530 (India Standard Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
 </footer>
 
 <script>prettyPrint();</script>

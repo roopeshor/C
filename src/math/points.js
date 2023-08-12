@@ -4,7 +4,7 @@
  *
  * @param {number[]} p1
  * @param {number[]} p2
- * @return number distance between p1 and p2
+ * @returns {number} distance between p1 and p2
  */
 export function dist(p1, p2) {
 	return Math.sqrt(Math.pow(p1[0] - p2[0], 2) + Math.pow(p1[1] - p2[1], 2));

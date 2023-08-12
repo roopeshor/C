@@ -18,7 +18,7 @@ const EPSILON = 0.000001;
 class m4 {
   /**
    * Returns a 4x4 Float32Array and functions to modify them
-   * @param {...number|Array<number>|m4|Float32Array} [array] of numbers
+   * @param {...number|number[]|m4|Float32Array} [array] of numbers
    */
   constructor(array) {
     this.mat = readMatrix(arguments);
@@ -27,7 +27,7 @@ class m4 {
   /**
    * Multiplies a matrix by this
    * from p5.js
-   * @param {...number|Array<number>|m4} mat matrix
+   * @param {...number|number[]|m4} mat matrix
    */
   multiply(mat) {
     let m = readMatrix(arguments);
@@ -71,7 +71,7 @@ class m4 {
   /**
    * Rotate our Matrix around an axis by the given angle.
    * @param {number} a The angle of rotation in radians
-   * @param {number|Array<number>} x  the axis to rotate around
+   * @param {number|number[]} x  the axis to rotate around
    * adapted by p5js's p5.Matrix rotation
    */
   rotate(a, x, y, z) {
@@ -178,9 +178,9 @@ class m4 {
    * Generates a look-at matrix with the given eye position, focal point, and up axis.
    * If you want a matrix that actually makes an object look at another object, you should use targetTo instead.
    *
-   * @param {Array<number>} eye Position of the viewer
-   * @param {Array<number>} center Point the viewer is looking at
-   * @param {Array<number>} up vec3 pointing up
+   * @param {number[]} eye Position of the viewer
+   * @param {number[]} center Point the viewer is looking at
+   * @param {number[]} up vec3 pointing up
    * @returns {m4}
    */
   static lookAt(eye, center, up) {
@@ -354,7 +354,7 @@ _webgl.WebGL.prototype.putBufferData = function (data, type = this.gl.ARRAY_BUFF
 
 /**
  * sets geometry of a objevt in buffer
- * @param {Array<number>} data data of positions to set
+ * @param {number[]} data data of positions to set
  * @param {number} [count=3] number of vertices to set
  * @param {number} [offset=0] offset of data to set
  * @param {number} [primitiveType=WebGLRenderingContext.TRIANGLES] type of primitive to draw
@@ -473,7 +473,7 @@ _webgl.WebGL.prototype.scale = function (x, y = x, z = 1) {
 
 /**
  *
- * @param  {...number|string|Array<number>} color
+ * @param  {...number|string|number[]} color
  */
 _webgl.WebGL.prototype.fill = function (...color) {
   let c = (0, _color_reader.readColor)(color).rgbaA;
@@ -511,7 +511,7 @@ _webgl.WebGL.prototype.lineWidth = function (w) {
 
 /**
  *
- * @param  {...number|string|Array<number>} color
+ * @param  {...number|string|number[]} color
  */
 _webgl.WebGL.prototype.stroke = function (...color) {
   let c = (0, _color_reader.readColor)(color).rgbaA;
@@ -1316,7 +1316,7 @@ exports.HSVToRGB = HSVToRGB;
 exports.RGBToHSL = RGBToHSL;
 exports.RGBToHSV = RGBToHSV;
 exports.hue2RGB = hue2RGB;
-/** @module Color Converters */
+/** @module Color-Converters */
 function hue2RGB(p, q, t) {
   if (t < 0) t += 1;
   if (t > 1) t -= 1;
@@ -1335,7 +1335,7 @@ function hue2RGB(p, q, t) {
  * @param {number} r The red color value
  * @param {number} g The green color value
  * @param {number} b The blue color value
- * @return {Array<number>} The HSL representation
+ * @return {number[]} The HSL representation
  */
 function RGBToHSL(r, g, b) {
   let max = Math.max(r, g, b),
@@ -1363,7 +1363,7 @@ function RGBToHSL(r, g, b) {
  * @param {number} hue The hue
  * @param {number} saturation The saturation
  * @param {number} lightness The lightness
- * @return {Array<number>} The RGB representation
+ * @return {number[]} The RGB representation
  */
 function HSLToRGB(hue, saturation, lightness) {
   let r, g, b;
@@ -1389,7 +1389,7 @@ function HSLToRGB(hue, saturation, lightness) {
  * @param {number} r The red color value
  * @param {number} g The green color value
  * @param {number} b The blue color value
- * @return {Array<number>} HSV representation
+ * @return {number[]} HSV representation
  */
 function RGBToHSV(r, g, b) {
   let max = Math.max(r, g, b),
@@ -1418,7 +1418,7 @@ function RGBToHSV(r, g, b) {
  * @param {number} hue
  * @param {number} saturation
  * @param {number} value Also knwon as brightness
- * @return {Array<number>} RGB representation of color
+ * @return {number[]} RGB representation of color
  */
 function HSVToRGB(hue, saturation, value) {
   let r,
@@ -1442,7 +1442,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.readColor = readColor;
 var _colors = require("../constants/colors.js");
-/** @module Color Reader */
+/** @module Color-Reader */
 
 // adapeted from p5.js
 // Full color string patterns. The capture groups are necessary.
@@ -1570,13 +1570,13 @@ Object.defineProperty(exports, "__esModule", {
 exports.linearGradient = linearGradient;
 var _main = require("../main.js");
 var _utils = require("../utils.js");
-/** @module Color gradient */
+/** @module Color-Gradient */
 
 /**
  * creates a linear gradient
  *
- * @param {Array<number>} initialPoint initial point as [x, y]
- * @param {Array<number>} finalPoint final point as [x, y]
+ * @param {number[]} initialPoint initial point as [x, y]
+ * @param {number[]} finalPoint final point as [x, y]
  * @param {Object|Array<*>} colStops color stops
  @example
  ```js
@@ -1633,7 +1633,7 @@ exports.lerpColor = lerpColor;
 exports.lerpColorArray = lerpColorArray;
 exports.lerpColorObject = lerpColorObject;
 var _color_reader = require("./color_reader.js");
-/** @module Color lear */
+/** @module Color-Lerp */
 
 /**
  * gives an interpolated color.
@@ -1678,7 +1678,7 @@ function lerpColorObject(colorObj, v) {
 /**
  * Lerps across a color Array
  * From <https://github.com/yuki-koyama/tinycolormap/blob/fe597277c782c583eb40362de98a08df62efc628/include/tinycolormap.hpp#L159>
- * @param {Array<string>} colorArr array that contains color as string
+ * @param {string[]} colorArr array that contains color as string
  * @param {number} v value to interpolate
  * @param {number} [min = 0] minimum value of the range
  * @param {number} [max = 1] maximum value of the range
@@ -1699,7 +1699,7 @@ function lerpColorArray(colorArr, v, min = 0, max = 1) {
 
 /**
  *
- * @param {Array<string>} colorPalatte Array of color palettes
+ * @param {string[]} colorPalatte Array of color palettes
  * @param {number} [min=0] minimum of range
  * @param {number} [max=5] maximum of range
  * @param {number} [alpha=1] value of alpha channel. This value must be between 0 & 1
@@ -1728,7 +1728,7 @@ exports.randomColor = randomColor;
 exports.randomDefinedColor = randomDefinedColor;
 var _colors = require("../constants/colors.js");
 var _random = require("../math/random.js");
-/** @module Random Colors */
+/** @module Random-Colors */
 
 let definedColorList = Object.keys(_colors.Colors);
 const TR_INDEX = definedColorList.indexOf("TRANSPARENT");
@@ -1763,7 +1763,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.ColorPalettes = void 0;
-/** @module Color Palettes */
+/** @module Color-Palettes */
 
 // prettier-ignore
 let colorPalettes = {
@@ -2239,7 +2239,7 @@ exports.imageToData = imageToData;
 exports.replaceColorInImage = replaceColorInImage;
 var _color_reader = require("../color/color_reader.js");
 var _main = require("../main.js");
-/** @module Image Processing */
+/** @module Image-Processing */
 
 /**
  * returns color at a given point from ImageData
@@ -2258,7 +2258,7 @@ function getPixelColor(pixels, x, y) {
  * Convert image data to 2d array of colors.
  *
  * @param {ImageData} pixels
- * @returns {Array<Array<number>>} 2d array of colors
+ * @returns {number[][]} 2d array of colors
  */
 function imageDataToColorArray(pixels) {
   let w = pixels.width,
@@ -2282,7 +2282,7 @@ function imageDataToColorArray(pixels) {
 /**
  * Returns if neighbor pixels have the same color as given.
  *
- * @param {Array<number>} color color to compare with
+ * @param {number[]} color color to compare with
  * @param {ImageData} pixels image data
  * @param {number} x x-coordinate of point
  * @param {number} y y-coordinate of point
@@ -2542,7 +2542,7 @@ C.dpr;
 /**
  * return inner width of container tag
  * @param {HTMLElement} [container=document.body]
- * @returns number
+ * @returns {number}
  */
 C.getWindowWidth = function (container = document.body) {
   const cs = window.getComputedStyle(container);
@@ -2677,13 +2677,13 @@ exports.gcd = gcd;
 exports.gcdArray = gcdArray;
 exports.lcm = lcm;
 exports.lcmArray = lcmArray;
-/** @module Arithmetic functions*/
+/** @module Arithmetic-Functions*/
 /**
  * Computes GCD (Greatest Common Divisor) or HCF (Highest Common Factor) of two numbers
  *
  * @param {number} a
  * @param {number} b
- * @return number
+ * @returns {number}
  */
 function gcd(a, b) {
   while (b != 0) {
@@ -2697,7 +2697,7 @@ function gcd(a, b) {
 /**
  * Returns greatest common divisor of a list of integers.
  *
- * @return number
+ * @returns {number}
  */
 function gcdArray(list) {
   let array = Array.isArray(list) ? list : arguments,
@@ -2711,7 +2711,7 @@ function gcdArray(list) {
  *
  * @param {number} a
  * @param {number} b
- * @return number
+ * @returns {number}
  */
 function lcm(a, b) {
   return a * b / gcd(a, b);
@@ -2719,7 +2719,7 @@ function lcm(a, b) {
 
 /**
  * Returns least common multiple of a list of integers given explictly or as array.
- * @return number
+ * @returns {number}
  */
 function lcmArray(list) {
   let n = 1,
@@ -2804,13 +2804,13 @@ exports.extendFromPoint = extendFromPoint;
 exports.lineIntersection = lineIntersection;
 exports.rotateAroundOrigin = rotateAroundOrigin;
 exports.rotateAroundPoint = rotateAroundPoint;
-/** @module Point Utils*/
+/** @module Point-Utils*/
 /**
  * return distance between two points
  *
- * @param {Array<number>} p1
- * @param {Array<number>} p2
- * @return number distance between p1 and p2
+ * @param {number[]} p1
+ * @param {number[]} p2
+ * @returns {number} distance between p1 and p2
  */
 function dist(p1, p2) {
   return Math.sqrt(Math.pow(p1[0] - p2[0], 2) + Math.pow(p1[1] - p2[1], 2));
@@ -2819,11 +2819,11 @@ function dist(p1, p2) {
 /**
  * Returns a point rotated around a point by certain angle, exetened by a certain length
  *
- * @param {number|Array<number>} x center x or center as array of coords [x, y]
+ * @param {number|number[]} x center x or center as array of coords [x, y]
  * @param {number} y center y
  * @param {number} angle angle of rotation
  * @param {number} len length to extend the point
- * @returns {Array<number>} array of two points
+ * @returns {number[]} array of two points
  */
 function rotateAroundPoint(x, y, angle, len = 10) {
   if (Array.isArray(x) && x.length === 2) {
@@ -2838,7 +2838,7 @@ function rotateAroundPoint(x, y, angle, len = 10) {
  *
  * @param {number} angle angle of rotation
  * @param {number} len length to extend the point
- * @returns {Array<number>} array of two points
+ * @returns {number[]} array of two points
  */
 function rotateAroundOrigin(angle, len = 10) {
   return rotateAroundPoint(0, 0, angle, len);
@@ -2847,11 +2847,11 @@ function rotateAroundOrigin(angle, len = 10) {
 /**
  * Returns the point of intersection of two lines.
  *
- * @param {Array<number>} p1 start point of first line as [x, y]
- * @param {Array<number>} p2 end point of first line as [x, y]
- * @param {Array<number>} p3 start point of second line as [x, y]
- * @param {Array<number>} p4 end point of second line as [x, y]
- * @return {Array<number>|Iterable} intersection point of lines as [x, y]
+ * @param {number[]} p1 start point of first line as [x, y]
+ * @param {number[]} p2 end point of first line as [x, y]
+ * @param {number[]} p3 start point of second line as [x, y]
+ * @param {number[]} p4 end point of second line as [x, y]
+ * @return {number[]|Iterable} intersection point of lines as [x, y]
  */
 function lineIntersection(p1, p2, p3, p4) {
   const m1 = (p2[1] - p1[1]) / (p2[0] - p1[0]);
@@ -2867,11 +2867,11 @@ function lineIntersection(p1, p2, p3, p4) {
  * Finds intersection of two circles.
  * Adapted from {@link https://stackoverflow.com/a/14146166}
  *
- * @param {Array<number>} c1 center of first circle as [x, y]
+ * @param {number[]} c1 center of first circle as [x, y]
  * @param {number} r1 radius of first circle
- * @param {Array<number>} c2 center of second circle as [x, y]
+ * @param {number[]} c2 center of second circle as [x, y]
  * @param {number} r2 radius of second circle
- * @return {Array<Array<number>>} array of two points as [x, y]
+ * @return {number[][]} array of two points as [x, y]
  */
 function circleIntersection(c1, r1, c2, r2) {
   const d = dist(c1, c2);
@@ -2884,10 +2884,10 @@ function circleIntersection(c1, r1, c2, r2) {
 
 /**
  * Extend a point by given length from a given center
- * @param {Array<number>} center center from the point to be extended
- * @param {Array<number>} point point to be extended
+ * @param {number[]} center center from the point to be extended
+ * @param {number[]} point point to be extended
  * @param {number} len length to extend the point
- * @returns {Array<number>}
+ * @returns {number[]}
  */
 function extendFromPoint(center, point, len = 10) {
   let dx = point[0] - center[0],
@@ -2899,9 +2899,9 @@ function extendFromPoint(center, point, len = 10) {
 
 /**
  * Extend a point by given length from origin (0, 0)
- * @param {Array<number>} point point to be extended
+ * @param {number[]} point point to be extended
  * @param {number} len length to extend the point
- * @returns {Array<number>}
+ * @returns {number[]}
  */
 function extendFromOrigin(point, len = 10) {
   return extendFromPoint([0, 0], point, len);
@@ -2914,13 +2914,13 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.randomInt = randomInt;
-/** @module Random functions*/
+/** @module Random-Functions*/
 /**
  * Returns a random integer between given range.
  *
  * @param {number} [max=10] maximum range
  * @param {number} [min=0] minimum range
- * @return number
+ * @returns {number}
  */
 function randomInt(max = 10, min = 0) {
   return Math.round(Math.random() * (max - min) + min);
@@ -3264,8 +3264,8 @@ function doubleArrow(x1, y1, x2, y2, tipWidth = DEFAULT_TIP_WIDTH, tipHeight = t
  * @param {Object} args parameters.
  * Possible values:
  * @param {string} args.text text
- * @param {Array<number>} args.p1 first point
- * @param {Array<number>} args.p2 second point
+ * @param {number[]} args.p1 first point
+ * @param {number[]} args.p2 second point
  * @param {number} [args.tipWidth = 15] tip width
  * @param {number} [args.tipHeight = 12.5] tip height
  * @param {number} [args.spacing = 0] spacing
@@ -3375,8 +3375,8 @@ function curvedDoubleArrow(x, y, radius, angle = Math.PI / 2, startAngle = 0, ti
 /**
  * Draws a curved arrow between two points that wraps around a circle with a definite radius.
  *
- * @param {Array<number>} p1 start point
- * @param {Array<number>} p2 end point
+ * @param {number[]} p1 start point
+ * @param {number[]} p2 end point
  * @param {number} radius radius of circle
  * @param {number} [tipWidth=DEFAULT_TIP_WIDTH] width of tip
  * @param {number} tipHeight height of tip. Default value is tipWidth / 1.2
@@ -3384,7 +3384,7 @@ function curvedDoubleArrow(x, y, radius, angle = Math.PI / 2, startAngle = 0, ti
  * @param {number} [tipOffset=0] offset (padding) of tip from it's defined end. Expressed in radians
  * @param {boolean} [otherArc=false] whether to use other arc
  * @param {boolean} [reverse=false] whether to reverse the direction of arrow.
- * @return {Array<number>} coordiante of the center of arc as [x, y]
+ * @return {number[]} coordiante of the center of arc as [x, y]
  */
 function curvedArrowBetweenPoints(p1, p2, radius, tipWidth = DEFAULT_TIP_WIDTH, tipHeight = tipWidth / 1.2, arrowCurving = 0, tipOffset = 0, otherArc = false, reverse = false) {
   const ctx = _main.C.workingContext;
@@ -3415,15 +3415,15 @@ function curvedArrowBetweenPoints(p1, p2, radius, tipWidth = DEFAULT_TIP_WIDTH, 
 /**
  * Draws a double tipped curved arrow between two points that wraps around a circle with a definite radius.
  *
- * @param {Array<number>} p1 start point
- * @param {Array<number>} p2 end point
+ * @param {number[]} p1 start point
+ * @param {number[]} p2 end point
  * @param {number} radius radius of circle
  * @param {number} [tipWidth=DEFAULT_TIP_WIDTH] width of tip
  * @param {number} tipHeight height of tip. Default value is tipWidth / 1.2
  * @param {number} [arrowCurving=0] arrow curving const. Expressed in pixels
  * @param {number} [tipOffset=0] offset (padding) of tip from it's defined. Expressed in radians
  * @param {boolean} [otherArc=false] whether to use other arc
- * @return {Array<number>} coordiante of the center of arc as [x, y]
+ * @return {number[]} coordiante of the center of arc as [x, y]
  */
 function curvedDoubleArrowBetweenPoints(p1, p2, radius, tipWidth = DEFAULT_TIP_WIDTH, tipHeight = tipWidth / 1.2, arrowCurving = 0, tipOffset = 0, otherArc = false) {
   const ctx = _main.C.workingContext;
@@ -3511,7 +3511,7 @@ function curlyBrace(x1, y1, x2, y2, size = 20, curviness = 0.6, taleLength = 0.8
  * @param {number} [smallerLineLength=10] length of small tips at the ends of brace
  * @param {number} [tipLineLength=smallerLineLength] length of middle tip
  * @param {number} [extender=5] how much the coordinate of middle tip should be extended.
- * @return {Array<number>} array of two numbers that are the coordinate of middle tip extended by a certain value.
+ * @return {number[]} array of two numbers that are the coordinate of middle tip extended by a certain value.
  */
 function arcBrace(x, y, radius = 100, angle = Math.PI / 2, startAngle = 0, smallerLineLength = 10, tipLineLength = smallerLineLength, extender = 10) {
   const ctx = _main.C.workingContext,
@@ -3559,9 +3559,36 @@ var _functions = require("./functions.js");
 var _geometry = require("./geometry.js");
 var _tex = require("./tex.js");
 var _text = require("./text.js");
-/** @module Coordinate systems*/
+/** @module Coordinate-Systems*/
 
-// list of plotters
+/**
+ * @typedef {Object} PolarPlotters
+ * @property {Function} plotPoints see {@link plotPolarPoints}
+ * @property {Function} parametricFunction see {@link polarParametricFunction}
+ * @property {Function} functionGraph see {@link polarFuntionGraph}
+ */
+
+/**
+ * @typedef {Object} CartesianPlotters
+ * @property {Function} getParametricFunction see {@link parametricFunction}
+ * @property {Function} getFunctionGraph see {@link functionGraph}
+ * @property {Function} getHeatPlot see {@link heatPlot}
+ * @property {Function} plotPoints see {@link plotPoints}
+ */
+
+/**
+ * @typedef {Object} NumberLineConfigs configurations about the number line
+ * @property {number[]} originPosition - Center of the number line in px
+ * @property {number[]} tickList - List of tick inervals
+ * @property {number[]} unitValue - How much a unit is in its value in x and y directions.
+ * @property {number[]} unitSpace - How much a unit is in px in x and y directions.
+ */
+/**
+ * returns list of plotting functions based on given cartesian parameters
+ *
+ * @param {Object} configs
+ * @return {CartesianPlotters}
+ */
 function getCartasianPlotters(configs) {
   return Object.assign(configs, {
     getParametricFunction: function (cfg) {
@@ -3588,6 +3615,13 @@ function getCartasianPlotters(configs) {
     }
   });
 }
+
+/**
+ * returns list of plotting functions based on given polar parameters
+ *
+ * @param {Object} configs
+ * @return {PolarPlotters}
+ */
 function getPolarPlotters(configs) {
   return {
     plotPoints: function (cfg) {
@@ -3624,13 +3658,13 @@ const ORIGIN = [0, 0];
  * @param {string} [configs.strokeColor = "white"] Color of axis and ticks
  * @param {string} [configs.textColor = "white"] Color of text
  *
- * @param {Array<number>} [configs.textDirection = TEXT_DIR] Direction of text relative to nearby tick
- * @param {Array<number>} [configs.numbersWithElongatedTicks] list of numbers where tick line should be longer
- * @param {Array<number>} [configs.originPosition = ORIGIN] position of the origin of number line in pixels.
- * @param {Array<number>} [configs.range] range of numbers to draw ticks and numbers. Default: [-5, 5, 1]
- * @param {Array<number>} [configs.labelsToInclude] list of labels to be displayed instead of default numbers
- * @param {Array<number>} [configs.numbersToExclude] list of numbers that shouldn't be displayed
- * @param {Array<number>} [configs.textDirection = [0, -1]]
+ * @param {number[]} [configs.textDirection = TEXT_DIR] Direction of text relative to nearby tick
+ * @param {number[]} [configs.numbersWithElongatedTicks] list of numbers where tick line should be longer
+ * @param {number[]} [configs.originPosition = ORIGIN] position of the origin of number line in pixels.
+ * @param {number[]} [configs.range] range of numbers to draw ticks and numbers. Default: [-5, 5, 1]
+ * @param {number[]} [configs.labelsToInclude] list of labels to be displayed instead of default numbers
+ * @param {number[]} [configs.numbersToExclude] list of numbers that shouldn't be displayed
+ * @param {number[]} [configs.textDirection = [0, -1]]
 
  * @param {boolean} [configs.includeTicks = true] Whether ticks should be added
  * @param {boolean} [configs.includeLeftTip = false] whether to add an arrow tip at left
@@ -3642,15 +3676,10 @@ const ORIGIN = [0, 0];
  * @param {string} [configs.textAlign = "center"] to align text in x-axis
  * @param {string} [configs.textBaseline = "middle"] to align text in y-axis
  *
- * @param {function} [configs.textRenderer = fillText] function that is used to render text.
+ * @param {Function} [configs.textRenderer = fillText] function that is used to render text.
  *
  * * You can adjust textAlign and textBaseline if you want to adjust alignment of labels.
- * @returns {Object} configurations about the number line
- *
- * * originPosition     {Array<number>} Center of the number line in px
- * * tickList   {Array<number>} List of tick inervals
- * * unitValue  {Array<number>} How much a unit is in its value in x and y directions.
- * * unitSpace {Array<number>} How much a unit is in px in x and y directions.
+ * @returns {NumberLineConfigs}
  */
 function numberLine(configs = {}) {
   const ctx = _main.C.workingContext;
@@ -3821,20 +3850,12 @@ function numberLine(configs = {}) {
 
 /**
  * Creates a axes.
- * @param {Object} configs
- * Possible configurations are:
- *
+ * @param {Object} configs Possible configurations are:
  * @param {Object} configs.xAxis Configurations for x axis. (See {@link numberLine} for more configurations)
  * @param {Object} configs.yAxis Configurations for y axis. (See {@link numberLine} for more configurations)
- * @param {Array<number>} [configs.originPosition = ORIGIN] originPosition of axes
+ * @param {number[]} [configs.originPosition = ORIGIN] originPosition of axes
  *
- * @returns {Object} object that contains following properties:
- * * xAxis                 <object>   : x axis confiurations from numberLine (See {@link numberLine} for those configurations).
- * * yAxis                 <object>   : y axis confiurations from numberLine (See {@link numberLine} for those configurations).
- * * unitValue             <array>    : How much a unit is in its value in x and y directions.
- * * unitSpace             <array>    : How much a unit is in px in x and y directions.
- * * getParametricFunction <function> : Draws a parametric function whose unit sizing are predefined by the axes. see {@link parametricFunction} to see possible configurations.
- * * getFunctionGraph      <function> : Draws a function graph whose unit sizing are predefined by the axes. see {@link functionGraph} to see possible configurations.
+ * @returns {CartesianPlotters}
  */
 function axes(configs = {}) {
   const ctx = _main.C.workingContext;
@@ -3883,28 +3904,18 @@ function axes(configs = {}) {
 
 /**
  * Creates a numberPlane based on following parameters inside a Object
- * @param {Object} configs
- * Possible parameters:
- *
+ * @param {Object} configs Possible parameters:
  * @param {Object} configs.xAxis Configurations for x axis. See {@link numberLine} for possible configurations.
  * @param {Object} configs.yAxis Configurations for y axis. See {@link numberLine} for possible configurations.
- * @param {Array<number>} configs.originPosition Center of number plane as [x, y] in px.
- * @param {Array<number>} [configs.subgrids] array number of sub-grid division in each axes. Default=[1,1]
+ * @param {number[]} configs.originPosition Center of number plane as [x, y] in px.
+ * @param {number[]} [configs.subgrids] array number of sub-grid division in each axes. Default=[1,1]
  * @param {Object} configs.grid Set of styles to draw grid & subgrids. This can have following properties:
  * @param {number} [configs.gridStrokeWidth = 1]  stroke width of grid lines
  * @param {number} [configs.subgridStrokeWidth = 0.7]  stroke width of sub-grid
  * @param {string} [configs.gridStrokeColor = "#58c4dda0"]  color of grid lines
  * @param {string} [configs.subgridStrokeColor = "#888888a0"]  color of sub-grids
- * @returns {Object} configurations of number plane. Those are :
  *
- * * originPosition                <array>   : Center of number plane as [x, y] in px.
- * * unitValue             <array>   : How much a unit is in its value in x and y directions.
- * * unitSpace            <array>   : How much a unit is in px in x and y directions.
- * * subgridUnit           <array>   : How much a sub-grid is in px in x and y directions.
- * * xAxis                 <object>  : x axis confiurations from numberLine (See {@link numberLine} for those configurations).
- * * yAxis                 <object>  : y axis confiurations from numberLine (See {@link numberLine} for those configurations).
- * * getParametricFunction <function>: Draws a parametric function whose unit sizing are predefined by the axes. see {@link parametricFunction} to see possible configurations.
- * * getFunctionGraph      <function>: Draws a function graph whose unit sizing are predefined by the axes. see {@link functionGraph} to see possible configurations.
+ * @returns {CartesianPlotters}
  */
 function numberPlane(configs = {}) {
   const cvs = _main.C.workingCanvas;
@@ -4039,43 +4050,44 @@ function numberPlane(configs = {}) {
 /**
  * Creates a polar plane. change following configs to customize the plane
  * @param {Object} configs - configurations
- * @param {Array<number>} [originPosition = ORIGIN] position of origin of plane
- * @param {number} [maxRadius = 4] maximum radius of the polar plane
- * @param {number} [size] diameter of the plane in pixels. Default it will try to fit in the canvas
- * @param {number} [radiusStep = 1] step size of radius
- * @param {string} [azimuthUnit = "degrees"]  azimuth unit:
+ * @param {number[]} [configs.originPosition = ORIGIN] position of origin of plane
+ * @param {number} [configs.maxRadius = 4] maximum radius of the polar plane
+ * @param {number} [configs.size] diameter of the plane in pixels. Default it will try to fit in the canvas
+ * @param {number} [configs.radiusStep = 1] step size of radius
+ * @param {string} [configs.azimuthUnit = "degrees"]  azimuth unit:
  *  * "PI radians" or "TAU radians": 20
  *  * "degrees": 36
  *  * "gradians": 40
- * @param {number} [azimuthDivisions = 0]  The number of divisions in the azimuth (also known as the angular coordinate or polar angle). If None is specified then it will use the default specified by azimuthUnit
- * @param {Array<*>} [radialLabels = []] Labels for the radial axis. If nothing is specified then the labels will be automatically generated using the radialStep.
- * @param {string} [azimuthDirection = "ccw"] direction of the azimuthal labels. This can be either 'ccw' or 'cw'
+ * @param {number} [configs.azimuthDivisions = 0]  The number of divisions in the azimuth (also known as the angular coordinate or polar angle). If None is specified then it will use the default specified by azimuthUnit
+ * @param {Array.<*>} [configs.radialLabels = []] Labels for the radial axis. If nothing is specified then the labels will be automatically generated using the radialStep.
+ * @param {string} [configs.azimuthDirection = "ccw"] direction of the azimuthal labels. This can be either 'ccw' or 'cw'
 
- * @param {Object} [radiusConfigs] radial axis configurations
- * @param {string} [radiusConfigs.strokeColor = "#fff"] stroke color of the radial axis
- * @param {string} [radiusConfigs.fontFamily = "serif"] font family of the radial axis labels
- * @param {string} [radiusConfigs.textAlign = "center"] text align of the radial axis labels
- * @param {string} [radiusConfigs.textBaseline = "middle"] text baseline of the radial axis labels
- * @param {number} [radiusConfigs.strokeWidth = 2] stroke width of the radial axis in pixels
- * @param {number} [radiusConfigs.fontSize = 22] font size of the radial axis in pixels
- * @param {number} [radiusConfigs.decimalPoints = 0] number of decimal points to show up in the radial axis labels
- * @param {function} [radiusConfigs.textRenderer = fillText] function that renders text. you can use strokeText to get stroked text, or something else to get custom text
- * @param {Array<number>} [radiusConfigs.textDirection = [-1.4, -1.2]] direction of the radial axis label. This'll align labels correctly in the position.
- * @param {Array<number>} [radiusConfigs.labelAxis = [1, 0]] axis to labels
- * @param {boolean} [radiusConfigs.includeLabels = true] whether to draw radial labels or not
+ * @param {Object} [configs.radiusConfigs] radial axis configurations
+ * @param {string} [configs.radiusConfigs.strokeColor = "#fff"] stroke color of the radial axis
+ * @param {string} [configs.radiusConfigs.fontFamily = "serif"] font family of the radial axis labels
+ * @param {string} [configs.radiusConfigs.textAlign = "center"] text align of the radial axis labels
+ * @param {string} [configs.radiusConfigs.textBaseline = "middle"] text baseline of the radial axis labels
+ * @param {number} [configs.radiusConfigs.strokeWidth = 2] stroke width of the radial axis in pixels
+ * @param {number} [configs.radiusConfigs.fontSize = 22] font size of the radial axis in pixels
+ * @param {number} [configs.radiusConfigs.decimalPoints = 0] number of decimal points to show up in the radial axis labels
+ * @param {Function} [configs.radiusConfigs.textRenderer = fillText] function that renders text. you can use strokeText to get stroked text, or something else to get custom text
+ * @param {number[]} [configs.radiusConfigs.textDirection = [-1.4, -1.2]] direction of the radial axis label. This'll align labels correctly in the position.
+ * @param {number[]} [configs.radiusConfigs.labelAxis = [1, 0]] axis to labels
+ * @param {boolean} [configs.radiusConfigs.includeLabels = true] whether to draw radial labels or not
 
- * @param {Object} [azimuth] azimuth line configurations
- * @param {boolean} [azimuth.compactFraction = true] whether to show the azimuthal fraction as compact or not
- * @param {number} [azimuth.offset = 0] radial offset of the azimuthal labels
- * @param {number} [azimuth.labelBuff = 0.5] buffer between the outermost azimuthal circle and the azimuthal labels
- * @param {number} [azimuth.fontSize = 17] font size of the azimuthal labels
- * @param {number} [azimuth.strokeWidth = 1.5] stroke width of the azimuthal lines
- * @param {number} [azimuth.decimalPoints = 0] number of decimal points to show up in the azimuthal labels
- * @param {string} [azimuth.fontFamily = "serif"] font family of the azimuthal labels
- * @param {string} [azimuth.strokeColor = "#58c4dddd"] stroke color of the azimuthal labels
- * @param {function} [azimuth.textRenderer = fillText] function that renders text. you can use strokeText to get stroked text, or something else to get custom text
- * @param {boolean} [azimuth.includeLabels = true] whether to draw azimuthal labels or not
+ * @param {Object} [configs.azimuth] azimuth line configurations
+ * @param {boolean} [configs.azimuth.compactFraction = true] whether to show the azimuthal fraction as compact or not
+ * @param {number} [configs.azimuth.offset = 0] radial offset of the azimuthal labels
+ * @param {number} [configs.azimuth.labelBuff = 0.5] buffer between the outermost azimuthal circle and the azimuthal labels
+ * @param {number} [configs.azimuth.fontSize = 17] font size of the azimuthal labels
+ * @param {number} [configs.azimuth.strokeWidth = 1.5] stroke width of the azimuthal lines
+ * @param {number} [configs.azimuth.decimalPoints = 0] number of decimal points to show up in the azimuthal labels
+ * @param {string} [configs.azimuth.fontFamily = "serif"] font family of the azimuthal labels
+ * @param {string} [configs.azimuth.strokeColor = "#58c4dddd"] stroke color of the azimuthal labels
+ * @param {Function} [configs.azimuth.textRenderer = fillText] function that renders text. you can use strokeText to get stroked text, or something else to get custom text
+ * @param {boolean} [configs.azimuth.includeLabels = true] whether to draw azimuthal labels or not
  *
+ * @returns {PolarPlotters}
  */
 function polarPlane(configs = {}) {
   let ctx = _main.C.workingContext,
@@ -4313,7 +4325,7 @@ var _main = require("../main.js");
 var _settings = require("../settings.js");
 var _utils = require("../utils.js");
 var _geometry = require("./geometry.js");
-/**@module Plottter Functions */
+/**@module Plottter-Functions */
 
 /**
  * @typedef {Object} CartesianPoint
@@ -4350,10 +4362,10 @@ const UNIT_VEC = [1, 1];
  *
  * @param {Function} configs.plotter function to plot. Must recieve one argument and return a array of point as [x, y]
  * @param {number} [configs.tension = 1] Smoothness tension.
- * @param {Array<number>} [configs.range = RANGE] Range as [min, max, dt]
- * @param {Array<number>} [configs.discontinuities] Array of t where the curve discontinues.
- * @param {Array<number>} [configs.unitValue = UNIT_VEC] Value of each unit space
- * @param {Array<number>} [configs.unitSpace = UNIT_VEC] Length of each unit in pixels
+ * @param {number[]} [configs.range = RANGE] Range as [min, max, dt]
+ * @param {number[]} [configs.discontinuities] Array of t where the curve discontinues.
+ * @param {number[]} [configs.unitValue = UNIT_VEC] Value of each unit space
+ * @param {number[]} [configs.unitSpace = UNIT_VEC] Length of each unit in pixels
  * @param {boolean} [configs.smoothen = true] Whether to smoothen the shape.
  * @param {boolean} [configs.closed = false] Whether the function draws a closed shape.
  * @param {boolean} [configs.draw = true] Wheteher to draw the function graph right now.
@@ -4511,11 +4523,11 @@ function functionGraph(configs) {
  * @param {Object} configs
  * Possible parameters are:
  *
- * @param {Array<number>} [configs.min] minimum point. Default: [-4, -4]
- * @param {Array<number>} [configs.max] maximum point. Default: [4, 4]
+ * @param {number[]} [configs.min] minimum point. Default: [-4, -4]
+ * @param {number[]} [configs.max] maximum point. Default: [4, 4]
  * @param {Object} configs.colors object of color map
- * @param {Array<number>} [configs.unitValue = UNIT_VEC] Value of each unit space
- * @param {Array<number>} [configs.unitSpace = UNIT_VEC] Length of each unit in pixels
+ * @param {number[]} [configs.unitValue = UNIT_VEC] Value of each unit space
+ * @param {number[]} [configs.unitSpace = UNIT_VEC] Length of each unit in pixels
  * @param {number} [configs.resolution = 1] resolution of plot
  * @param {Function} [configs.interpolator = linear] function to interpolate color.
  * @return {Object} metadatas
@@ -4800,7 +4812,7 @@ var _points = require("../math/points.js");
 var _utils = require("../utils.js");
 /**
  * Functions for drawing various shapes
- * @module Geometric shapes
+ * @module Geometric-Shapes
  */
 
 /**
@@ -4927,12 +4939,12 @@ function sector(x, y, radius, angle = Math.PI / 2, startAngle = 0) {
 /**
  * Returns bēzier control points that passes smoothly through given points.
  *
- * @param {Array<number>} recentPoint previous point
- * @param {Array<number>} currentPoint
- * @param {Array<number>} nextPoint
- * @param {Array<number>} secondNextPoint
+ * @param {number[]} recentPoint previous point
+ * @param {number[]} currentPoint
+ * @param {number[]} nextPoint
+ * @param {number[]} secondNextPoint
  * @param {number} [tension=1]
- * @return {Array<number>} two control points as [cp1x, cp1y, cp2x, cp2y]
+ * @return {number[]} two control points as [cp1x, cp1y, cp2x, cp2y]
  */
 function getBezierControlPoints(recentPoint, currentPoint, nextPoint, secondNextPoint, tension = 1) {
   return [currentPoint[0] + (nextPoint[0] - recentPoint[0]) / 6 * tension, currentPoint[1] + (nextPoint[1] - recentPoint[1]) / 6 * tension, nextPoint[0] - (secondNextPoint[0] - currentPoint[0]) / 6 * tension, nextPoint[1] - (secondNextPoint[1] - currentPoint[1]) / 6 * tension];
@@ -4942,7 +4954,7 @@ function getBezierControlPoints(recentPoint, currentPoint, nextPoint, secondNext
  * Adds a smooth curve passing through given points and tension using bézie curve to the current shape.
  * Taken from {@link https://stackoverflow.com/a/49371349}
  *
- * @param {Array<Array<number>>} points array of points as [x, y]
+ * @param {number[][]} points array of points as [x, y]
  * @param {number} tension tension of the curve
  */
 function smoothCurveThroughPointsTo(points, tension = 1, closed = true, offset = 0) {
@@ -4959,7 +4971,7 @@ function smoothCurveThroughPointsTo(points, tension = 1, closed = true, offset =
 /**
  * Draws smooth curve passing through given points and tension using bézie curve.
  *
- * @param {Array<Array<number>>} points array of points as [x, y]
+ * @param {number[][]} points array of points as [x, y]
  * @param {number} tension tension of the curve
  */
 function smoothCurveThroughPoints(points, tension = 1, closed = true, offset = 0) {
@@ -5041,10 +5053,10 @@ function annulusSector(x, y, innerRadius, outerRadius, angle, startAngle) {
 /**
  * Angle between two lines. And returns the coordinate of middle of angle
  *
- * @param {Array<number>} p1 start point of first line array of point as [x, y]
- * @param {Array<number>} p2 end point of first line array of point as [x, y]
- * @param {Array<number>} p3 start point of second line array of point as [x, y]
- * @param {Array<number>} p4 end point of second line array of point as [x, y]
+ * @param {number[]} p1 start point of first line array of point as [x, y]
+ * @param {number[]} p2 end point of first line array of point as [x, y]
+ * @param {number[]} p3 start point of second line array of point as [x, y]
+ * @param {number[]} p4 end point of second line array of point as [x, y]
  * @param {number} radius radius of angle
  * @param {number} extender extender of output point
  * @param {boolean} otherAngle whether to draw the other angle
@@ -5112,7 +5124,7 @@ function angle(p1, p2, p3, p4, radius = 20, extender = 10, otherAngle = false, a
  * @param {number} y2 y-coord of second point
  * @param {number} radius radius of arc
  * @param {boolean} otherArc specifies whether to use other arc of the circle.
- * @returns {Array<number>} returns the coordinate of center of the arc as [x, y]
+ * @returns {number[]} returns the coordinate of center of the arc as [x, y]
  */
 function arcBetweenPoints(x1, y1, x2, y2, radius, otherArc = false) {
   if (x1 == x2 && y1 == y2)
@@ -5211,10 +5223,10 @@ function square(x, y, sideLength) {
 /**
  * Draws quadrilateral with four points as array of coordinate as [x, y]
  *
- * @param {Array<number>} p1 1st point
- * @param {Array<number>} p2 2nd point
- * @param {Array<number>} p3 3rd point
- * @param {Array<number>} p4 4th point
+ * @param {number[]} p1 1st point
+ * @param {number[]} p2 2nd point
+ * @param {number[]} p3 3rd point
+ * @param {number[]} p4 4th point
  */
 function quad(p1, p2, p3, p4) {
   let ctx = _main.C.workingContext;
@@ -5232,9 +5244,9 @@ function quad(p1, p2, p3, p4) {
 /**
  * Draws triangle with three points as array of coordinate as [x, y]
  *
- * @param {Array<number>} p1 first point
- * @param {Array<number>} p2 second point
- * @param {Array<number>} p3 third point
+ * @param {number[]} p1 first point
+ * @param {number[]} p2 second point
+ * @param {number[]} p3 third point
  */
 function triangle(p1, p2, p3) {
   let ctx = _main.C.workingContext;
@@ -5310,7 +5322,7 @@ exports.lens = lens;
 exports.polygonWithRatioOfCentralAngles = polygonWithRatioOfCentralAngles;
 var _main = require("../main.js");
 var _points = require("../math/points.js");
-/** @module Extra shapes*/
+/** @module Extra-Shapes*/
 
 /**
  * Draws a polygon with ratio of central angles
@@ -5318,7 +5330,7 @@ var _points = require("../math/points.js");
  * @param {number} x x coord of centre of polygon
  * @param {number} y y coord of centre of polygon
  * @param {number} radius radius of ex-circle of polygon
- * @param {Array<number>} ratios array of ratios of central angles. Must have atleast 3 elements.
+ * @param {number[]} ratios array of ratios of central angles. Must have atleast 3 elements.
  * @param {number} [rotation=0] amound to rotate the entire polygon.
  */
 function polygonWithRatioOfCentralAngles(x, y, radius, ratios, rotation = 0) {
@@ -5343,9 +5355,9 @@ function polygonWithRatioOfCentralAngles(x, y, radius, ratios, rotation = 0) {
 
 /**
  * Creates a lens.
- * @param {Array<number>} c1 center coordinate as array [x, y]
+ * @param {number[]} c1 center coordinate as array [x, y]
  * @param {number} r1
- * @param {Array<number>} c2 center coordinate as array [x, y]
+ * @param {number[]} c2 center coordinate as array [x, y]
  * @param {number} r2
  */
 function lens(c1, r1, c2, r2) {

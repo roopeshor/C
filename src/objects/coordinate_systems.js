@@ -17,10 +17,33 @@ import { tex } from "./tex.js";
 import { fillText } from "./text.js";
 
 /**
+ * @typedef {Object} PolarPlotters
+ * @property {Function} plotPoints see {@link plotPolarPoints}
+ * @property {Function} parametricFunction see {@link polarParametricFunction}
+ * @property {Function} functionGraph see {@link polarFuntionGraph}
+ */
+
+/**
+ * @typedef {Object} CartesianPlotters
+ * @property {Function} getParametricFunction see {@link parametricFunction}
+ * @property {Function} getFunctionGraph see {@link functionGraph}
+ * @property {Function} getHeatPlot see {@link heatPlot}
+ * @property {Function} plotPoints see {@link plotPoints}
+ */
+
+/**
+ * @typedef {Object} NumberLineConfigs configurations about the number line
+ * @property {number[]} originPosition - Center of the number line in px
+ * @property {number[]} tickList - List of tick inervals
+ * @property {number[]} unitValue - How much a unit is in its value in x and y directions.
+ * @property {number[]} unitSpace - How much a unit is in px in x and y directions.
+ */
+
+/**
  * returns list of plotting functions based on given cartesian parameters
  *
  * @param {Object} configs
- * @return {Object.<string, function>}
+ * @return {CartesianPlotters}
  */
 function getCartasianPlotters(configs) {
 	return Object.assign(configs, {
@@ -53,7 +76,7 @@ function getCartasianPlotters(configs) {
  * returns list of plotting functions based on given polar parameters
  *
  * @param {Object} configs
- * @return {Object.<string, function>}
+ * @return {PolarPlotters}
  */
 function getPolarPlotters(configs) {
 	return {
@@ -110,14 +133,10 @@ const ORIGIN = [0, 0];
  * @param {string} [configs.textAlign = "center"] to align text in x-axis
  * @param {string} [configs.textBaseline = "middle"] to align text in y-axis
  *
- * @param {function} [configs.textRenderer = fillText] function that is used to render text.
+ * @param {Function} [configs.textRenderer = fillText] function that is used to render text.
  *
  * * You can adjust textAlign and textBaseline if you want to adjust alignment of labels.
- * @returns {Object} configurations - About the number line
- * @returns {number[]} configuration.originPosition - Center of the number line in px
- * @returns {number[]} configuration.tickList - List of tick inervals
- * @returns {number[]} configuration.unitValue - How much a unit is in its value in x and y directions.
- * @returns {number[]} configuration.unitSpace - How much a unit is in px in x and y directions.
+ * @returns {NumberLineConfigs}
  */
 export function numberLine(configs = {}) {
 	const ctx = C.workingContext;
@@ -308,20 +327,12 @@ export function numberLine(configs = {}) {
 
 /**
  * Creates a axes.
- * @param {Object} configs
- * Possible configurations are:
- *
+ * @param {Object} configs Possible configurations are:
  * @param {Object} configs.xAxis Configurations for x axis. (See {@link numberLine} for more configurations)
  * @param {Object} configs.yAxis Configurations for y axis. (See {@link numberLine} for more configurations)
  * @param {number[]} [configs.originPosition = ORIGIN] originPosition of axes
  *
- * @returns {Object} object that contains following properties:
- * * xAxis                 <object>   : x axis confiurations from numberLine (See {@link numberLine} for those configurations).
- * * yAxis                 <object>   : y axis confiurations from numberLine (See {@link numberLine} for those configurations).
- * * unitValue             <array>    : How much a unit is in its value in x and y directions.
- * * unitSpace             <array>    : How much a unit is in px in x and y directions.
- * * getParametricFunction <function> : Draws a parametric function whose unit sizing are predefined by the axes. see {@link parametricFunction} to see possible configurations.
- * * getFunctionGraph      <function> : Draws a function graph whose unit sizing are predefined by the axes. see {@link functionGraph} to see possible configurations.
+ * @returns {CartesianPlotters}
  */
 export function axes(configs = {}) {
 	const ctx = C.workingContext;
@@ -369,9 +380,7 @@ export function axes(configs = {}) {
 
 /**
  * Creates a numberPlane based on following parameters inside a Object
- * @param {Object} configs
- * Possible parameters:
- *
+ * @param {Object} configs Possible parameters:
  * @param {Object} configs.xAxis Configurations for x axis. See {@link numberLine} for possible configurations.
  * @param {Object} configs.yAxis Configurations for y axis. See {@link numberLine} for possible configurations.
  * @param {number[]} configs.originPosition Center of number plane as [x, y] in px.
@@ -381,16 +390,8 @@ export function axes(configs = {}) {
  * @param {number} [configs.subgridStrokeWidth = 0.7]  stroke width of sub-grid
  * @param {string} [configs.gridStrokeColor = "#58c4dda0"]  color of grid lines
  * @param {string} [configs.subgridStrokeColor = "#888888a0"]  color of sub-grids
- * @returns {Object} configurations of number plane. Those are :
  *
- * * originPosition                <array>   : Center of number plane as [x, y] in px.
- * * unitValue             <array>   : How much a unit is in its value in x and y directions.
- * * unitSpace            <array>   : How much a unit is in px in x and y directions.
- * * subgridUnit           <array>   : How much a sub-grid is in px in x and y directions.
- * * xAxis                 <object>  : x axis confiurations from numberLine (See {@link numberLine} for those configurations).
- * * yAxis                 <object>  : y axis confiurations from numberLine (See {@link numberLine} for those configurations).
- * * getParametricFunction <function>: Draws a parametric function whose unit sizing are predefined by the axes. see {@link parametricFunction} to see possible configurations.
- * * getFunctionGraph      <function>: Draws a function graph whose unit sizing are predefined by the axes. see {@link functionGraph} to see possible configurations.
+ * @returns {CartesianPlotters}
  */
 export function numberPlane(configs = {}) {
 	const cvs = C.workingCanvas;
@@ -552,7 +553,7 @@ export function numberPlane(configs = {}) {
  * @param {number} [configs.radiusConfigs.strokeWidth = 2] stroke width of the radial axis in pixels
  * @param {number} [configs.radiusConfigs.fontSize = 22] font size of the radial axis in pixels
  * @param {number} [configs.radiusConfigs.decimalPoints = 0] number of decimal points to show up in the radial axis labels
- * @param {function} [configs.radiusConfigs.textRenderer = fillText] function that renders text. you can use strokeText to get stroked text, or something else to get custom text
+ * @param {Function} [configs.radiusConfigs.textRenderer = fillText] function that renders text. you can use strokeText to get stroked text, or something else to get custom text
  * @param {number[]} [configs.radiusConfigs.textDirection = [-1.4, -1.2]] direction of the radial axis label. This'll align labels correctly in the position.
  * @param {number[]} [configs.radiusConfigs.labelAxis = [1, 0]] axis to labels
  * @param {boolean} [configs.radiusConfigs.includeLabels = true] whether to draw radial labels or not
@@ -566,9 +567,10 @@ export function numberPlane(configs = {}) {
  * @param {number} [configs.azimuth.decimalPoints = 0] number of decimal points to show up in the azimuthal labels
  * @param {string} [configs.azimuth.fontFamily = "serif"] font family of the azimuthal labels
  * @param {string} [configs.azimuth.strokeColor = "#58c4dddd"] stroke color of the azimuthal labels
- * @param {function} [configs.azimuth.textRenderer = fillText] function that renders text. you can use strokeText to get stroked text, or something else to get custom text
+ * @param {Function} [configs.azimuth.textRenderer = fillText] function that renders text. you can use strokeText to get stroked text, or something else to get custom text
  * @param {boolean} [configs.azimuth.includeLabels = true] whether to draw azimuthal labels or not
  *
+ * @returns {PolarPlotters}
  */
 export function polarPlane(configs = {}) {
 	let ctx = C.workingContext,

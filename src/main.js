@@ -148,7 +148,7 @@ C.dpr;
 /**
  * return inner width of container tag
  * @param {HTMLElement} [container=document.body]
- * @returns number
+ * @returns {number}
  */
 C.getWindowWidth = function (container = document.body) {
 	const cs = window.getComputedStyle(container);
