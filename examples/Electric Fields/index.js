@@ -64,7 +64,7 @@ let sx = (W / abs(range[1] - range[0])) * Math.round(window.devicePixelRatio),
 	sy = (H / abs(range[1] - range[0])) * Math.round(window.devicePixelRatio);
 let P = getInterpolatedColorList(ColorPalettes.Heat, 0, 3, 0.2);
 console.log(P);
-/*C(
+C(
 	() => {
 		centreCanvas();
 		let a = axes({
@@ -103,8 +103,8 @@ console.log(P);
 		width: W,
 		height: H,
 		name: "t2",
-	}
-);*/
+	},
+);
 C(
 	() => {
 		centreCanvas();

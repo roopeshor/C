@@ -20,7 +20,7 @@ const CFG = {
 	height: H,
 };
 const { GREEN } = Manim;
-function drawAxis(min = -4, max = 4, dx = 1) {
+function drawAxis(min = -4, max = 4, step = 1) {
 	background(0);
 	translate(CENTERX, CENTERY);
 	strokeWidth(2);
@@ -31,7 +31,7 @@ function drawAxis(min = -4, max = 4, dx = 1) {
 	return axes({
 		xAxis: {
 			lineWidth: 1,
-			range: [min, max, dx],
+			range: [min, max, step],
 			includeNumbers: true,
 			textSize: 11,
 			includeLeftTip: false,
@@ -39,7 +39,7 @@ function drawAxis(min = -4, max = 4, dx = 1) {
 		},
 		yAxis: {
 			lineWidth: 1,
-			range: [min, max, dx],
+			range: [min, max, step],
 			includeNumbers: true,
 			textSize: 11,
 			includeLeftTip: false,
