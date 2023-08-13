@@ -679,7 +679,7 @@ function createWebGL(configs) {
   const cv = _main.C.workingCanvas;
   configs = (0, _utils.applyDefault)({
     deleteOld: false,
-    dpr: Math.ceil(window.devicePixelRatio),
+    dpr: Math.ceil(globalThis.devicePixelRatio),
     width: cv.rWidth,
     height: cv.rHeight
   }, configs);
@@ -724,7 +724,7 @@ class WebGL {
     /** @type number */
     this.height = canvas.rHeight;
     /** @type number */
-    this.dpr = canvas.dpr || Math.ceil(window.devicePixelRatio);
+    this.dpr = canvas.dpr || Math.ceil(globalThis.devicePixelRatio);
     this.canvas = canvas;
     this.sources = {
       // one color for all vertex
@@ -878,7 +878,7 @@ class WebGL {
   }
   resizeCanvas(width = 300, height = 300) {
     // Lookup the size the browser is displaying the canvas in CSS pixels.
-    const dpr = window.devicePixelRatio;
+    const dpr = globalThis.devicePixelRatio;
     const displayWidth = Math.round(width * dpr);
     const displayHeight = Math.round(height * dpr);
     // Make the canvas the same size
@@ -2427,7 +2427,7 @@ function C(fx, container, cfgs = {}) {
     height: 200,
     // height of canvas  multiplied by dpr
 
-    dpr: Math.ceil(window.devicePixelRatio || 1),
+    dpr: Math.ceil(globalThis.devicePixelRatio || 1),
     // device pixel ratio for clear drawings
 
     // states
@@ -2560,7 +2560,7 @@ C.dpr;
  * @returns {number}
  */
 C.getWindowWidth = function (container = document.body) {
-  const cs = window.getComputedStyle(container);
+  const cs = globalThis.getComputedStyle(container);
   return parseInt(cs.width, 10) - parseInt(cs.paddingRight, 10) - parseInt(cs.paddingLeft, 10);
 };
 
@@ -2577,7 +2577,7 @@ C.getWindowWidth = function (container = document.body) {
 C.resizeCanvas = function (cvs, configs) {
   const width = configs.width;
   const height = configs.height;
-  const dpr = configs.dpr || window.devicePixelRatio;
+  const dpr = configs.dpr || globalThis.devicePixelRatio;
   cvs.style.width = width + "px";
   cvs.style.height = height + "px";
   cvs.width = dpr * width;
@@ -2599,12 +2599,12 @@ C.makeCanvas = function (configs) {
 };
 
 /**
- * Add extension to window and C extension list
+ * Add extension to globalThis and C extension list
  *
  * @param {Object} extObj
  */
 C.addExtension = function (extObj) {
-  (0, _utils.defineProperties)(extObj, window);
+  (0, _utils.defineProperties)(extObj, globalThis);
   (0, _utils.defineProperties)(extObj, C.extensions, false);
 };
 
@@ -2655,12 +2655,12 @@ function defineConstant(constantList) {
   let constants = Object.keys(constantList);
   for (let i = 0; i < constants.length; i++) {
     let constant = constants[i];
-    Object.defineProperty(window, constant, {
+    Object.defineProperty(globalThis, constant, {
       configurable: true,
       enumerable: true,
       get: constantList[constant],
       set: function (val) {
-        Object.defineProperty(window, constant, {
+        Object.defineProperty(globalThis, constant, {
           configurable: true,
           enumerable: true,
           value: val,
@@ -2679,8 +2679,8 @@ defineConstant({
   }
 });
 
-// register to window
-window["C"] = C;
+// register to globalThis
+globalThis["C"] = C;
 
 },{"./utils.js":32}],18:[function(require,module,exports){
 "use strict";
@@ -3668,7 +3668,7 @@ const ORIGIN = [0, 0];
  * @param {number} [configs.decimalPlaces] Number of decimal places in text. By default value is number of decimals in step
  * @param {number} [configs.rotation = 0] Amound to rotate the numberline from origin
  * @param {number} [configs.strokeWidth = 2] Width of lines in px
- * @param {number} [configs.length] Total length of numberline in pixels. Default is the widht of canvas
+ * @param {number} [configs.length] Total length of numberline in pixels. Default is the width of canvas
  *
  * @param {string} [configs.strokeColor = "white"] Color of axis and ticks
  * @param {string} [configs.textColor = "white"] Color of text
@@ -3766,14 +3766,13 @@ function numberLine(configs = {}) {
     /** Total number of ticks */
     totalTicks = (max - min) / step,
     /** Space between two ticks in pixels*/
-    unitSpace = configs.length / totalTicks,
+    unitSpace = configs.length / totalTicks / _main.C.dpr,
     /** A list of numbers that'll be displayed if no labels are given through numberToInclude */
     tickList = getTickList();
 
   // scale everyting down
   strokeWidth /= unitSpace;
   tipWidth /= unitSpace;
-  fontSize /= unitSpace;
   tipHeight /= unitSpace;
   configs.tickHeight /= unitSpace;
   ctx.beginPath();
@@ -3829,6 +3828,8 @@ function numberLine(configs = {}) {
     const start = includeLeftTip ? 1 : 0;
     const end = includeRightTip ? tickList.length - 1 : tickList.length;
     const textRenderer = configs.textRenderer;
+    ctx.save();
+    ctx.scale(1 / unitSpace, 1 / unitSpace);
     for (let i = start; i < end; i++) {
       if (i >= labels.length) break;
       const tick = typeof labels[i] == "number" ? labels[i].toFixed(decimalPlaces) : labels[i];
@@ -3844,11 +3845,12 @@ function numberLine(configs = {}) {
       textDirection[0] * width; // shift by text direction
       const yShift = textDirection[1] * fontSize; // shift by text direction
       ctx.save();
-      ctx.translate(xShift, yShift);
+      ctx.translate(xShift * unitSpace, yShift);
       ctx.rotate(textRotation);
       textRenderer(tick, 0, 0);
       ctx.restore();
     }
+    ctx.restore();
   }
   function getTickList() {
     return (0, _utils.arange)(min, max, step);
@@ -4346,17 +4348,24 @@ var _geometry = require("./geometry.js");
  * @typedef {Object} CartesianPoint
  * @property {number} x
  * @property {number} y
- * @property {number} [radius=5]
- * @property {string} [fill="white"]
- * @property {string} [stroke="transparent"]
+ * @property {number} radius radius of point
+ * @property {string} fill fill style
+ * @property {string} stroke stroke styles
  */
+
 /**
  * @typedef {Object} PolarPoint
- * @property {number} r
- * @property {number} phi
- * @property {number} [radius=5]
- * @property {string} [fill="white"]
- * @property {string} [stroke="transparent"]
+ * @property {number} r distance from origin
+ * @property {number} phi radial distance from +x axis in CCW direction
+ * @property {number} radius radius of point
+ * @property {string} fill fill style
+ * @property {string} stroke stroke styles
+ */
+/**
+ * @typedef {Object} ParametricPlotter
+ * @property {number[][]} points : Array of computed points in the function
+ * @property {Function} draw : Function that draws the plot
+ * @property {Function} animate : Function that animates the drawing of the shape. Accept argument `duration` which is the duration of animation.
  */
 const animationEventChain = {
   then: function (f) {
@@ -4372,24 +4381,20 @@ const UNIT_VEC = [1, 1];
 /**
  * Draws a parametric functions
  * This accept parameters as object.
- * @param {Object} configs configuration object
- * It can have following properties:
- *
+ * @param {Object} configs configurations
  * @param {Function} configs.plotter function to plot. Must recieve one argument and return a array of point as [x, y]
  * @param {number} [configs.tension = 1] Smoothness tension.
  * @param {number[]} [configs.range = RANGE] Range as [min, max, dt]
  * @param {number[]} [configs.discontinuities] Array of t where the curve discontinues.
- * @param {number[]} [configs.unitValue = UNIT_VEC] Value of each unit space
- * @param {number[]} [configs.unitSpace = UNIT_VEC] Length of each unit in pixels
+ * @param {number[]} [configs.unitValue = [1, 1]] Value of each unit space
+ * @param {number[]} [configs.unitSpace = [1, 1]] Length of each unit in pixels
  * @param {boolean} [configs.smoothen = true] Whether to smoothen the shape.
  * @param {boolean} [configs.closed = false] Whether the function draws a closed shape.
  * @param {boolean} [configs.draw = true] Wheteher to draw the function graph right now.
+ * @param {number} [configs.strokeWidth = 2]
+ * @param {number} [configs.discontinuityRadius = range[2]]
  *
- * @returns {Object} object that contains following properties:
- *
- * * points  <array>    : Array of computed points in the function
- * * draw    <function> : Function that draws the plot
- * * animate <function> : Function that animates the drawing of the shape. Accept argument `duration` which is the duration of animation.
+ * @returns {ParametricPlotter}
  */
 function parametricFunction(configs) {
   let defaultConfigs = {
@@ -4425,17 +4430,12 @@ function parametricFunction(configs) {
   let row = 0,
     pointCount = 0,
     unitX = configs.unitSpace[0] / configs.unitValue[0],
-    unitY = configs.unitSpace[1] / configs.unitValue[1];
-  let discontinuityRadius;
-  if (isNaN(configs.discontinuityRadius)) {
-    discontinuityRadius = step;
-  } else {
-    discontinuityRadius = configs.discontinuityRadius;
-  }
+    unitY = configs.unitSpace[1] / configs.unitValue[1],
+    discontinuityRadius = isNaN(configs.discontinuityRadius) ? step : configs.discontinuityRadius;
   if (step < discontinuityRadius) discontinuityRadius = step / 2;
   for (let t = min; t <= max + discontinuityRadius; t += step) {
-    if ((0, _utils.approximateIndexInArray)(t, discontinuities, discontinuityRadius) > -1) {
-      if ((0, _utils.approximateIndexInArray)(t + step, discontinuities, discontinuityRadius) > -1) {
+    if ((0, _utils.inArray)(t, discontinuities, discontinuityRadius)) {
+      if ((0, _utils.inArray)(t + step, discontinuities, discontinuityRadius)) {
         row++;
         points.push([]);
       }
@@ -4445,7 +4445,6 @@ function parametricFunction(configs) {
     points[row].push([ft[0] * unitX, ft[1] * unitY]);
     pointCount++;
   }
-
   // draw the plot
   if (configs.draw) plot();
   function plot() {
@@ -4524,6 +4523,9 @@ function parametricFunction(configs) {
 /**
  * Draws graph of funciton
  * See {@link parametricFunction} For arguments
+ *
+ * @param {Object} configs
+ * @return {ParametricPlotter}
  */
 function functionGraph(configs) {
   let plotter = configs.plotter;
@@ -4538,6 +4540,7 @@ function functionGraph(configs) {
  * @param {Object} configs
  * Possible parameters are:
  *
+ * @param {Function} configs.plotFunction function to be plotted.
  * @param {number[]} [configs.min] minimum point. Default: [-4, -4]
  * @param {number[]} [configs.max] maximum point. Default: [4, 4]
  * @param {Object} configs.colors object of color map
@@ -4545,7 +4548,6 @@ function functionGraph(configs) {
  * @param {number[]} [configs.unitSpace = UNIT_VEC] Length of each unit in pixels
  * @param {number} [configs.resolution = 1] resolution of plot
  * @param {Function} [configs.interpolator = linear] function to interpolate color.
- * @return {Object} metadatas
  */
 function heatPlot(configs) {
   let defaultConfigs = {
@@ -4577,44 +4579,39 @@ function heatPlot(configs) {
     ctx = _main.C.workingContext,
     unitSizeX = configs.unitSpace[0] / configs.unitValue[0],
     unitSizeY = configs.unitSpace[1] / configs.unitValue[1],
-    UVX = configs.unitValue[0] / configs.unitSpace[0],
-    UVY = configs.unitValue[1] / configs.unitSpace[1],
+    UVX = 1 / unitSizeX,
+    UVY = 1 / unitSizeY,
     stopes = Object.keys(colors).sort();
 
-  // converting colors to rgba array
-
+  // convert colors to rgba array
   for (let stop of stopes) {
     colors[stop] = (0, _color_reader.readColor)(colors[stop]).rgbaA;
   }
-  let minS = Math.min(...stopes),
-    maxS = Math.max(...stopes);
+  let stopMin = Math.min(...stopes),
+    stopMax = Math.max(...stopes);
   ctx.save();
   for (let x = min[0]; x <= max[0]; x += resolution * UVX) {
     for (let y = min[1]; y <= max[1]; y += resolution * UVY) {
-      ctx.fillStyle = lerpColorArray(plotFunction(x, y));
+      let v = plotFunction(x, y);
+      ctx.fillStyle = lerpColorArray(v, stopMax, colors, stopMin, stopes, interpolator);
       ctx.fillRect(x * unitSizeX, y * unitSizeY, resolution, resolution);
     }
   }
+  ctx.restore();
   function lerpColorArray(v) {
-    if (v >= maxS) return "rgba(" + colors[maxS].join() + ")";
-    if (v <= minS) return "rgba(" + colors[minS].join() + ")";
+    if (v >= stopMax) return "rgba(" + colors[stopMax].join() + ")";
+    if (v <= stopMin) return "rgba(" + colors[stopMin].join() + ")";
     for (let i = 0; i < stopes.length - 1; i++) {
       let a = stopes[i],
-        b = stopes[i + 1],
-        c1 = colors[a],
-        c2 = colors[b],
-        k = interpolator((v - a) / (b - a));
+        b = stopes[i + 1];
       if (v >= a && v < b) {
-        return "rgba(" + [(c2[0] - c1[0]) * k + c1[0], (c2[1] - c1[1]) * k + c1[1], (c2[2] - c1[2]) * k + c1[2], (c2[3] - c1[3]) * k + c1[3]].join() + ")";
+        let c1 = colors[a],
+          c2 = colors[b],
+          k = interpolator((v - a) / (b - a));
+        return "rgba(" + [Math.round((c2[0] - c1[0]) * k + c1[0]), Math.round((c2[1] - c1[1]) * k + c1[1]), Math.round((c2[2] - c1[2]) * k + c1[2]), (c2[3] - c1[3]) * k + c1[3]].join() + ")";
       }
     }
   }
-  ctx.restore();
-  return {
-    min: minS,
-    max: maxS,
-    colors: colors
-  };
 }
 
 /**
@@ -4634,17 +4631,19 @@ function plotPoints(configs) {
     radius: 5
   }, configs);
   let {
-    points,
-    unitValue,
-    unitSpace
-  } = configs;
-  let ctx = _main.C.workingContext;
+      points,
+      unitValue,
+      unitSpace
+    } = configs,
+    ctx = _main.C.workingContext,
+    unitSizeX = unitSpace[0] / unitValue[0],
+    unitSizeY = unitSpace[1] / unitValue[1];
   for (let i = 0; i < points.length; i++) {
     let p = points[i],
       fill = p.fill || configs.fill || ctx.fillStyle,
       stroke = p.stroke || configs.stroke || ctx.strokeStyle,
-      x = p.x * unitSpace[0] / unitValue[0],
-      y = p.y * unitSpace[1] / unitValue[1];
+      x = p.x * unitSizeX,
+      y = p.y * unitSizeY;
     ctx.beginPath();
     ctx.fillStyle = fill;
     ctx.strokeStyle = stroke;
@@ -4659,6 +4658,7 @@ function plotPoints(configs) {
  * Plots a bunch of points in polar plane
  * @param {Object} configs configurations
  * @param {PolarPoint[]} configs.points list of points
+ * @param {number} configs.radialSpacing size of each unit radius in pixels
  */
 function plotPolarPoints(configs) {
   configs = (0, _utils.applyDefault)({
@@ -4670,14 +4670,16 @@ function plotPolarPoints(configs) {
   }, configs);
   let ctx = _main.C.workingContext;
   let {
-    points,
-    radialSpacing
-  } = configs;
+      points,
+      radialSpacing
+    } = configs,
+    defaultFill = configs.fill || ctx.fillStyle,
+    defaultStroke = configs.stroke || ctx.strokeStyle;
   ctx.save();
   for (let i = 0; i < points.length; i++) {
     let p = points[i],
-      fill = p.fill || configs.fill || ctx.fillStyle,
-      stroke = p.stroke || configs.stroke || ctx.strokeStyle,
+      fill = p.fill || defaultFill,
+      stroke = p.stroke || defaultStroke,
       x = p.r * Math.cos(p.phi) * radialSpacing,
       y = p.r * Math.sin(p.phi) * radialSpacing;
     ctx.beginPath();
@@ -4695,6 +4697,15 @@ function plotPolarPoints(configs) {
  * Plots a parametric function in polar plane
  * @param {Object} configs
  * @param {Function} configs.plotter function that takes one arguments t and returns a coordinate as [radius, angle]
+ * @param {number} [configs.tension = 1]
+ * @param {number} [configs.radialSpacing = 1]
+ * @param {number[]} [configs.range = [0, Math.PI * 2, Math.PI / 50]]
+ * @param {Array} [configs.discontinuities = []]
+ * @param {boolean} [configs.smoothen = true]
+ * @param {boolean} [configs.closed = false]
+ * @param {number} [configs.strokeWidth = 2]
+ * @param {number} [configs.discontinuityRadius = range[2]]
+
  * @returns {Object}
  */
 function polarParametricFunction(configs) {
@@ -4705,8 +4716,7 @@ function polarParametricFunction(configs) {
     discontinuities: [],
     smoothen: true,
     closed: false,
-    strokeWidth: 2,
-    plotter: t => [0, 0]
+    strokeWidth: 2
   }, configs);
   let {
     plotter,
@@ -4723,19 +4733,15 @@ function polarParametricFunction(configs) {
     max = range[1],
     step = range[2];
   if (!Array.isArray(discontinuities)) discontinuities = [];
-  let discontinuityRadius;
-  if (isNaN(configs.discontinuityRadius)) {
-    discontinuityRadius = step;
-  } else {
-    discontinuityRadius = configs.discontinuityRadius;
-  }
+  let discontinuityRadius = isNaN(configs.discontinuityRadius) ? step : configs.discontinuityRadius;
+
   // generate points
   let row = 0,
     _fix = discontinuityRadius < step ? discontinuityRadius : 0;
   // we add one more point to make the graph more accurate when applying smoothening technique.
   for (let t = min; t <= max + step + _fix; t += step) {
-    if ((0, _utils.approximateIndexInArray)(t, discontinuities, discontinuityRadius) > -1) {
-      if ((0, _utils.approximateIndexInArray)(t + step, discontinuities, discontinuityRadius) > -1) {
+    if ((0, _utils.inArray)(t, discontinuities, discontinuityRadius)) {
+      if ((0, _utils.inArray)(t + step, discontinuities, discontinuityRadius)) {
         row++;
         points.push([]);
       }
@@ -4782,7 +4788,7 @@ function polarParametricFunction(configs) {
   };
 }
 /**
- * Wrapper for polarParametricFunction
+ * Wrapper for {@link polarParametricFunction}
  * @param {Object} configs
  * @returns {Object}
  */
@@ -5183,7 +5189,7 @@ function line(x1, y1, x2, y2) {
  *
  * @param {number} x x-coord
  * @param {number} y y-coord
- * @param {number} width widht
+ * @param {number} width width
  * @param {number} height height
  */
 function rect(x, y, width, height) {
@@ -5413,11 +5419,11 @@ var _main = require("../main.js");
  * @return {HTMLImageElement}
  */
 function getImageFromTex(input) {
-  if (!(typeof window["MathJax"] == "object" && typeof window["MathJax"]["tex2svg"] == "function")) {
+  if (!(typeof globalThis["MathJax"] == "object" && typeof globalThis["MathJax"]["tex2svg"] == "function")) {
     throw new Error("MathJax is not found. Please include it.");
   }
   let ctx = _main.C.workingContext,
-    svgOutput = window["MathJax"].tex2svg(input).getElementsByTagName("svg")[0],
+    svgOutput = globalThis["MathJax"].tex2svg(input).getElementsByTagName("svg")[0],
     g = svgOutput.getElementsByTagName("g")[0];
   svgOutput.style.verticalAlign = "1ex";
   svgOutput.style.fontSize = parseFloat(ctx.font) + "px";
@@ -5427,7 +5433,7 @@ function getImageFromTex(input) {
     blob = new Blob([outerHTML], {
       type: "image/svg+xml;charset=utf-8"
     }),
-    URL = window.URL || window.webkitURL,
+    URL = globalThis.URL || globalThis.webkitURL,
     blobURL = URL.createObjectURL(blob),
     image = new Image();
   image.src = blobURL;
@@ -5971,15 +5977,15 @@ function loop(name, functionToRun, canvasName, timeDelay, timeDelaysToRemember =
       });
       console.log(toLog, ...styles);
     }
-    ctx.recentTimeStamp = window.performance.now();
-    ctx.timeStart = window.performance.now();
+    ctx.recentTimeStamp = performance.now();
+    ctx.timeStart = performance.now();
     if (!isNaN(timeDelay)) {
       ctx.currentLoopName = name;
       ctx.currentLoop = setInterval(function () {
         _main.C.workingContext = ctx;
         let S = getContextStates(canvasName);
         (0, _utils.defineProperties)(assignedSettings, _main.C.workingContext);
-        functionToRun(window.performance.now() - ctx.timeStart, getFPS());
+        functionToRun(performance.now() - ctx.timeStart, getFPS());
         (0, _utils.defineProperties)(S, _main.C.workingContext);
       }, timeDelay);
     } else {
@@ -5987,15 +5993,15 @@ function loop(name, functionToRun, canvasName, timeDelay, timeDelaysToRemember =
     }
   }
   function run() {
-    ctx.currentLoop = window.requestAnimationFrame(run);
+    ctx.currentLoop = globalThis.requestAnimationFrame(run);
     _main.C.workingContext = ctx;
     let S = getContextStates(canvasName);
     if (settings) (0, _utils.defineProperties)(assignedSettings, _main.C.workingContext);
-    functionToRun(window.performance.now() - ctx.timeStart, getFPS());
+    functionToRun(performance.now() - ctx.timeStart, getFPS());
     if (settings) (0, _utils.defineProperties)(S, _main.C.workingContext);
   }
   function getFPS() {
-    let now = window.performance.now(),
+    let now = performance.now(),
       timeDelay = now - ctx.recentTimeStamp; // time delays between frames
     ctx.recentTimeStamp = now;
     ctx.timeDelayList.push(timeDelay);
@@ -6015,7 +6021,7 @@ function noLoop(canvasName, time) {
   let ctx = _main.C.workingContext;
   if (!canvasName) canvasName = ctx.name;else ctx = _main.C.contextList[canvasName];
   clearInterval(ctx.currentLoop);
-  window.cancelAnimationFrame(ctx.currentLoop);
+  globalThis.cancelAnimationFrame(ctx.currentLoop);
   ctx.currentLoop = undefined;
   if (_main.C.debugAnimations) {
     let toLog = `${canvasName}: ${ctx.currentLoopName} %cfinished`,
@@ -6282,11 +6288,11 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.applyDefault = applyDefault;
-exports.approximateIndexInArray = approximateIndexInArray;
 exports.arange = arange;
 exports.defineProperties = defineProperties;
 exports.doFillAndStroke = doFillAndStroke;
 exports.fraction = fraction;
+exports.inArray = inArray;
 exports.latexToImg = latexToImg;
 exports.type = void 0;
 var _c = require("./c.js");
@@ -6313,10 +6319,10 @@ Object.clone = Object.clone || function (toClone) {
  * defines new properties to a given Object
  *
  * @param {*} source source object
- * @param {*} [target=window] target object
+ * @param {*} [target=globalThis] target object
  * @param {boolean} [assignToC=true] whether apply properties to C.
  */
-function defineProperties(source, target = window, assignToC = false) {
+function defineProperties(source, target = globalThis, assignToC = false) {
   Object.assign(target, source);
   if (assignToC) Object.assign(_main.C.functions, source);
 }
@@ -6380,22 +6386,22 @@ function doFillAndStroke(ctx) {
 }
 
 /**
- * Returns index of first element that is close to ```val```
+ * Checks if any number in the array matches closely with the given value.
  *
- * @param {number} val value to search for
- * @param {Array} array
+ * @param {number} value value to search for
+ * @param {number[]} array
  * @param {number} [epsilon=1e-6] maximum difference
  * @return {number}
  * @ignore
  */
-function approximateIndexInArray(val, array, epsilon = 1e-6) {
+function inArray(value, array, epsilon = 1e-6) {
   for (let i = 0; i < array.length; i++) {
     let k = array[i];
-    if (Math.abs(k - val) <= epsilon) {
-      return i;
+    if (Math.abs(k - value) <= epsilon) {
+      return true;
     }
   }
-  return -1;
+  return false;
 }
 
 /**
@@ -6421,7 +6427,7 @@ function latexToImg(latex) {
     };
     output.svg = mjOut.outerHTML;
     var image = new Image();
-    image.src = "data:image/svg+xml;base64," + window.btoa(unescape(encodeURIComponent(output.svg)));
+    image.src = "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(output.svg)));
     image.onload = function () {
       var canvas = document.createElement("canvas");
       canvas.width = image.width;
@@ -6478,6 +6484,5 @@ function fraction(numerator, denominator, simplifyFraction = true, compact = tru
   }
   return tex;
 }
-window["applyDefault"] = applyDefault;
 
 },{"./c.js":5,"./main.js":17}]},{},[4]);
