@@ -11,14 +11,14 @@ import { C } from "../main.js";
 function getImageFromTex(input) {
 	if (
 		!(
-			typeof window["MathJax"] == "object" &&
-			typeof window["MathJax"]["tex2svg"] == "function"
+			typeof globalThis["MathJax"] == "object" &&
+			typeof globalThis["MathJax"]["tex2svg"] == "function"
 		)
 	) {
 		throw new Error("MathJax is not found. Please include it.");
 	}
 	let ctx = C.workingContext,
-		svgOutput = window["MathJax"].tex2svg(input).getElementsByTagName("svg")[0],
+		svgOutput = globalThis["MathJax"].tex2svg(input).getElementsByTagName("svg")[0],
 		g = svgOutput.getElementsByTagName("g")[0];
 	svgOutput.style.verticalAlign = "1ex";
 	svgOutput.style.fontSize = parseFloat(ctx.font) + "px";
@@ -26,7 +26,7 @@ function getImageFromTex(input) {
 	g.setAttribute("fill", ctx.fillStyle);
 	let outerHTML = svgOutput.outerHTML,
 		blob = new Blob([outerHTML], { type: "image/svg+xml;charset=utf-8" }),
-		URL = window.URL || window.webkitURL,
+		URL = globalThis.URL || globalThis.webkitURL,
 		blobURL = URL.createObjectURL(blob),
 		image = new Image();
 	image.src = blobURL;

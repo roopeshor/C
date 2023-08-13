@@ -13,7 +13,7 @@ function createWebGL(configs) {
 	configs = applyDefault(
 		{
 			deleteOld: false,
-			dpr: Math.ceil(window.devicePixelRatio),
+			dpr: Math.ceil(globalThis.devicePixelRatio),
 			width: cv.rWidth,
 			height: cv.rHeight,
 		},
@@ -60,7 +60,7 @@ class WebGL {
 		/** @type number */
 		this.height = canvas.rHeight;
 		/** @type number */
-		this.dpr = canvas.dpr || Math.ceil(window.devicePixelRatio);
+		this.dpr = canvas.dpr || Math.ceil(globalThis.devicePixelRatio);
 		this.canvas = canvas;
 		this.sources = {
 			// one color for all vertex
@@ -225,7 +225,7 @@ class WebGL {
 	}
 	resizeCanvas(width = 300, height = 300) {
 		// Lookup the size the browser is displaying the canvas in CSS pixels.
-		const dpr = window.devicePixelRatio;
+		const dpr = globalThis.devicePixelRatio;
 		const displayWidth = Math.round(width * dpr);
 		const displayHeight = Math.round(height * dpr);
 		// Make the canvas the same size

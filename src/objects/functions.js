@@ -8,18 +8,25 @@ import { getBezierControlPoints, line, smoothCurveThroughPoints } from "./geomet
  * @typedef {Object} CartesianPoint
  * @property {number} x
  * @property {number} y
- * @property {number} [radius=5]
- * @property {string} [fill="white"]
- * @property {string} [stroke="transparent"]
+ * @property {number} radius radius of point
+ * @property {string} fill fill style
+ * @property {string} stroke stroke styles
  */
 
 /**
  * @typedef {Object} PolarPoint
- * @property {number} r
- * @property {number} phi
- * @property {number} [radius=5]
- * @property {string} [fill="white"]
- * @property {string} [stroke="transparent"]
+ * @property {number} r distance from origin
+ * @property {number} phi radial distance from +x axis in CCW direction
+ * @property {number} radius radius of point
+ * @property {string} fill fill style
+ * @property {string} stroke stroke styles
+ */
+
+/**
+ * @typedef {Object} ParametricPlotter
+ * @property {number[][]} points : Array of computed points in the function
+ * @property {Function} draw : Function that draws the plot
+ * @property {Function} animate : Function that animates the drawing of the shape. Accept argument `duration` which is the duration of animation.
  */
 
 const animationEventChain = {
@@ -32,30 +39,23 @@ const animationEventChain = {
 let counter = {
 	parametricFunction: 1,
 };
-
 const RANGE = [0, 10, 0.1];
 const UNIT_VEC = [1, 1];
 /**
  * Draws a parametric functions
  * This accept parameters as object.
- * @param {Object} configs configuration object
- * It can have following properties:
- *
+ * @param {Object} configs configurations
  * @param {Function} configs.plotter function to plot. Must recieve one argument and return a array of point as [x, y]
  * @param {number} [configs.tension = 1] Smoothness tension.
  * @param {number[]} [configs.range = RANGE] Range as [min, max, dt]
  * @param {number[]} [configs.discontinuities] Array of t where the curve discontinues.
- * @param {number[]} [configs.unitValue = UNIT_VEC] Value of each unit space
- * @param {number[]} [configs.unitSpace = UNIT_VEC] Length of each unit in pixels
+ * @param {number[]} [configs.unitValue = [1, 1]] Value of each unit space
+ * @param {number[]} [configs.unitSpace = [1, 1]] Length of each unit in pixels
  * @param {boolean} [configs.smoothen = true] Whether to smoothen the shape.
  * @param {boolean} [configs.closed = false] Whether the function draws a closed shape.
  * @param {boolean} [configs.draw = true] Wheteher to draw the function graph right now.
  *
- * @returns {Object} object that contains following properties:
- *
- * * points  <array>    : Array of computed points in the function
- * * draw    <function> : Function that draws the plot
- * * animate <function> : Function that animates the drawing of the shape. Accept argument `duration` which is the duration of animation.
+ * @returns {ParametricPlotter}
  */
 export function parametricFunction(configs) {
 	let defaultConfigs = {
@@ -201,6 +201,9 @@ export function parametricFunction(configs) {
 /**
  * Draws graph of funciton
  * See {@link parametricFunction} For arguments
+ *
+ * @param {Object} configs
+ * @return {ParametricPlotter}
  */
 export function functionGraph(configs) {
 	let plotter = configs.plotter;
@@ -215,6 +218,7 @@ export function functionGraph(configs) {
  * @param {Object} configs
  * Possible parameters are:
  *
+ * @param {Function} configs.plotFunction function to be plotted.
  * @param {number[]} [configs.min] minimum point. Default: [-4, -4]
  * @param {number[]} [configs.max] maximum point. Default: [4, 4]
  * @param {Object} configs.colors object of color map
@@ -222,7 +226,6 @@ export function functionGraph(configs) {
  * @param {number[]} [configs.unitSpace = UNIT_VEC] Length of each unit in pixels
  * @param {number} [configs.resolution = 1] resolution of plot
  * @param {Function} [configs.interpolator = linear] function to interpolate color.
- * @return {Object} metadatas
  */
 export function heatPlot(configs) {
 	let defaultConfigs = {
@@ -247,40 +250,43 @@ export function heatPlot(configs) {
 		ctx = C.workingContext,
 		unitSizeX = configs.unitSpace[0] / configs.unitValue[0],
 		unitSizeY = configs.unitSpace[1] / configs.unitValue[1],
-		UVX = configs.unitValue[0] / configs.unitSpace[0],
-		UVY = configs.unitValue[1] / configs.unitSpace[1],
+		UVX = 1 / unitSizeX,
+		UVY = 1 / unitSizeY,
 		stopes = Object.keys(colors).sort();
 
-	// converting colors to rgba array
-
+	// convert colors to rgba array
 	for (let stop of stopes) {
 		colors[stop] = readColor(colors[stop]).rgbaA;
 	}
-	let minS = Math.min(...stopes),
-		maxS = Math.max(...stopes);
+
+	let stopMin = Math.min(...stopes),
+		stopMax = Math.max(...stopes);
+
 	ctx.save();
 	for (let x = min[0]; x <= max[0]; x += resolution * UVX) {
 		for (let y = min[1]; y <= max[1]; y += resolution * UVY) {
-			ctx.fillStyle = lerpColorArray(plotFunction(x, y));
+			let v = plotFunction(x, y);
+			ctx.fillStyle = lerpColorArray(v, stopMax, colors, stopMin, stopes, interpolator);
 			ctx.fillRect(x * unitSizeX, y * unitSizeY, resolution, resolution);
 		}
 	}
+	ctx.restore();
 	function lerpColorArray(v) {
-		if (v >= maxS) return "rgba(" + colors[maxS].join() + ")";
-		if (v <= minS) return "rgba(" + colors[minS].join() + ")";
+		if (v >= stopMax) return "rgba(" + colors[stopMax].join() + ")";
+		if (v <= stopMin) return "rgba(" + colors[stopMin].join() + ")";
 		for (let i = 0; i < stopes.length - 1; i++) {
 			let a = stopes[i],
-				b = stopes[i + 1],
-				c1 = colors[a],
-				c2 = colors[b],
-				k = interpolator((v - a) / (b - a));
+				b = stopes[i + 1];
 			if (v >= a && v < b) {
+				let c1 = colors[a],
+					c2 = colors[b],
+					k = interpolator((v - a) / (b - a));
 				return (
 					"rgba(" +
 					[
-						(c2[0] - c1[0]) * k + c1[0],
-						(c2[1] - c1[1]) * k + c1[1],
-						(c2[2] - c1[2]) * k + c1[2],
+						Math.round((c2[0] - c1[0]) * k + c1[0]),
+						Math.round((c2[1] - c1[1]) * k + c1[1]),
+						Math.round((c2[2] - c1[2]) * k + c1[2]),
 						(c2[3] - c1[3]) * k + c1[3],
 					].join() +
 					")"
@@ -288,12 +294,6 @@ export function heatPlot(configs) {
 			}
 		}
 	}
-	ctx.restore();
-	return {
-		min: minS,
-		max: maxS,
-		colors: colors,
-	};
 }
 
 /**
@@ -315,14 +315,16 @@ export function plotPoints(configs) {
 		},
 		configs,
 	);
-	let { points, unitValue, unitSpace } = configs;
-	let ctx = C.workingContext;
+	let { points, unitValue, unitSpace } = configs,
+		ctx = C.workingContext,
+		unitSizeX = unitSpace[0] / unitValue[0],
+		unitSizeY = unitSpace[1] / unitValue[1];
 	for (let i = 0; i < points.length; i++) {
 		let p = points[i],
 			fill = p.fill || configs.fill || ctx.fillStyle,
 			stroke = p.stroke || configs.stroke || ctx.strokeStyle,
-			x = (p.x * unitSpace[0]) / unitValue[0],
-			y = (p.y * unitSpace[1]) / unitValue[1];
+			x = p.x * unitSizeX,
+			y = p.y * unitSizeY;
 		ctx.beginPath();
 		ctx.fillStyle = fill;
 		ctx.strokeStyle = stroke;
@@ -337,6 +339,7 @@ export function plotPoints(configs) {
  * Plots a bunch of points in polar plane
  * @param {Object} configs configurations
  * @param {PolarPoint[]} configs.points list of points
+ * @param {number} configs.radialSpacing size of each unit radius in pixels
  */
 export function plotPolarPoints(configs) {
 	configs = applyDefault(
@@ -350,12 +353,14 @@ export function plotPolarPoints(configs) {
 		configs,
 	);
 	let ctx = C.workingContext;
-	let { points, radialSpacing } = configs;
+	let { points, radialSpacing } = configs,
+		defaultFill = configs.fill || ctx.fillStyle,
+		defaultStroke = configs.stroke || ctx.strokeStyle;
 	ctx.save();
 	for (let i = 0; i < points.length; i++) {
 		let p = points[i],
-			fill = p.fill || configs.fill || ctx.fillStyle,
-			stroke = p.stroke || configs.stroke || ctx.strokeStyle,
+			fill = p.fill || defaultFill,
+			stroke = p.stroke || defaultStroke,
 			x = p.r * Math.cos(p.phi) * radialSpacing,
 			y = p.r * Math.sin(p.phi) * radialSpacing;
 		ctx.beginPath();
@@ -373,6 +378,15 @@ export function plotPolarPoints(configs) {
  * Plots a parametric function in polar plane
  * @param {Object} configs
  * @param {Function} configs.plotter function that takes one arguments t and returns a coordinate as [radius, angle]
+ * @param {number} [configs.tension = 1]
+ * @param {number} [configs.radialSpacing = 1]
+ * @param {number[]} [configs.range = [0, Math.PI * 2, Math.PI / 50]]
+ * @param {Array} [configs.discontinuities = []]
+ * @param {boolean} [configs.smoothen = true]
+ * @param {boolean} [configs.closed = false]
+ * @param {number} [configs.strokeWidth = 2]
+ * @param {number} [configs.discontinuityRadius = range[2]]
+
  * @returns {Object}
  */
 export function polarParametricFunction(configs) {
@@ -384,8 +398,7 @@ export function polarParametricFunction(configs) {
 			discontinuities: [],
 			smoothen: true,
 			closed: false,
-			strokeWidth: 2,
-			plotter: (t) => [0, 0],
+			strokeWidth: 2
 		},
 		configs,
 	);
@@ -397,13 +410,11 @@ export function polarParametricFunction(configs) {
 		max = range[1],
 		step = range[2];
 	if (!Array.isArray(discontinuities)) discontinuities = [];
-	let discontinuityRadius;
-	if (isNaN(configs.discontinuityRadius)) {
-		discontinuityRadius = step;
-	} else {
-		discontinuityRadius = configs.discontinuityRadius;
-	}
-	// generate points
+	let discontinuityRadius = isNaN(configs.discontinuityRadius)
+		? step
+		: configs.discontinuityRadius;
+
+		// generate points
 	let row = 0,
 		_fix = discontinuityRadius < step ? discontinuityRadius : 0;
 	// we add one more point to make the graph more accurate when applying smoothening technique.
@@ -460,7 +471,7 @@ export function polarParametricFunction(configs) {
 	};
 }
 /**
- * Wrapper for polarParametricFunction
+ * Wrapper for {@link polarParametricFunction}
  * @param {Object} configs
  * @returns {Object}
  */

@@ -12,7 +12,7 @@ function C(fx, container, cfgs = {}) {
 		width: 200, // width of canvas multiplied by dpr
 		height: 200, // height of canvas  multiplied by dpr
 
-		dpr: Math.ceil(window.devicePixelRatio || 1), // device pixel ratio for clear drawings
+		dpr: Math.ceil(globalThis.devicePixelRatio || 1), // device pixel ratio for clear drawings
 
 		// states
 		doFill: true,
@@ -151,7 +151,7 @@ C.dpr;
  * @returns {number}
  */
 C.getWindowWidth = function (container = document.body) {
-	const cs = window.getComputedStyle(container);
+	const cs = globalThis.getComputedStyle(container);
 	return (
 		parseInt(cs.width, 10) - parseInt(cs.paddingRight, 10) - parseInt(cs.paddingLeft, 10)
 	);
@@ -170,7 +170,7 @@ C.getWindowWidth = function (container = document.body) {
 C.resizeCanvas = function (cvs, configs) {
 	const width = configs.width;
 	const height = configs.height;
-	const dpr = configs.dpr || window.devicePixelRatio;
+	const dpr = configs.dpr || globalThis.devicePixelRatio;
 	cvs.style.width = width + "px";
 	cvs.style.height = height + "px";
 	cvs.width = dpr * width;
@@ -192,12 +192,12 @@ C.makeCanvas = function (configs) {
 };
 
 /**
- * Add extension to window and C extension list
+ * Add extension to globalThis and C extension list
  *
  * @param {Object} extObj
  */
 C.addExtension = function (extObj) {
-	defineProperties(extObj, window);
+	defineProperties(extObj, globalThis);
 	defineProperties(extObj, C.extensions, false);
 };
 
@@ -250,12 +250,12 @@ function defineConstant(constantList) {
 	let constants = Object.keys(constantList);
 	for (let i = 0; i < constants.length; i++) {
 		let constant = constants[i];
-		Object.defineProperty(window, constant, {
+		Object.defineProperty(globalThis, constant, {
 			configurable: true,
 			enumerable: true,
 			get: constantList[constant],
 			set: function (val) {
-				Object.defineProperty(window, constant, {
+				Object.defineProperty(globalThis, constant, {
 					configurable: true,
 					enumerable: true,
 					value: val,
@@ -274,7 +274,7 @@ defineConstant({
 	},
 });
 
-// register to window
-window["C"] = C;
+// register to globalThis
+(globalThis)["C"] = C;
 
 export { C };

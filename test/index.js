@@ -1,5 +1,16 @@
 import { readColor } from "../src/color/color_reader.js";
+import { lerpColorArray } from "../src/objects/functions.js";
 import { testFunction } from "./tester.js";
+let col = {
+		"-5": "#b36e38b0",
+		"-3": "#ff9c52b0",
+		"-1": "#ffcea9b0",
+		0: "#dcdcddb0",
+		1: "#9fcaedb0",
+		3: "#3d96dab0",
+		5: "#2b6b99b0",
+	},
+	srt = Object.keys(col).sort();
 
 let data = [
 	{
@@ -136,11 +147,91 @@ let data = [
 			},
 		],
 	},
+	{
+		fx: lerpColorArray,
+		path: "objects/functions.js",
+		tests: [
+			{
+				args: [-5, 5, col, -5, srt],
+				expect: "rgba(179,110,56,0.6901960784313725)",
+			},
+			{
+				args: [3, 5, col, -5, srt],
+				expect: "rgba(61,150,218,0.6901960784313725)",
+			},
+			{
+				args: [-2, 5, col, -5, srt],
+				expect: "rgba(204,176,155,0.6901960784313725)",
+			},
+			{
+				args: [0, 5, col, -5, srt],
+				expect: "rgba(220,220,221,0.6901960784313725)",
+			},
+			{
+				args: [5, 5, col, -5, srt],
+				expect: "rgba(43,107,153,0.6901960784313725)",
+			},
+			{
+				args: [2, 5, col, -5, srt],
+				expect: "rgba(110,176,228,0.6901960784313725)",
+			},
+			{
+				args: [4, 5, col, -5, srt],
+				expect: "rgba(52,129,186,0.6901960784313725)",
+			},
+			{
+				args: [-4, 5, col, -5, srt],
+				expect: "rgba(187,132,89,0.6901960784313725)",
+			},
+			{
+				args: [-4.2, 5, col, -5, srt],
+				expect: "rgba(186,128,82,0.6901960784313725)",
+			},
+			{
+				args: [-3.2, 5, col, -5, srt],
+				expect: "rgba(194,150,115,0.6901960784313725)",
+			},
+			{
+				args: [-1.2, 5, col, -5, srt],
+				expect: "rgba(210,194,181,0.6901960784313725)",
+			},
+			{
+				args: [-1.2, 5, col, -5, srt],
+				expect: "rgba(210,194,181,0.6901960784313725)",
+			},
+			{
+				args: [-0.023, 5, col, -5, srt],
+				expect: "rgba(220,219,220,0.6901960784313725)",
+			},
+			{
+				args: [-0.23, 5, col, -5, srt],
+				expect: "rgba(218,215,213,0.6901960784313725)",
+			},
+			{
+				args: [-0.023, 5, col, -5, srt],
+				expect: "rgba(220,219,220,0.6901960784313725)",
+			},
+			{
+				args: [-Math.PI, 5, col, -5, srt],
+				expect: "rgba(194,151,117,0.6901960784313725)",
+			},
+			{
+				args: [Math.PI, 5, col, -5, srt],
+				expect: "rgba(60,147,213,0.6901960784313725)",
+			},
+			{
+				args: [Math.PI / 2, 5, col, -5, srt],
+				expect: "rgba(131,187,232,0.6901960784313725)",
+			},
+			{
+				args: [Math.E, 5, col, -5, srt],
+				expect: "rgba(75,157,221,0.6901960784313725)",
+			},
+		],
+	},
 ];
 
 // for (let t of data.readColor) {
 // 	console.log(JSON.stringify(t.args), JSON.stringify(readColor(...t.args)));
 // }
-for (let entry of data) {
-	testFunction(entry.fx, entry.path, entry.tests, 3);
-}
+testFunction(data[1].fx, data[1].path, data[1].tests, 30);

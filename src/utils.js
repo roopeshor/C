@@ -24,10 +24,10 @@ Object.clone =
  * defines new properties to a given Object
  *
  * @param {*} source source object
- * @param {*} [target=window] target object
+ * @param {*} [target=globalThis] target object
  * @param {boolean} [assignToC=true] whether apply properties to C.
  */
-export function defineProperties(source, target = window, assignToC = false) {
+export function defineProperties(source, target = globalThis, assignToC = false) {
 	Object.assign(target, source);
 	if (assignToC) Object.assign(C.functions, source);
 }
@@ -127,8 +127,7 @@ export function latexToImg(latex) {
 		output.svg = mjOut.outerHTML;
 		var image = new Image();
 		image.src =
-			"data:image/svg+xml;base64," +
-			window.btoa(unescape(encodeURIComponent(output.svg)));
+			"data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(output.svg)));
 		image.onload = function () {
 			var canvas = document.createElement("canvas");
 			canvas.width = image.width;
@@ -191,5 +190,3 @@ export function fraction(
 	}
 	return tex;
 }
-
-window["applyDefault"] = applyDefault;

@@ -383,15 +383,15 @@ export function loop(
 			});
 			console.log(toLog, ...styles);
 		}
-		ctx.recentTimeStamp = window.performance.now();
-		ctx.timeStart = window.performance.now();
+		ctx.recentTimeStamp = performance.now();
+		ctx.timeStart = performance.now();
 		if (!isNaN(timeDelay)) {
 			ctx.currentLoopName = name;
 			ctx.currentLoop = setInterval(function () {
 				C.workingContext = ctx;
 				let S = getContextStates(canvasName);
 				defineProperties(assignedSettings, C.workingContext);
-				functionToRun(window.performance.now() - ctx.timeStart, getFPS());
+				functionToRun(performance.now() - ctx.timeStart, getFPS());
 				defineProperties(S, C.workingContext);
 			}, timeDelay);
 		} else {
@@ -399,16 +399,16 @@ export function loop(
 		}
 	}
 	function run() {
-		ctx.currentLoop = window.requestAnimationFrame(run);
+		ctx.currentLoop = globalThis.requestAnimationFrame(run);
 		C.workingContext = ctx;
 		let S = getContextStates(canvasName);
 		if (settings) defineProperties(assignedSettings, C.workingContext);
-		functionToRun(window.performance.now() - ctx.timeStart, getFPS());
+		functionToRun(performance.now() - ctx.timeStart, getFPS());
 		if (settings) defineProperties(S, C.workingContext);
 	}
 
 	function getFPS() {
-		let now = window.performance.now(),
+		let now = performance.now(),
 			timeDelay = now - ctx.recentTimeStamp; // time delays between frames
 		ctx.recentTimeStamp = now;
 		ctx.timeDelayList.push(timeDelay);
@@ -430,7 +430,7 @@ export function noLoop(canvasName, time) {
 	if (!canvasName) canvasName = ctx.name;
 	else ctx = C.contextList[canvasName];
 	clearInterval(ctx.currentLoop);
-	window.cancelAnimationFrame(ctx.currentLoop);
+	globalThis.cancelAnimationFrame(ctx.currentLoop);
 	ctx.currentLoop = undefined;
 	if (C.debugAnimations) {
 		let toLog = `${canvasName}: ${ctx.currentLoopName} %cfinished`,
