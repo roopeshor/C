@@ -418,7 +418,7 @@ export function line(x1, y1, x2, y2) {
  *
  * @param {number} x x-coord
  * @param {number} y y-coord
- * @param {number} width widht
+ * @param {number} width width
  * @param {number} height height
  */
 export function rect(x, y, width, height) {

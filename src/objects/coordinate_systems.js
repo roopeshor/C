@@ -110,7 +110,7 @@ const ORIGIN = [0, 0];
  * @param {number} [configs.decimalPlaces] Number of decimal places in text. By default value is number of decimals in step
  * @param {number} [configs.rotation = 0] Amound to rotate the numberline from origin
  * @param {number} [configs.strokeWidth = 2] Width of lines in px
- * @param {number} [configs.length] Total length of numberline in pixels. Default is the widht of canvas
+ * @param {number} [configs.length] Total length of numberline in pixels. Default is the width of canvas
  *
  * @param {string} [configs.strokeColor = "white"] Color of axis and ticks
  * @param {string} [configs.textColor = "white"] Color of text
@@ -219,14 +219,13 @@ export function numberLine(configs = {}) {
 		/** Total number of ticks */
 		totalTicks = (max - min) / step,
 		/** Space between two ticks in pixels*/
-		unitSpace = configs.length / totalTicks,
+		unitSpace = configs.length / totalTicks / C.dpr,
 		/** A list of numbers that'll be displayed if no labels are given through numberToInclude */
 		tickList = getTickList();
 
 	// scale everyting down
 	strokeWidth /= unitSpace;
 	tipWidth /= unitSpace;
-	fontSize /= unitSpace;
 	tipHeight /= unitSpace;
 	configs.tickHeight /= unitSpace;
 
@@ -238,7 +237,6 @@ export function numberLine(configs = {}) {
 	ctx.scale(unitSpace, unitSpace);
 	// rotate entire canvas
 	ctx.rotate(configs.rotation);
-
 	if (configs.includeTicks) drawTicks();
 	if (configs.includeLabels) drawNumbers();
 	drawAxis();
@@ -288,6 +286,8 @@ export function numberLine(configs = {}) {
 		const start = includeLeftTip ? 1 : 0;
 		const end = includeRightTip ? tickList.length - 1 : tickList.length;
 		const textRenderer = configs.textRenderer;
+		ctx.save();
+		ctx.scale(1 / unitSpace, 1 / unitSpace);
 		for (let i = start; i < end; i++) {
 			if (i >= labels.length) break;
 			const tick =
@@ -304,11 +304,12 @@ export function numberLine(configs = {}) {
 				textDirection[0] * width; // shift by text direction
 			const yShift = textDirection[1] * fontSize; // shift by text direction
 			ctx.save();
-			ctx.translate(xShift, yShift);
+			ctx.translate(xShift * unitSpace, yShift);
 			ctx.rotate(textRotation);
 			textRenderer(tick, 0, 0);
 			ctx.restore();
 		}
+		ctx.restore();
 	}
 
 	function getTickList() {

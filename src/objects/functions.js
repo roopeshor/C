@@ -2,7 +2,7 @@
 import { readColor } from "../color/color_reader.js";
 import { C } from "../main.js";
 import { loop, noLoop } from "../settings.js";
-import { applyDefault, approximateIndexInArray, doFillAndStroke } from "../utils.js";
+import { applyDefault, inArray, doFillAndStroke } from "../utils.js";
 import { getBezierControlPoints, line, smoothCurveThroughPoints } from "./geometry.js";
 /**
  * @typedef {Object} CartesianPoint
@@ -54,6 +54,8 @@ const UNIT_VEC = [1, 1];
  * @param {boolean} [configs.smoothen = true] Whether to smoothen the shape.
  * @param {boolean} [configs.closed = false] Whether the function draws a closed shape.
  * @param {boolean} [configs.draw = true] Wheteher to draw the function graph right now.
+ * @param {number} [configs.strokeWidth = 2]
+ * @param {number} [configs.discontinuityRadius = range[2]]
  *
  * @returns {ParametricPlotter}
  */
@@ -86,17 +88,14 @@ export function parametricFunction(configs) {
 	let row = 0,
 		pointCount = 0,
 		unitX = configs.unitSpace[0] / configs.unitValue[0],
-		unitY = configs.unitSpace[1] / configs.unitValue[1];
-	let discontinuityRadius;
-	if (isNaN(configs.discontinuityRadius)) {
-		discontinuityRadius = step;
-	} else {
-		discontinuityRadius = configs.discontinuityRadius;
-	}
+		unitY = configs.unitSpace[1] / configs.unitValue[1],
+		discontinuityRadius = isNaN(configs.discontinuityRadius)
+			? step
+			: configs.discontinuityRadius;
 	if (step < discontinuityRadius) discontinuityRadius = step / 2;
 	for (let t = min; t <= max + discontinuityRadius; t += step) {
-		if (approximateIndexInArray(t, discontinuities, discontinuityRadius) > -1) {
-			if (approximateIndexInArray(t + step, discontinuities, discontinuityRadius) > -1) {
+		if (inArray(t, discontinuities, discontinuityRadius)) {
+			if (inArray(t + step, discontinuities, discontinuityRadius)) {
 				row++;
 				points.push([]);
 			}
@@ -106,7 +105,6 @@ export function parametricFunction(configs) {
 		points[row].push([ft[0] * unitX, ft[1] * unitY]);
 		pointCount++;
 	}
-
 	// draw the plot
 	if (configs.draw) plot();
 	function plot() {
@@ -398,7 +396,7 @@ export function polarParametricFunction(configs) {
 			discontinuities: [],
 			smoothen: true,
 			closed: false,
-			strokeWidth: 2
+			strokeWidth: 2,
 		},
 		configs,
 	);
@@ -414,13 +412,13 @@ export function polarParametricFunction(configs) {
 		? step
 		: configs.discontinuityRadius;
 
-		// generate points
+	// generate points
 	let row = 0,
 		_fix = discontinuityRadius < step ? discontinuityRadius : 0;
 	// we add one more point to make the graph more accurate when applying smoothening technique.
 	for (let t = min; t <= max + step + _fix; t += step) {
-		if (approximateIndexInArray(t, discontinuities, discontinuityRadius) > -1) {
-			if (approximateIndexInArray(t + step, discontinuities, discontinuityRadius) > -1) {
+		if (inArray(t, discontinuities, discontinuityRadius)) {
+			if (inArray(t + step, discontinuities, discontinuityRadius)) {
 				row++;
 				points.push([]);
 			}

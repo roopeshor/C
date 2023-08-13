@@ -275,6 +275,6 @@ defineConstant({
 });
 
 // register to globalThis
-(globalThis)["C"] = C;
+globalThis["C"] = C;
 
 export { C };

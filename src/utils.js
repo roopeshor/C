@@ -92,22 +92,22 @@ export function doFillAndStroke(ctx) {
 }
 
 /**
- * Returns index of first element that is close to ```val```
+ * Checks if any number in the array matches closely with the given value.
  *
- * @param {number} val value to search for
- * @param {Array} array
+ * @param {number} value value to search for
+ * @param {number[]} array
  * @param {number} [epsilon=1e-6] maximum difference
  * @return {number}
  * @ignore
  */
-export function approximateIndexInArray(val, array, epsilon = 1e-6) {
+export function inArray(value, array, epsilon = 1e-6) {
 	for (let i = 0; i < array.length; i++) {
 		let k = array[i];
-		if (Math.abs(k - val) <= epsilon) {
-			return i;
+		if (Math.abs(k - value) <= epsilon) {
+			return true;
 		}
 	}
-	return -1;
+	return false;
 }
 
 /**
