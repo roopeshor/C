@@ -20,15 +20,12 @@ export function drawImage(image) {
 		x = arguments[5];
 		y = arguments[6];
 	}
-	if (ctx.yAxisInverted) {
-		ctx.save();
-		ctx.translate(x, y);
-		ctx.scale(1, -1);
-		ctx.drawImage(image, 0, 0, ...Array.prototype.slice.call(arguments, 3));
-		ctx.restore();
-	} else {
-		ctx.drawImage(image, x, y, ...Array.prototype.slice.call(arguments, 3));
-	}
+	ctx.save();
+	ctx.translate(x, y);
+	if (ctx.yAxisInverted) ctx.scale(1, -1);
+	if (ctx.XAxisInverted) ctx.scale(-1, 1);
+	ctx.drawImage(image, 0, 0, ...Array.prototype.slice.call(arguments, 3));
+	ctx.restore();
 }
 
 /**

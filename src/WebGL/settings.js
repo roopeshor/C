@@ -9,7 +9,8 @@ function readPoints(points, count) {
 		// 2d point array. Convert it to 3d point array
 		if (points.length / count == 2) {
 			is2D = true;
-			for (let i = 0; i < points.length; i += 2) pts.push(points[i], points[i + 1], 0);
+			for (let i = 0; i < points.length; i += 2)
+				pts.push(points[i], points[i + 1], 0);
 		} else pts = points;
 	} else {
 		throw Error("excess component in points");

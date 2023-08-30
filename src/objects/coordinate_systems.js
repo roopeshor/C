@@ -1,6 +1,15 @@
 /** @module Coordinate-Systems*/
 import { C } from "../main.js";
-import { restore, save } from "../settings.js";
+import {
+	fill,
+	fontSize,
+	fontWeight,
+	restore,
+	save,
+	scale,
+	stroke,
+	translate,
+} from "../settings.js";
 import { applyDefault, arange, fraction } from "../utils.js";
 import { arrowTip } from "./arrows.js";
 import {
@@ -35,8 +44,8 @@ import { fillText } from "./text.js";
  * @typedef {Object} NumberLineConfigs configurations about the number line
  * @property {number[]} originPosition - Center of the number line in px
  * @property {number[]} tickList - List of tick inervals
- * @property {number[]} unitValue - How much a unit is in its value in x and y directions.
- * @property {number[]} unitSpace - How much a unit is in px in x and y directions.
+ * @property {number} unitValue - How much a unit is in its value in x and y directions.
+ * @property {number} unitSpace - How much a unit is in px in x and y directions.
  */
 
 /**
@@ -138,6 +147,7 @@ const ORIGIN = [0, 0];
  * * You can adjust textAlign and textBaseline if you want to adjust alignment of labels.
  * @returns {NumberLineConfigs}
  */
+
 export function numberLine(configs = {}) {
 	const ctx = C.workingContext;
 	const cvs = C.workingCanvas;
@@ -149,6 +159,9 @@ export function numberLine(configs = {}) {
 			originPosition: ORIGIN,
 			range: [-5, 5, 1],
 			strokeColor: "white",
+			axisLabel: "",
+			axisFont: 14,
+			axisLabelDirection: [1, -1],
 
 			tipWidth: 13,
 			tipHeight: 10,
@@ -165,7 +178,7 @@ export function numberLine(configs = {}) {
 			tickHeight: 10,
 			longerTickMultiple: 1.5,
 			labelsToInclude: [],
-			numbersToExclude: [0],
+			numbersToExclude: [],
 			numbersWithElongatedTicks: [],
 
 			includeTicks: true,
@@ -177,25 +190,28 @@ export function numberLine(configs = {}) {
 		configs,
 	);
 	let {
-		strokeColor,
+		range,
 		tipWidth,
-		strokeWidth,
-		fontSize,
+		fontSize: labelFontSize,
+		axisFont,
+		axisLabel,
 		tipHeight,
+		tickHeight,
+		strokeColor,
+		strokeWidth,
 		textRotation,
+		decimalPlaces,
 		textDirection,
 		includeLeftTip,
 		includeRightTip,
-		numbersToExclude,
 		labelsToInclude,
+		numbersToExclude,
 		excludeOriginTick,
 		longerTickMultiple,
 		numbersWithElongatedTicks,
-		range,
-		decimalPlaces,
 	} = configs;
 
-	if (Array.isArray(range) && range.length) {
+	if (Array.isArray(range) && range.length > 0) {
 		if (range.length === 1) {
 			range = [0, range[0], 1];
 		}
@@ -204,52 +220,46 @@ export function numberLine(configs = {}) {
 		}
 	} else {
 		throw new Error(
-			"range must be a array that have atleast one item. Got: " + range.toString(),
+			"NumberLine: range must be a array that have atleast one item. Got: " +
+				range.toString(),
 		);
 	}
 
 	// if number of decimal places is not defined, find it using `step`
 	if (isNaN(decimalPlaces) && decimalPlaces >= 0) {
-		decimalPlaces = (range[2].toString().split(".")[1] || []).length || 0;
+		decimalPlaces = (range[2].toString().split(".")[1] || []).length;
 	}
 
-	const min = range[0],
+	let min = range[0],
 		max = range[1],
 		step = range[2],
-		/** Total number of ticks */
-		totalTicks = (max - min) / step,
 		/** Space between two ticks in pixels*/
-		unitSpace = configs.length / totalTicks / C.dpr,
+		unitSpace = configs.length / (max - min),
 		/** A list of numbers that'll be displayed if no labels are given through numberToInclude */
-		tickList = getTickList();
-
+		tickList = arange(min, max, step),
+		textRenderer = configs.textRenderer;
 	// scale everyting down
 	strokeWidth /= unitSpace;
 	tipWidth /= unitSpace;
 	tipHeight /= unitSpace;
-	configs.tickHeight /= unitSpace;
-
-	ctx.beginPath();
+	tickHeight /= unitSpace;
 	save();
-	// shfit to origin position
+	fontSize(axisFont);
 	ctx.translate(configs.originPosition[0], configs.originPosition[1]);
-	// scale up by unitspace
 	ctx.scale(unitSpace, unitSpace);
-	// rotate entire canvas
 	ctx.rotate(configs.rotation);
 	if (configs.includeTicks) drawTicks();
 	if (configs.includeLabels) drawNumbers();
 	drawAxis();
-	ctx.closePath();
 
 	function drawAxis() {
-		ctx.strokeStyle = strokeColor;
+		stroke(strokeColor);
 		ctx.lineWidth = strokeWidth;
-		ctx.fillStyle = strokeColor;
+		fill(strokeColor);
 
-		const r = Math.atan(tipHeight / 2);
-		let x1 = tickList[0];
-		let x2 = tickList[tickList.length - 1];
+		let r = Math.atan(tipHeight / 2),
+			x1 = tickList[0],
+			x2 = tickList[tickList.length - 1];
 		if (includeLeftTip) {
 			arrowTip(x1 + tipWidth, 0, x1, 0, tipWidth, tipHeight);
 			x1 += tipWidth * Math.cos(r);
@@ -259,61 +269,73 @@ export function numberLine(configs = {}) {
 			x2 -= tipWidth * Math.cos(r) * 1;
 		}
 		line(x1, 0, x2, 0);
+		ctx.save();
+		fontSize(axisFont);
+		ctx.scale(1 / unitSpace, 1 / unitSpace);
+		ctx.translate(
+			(x2 + configs.axisLabelDirection[0]) * unitSpace,
+			-configs.axisLabelDirection[1] * axisFont,
+		);
+		ctx.rotate(textRotation);
+		textRenderer(axisLabel, 0, 0);
+		ctx.restore();
 	}
 
 	function drawTicks() {
 		ctx.strokeStyle = strokeColor;
 		ctx.lineWidth = strokeWidth;
-		const from = includeLeftTip ? 1 : 0;
-		const to = includeRightTip ? tickList.length - 1 : tickList.length;
-		for (let i = from; i < to && numbersToExclude.indexOf(tickList[0][i]) < 0; i++) {
-			const tick = tickList[i];
-			if (Number(tick) === 0 && excludeOriginTick) continue;
-			let TH = configs.tickHeight;
+		let start = includeLeftTip ? 1 : 0,
+			end = includeRightTip ? tickList.length - 1 : tickList.length;
+		for (let i = start; i < end; i++) {
+			let tick = tickList[i],
+				tH = tickHeight;
+			if (
+				(tick === 0 && excludeOriginTick) ||
+				numbersToExclude.indexOf(tickList[0][i]) >= 0
+			)
+				continue;
 			if (numbersWithElongatedTicks.indexOf(tick) > -1) {
-				TH *= longerTickMultiple;
+				tH *= longerTickMultiple;
 			}
-			line(tick, -TH / 2, tick, TH / 2);
+			line(tick, -tH / 2, tick, tH / 2);
 		}
 	}
 
 	function drawNumbers() {
-		const labels = labelsToInclude.length > 0 ? labelsToInclude : tickList;
 		ctx.fillStyle = configs.textColor;
-		ctx.font = fontSize + "px " + configs.fontFamily;
+		fontSize(labelFontSize);
 		ctx.textAlign = configs.textAlign;
 		ctx.textBaseline = configs.textBaseline;
-		const start = includeLeftTip ? 1 : 0;
-		const end = includeRightTip ? tickList.length - 1 : tickList.length;
-		const textRenderer = configs.textRenderer;
+		let labels = labelsToInclude.length > 0 ? labelsToInclude : tickList,
+			start = includeLeftTip ? 1 : 0,
+			end = includeRightTip ? tickList.length - 1 : tickList.length;
 		ctx.save();
 		ctx.scale(1 / unitSpace, 1 / unitSpace);
 		for (let i = start; i < end; i++) {
 			if (i >= labels.length) break;
-			const tick =
-				typeof labels[i] == "number" ? labels[i].toFixed(decimalPlaces) : labels[i];
+			let tick =
+				typeof labels[i] == "number"
+					? labels[i].toFixed(decimalPlaces)
+					: labels[i];
 			if (
 				(tickList[i] == 0 && excludeOriginTick) || // exclude origin tick
 				numbersToExclude.indexOf(tickList[i]) > -1 // exclude ticks that were said to ignore explictly.
 			) {
 				continue;
 			}
-			const width = ctx.measureText(tick).width;
-			const xShift =
-				tickList[i] - // tick position
-				textDirection[0] * width; // shift by text direction
-			const yShift = textDirection[1] * fontSize; // shift by text direction
+			let width = ctx.measureText(tick).width;
+
+			let xShift = tickList[i] - textDirection[0] * width;
+			let yShift = textDirection[1] * labelFontSize;
 			ctx.save();
+
+			// shift by text direction
 			ctx.translate(xShift * unitSpace, yShift);
 			ctx.rotate(textRotation);
 			textRenderer(tick, 0, 0);
 			ctx.restore();
 		}
 		ctx.restore();
-	}
-
-	function getTickList() {
-		return arange(min, max, step);
 	}
 
 	restore();
@@ -732,20 +754,28 @@ export function polarPlane(configs = {}) {
 			}`;
 			for (let division = 0; division < azimuthDivisions; division++) {
 				labels.push(
-					fraction(numerator * division, denominator, true, azimuthCompactFraction, post),
+					fraction(
+						numerator * division,
+						denominator,
+						true,
+						azimuthCompactFraction,
+						post,
+					),
 				);
 			}
 		} else if (azimuthUnit == "degrees") {
 			// Use Tex parser to generate fractions
 			for (let i = 0; i < azimuthDivisions; i++) {
 				labels.push(
-					((i * 360) / azimuthDivisions).toFixed(azimuthConfigs.decimalPoints) + "°",
+					((i * 360) / azimuthDivisions).toFixed(azimuthConfigs.decimalPoints) +
+						"°",
 				);
 			}
 		} else if (azimuthUnit == "gradians") {
 			for (let i = 0; i < azimuthDivisions; i++) {
 				labels.push(
-					((i * 400) / azimuthDivisions).toFixed(azimuthConfigs.decimalPoints) + "ᵍ",
+					((i * 400) / azimuthDivisions).toFixed(azimuthConfigs.decimalPoints) +
+						"ᵍ",
 				);
 			}
 		}

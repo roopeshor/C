@@ -108,7 +108,15 @@ C(
 			const colors = [
 				["DARK_BLUE", "DARK_BROWN", "LIGHT_BROWN"],
 				["LIGHT_GREY", "GREY", "DARK_GREY", "DARKER_GREY"],
-				["WHITE", "BLACK", "GREY_BROWN", "PINK", "LIGHT_PINK", "GREEN_SCREEN", "ORANGE"],
+				[
+					"WHITE",
+					"BLACK",
+					"GREY_BROWN",
+					"PINK",
+					"LIGHT_PINK",
+					"GREEN_SCREEN",
+					"ORANGE",
+				],
 			];
 			const stopNames = ["Blue & Brown", "Grey shades", "Others"];
 			const pd = 40; // a quick fix

@@ -94,7 +94,10 @@ export function extendFromPoint(center, point, len = 10) {
 		dy = point[1] - center[1],
 		angle = Math.atan2(dy, dx),
 		distance = Math.sqrt(dx * dx + dy * dy) + len; // total extended length
-	return [center[0] + Math.cos(angle) * distance, center[1] + Math.sin(angle) * distance];
+	return [
+		center[0] + Math.cos(angle) * distance,
+		center[1] + Math.sin(angle) * distance,
+	];
 }
 
 /**

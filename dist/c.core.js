@@ -2171,15 +2171,12 @@ function drawImage(image) {
     x = arguments[5];
     y = arguments[6];
   }
-  if (ctx.yAxisInverted) {
-    ctx.save();
-    ctx.translate(x, y);
-    ctx.scale(1, -1);
-    ctx.drawImage(image, 0, 0, ...Array.prototype.slice.call(arguments, 3));
-    ctx.restore();
-  } else {
-    ctx.drawImage(image, x, y, ...Array.prototype.slice.call(arguments, 3));
-  }
+  ctx.save();
+  ctx.translate(x, y);
+  if (ctx.yAxisInverted) ctx.scale(1, -1);
+  if (ctx.XAxisInverted) ctx.scale(-1, 1);
+  ctx.drawImage(image, 0, 0, ...Array.prototype.slice.call(arguments, 3));
+  ctx.restore();
 }
 
 /**
@@ -2420,6 +2417,7 @@ function C(fx, container, cfgs = {}) {
     doStroke: true,
     pathStarted: false,
     yAxisInverted: false,
+    xAxisInverted: false,
     pauseAnimations: false,
     netRotation: 0,
     currentLoop: undefined,
@@ -3580,8 +3578,8 @@ var _text = require("./text.js");
  * @typedef {Object} NumberLineConfigs configurations about the number line
  * @property {number[]} originPosition - Center of the number line in px
  * @property {number[]} tickList - List of tick inervals
- * @property {number[]} unitValue - How much a unit is in its value in x and y directions.
- * @property {number[]} unitSpace - How much a unit is in px in x and y directions.
+ * @property {number} unitValue - How much a unit is in its value in x and y directions.
+ * @property {number} unitSpace - How much a unit is in px in x and y directions.
  */
 /**
  * returns list of plotting functions based on given cartesian parameters
@@ -3681,6 +3679,7 @@ const ORIGIN = [0, 0];
  * * You can adjust textAlign and textBaseline if you want to adjust alignment of labels.
  * @returns {NumberLineConfigs}
  */
+
 function numberLine(configs = {}) {
   const ctx = _main.C.workingContext;
   const cvs = _main.C.workingCanvas;
@@ -3691,6 +3690,9 @@ function numberLine(configs = {}) {
     originPosition: ORIGIN,
     range: [-5, 5, 1],
     strokeColor: "white",
+    axisLabel: "",
+    axisFont: 14,
+    axisLabelDirection: [1, -1],
     tipWidth: 13,
     tipHeight: 10,
     fontSize: 17,
@@ -3704,7 +3706,7 @@ function numberLine(configs = {}) {
     tickHeight: 10,
     longerTickMultiple: 1.5,
     labelsToInclude: [],
-    numbersToExclude: [0],
+    numbersToExclude: [],
     numbersWithElongatedTicks: [],
     includeTicks: true,
     includeLabels: true,
@@ -3713,24 +3715,27 @@ function numberLine(configs = {}) {
     excludeOriginTick: false
   }, configs);
   let {
-    strokeColor,
+    range,
     tipWidth,
-    strokeWidth,
-    fontSize,
+    fontSize: labelFontSize,
+    axisFont,
+    axisLabel,
     tipHeight,
+    tickHeight,
+    strokeColor,
+    strokeWidth,
     textRotation,
+    decimalPlaces,
     textDirection,
     includeLeftTip,
     includeRightTip,
-    numbersToExclude,
     labelsToInclude,
+    numbersToExclude,
     excludeOriginTick,
     longerTickMultiple,
-    numbersWithElongatedTicks,
-    range,
-    decimalPlaces
+    numbersWithElongatedTicks
   } = configs;
-  if (Array.isArray(range) && range.length) {
+  if (Array.isArray(range) && range.length > 0) {
     if (range.length === 1) {
       range = [0, range[0], 1];
     }
@@ -3738,47 +3743,41 @@ function numberLine(configs = {}) {
       range = [range[0], range[1], 1];
     }
   } else {
-    throw new Error("range must be a array that have atleast one item. Got: " + range.toString());
+    throw new Error("NumberLine: range must be a array that have atleast one item. Got: " + range.toString());
   }
 
   // if number of decimal places is not defined, find it using `step`
   if (isNaN(decimalPlaces) && decimalPlaces >= 0) {
-    decimalPlaces = (range[2].toString().split(".")[1] || []).length || 0;
+    decimalPlaces = (range[2].toString().split(".")[1] || []).length;
   }
-  const min = range[0],
+  let min = range[0],
     max = range[1],
     step = range[2],
-    /** Total number of ticks */
-    totalTicks = (max - min) / step,
     /** Space between two ticks in pixels*/
-    unitSpace = configs.length / totalTicks / _main.C.dpr,
+    unitSpace = configs.length / (max - min),
     /** A list of numbers that'll be displayed if no labels are given through numberToInclude */
-    tickList = getTickList();
-
+    tickList = (0, _utils.arange)(min, max, step),
+    textRenderer = configs.textRenderer;
   // scale everyting down
   strokeWidth /= unitSpace;
   tipWidth /= unitSpace;
   tipHeight /= unitSpace;
-  configs.tickHeight /= unitSpace;
-  ctx.beginPath();
+  tickHeight /= unitSpace;
   (0, _settings.save)();
-  // shfit to origin position
+  (0, _settings.fontSize)(axisFont);
   ctx.translate(configs.originPosition[0], configs.originPosition[1]);
-  // scale up by unitspace
   ctx.scale(unitSpace, unitSpace);
-  // rotate entire canvas
   ctx.rotate(configs.rotation);
   if (configs.includeTicks) drawTicks();
   if (configs.includeLabels) drawNumbers();
   drawAxis();
-  ctx.closePath();
   function drawAxis() {
-    ctx.strokeStyle = strokeColor;
+    (0, _settings.stroke)(strokeColor);
     ctx.lineWidth = strokeWidth;
-    ctx.fillStyle = strokeColor;
-    const r = Math.atan(tipHeight / 2);
-    let x1 = tickList[0];
-    let x2 = tickList[tickList.length - 1];
+    (0, _settings.fill)(strokeColor);
+    let r = Math.atan(tipHeight / 2),
+      x1 = tickList[0],
+      x2 = tickList[tickList.length - 1];
     if (includeLeftTip) {
       (0, _arrows.arrowTip)(x1 + tipWidth, 0, x1, 0, tipWidth, tipHeight);
       x1 += tipWidth * Math.cos(r);
@@ -3788,57 +3787,60 @@ function numberLine(configs = {}) {
       x2 -= tipWidth * Math.cos(r) * 1;
     }
     (0, _geometry.line)(x1, 0, x2, 0);
+    ctx.save();
+    (0, _settings.fontSize)(axisFont);
+    ctx.scale(1 / unitSpace, 1 / unitSpace);
+    ctx.translate((x2 + configs.axisLabelDirection[0]) * unitSpace, -configs.axisLabelDirection[1] * axisFont);
+    ctx.rotate(textRotation);
+    textRenderer(axisLabel, 0, 0);
+    ctx.restore();
   }
   function drawTicks() {
     ctx.strokeStyle = strokeColor;
     ctx.lineWidth = strokeWidth;
-    const from = includeLeftTip ? 1 : 0;
-    const to = includeRightTip ? tickList.length - 1 : tickList.length;
-    for (let i = from; i < to && numbersToExclude.indexOf(tickList[0][i]) < 0; i++) {
-      const tick = tickList[i];
-      if (Number(tick) === 0 && excludeOriginTick) continue;
-      let TH = configs.tickHeight;
+    let start = includeLeftTip ? 1 : 0,
+      end = includeRightTip ? tickList.length - 1 : tickList.length;
+    for (let i = start; i < end; i++) {
+      let tick = tickList[i],
+        tH = tickHeight;
+      if (tick === 0 && excludeOriginTick || numbersToExclude.indexOf(tickList[0][i]) >= 0) continue;
       if (numbersWithElongatedTicks.indexOf(tick) > -1) {
-        TH *= longerTickMultiple;
+        tH *= longerTickMultiple;
       }
-      (0, _geometry.line)(tick, -TH / 2, tick, TH / 2);
+      (0, _geometry.line)(tick, -tH / 2, tick, tH / 2);
     }
   }
   function drawNumbers() {
-    const labels = labelsToInclude.length > 0 ? labelsToInclude : tickList;
     ctx.fillStyle = configs.textColor;
-    ctx.font = fontSize + "px " + configs.fontFamily;
+    (0, _settings.fontSize)(labelFontSize);
     ctx.textAlign = configs.textAlign;
     ctx.textBaseline = configs.textBaseline;
-    const start = includeLeftTip ? 1 : 0;
-    const end = includeRightTip ? tickList.length - 1 : tickList.length;
-    const textRenderer = configs.textRenderer;
+    let labels = labelsToInclude.length > 0 ? labelsToInclude : tickList,
+      start = includeLeftTip ? 1 : 0,
+      end = includeRightTip ? tickList.length - 1 : tickList.length;
     ctx.save();
     ctx.scale(1 / unitSpace, 1 / unitSpace);
     for (let i = start; i < end; i++) {
       if (i >= labels.length) break;
-      const tick = typeof labels[i] == "number" ? labels[i].toFixed(decimalPlaces) : labels[i];
+      let tick = typeof labels[i] == "number" ? labels[i].toFixed(decimalPlaces) : labels[i];
       if (tickList[i] == 0 && excludeOriginTick ||
       // exclude origin tick
       numbersToExclude.indexOf(tickList[i]) > -1 // exclude ticks that were said to ignore explictly.
       ) {
         continue;
       }
-      const width = ctx.measureText(tick).width;
-      const xShift = tickList[i] -
-      // tick position
-      textDirection[0] * width; // shift by text direction
-      const yShift = textDirection[1] * fontSize; // shift by text direction
+      let width = ctx.measureText(tick).width;
+      let xShift = tickList[i] - textDirection[0] * width;
+      let yShift = textDirection[1] * labelFontSize;
       ctx.save();
+
+      // shift by text direction
       ctx.translate(xShift * unitSpace, yShift);
       ctx.rotate(textRotation);
       textRenderer(tick, 0, 0);
       ctx.restore();
     }
     ctx.restore();
-  }
-  function getTickList() {
-    return (0, _utils.arange)(min, max, step);
   }
   (0, _settings.restore)();
   return {
@@ -4460,22 +4462,19 @@ function parametricFunction(configs) {
     rateFunction: configs.rateFunction,
     syncWithTime: configs.syncWithTime || false,
     draw: function (duration = 2000) {
-      let dt = duration / pointCount;
+      let dt = duration / pointCount,
+        drawer = smoothen ? smoothed : nonSmoothed;
       for (let i = 0; i < points.length; i++) {
-        var p = points[i];
-        let j = 0;
-        if (smoothen) {
-          (0, _settings.loop)("parametric-plot-" + counter.parametricFunction++, smoothed(j), _main.C.workingContext.name, dt);
-        } else {
-          (0, _settings.loop)("parametric-plot-" + counter.parametricFunction++, nonSmoothed(j), _main.C.workingContext.name, dt);
-        }
+        var p = points[i],
+          j = 0;
+        (0, _settings.loop)("parametric-plot-" + counter.parametricFunction++, drawer(j), _main.C.workingContext.name, dt);
       }
       function smoothed(j) {
         return function () {
           if (j >= p.length - 2) {
             (0, _settings.noLoop)();
             ctx.closePath();
-            if (ctx.doFill) this.draw();
+            if (ctx.doFill) plot();
           }
           let recentPoint = j > 0 ? p[j - 1] : closed ? p[p.length - 2] : p[0],
             currentPoint = p[j],
@@ -5395,6 +5394,7 @@ exports.getImageFromTex = getImageFromTex;
 exports.tex = tex;
 var _drawing = require("../constants/drawing.js");
 var _main = require("../main.js");
+var _settings = require("../settings.js");
 /** @module Tex */
 
 /**
@@ -5433,7 +5433,7 @@ function getImageFromTex(input) {
  * @param {number} [y=0]
  * @return {HTMLImageElement} image representation of tex
  */
-function tex(input, x, y) {
+function tex(input, x = 0, y = 0) {
   let image = getImageFromTex(input),
     ctx = _main.C.workingContext,
     text_align = ctx.textAlign,
@@ -5466,17 +5466,16 @@ function tex(input, x, y) {
         break;
     }
     // invert axis first
-    if (ctx.yAxisInverted) {
-      ctx.scale(1, -1);
-      y *= -1;
-    }
-    ctx.drawImage(image, x || 0, y || 0);
+    ctx.translate(x, y);
+    if (ctx.yAxisInverted) ctx.scale(1, -1);
+    if (ctx.xAxisInverted) ctx.scale(-1, 1);
+    ctx.drawImage(image, 0, 0);
     ctx.restore();
   };
   return image;
 }
 
-},{"../constants/drawing.js":12,"../main.js":17}],30:[function(require,module,exports){
+},{"../constants/drawing.js":12,"../main.js":17,"../settings.js":31}],30:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5486,11 +5485,11 @@ exports.fillText = fillText;
 exports.strokeText = strokeText;
 exports.text = text;
 var _main = require("../main.js");
-var _settings = require("../settings.js");
 /**
  * This module contains functions for drawing different types of text.
  * @module text
  */
+
 /**
  * Draws a filled & stroked text
  *
@@ -5501,13 +5500,13 @@ var _settings = require("../settings.js");
  */
 function text(text, x = 0, y = 0, maxwidth = undefined) {
   let ctx = _main.C.workingContext;
-  if (ctx.yAxisInverted) {
-    // if inverted reverse it and invert y component
-    (0, _settings.scale)(1, -1);
-    y *= -1;
-  }
-  if (ctx.doFill) ctx.fillText(text, x, y, maxwidth);else if (ctx.doStroke) ctx.strokeText(text, x, y, maxwidth);
-  if (ctx.yAxisInverted) (0, _settings.scale)(1, -1); // reverse y-invertion
+  // if axes are inverted through invert* function reverse it
+  ctx.save();
+  ctx.translate(x, y);
+  if (ctx.yAxisInverted) ctx.scale(1, -1);
+  if (ctx.xAxisInverted) ctx.scale(-1, 1);
+  if (ctx.doFill) ctx.fillText(text, 0, 0, maxwidth);else if (ctx.doStroke) ctx.strokeText(text, 0, 0, maxwidth);
+  ctx.restore();
 }
 
 /**
@@ -5520,12 +5519,12 @@ function text(text, x = 0, y = 0, maxwidth = undefined) {
  */
 function fillText(text, x = 0, y = 0, maxwidth = undefined) {
   let ctx = _main.C.workingContext;
-  if (ctx.yAxisInverted) {
-    (0, _settings.scale)(1, -1);
-    y *= -1;
-  }
-  ctx.fillText(text, x, y, maxwidth);
-  if (ctx.yAxisInverted) (0, _settings.scale)(1, -1);
+  ctx.save();
+  ctx.translate(x, y);
+  if (ctx.yAxisInverted) ctx.scale(1, -1);
+  if (ctx.xAxisInverted) ctx.scale(-1, 1);
+  ctx.fillText(text, 0, 0, maxwidth);
+  ctx.restore();
 }
 
 /**
@@ -5538,15 +5537,15 @@ function fillText(text, x = 0, y = 0, maxwidth = undefined) {
  */
 function strokeText(text, x = 0, y = 0, maxwidth = undefined) {
   let ctx = _main.C.workingContext;
-  if (ctx.yAxisInverted) {
-    (0, _settings.scale)(1, -1);
-    y *= -1;
-  }
-  ctx.strokeText(text, x, y, maxwidth);
-  if (ctx.yAxisInverted) (0, _settings.scale)(1, -1);
+  ctx.save();
+  ctx.translate(x, y);
+  if (ctx.yAxisInverted) ctx.scale(1, -1);
+  if (ctx.xAxisInverted) ctx.scale(-1, 1);
+  ctx.strokeText(text, 0, 0, maxwidth);
+  ctx.restore();
 }
 
-},{"../main.js":17,"../settings.js":31}],31:[function(require,module,exports){
+},{"../main.js":17}],31:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5566,6 +5565,8 @@ exports.fontWeight = fontWeight;
 exports.getCanvasData = getCanvasData;
 exports.getContextStates = getContextStates;
 exports.getFont = getFont;
+exports.invertXAxis = invertXAxis;
+exports.invertYAxis = invertYAxis;
 exports.lineCap = lineCap;
 exports.lineDash = lineDash;
 exports.lineHeight = lineHeight;
@@ -5763,7 +5764,22 @@ function strokeWidth(w) {
  */
 function scale(x, y = x) {
   _main.C.workingContext.scale(x, y);
-  if (y < 0) _main.C.workingContext.yAxisInverted = true;
+}
+
+/**
+ * inverts y-Axis
+ */
+function invertYAxis() {
+  _main.C.workingContext.scale(1, -1);
+  _main.C.workingContext.yAxisInverted = true;
+}
+
+/**
+ * inverts x-Axis
+ */
+function invertXAxis() {
+  _main.C.workingContext.scale(-1, 1);
+  _main.C.workingContext.xAxisInverted = true;
 }
 
 /**
@@ -5880,6 +5896,7 @@ function getContextStates(canvasName) {
     doFill: ctx.doFill,
     pathStarted: ctx.pathStarted,
     yAxisInverted: ctx.yAxisInverted,
+    xAxisInverted: ctx.xAxisInverted,
     netRotation: ctx.netRotation,
     fontStyle: ctx.fontStyle,
     fontVariant: ctx.fontVariant,
@@ -6398,8 +6415,9 @@ function inArray(value, array, epsilon = 1e-6) {
  */
 
 function latexToImg(latex) {
+  let MJX = window["MathJax"] || {};
   return new Promise((resolve, reject) => {
-    let wrapper = MathJax.tex2svg(`${latex}`, {
+    let wrapper = MJX.tex2svg(`${latex}`, {
       em: 10,
       ex: 5,
       display: true

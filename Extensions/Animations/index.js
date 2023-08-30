@@ -39,7 +39,10 @@ import { animateFill } from "./constructs.js";
 							points = animation.points,
 							closed = animation.closed || false,
 							tension = animation.tension || 1,
-							smoothen = animation.smoothen == undefined ? true : animation.smoothen,
+							smoothen =
+								animation.smoothen == undefined
+									? true
+									: animation.smoothen,
 							rateFunction = animation.rateFunction || smooth,
 							syncWithTime = animation.syncWithTime || false,
 							t = 0,
@@ -55,16 +58,34 @@ import { animateFill } from "./constructs.js";
 												noLoop(ctx.name, elapsed);
 											}
 											let i = Math.round(len * rateFunction(t)),
-												ip1 = Math.round(len * rateFunction(t + dt)),
-												ip2 = Math.round(len * rateFunction(t + dt * 2));
+												ip1 = Math.round(
+													len * rateFunction(t + dt),
+												),
+												ip2 = Math.round(
+													len * rateFunction(t + dt * 2),
+												);
 											if (closed) {
 												i %= len;
 												ip1 %= len;
 												ip2 %= len;
 											}
 											let recentPoint =
-													points[Math.round(len * rateFunction(t - dt))] ||
-													points[len - Math.abs(Math.round(len * rateFunction(t - dt)))],
+													points[
+														Math.round(
+															len * rateFunction(t - dt),
+														)
+													] ||
+													points[
+														len -
+															Math.abs(
+																Math.round(
+																	len *
+																		rateFunction(
+																			t - dt,
+																		),
+																),
+															)
+													],
 												currentPoint = points[i],
 												nextPoint = points[ip1],
 												secondNextPoint = points[ip2],
@@ -78,9 +99,20 @@ import { animateFill } from "./constructs.js";
 											ctx.beginPath();
 											if (closed)
 												ctx.moveTo(
-													...points[Math.abs(Math.round(len * rateFunction(t)) % len)],
+													...points[
+														Math.abs(
+															Math.round(
+																len * rateFunction(t),
+															) % len,
+														)
+													],
 												);
-											else ctx.moveTo(...points[Math.round(len * rateFunction(t))]);
+											else
+												ctx.moveTo(
+													...points[
+														Math.round(len * rateFunction(t))
+													],
+												);
 
 											ctx.bezierCurveTo(
 												cp[0],
@@ -110,10 +142,20 @@ import { animateFill } from "./constructs.js";
 											} else if (t == 0) {
 												ctx.beginPath();
 												ctx.moveTo(
-													...points[Math.abs(Math.round(len * rateFunction(0)))],
+													...points[
+														Math.abs(
+															Math.round(
+																len * rateFunction(0),
+															),
+														)
+													],
 												);
 											}
-											let currentPoint = points[Math.round(len * rateFunction(t)) % len];
+											let currentPoint =
+												points[
+													Math.round(len * rateFunction(t)) %
+														len
+												];
 											ctx.lineTo(currentPoint[0], currentPoint[1]);
 											if (ctx.doStroke) ctx.stroke();
 											if (!syncWithTime) t += dt;

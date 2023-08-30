@@ -64,7 +64,16 @@ C(
 		strokeWidth(1);
 		fill("white");
 		doubleArrow(leftStart + 10, 0, leftStart + 10, pointOnCircle[1], 13, 10, 0, 4);
-		doubleArrow(leftStart + 10, pointOnCircle[1], leftStart + 10, radius, 13, 10, 0, 4);
+		doubleArrow(
+			leftStart + 10,
+			pointOnCircle[1],
+			leftStart + 10,
+			radius,
+			13,
+			10,
+			0,
+			4,
+		);
 		save();
 
 		// horizontal markers

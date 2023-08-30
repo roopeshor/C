@@ -34,8 +34,8 @@ function drawAxis(min = -4, max = 4, step = 1) {
 			range: [min, max, step],
 			includeNumbers: true,
 			textSize: 11,
-			includeLeftTip: false,
-			includeRightTip: false,
+			includeLeftTip: true,
+			includeRightTip: true,
 		},
 		yAxis: {
 			lineWidth: 1,

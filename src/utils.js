@@ -119,8 +119,9 @@ export function inArray(value, array, epsilon = 1e-6) {
  */
 
 export function latexToImg(latex) {
+	let MJX = window["MathJax"] || {};
 	return new Promise((resolve, reject) => {
-		let wrapper = MathJax.tex2svg(`${latex}`, { em: 10, ex: 5, display: true });
+		let wrapper = MJX.tex2svg(`${latex}`, { em: 10, ex: 5, display: true });
 		let mjOut = wrapper.getElementsByTagName("svg")[0];
 		// mjOut.setAttribute("xmlns", "http://www.w3.org/2000/svg")
 		let output = { svg: "", img: "" };

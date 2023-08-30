@@ -1,5 +1,4 @@
 import { C } from "../main.js";
-import { scale } from "../settings.js";
 
 /**
  * This module contains functions for drawing different types of text.
@@ -14,16 +13,16 @@ import { scale } from "../settings.js";
  * @param {number} [y=0] y-coord
  * @param {number} [maxwidth=undefined] maximum width
  */
-function text(text, x = 0, y = 0, maxwidth = undefined) {
+export function text(text, x = 0, y = 0, maxwidth = undefined) {
 	let ctx = C.workingContext;
-	if (ctx.yAxisInverted) {
-		// if inverted reverse it and invert y component
-		scale(1, -1);
-		y *= -1;
-	}
-	if (ctx.doFill) ctx.fillText(text, x, y, maxwidth);
-	else if (ctx.doStroke) ctx.strokeText(text, x, y, maxwidth);
-	if (ctx.yAxisInverted) scale(1, -1); // reverse y-invertion
+	// if axes are inverted through invert* function reverse it
+	ctx.save();
+	ctx.translate(x, y);
+	if (ctx.yAxisInverted) ctx.scale(1, -1);
+	if (ctx.xAxisInverted) ctx.scale(-1, 1);
+	if (ctx.doFill) ctx.fillText(text, 0, 0, maxwidth);
+	else if (ctx.doStroke) ctx.strokeText(text, 0, 0, maxwidth);
+	ctx.restore();
 }
 
 /**
@@ -34,14 +33,14 @@ function text(text, x = 0, y = 0, maxwidth = undefined) {
  * @param {number} [y=x] y-coord
  * @param {number} [maxwidth=undefined] maximum width
  */
-function fillText(text, x = 0, y = 0, maxwidth = undefined) {
+export function fillText(text, x = 0, y = 0, maxwidth = undefined) {
 	let ctx = C.workingContext;
-	if (ctx.yAxisInverted) {
-		scale(1, -1);
-		y *= -1;
-	}
-	ctx.fillText(text, x, y, maxwidth);
-	if (ctx.yAxisInverted) scale(1, -1);
+	ctx.save();
+	ctx.translate(x, y);
+	if (ctx.yAxisInverted) ctx.scale(1, -1);
+	if (ctx.xAxisInverted) ctx.scale(-1, 1);
+	ctx.fillText(text, 0, 0, maxwidth);
+	ctx.restore();
 }
 
 /**
@@ -52,14 +51,12 @@ function fillText(text, x = 0, y = 0, maxwidth = undefined) {
  * @param {number} [y=x] y-coord
  * @param {number} [maxwidth=undefined] maximum width
  */
-function strokeText(text, x = 0, y = 0, maxwidth = undefined) {
+export function strokeText(text, x = 0, y = 0, maxwidth = undefined) {
 	let ctx = C.workingContext;
-	if (ctx.yAxisInverted) {
-		scale(1, -1);
-		y *= -1;
-	}
-	ctx.strokeText(text, x, y, maxwidth);
-	if (ctx.yAxisInverted) scale(1, -1);
+	ctx.save();
+	ctx.translate(x, y);
+	if (ctx.yAxisInverted) ctx.scale(1, -1);
+	if (ctx.xAxisInverted) ctx.scale(-1, 1);
+	ctx.strokeText(text, 0, 0, maxwidth);
+	ctx.restore();
 }
-
-export { text, fillText, strokeText };

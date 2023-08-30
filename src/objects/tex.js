@@ -1,6 +1,7 @@
 /** @module Tex */
 import { CENTER, RIGHT } from "../constants/drawing.js";
 import { C } from "../main.js";
+import { translate } from "../settings.js";
 
 /**
  * Renders the input tex into a HTMLImageElement
@@ -41,7 +42,7 @@ function getImageFromTex(input) {
  * @param {number} [y=0]
  * @return {HTMLImageElement} image representation of tex
  */
-function tex(input, x, y) {
+function tex(input, x = 0, y = 0) {
 	let image = getImageFromTex(input),
 		ctx = C.workingContext,
 		text_align = ctx.textAlign,
@@ -71,11 +72,10 @@ function tex(input, x, y) {
 				break;
 		}
 		// invert axis first
-		if (ctx.yAxisInverted) {
-			ctx.scale(1, -1);
-			y *= -1;
-		}
-		ctx.drawImage(image, x || 0, y || 0);
+		ctx.translate(x, y);
+		if (ctx.yAxisInverted) ctx.scale(1, -1);
+		if (ctx.xAxisInverted) ctx.scale(-1, 1);
+		ctx.drawImage(image, 0, 0);
 		ctx.restore();
 	};
 	return image;

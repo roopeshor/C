@@ -170,7 +170,22 @@ export function strokeWidth(w) {
  */
 export function scale(x, y = x) {
 	C.workingContext.scale(x, y);
-	if (y < 0) C.workingContext.yAxisInverted = true;
+}
+
+/**
+ * inverts y-Axis
+ */
+export function invertYAxis() {
+	C.workingContext.scale(1, -1);
+	C.workingContext.yAxisInverted = true;
+}
+
+/**
+ * inverts x-Axis
+ */
+export function invertXAxis() {
+	C.workingContext.scale(-1, 1);
+	C.workingContext.xAxisInverted = true;
 }
 
 /**
@@ -289,6 +304,7 @@ export function getContextStates(canvasName) {
 		doFill: ctx.doFill,
 		pathStarted: ctx.pathStarted,
 		yAxisInverted: ctx.yAxisInverted,
+		xAxisInverted: ctx.xAxisInverted,
 
 		netRotation: ctx.netRotation,
 

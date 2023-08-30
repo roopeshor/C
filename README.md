@@ -40,36 +40,37 @@ But you acn apply styles to this.
 Configuration object which contains all about canvas and can be used to manipulate canvas.
 Possible configurations [with default values]
 
-- `width[=200]`: Width of canvas in pixels.
-- `height[=200]`: Width of canvas in pixels.
-- `dpr[=window.devicePixelRatio]`: device pixel ratio of canvas.
-- `doFill[=true]`: Whether to fill.
-- `doStroke[=true]`: Whether to stroke.
-- `pathStarted[=false]`: Whether a shape has begun to draw.
-- `yAxisInverted[=false]`: Whether y axis of canvas was inverted.
+-   `width[=200]`: Width of canvas in pixels.
+-   `height[=200]`: Width of canvas in pixels.
+-   `dpr[=window.devicePixelRatio]`: device pixel ratio of canvas.
+-   `doFill[=true]`: Whether to fill.
+-   `doStroke[=true]`: Whether to stroke.
+-   `pathStarted[=false]`: Whether a shape has begun to draw.
+-   `yAxisInverted[=false]`: Whether y axis of canvas was inverted.
+-   `xAxisInverted[=false]`: Whether x axis of canvas was inverted.
 
 <br>
 
-- `textAlign[="start"]` : textv align property of canvas.
-- `textBaseline[="alphabetic"]` : textv baseline property of canvas.
+-   `textAlign[="start"]` : textv align property of canvas.
+-   `textBaseline[="alphabetic"]` : textv baseline property of canvas.
 
 <br>
 
-- `fillStyle[="#ffffff"]`: color to fill.
-- `strokeStyle[="#000000"]`: color to stroke.
-- `colorMode[="rgba"]`: mode of color.
-- `lineWidth[=1]`: width of line.
+-   `fillStyle[="#ffffff"]`: color to fill.
+-   `strokeStyle[="#000000"]`: color to stroke.
+-   `colorMode[="rgba"]`: mode of color.
+-   `lineWidth[=1]`: width of line.
 
 <br>
 
-- `fontSize[="20px"]`: font size.
-- `fontFamily[="serif"]`: font family.
-- `fontStyle[="normal"]`: font style.
-- `fontVariant[="normal"]`: font variant.
-- `fontWeight[="normal"]`: font weight.
-- `fontStretch[="normal"]`: font stretch.
-- `lineHeight[="1.2"]`: line height.
-- `font[="20px serif"]`: explict font of canvas.
+-   `fontSize[="20px"]`: font size.
+-   `fontFamily[="serif"]`: font family.
+-   `fontStyle[="normal"]`: font style.
+-   `fontVariant[="normal"]`: font variant.
+-   `fontWeight[="normal"]`: font weight.
+-   `fontStretch[="normal"]`: font stretch.
+-   `lineHeight[="1.2"]`: line height.
+-   `font[="20px serif"]`: explict font of canvas.
 
 ## Inside drawFunction (Documentation)
 

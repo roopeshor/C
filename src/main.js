@@ -19,6 +19,7 @@ function C(fx, container, cfgs = {}) {
 		doStroke: true,
 		pathStarted: false,
 		yAxisInverted: false,
+		xAxisInverted: false,
 		pauseAnimations: false,
 
 		netRotation: 0,
@@ -153,7 +154,9 @@ C.dpr;
 C.getWindowWidth = function (container = document.body) {
 	const cs = globalThis.getComputedStyle(container);
 	return (
-		parseInt(cs.width, 10) - parseInt(cs.paddingRight, 10) - parseInt(cs.paddingLeft, 10)
+		parseInt(cs.width, 10) -
+		parseInt(cs.paddingRight, 10) -
+		parseInt(cs.paddingLeft, 10)
 	);
 };
 
