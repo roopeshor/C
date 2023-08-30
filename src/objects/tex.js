@@ -8,7 +8,7 @@ import { C } from "../main.js";
  * @param {string} input
  * @return {HTMLImageElement}
  */
-function getImageFromTex(input) {
+export function getImageFromTex(input) {
 	if (
 		!(
 			typeof globalThis["MathJax"] == "object" &&
@@ -41,7 +41,7 @@ function getImageFromTex(input) {
  * @param {number} [y=0]
  * @return {HTMLImageElement} image representation of tex
  */
-function tex(input, x = 0, y = 0) {
+export function tex(input, x = 0, y = 0) {
 	let image = getImageFromTex(input),
 		ctx = C.workingContext,
 		text_align = ctx.textAlign,
@@ -79,5 +79,3 @@ function tex(input, x = 0, y = 0) {
 	};
 	return image;
 }
-
-export { tex, getImageFromTex };

@@ -7,7 +7,7 @@ import { m4 } from "./m4.js";
  * @param	{boolean} [configs.deleteOld=false] whether to delete old canvas.
  * @returns {WebGL} WebGL instance
  */
-function createWebGL(configs) {
+export function createWebGL(configs) {
 	let c = C.workingContext;
 	const cv = C.workingCanvas;
 	configs = applyDefault(
@@ -40,7 +40,7 @@ function createWebGL(configs) {
 /**
  * Creates a new instance for drawing in webgl
  */
-class WebGL {
+export class WebGL {
 	constructor(canvas) {
 		let gl = canvas.getContext("webgl");
 		if (!gl) {
@@ -331,4 +331,3 @@ class WebGL {
 		);
 	}
 }
-export { createWebGL, WebGL };

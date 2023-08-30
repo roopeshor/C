@@ -9,7 +9,7 @@
  * @param {boolean} clockwise if true returns points in clock wise direction
  * @returns {number[][]} array of points
  */
-function generatePointsInArc(
+export function generatePointsInArc(
 	x,
 	y,
 	radius,
@@ -31,5 +31,3 @@ function generatePointsInArc(
 	}
 	return clockwise ? points.reverse() : points;
 }
-
-export { generatePointsInArc };

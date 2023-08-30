@@ -19,7 +19,7 @@ const TRANSPARENT = "rgba(0,0,0,0)";
  * @param {number} width width of tip
  * @param {number} height height of tip
  */
-function arrowTip(x1, y1, x2, y2, width, height) {
+export function arrowTip(x1, y1, x2, y2, width, height) {
 	let ctx = C.workingContext;
 	let thickness = ctx.lineWidth;
 	let distance = Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2);
@@ -70,7 +70,7 @@ function arrowTip(x1, y1, x2, y2, width, height) {
  * @param {number} [spacing = 0] padding from end to tip
  *
  */
-function arrow(
+export function arrow(
 	x1,
 	y1,
 	x2,
@@ -115,7 +115,7 @@ function arrow(
  * @param {number} [arrowCurving = 0]
  * @param {number} [spacing=0]
  */
-function doubleArrow(
+export function doubleArrow(
 	x1,
 	y1,
 	x2,
@@ -160,7 +160,7 @@ function doubleArrow(
  * @param {number} args.textRotation rotatioin of text
  * @param {number} args.arrowCurving worping of arrow
  */
-function measurement(args) {
+export function measurement(args) {
 	const ctx = C.workingContext;
 	const defaults = {
 		background: TRANSPARENT,
@@ -226,7 +226,7 @@ function measurement(args) {
  * @param {number} [tipOffset=10] offset (padding) of tip from it's defined end
  * @param {boolean} [reverse=false] whether to reverse the direction of arrow
  */
-function curvedArrow(
+export function curvedArrow(
 	x,
 	y,
 	radius,
@@ -289,7 +289,7 @@ function curvedArrow(
  * @param {number} [arrowCurving=0] curving of arrow
  * @param {number} [tipOffset=0] angular offset of arrow from radial boundaries in radians.
  */
-function curvedDoubleArrow(
+export function curvedDoubleArrow(
 	x,
 	y,
 	radius,
@@ -346,7 +346,7 @@ function curvedDoubleArrow(
  * @param {boolean} [reverse=false] whether to reverse the direction of arrow.
  * @return {number[]} coordiante of the center of arc as [x, y]
  */
-function curvedArrowBetweenPoints(
+export function curvedArrowBetweenPoints(
 	p1,
 	p2,
 	radius,
@@ -406,7 +406,7 @@ function curvedArrowBetweenPoints(
  * @param {boolean} [otherArc=false] whether to use other arc
  * @return {number[]} coordiante of the center of arc as [x, y]
  */
-function curvedDoubleArrowBetweenPoints(
+export function curvedDoubleArrowBetweenPoints(
 	p1,
 	p2,
 	radius,
@@ -459,14 +459,3 @@ function curvedDoubleArrowBetweenPoints(
 	ctx.restore();
 	return center;
 }
-
-export {
-	arrow,
-	arrowTip,
-	doubleArrow,
-	measurement,
-	curvedArrow,
-	curvedDoubleArrow,
-	curvedArrowBetweenPoints,
-	curvedDoubleArrowBetweenPoints,
-};

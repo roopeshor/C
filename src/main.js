@@ -7,7 +7,7 @@ import { applyDefault, defineProperties } from "./utils.js";
  * @param {Element|string} [container=document.body] container for the drawings as an element or css selector
  * @param {Object} [cfgs] configurations
  */
-function C(fx, container, cfgs = {}) {
+export function C(fx, container, cfgs = {}) {
 	const defaultConfigs = {
 		width: 200, // width of canvas multiplied by dpr
 		height: 200, // height of canvas  multiplied by dpr
@@ -280,4 +280,3 @@ defineConstant({
 // register to globalThis
 globalThis["C"] = C;
 
-export { C };

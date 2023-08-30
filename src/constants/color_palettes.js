@@ -54,5 +54,4 @@ let colorPalettes = {
 for (var p in colorPalettes) colorPalettes[p] = colorPalettes[p].split(" ");
 
 /** @type {Object<string, string[]>} */
-const ColorPalettes = colorPalettes;
-export { ColorPalettes };
+export const ColorPalettes = colorPalettes;

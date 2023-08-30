@@ -1,18 +1,18 @@
-import { axes, line, numberLine, point } from "../../src/c.js";
-import {
-	background,
-	endShape,
-	fill,
-	invertXAxis,
-	invertYAxis,
-	lineTo,
-	moveTo,
-	scale,
-	startShape,
-	stroke,
-	strokeWidth,
-	translate,
-} from "../../src/settings.js";
+// import { axes, line, numberLine, point } from "../../src/c.js";
+// import {
+// 	background,
+// 	endShape,
+// 	fill,
+// 	invertXAxis,
+// 	invertYAxis,
+// 	lineTo,
+// 	moveTo,
+// 	scale,
+// 	startShape,
+// 	stroke,
+// 	strokeWidth,
+// 	translate,
+// } from "../../src/settings.js";
 
 const W = 400;
 const H = 400;

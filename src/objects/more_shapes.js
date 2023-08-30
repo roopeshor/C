@@ -11,7 +11,7 @@ import { circleIntersection } from "../math/points.js";
  * @param {number[]} ratios array of ratios of central angles. Must have atleast 3 elements.
  * @param {number} [rotation=0] amound to rotate the entire polygon.
  */
-function polygonWithRatioOfCentralAngles(x, y, radius, ratios, rotation = 0) {
+export function polygonWithRatioOfCentralAngles(x, y, radius, ratios, rotation = 0) {
 	if (!Array.isArray(ratios)) console.error("ratio provided is not array");
 	let sumOfRatio = ratios.reduce((a, b) => a + b, 0),
 		baseAngle = (Math.PI * 2) / sumOfRatio,
@@ -38,7 +38,7 @@ function polygonWithRatioOfCentralAngles(x, y, radius, ratios, rotation = 0) {
  * @param {number[]} c2 center coordinate as array [x, y]
  * @param {number} r2
  */
-function lens(c1, r1, c2, r2) {
+export function lens(c1, r1, c2, r2) {
 	// find intersectionPoint
 	let p = circleIntersection(c1, r1, c2, r2),
 		pa = p[0],
@@ -56,4 +56,3 @@ function lens(c1, r1, c2, r2) {
 	if (ctx.doFill) ctx.fill();
 	ctx.closePath();
 }
-export { polygonWithRatioOfCentralAngles, lens };

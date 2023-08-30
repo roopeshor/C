@@ -13,7 +13,7 @@ import { C } from "../main.js";
  * @param {number} [curviness=0.6] curviness of brace. '0' doesn't make flat brace
  * @param {number} [taleLength=0.8] length of tale proportional to size \ length
  */
-function curlyBrace(x1, y1, x2, y2, size = 20, curviness = 0.6, taleLength = 0.8) {
+export function curlyBrace(x1, y1, x2, y2, size = 20, curviness = 0.6, taleLength = 0.8) {
 	//Calculate unit vector
 	let dx = x1 - x2;
 	let dy = y1 - y2;
@@ -59,7 +59,7 @@ function curlyBrace(x1, y1, x2, y2, size = 20, curviness = 0.6, taleLength = 0.8
  * @param {number} [extender=5] how much the coordinate of middle tip should be extended.
  * @return {number[]} array of two numbers that are the coordinate of middle tip extended by a certain value.
  */
-function arcBrace(
+export function arcBrace(
 	x,
 	y,
 	radius = 100,
@@ -101,5 +101,3 @@ function arcBrace(
 		(largerRadius + extender) * Math.sin(angle / 2 + startAngle) + y,
 	];
 }
-
-export { curlyBrace, arcBrace };
