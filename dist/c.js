@@ -5409,7 +5409,6 @@ exports.getImageFromTex = getImageFromTex;
 exports.tex = tex;
 var _drawing = require("../constants/drawing.js");
 var _main = require("../main.js");
-var _settings = require("../settings.js");
 /** @module Tex */
 
 /**
@@ -5490,7 +5489,7 @@ function tex(input, x = 0, y = 0) {
   return image;
 }
 
-},{"../constants/drawing.js":13,"../main.js":17,"../settings.js":31}],30:[function(require,module,exports){
+},{"../constants/drawing.js":13,"../main.js":17}],30:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {

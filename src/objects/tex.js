@@ -1,7 +1,6 @@
 /** @module Tex */
 import { CENTER, RIGHT } from "../constants/drawing.js";
 import { C } from "../main.js";
-import { translate } from "../settings.js";
 
 /**
  * Renders the input tex into a HTMLImageElement

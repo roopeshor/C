@@ -1,15 +1,6 @@
 /** @module Coordinate-Systems*/
 import { C } from "../main.js";
-import {
-	fill,
-	fontSize,
-	fontWeight,
-	restore,
-	save,
-	scale,
-	stroke,
-	translate,
-} from "../settings.js";
+import { fill, fontSize, restore, save, stroke } from "../settings.js";
 import { applyDefault, arange, fraction } from "../utils.js";
 import { arrowTip } from "./arrows.js";
 import {
