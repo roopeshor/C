@@ -142,7 +142,7 @@ export function Arc(args) {
 
 /**
  * animate filling of a given shape
- * ! Has some flaws !
+ * TODO: Has some flaws
  * @param {string} name name of animation. Optional
  * @param {string} canvasName ID of canvas
  * @param {string|Array<number>} FILL color of canvas

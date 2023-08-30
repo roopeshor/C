@@ -1,3 +1,4 @@
+````js
 const W = 400;
 const H = 400;
 const translateX = W / 1.5 + 50;
@@ -171,3 +172,4 @@ function arange(start, end, step, rev = false) {
 	else for (let i = start; i <= end; i += step) arr.push(i);
 	return arr;
 }
+````

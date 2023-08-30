@@ -1,5 +1,5 @@
+import { loop, noLoop } from "../../src/settings.js";
 import { animateFill } from "./constructs.js";
-
 (function () {
 	if (window["C"] && typeof window["C"].addExtension == "function") {
 		let C = window["C"];
@@ -47,7 +47,7 @@ import { animateFill } from "./constructs.js";
 							syncWithTime = animation.syncWithTime || false,
 							t = 0,
 							dt = dTime / dur,
-							len = points.length - 1;
+							len = points.length;
 						if (ctx.lineWidth > 0 && ctx.doStroke) {
 							if (typeof animation.draw != "function") {
 								if (smoothen) {
@@ -153,8 +153,7 @@ import { animateFill } from "./constructs.js";
 											}
 											let currentPoint =
 												points[
-													Math.round(len * rateFunction(t)) %
-														len
+													Math.ceil(len * rateFunction(t)) % len
 												];
 											ctx.lineTo(currentPoint[0], currentPoint[1]);
 											if (ctx.doStroke) ctx.stroke();
@@ -163,7 +162,7 @@ import { animateFill } from "./constructs.js";
 										},
 										ctx.name,
 										dTime,
-										50,
+										1,
 										{},
 										dur,
 									);
