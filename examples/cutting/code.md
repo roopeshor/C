@@ -1,11 +1,13 @@
-````js
+````html
+<!doctype html>
+<html lang="en"><head><meta charset="UTF-8"/><script src="https://cdn.jsdelivr.net/gh/Roopesh2/C@v2/dist/c.min.js"></script><style>body,html{margin:0;padding:0;}</style></head><body><div class="display"></div>
+<script>
 const W = 400;
 const H = 400;
 const translateX = W / 1.5 + 50;
 const translateY = H / 2;
 
-C(draw, ".display", { width: W, height: H });
-
+/////---------- ENTRY POINT------------ ///////
 async function draw() {
 	setup();
 
@@ -17,6 +19,10 @@ async function draw() {
 	let profileEdge = generateProfileGeometry(pts);
 	drawProfileCuts(profileEdge);
 }
+
+C(draw, ".display", { width: W, height: H });
+
+//////---------- UTILITIES ----------- ////////
 
 /**
  * Generates boundary points of profile
@@ -46,8 +52,8 @@ function generateProfileGeometry(handles, step = 2) {
  * Linear interpolation.
  * @param {number} a start
  * @param {number} b end
- * @param {number} t ∈ [0, 1]
- * @returns {number} ∈ [a, b]
+ * @param {number} t in the range [0, 1]
+ * @returns {number} in the range [a, b]
  */
 function linear(a, b, t) {
 	return a + t * (b - a);
@@ -172,4 +178,6 @@ function arange(start, end, step, rev = false) {
 	else for (let i = start; i <= end; i += step) arr.push(i);
 	return arr;
 }
-````
+
+</script>
+</body></html>```
