@@ -66,7 +66,7 @@ function check(result, data) {
 		message = "",
 		errorIndexes = [],
 		resultDataType = _typeof(result);
-	console.log(result);
+
 	if (resultDataType == "Array" || resultDataType == "Object") {
 		if (JSON.stringify(result) !== JSON.stringify(data)) {
 			passed = false;
@@ -78,7 +78,8 @@ function check(result, data) {
 		}
 	} else if (result !== data) {
 		passed = false;
-		message = "Value mismatch! expected: " + data;
+		message = "Value mismatch! expected: " + data +
+		"; \n                got: " + result;
 		// for singular values there isn't any index.
 		// TODO: Decide if this is needed
 		errorIndexes = [-2];

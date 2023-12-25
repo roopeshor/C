@@ -2,13 +2,13 @@ import { readColor } from "../src/color/color_reader.js";
 import { lerpColorArray } from "../src/color/interpolation.js";
 import { testFunction } from "./tester.js";
 let col = [
-		"#b36e38b0",
-		"#ff9c52b0",
-		"#ffcea9b0",
-		"#dcdcddb0",
-		"#9fcaedb0",
-		"#3d96dab0",
-		"#2b6b99b0",
+	"#b36e38b0",
+	"#ff9c52b0",
+	"#ffcea9b0",
+	"#dcdcddb0",
+	"#9fcaedb0",
+	"#3d96dab0",
+	"#2b6b99b0",
 ];
 
 let data = [
@@ -151,79 +151,79 @@ let data = [
 		path: "color/interpolation.js",
 		tests: [
 			{
-				args: [col, -5, 5, -5],
+				args: [col, -5, -5, 5],
 				expect: "rgba(179,110,56,0.6901960784313725)",
 			},
 			{
-				args: [col, 5, -5,  3],
+				args: [col, 3, -5, 5],
 				expect: "rgba(61,150,218,0.6901960784313725)",
 			},
 			{
-				args: [col, 5, -5,  -2],
+				args: [col, -2, -5, 5],
 				expect: "rgba(204,176,155,0.6901960784313725)",
 			},
 			{
-				args: [col, 5, -5,  0],
+				args: [col, 0, -5, 5],
 				expect: "rgba(220,220,221,0.6901960784313725)",
 			},
 			{
-				args: [col, 5, -5,  5],
+				args: [col, 5, -5, 5],
 				expect: "rgba(43,107,153,0.6901960784313725)",
 			},
 			{
-				args: [col, 5, -5,  2],
+				args: [col, 2, -5, 5],
 				expect: "rgba(110,176,228,0.6901960784313725)",
 			},
 			{
-				args: [col, 5, -5,  4],
+				args: [col, 4, -5, 5],
 				expect: "rgba(52,129,186,0.6901960784313725)",
 			},
 			{
-				args: [col, 5, -5,  -4],
+				args: [col, -4, -5, 5],
 				expect: "rgba(187,132,89,0.6901960784313725)",
 			},
 			{
-				args: [col, 5, -5,  -4.2],
+				args: [col, -4.2, -5, 5],
 				expect: "rgba(186,128,82,0.6901960784313725)",
 			},
 			{
-				args: [col, 5, -5,  -3.2],
+				args: [col, -3.2, -5, 5],
 				expect: "rgba(194,150,115,0.6901960784313725)",
 			},
 			{
-				args: [col, 5, -5,  -1.2],
+				args: [col, -1.2, -5, 5],
 				expect: "rgba(210,194,181,0.6901960784313725)",
 			},
 			{
-				args: [col, 5, -5,  -1.2],
+				args: [col, -1.2, -5, 5],
 				expect: "rgba(210,194,181,0.6901960784313725)",
 			},
 			{
-				args: [col, 5, -5,  -0.023],
+				args: [col, -0.023, -5, 5],
 				expect: "rgba(220,219,220,0.6901960784313725)",
 			},
 			{
-				args: [col, 5, -5,  -0.23],
+				args: [col, -0.23, -5, 5],
 				expect: "rgba(218,215,213,0.6901960784313725)",
 			},
 			{
-				args: [col, 5, -5,  -0.023],
+				args: [col, -0.023, -5, 5],
 				expect: "rgba(220,219,220,0.6901960784313725)",
 			},
 			{
-				args: [col, 5, -5,  -Math.PI],
+				args: [col, -Math.PI, -5, 5],
 				expect: "rgba(194,151,117,0.6901960784313725)",
 			},
 			{
-				args: [col, 5, -5,  Math.PI],
+				args: [col, Math.PI, -5, 5],
 				expect: "rgba(60,147,213,0.6901960784313725)",
 			},
 			{
-				args: [col, 5, -5,  Math.PI / 2],
+				args: [col, Math.PI / 2, -5, 5],
 				expect: "rgba(131,187,232,0.6901960784313725)",
 			},
 			{
-				args: [col, 5, -5,  Math.E],
+				args: [col, Math.E, -5, 5],
 				expect: "rgba(75,157,221,0.6901960784313725)",
 			},
 		],

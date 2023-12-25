@@ -1,186 +1,199 @@
 <!doctype html>
-<html lang="en"><head><meta charset="UTF-8"/><script src="https://cdn.jsdelivr.net/gh/Roopesh2/C@v2/dist/c.min.js"></script><style>body,html{margin:0;padding:0;}</style></head><body><div class="display"></div>
-<script>
-const W = 400;
-const H = 400;
-const translateX = W / 1.5 + 50;
-const translateY = H / 2;
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<script src="https://cdn.jsdelivr.net/gh/Roopesh2/C@v2/dist/c.min.js"></script>
+		<style>
+			body,
+			html {
+				margin: 0;
+				padding: 0;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="display"></div>
+		<script>
+			const W = 400;
+			const H = 400;
+			const translateX = W / 1.5 + 50;
+			const translateY = H / 2;
 
-/////---------- ENTRY POINT------------ ///////
-async function draw() {
-	setup();
+			/////---------- ENTRY POINT------------ ///////
+			async function draw() {
+				setup();
 
-	let data = `N11 X0 Z0
+				let data = `N11 X0 Z0
 N12 X20 Z10
 N13 X20 Z20
 N14 X40 Z35
 N14 X50 Z35`;
-	let pts = NCtoPoints(data);
-	drawProfileOutline(pts);
-	drawProfileHandles(pts);
+				let pts = NCtoPoints(data);
+				drawProfileOutline(pts);
+				drawProfileHandles(pts);
 
-	let profileEdge = generateProfileGeometry(pts);
-	drawProfileCuts(profileEdge);
-}
+				let profileEdge = generateProfileGeometry(pts);
+				drawProfileCuts(profileEdge);
+			}
 
-C(draw, ".display", { width: W, height: H });
+			C(draw, ".display", { width: W, height: H });
 
-//////---------- UTILITIES ----------- ////////
+			//////---------- UTILITIES ----------- ////////
 
-/**
- * Generates boundary points of profile
- * @param {Array<{x:number, z: number}>} handles
- * @param {number} step
- * @returns {Array<{x:number, z: number}>}
- */
-function generateProfileGeometry(handles, step = 2) {
-	let points = [];
-	for (let i = 1; i < handles.length; i++) {
-		let p1 = handles[i - 1],
-			p2 = handles[i];
-		let xCoords = arange(p1.x, p2.x, step),
-			interpolator = linear; // function that outlines profile surface
-		if (xCoords.length < 2 && i > 1) continue;
-		xCoords.forEach((val, i) => {
-			points.push({
-				z: interpolator(p1.z, p2.z, i / (xCoords.length - 1)),
-				x: xCoords[i],
-			});
-		});
-	}
-	return points;
-}
+			/**
+			 * Generates boundary points of profile
+			 * @param {Array<{x:number, z: number}>} handles
+			 * @param {number} step
+			 * @returns {Array<{x:number, z: number}>}
+			 */
+			function generateProfileGeometry(handles, step = 2) {
+				let points = [];
+				for (let i = 1; i < handles.length; i++) {
+					let p1 = handles[i - 1],
+						p2 = handles[i];
+					let xCoords = arange(p1.x, p2.x, step),
+						interpolator = linear; // function that outlines profile surface
+					if (xCoords.length < 2 && i > 1) continue;
+					xCoords.forEach((val, i) => {
+						points.push({
+							z: interpolator(p1.z, p2.z, i / (xCoords.length - 1)),
+							x: xCoords[i],
+						});
+					});
+				}
+				return points;
+			}
 
-/**
- * Linear interpolation.
- * @param {number} a start
- * @param {number} b end
- * @param {number} t in the range [0, 1]
- * @returns {number} in the range [a, b]
- */
-function linear(a, b, t) {
-	return a + t * (b - a);
-}
+			/**
+			 * Linear interpolation.
+			 * @param {number} a start
+			 * @param {number} b end
+			 * @param {number} t in the range [0, 1]
+			 * @returns {number} in the range [a, b]
+			 */
+			function linear(a, b, t) {
+				return a + t * (b - a);
+			}
 
-/**
- * Draws profile cuts based on bounding geometry
- *
- * @param {Array<{x:number, z: number}>} edgePoints
- */
-function drawProfileCuts(edgePoints) {
-	stroke("#0fa");
-	console.log(edgePoints);
-	for (let i = 0; i < edgePoints.length; i++) {
-		let x = edgePoints[i].z;
-		let y = edgePoints[i].x;
-		line(0, y, x, y);
-	}
-}
+			/**
+			 * Draws profile cuts based on bounding geometry
+			 *
+			 * @param {Array<{x:number, z: number}>} edgePoints
+			 */
+			function drawProfileCuts(edgePoints) {
+				stroke("#0fa");
+				console.log(edgePoints);
+				for (let i = 0; i < edgePoints.length; i++) {
+					let x = edgePoints[i].z;
+					let y = edgePoints[i].x;
+					line(0, y, x, y);
+				}
+			}
 
-function setup() {
-	background(0);
-	translate(translateX, translateY);
-	invertXAxis();
-	invertYAxis();
-	let a = axes({
-		xAxis: {
-			length: W / 1.3,
-			range: [-10, 100, 10],
-			includeRightTip: false,
-			fontSize: 13,
-			axisFont: 20,
-			axisLabel: "z",
-		},
-		yAxis: {
-			length: H / 1.3,
-			range: [-50, 50, 10],
-			includeRightTip: false,
-			textDirection: [0, -1.2],
-			fontSize: 13,
-			axisFont: 20,
-			axisLabel: "x",
-		},
-	});
-	scale(...a.unitSpace);
-	strokeWidth(0.3);
-}
+			function setup() {
+				background(0);
+				translate(translateX, translateY);
+				invertXAxis();
+				invertYAxis();
+				let a = axes({
+					xAxis: {
+						length: W / 1.3,
+						range: [-10, 100, 10],
+						includeRightTip: false,
+						fontSize: 13,
+						axisFont: 20,
+						axisLabel: "z",
+					},
+					yAxis: {
+						length: H / 1.3,
+						range: [-50, 50, 10],
+						includeRightTip: false,
+						textDirection: [0, -1.2],
+						fontSize: 13,
+						axisFont: 20,
+						axisLabel: "x",
+					},
+				});
+				scale(...a.unitSpace);
+				strokeWidth(0.3);
+			}
 
-function drawProfileOutline(handles) {
-	stroke("yellow");
-	startShape();
-	moveTo(handles[0].z, handles[0].x);
-	for (let i = 1; i < handles.length; i++) {
-		let pt = handles[i];
-		lineTo(pt.z, pt.x);
-	}
-	stroke();
-	endShape();
-}
+			function drawProfileOutline(handles) {
+				stroke("yellow");
+				startShape();
+				moveTo(handles[0].z, handles[0].x);
+				for (let i = 1; i < handles.length; i++) {
+					let pt = handles[i];
+					lineTo(pt.z, pt.x);
+				}
+				stroke();
+				endShape();
+			}
 
-function drawProfileHandles(handles) {
-	fill("red");
-	for (let handle of handles) {
-		point(handle.z, handle.x, 2);
-	}
-}
+			function drawProfileHandles(handles) {
+				fill("red");
+				for (let handle of handles) {
+					point(handle.z, handle.x, 2);
+				}
+			}
 
-/**
- * Reads a local file and returns output text
- * @param {string} file
- * @returns {string}
- */
-async function read(file) {
-	let data;
-	await fetch(file)
-		.then((res) => {
-			return res.blob();
-		})
-		.then((dat) => {
-			data = dat.text();
-		});
-	return data;
-}
+			/**
+			 * Reads a local file and returns output text
+			 * @param {string} file
+			 * @returns {string}
+			 */
+			async function read(file) {
+				let data;
+				await fetch(file)
+					.then((res) => {
+						return res.blob();
+					})
+					.then((dat) => {
+						data = dat.text();
+					});
+				return data;
+			}
 
-/**
- * Extracts coodinates from NC statements
- * @param {string} txt
- * @returns {Array<{x:number, z: number}>[]}
- */
-function NCtoPoints(txt) {
-	let arr = [];
-	txt = txt.split("\n");
-	for (let line of txt) {
-		if (line.length < 4) continue;
-		arr.push(extractCoords(line));
-	}
-	return arr;
-}
+			/**
+			 * Extracts coodinates from NC statements
+			 * @param {string} txt
+			 * @returns {Array<{x:number, z: number}>[]}
+			 */
+			function NCtoPoints(txt) {
+				let arr = [];
+				txt = txt.split("\n");
+				for (let line of txt) {
+					if (line.length < 4) continue;
+					arr.push(extractCoords(line));
+				}
+				return arr;
+			}
 
-/**
- * Extracts coords from single NC instruction
- * @param {string} line
- * @returns {{x:number, z: number}}
- */
-function extractCoords(line) {
-	let x = line.match(/(?<=x)(\-+)?\.?\d+\.?(\d+)?/gi);
-	let z = line.match(/(?<=z)(\-+)?\.?\d+\.?(\d+)?/gi);
-	return { z: parseFloat(z), x: parseFloat(x) };
-}
+			/**
+			 * Extracts coords from single NC instruction
+			 * @param {string} line
+			 * @returns {{x:number, z: number}}
+			 */
+			function extractCoords(line) {
+				let x = line.match(/(?<=x)(\-+)?\.?\d+\.?(\d+)?/gi);
+				let z = line.match(/(?<=z)(\-+)?\.?\d+\.?(\d+)?/gi);
+				return { z: parseFloat(z), x: parseFloat(x) };
+			}
 
-/**
- * Returns array of numbers from ```start``` to ```end``` each with successive difference of ```step```
- * @param {number} start
- * @param {number} end
- * @param {number} step
- * @param {boolean} rev
- * @returns {number[]}
- */
-function arange(start, end, step, rev = false) {
-	let arr = [];
-	if (rev) for (let i = end; i >= start; i -= step) arr.push(i);
-	else for (let i = start; i <= end; i += step) arr.push(i);
-	return arr;
-}
-
-</script>
-</body></html>
+			/**
+			 * Returns array of numbers from ```start``` to ```end``` each with successive difference of ```step```
+			 * @param {number} start
+			 * @param {number} end
+			 * @param {number} step
+			 * @param {boolean} rev
+			 * @returns {number[]}
+			 */
+			function arange(start, end, step, rev = false) {
+				let arr = [];
+				if (rev) for (let i = end; i >= start; i -= step) arr.push(i);
+				else for (let i = start; i <= end; i += step) arr.push(i);
+				return arr;
+			}
+		</script>
+	</body>
+</html>
