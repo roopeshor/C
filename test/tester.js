@@ -66,6 +66,7 @@ function check(result, data) {
 		message = "",
 		errorIndexes = [],
 		resultDataType = _typeof(result);
+	console.log(result);
 	if (resultDataType == "Array" || resultDataType == "Object") {
 		if (JSON.stringify(result) !== JSON.stringify(data)) {
 			passed = false;
@@ -242,7 +243,6 @@ function generateReport(res, testIndex, printStructs = false) {
 		formattedFunction = parseArgs(res.name, res.args, passed),
 		formattedOutput,
 		message = passed ? "" : "\n\n" + res.message + "\n" + WHITE;
-
 	if (_isStruct(outputType) && (printStructs || !passed)) {
 		formattedOutput = formatData(output, res.errorIndexes);
 	} else {
