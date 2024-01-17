@@ -1,6 +1,6 @@
 /** @module Coordinate-Systems*/
 import { C } from "../main.js";
-import { fill, fontSize, restore, save, stroke } from "../settings.js";
+import { fill, fontSize, restore, save, scale, stroke } from "../settings.js";
 import { applyDefault, arange, fraction } from "../utils.js";
 import { arrowTip } from "./arrows.js";
 import {
@@ -45,7 +45,7 @@ import { fillText } from "./text.js";
  * @param {Object} configs
  * @return {CartesianPlotters}
  */
-function getCartasianPlotters(configs) {
+function getCartasianFunctions(configs) {
 	return Object.assign(configs, {
 		getParametricFunction: function (cfg) {
 			cfg.unitSpace = configs.unitSpace;
@@ -69,6 +69,11 @@ function getCartasianPlotters(configs) {
 			cfg.unitSpace = configs.unitSpace;
 			return plotPoints(cfg);
 		},
+		scaleCanvas: function() {
+			let unitSizeX = configs.unitSpace[0] / configs.unitValue[0];
+			let unitSizeY = configs.unitSpace[1] / configs.unitValue[1];
+			scale(unitSizeX, unitSizeY)
+		}
 	});
 }
 
@@ -383,12 +388,13 @@ export function axes(configs = {}) {
 	const yAxisLine = numberLine(configs.yAxis); // draw y axis
 
 	ctx.restore();
-	return getCartasianPlotters({
+	return getCartasianFunctions({
 		originPosition: configs.originPosition, // originPosition of axis as [x, y] in px
 		xAxis: xAxisLine, // x axis confiurations from numberLine
 		yAxis: yAxisLine, // y axis confiurations from numberLine
 		unitSpace: [xAxisLine.unitSpace, yAxisLine.unitSpace], // space between two ticks in pixels
 		unitValue: [xAxisLine.unitValue, yAxisLine.unitValue], // value between two close ticks
+
 	});
 }
 
@@ -534,7 +540,7 @@ export function numberPlane(configs = {}) {
 		ctx.closePath();
 	}
 
-	return getCartasianPlotters({
+	return getCartasianFunctions({
 		originPosition: originPosition, // position of origin of number plane
 		unitValue: unitValue, // how much a unit is in its value
 		unitSpace: unitSpace, // how much a unit is in px

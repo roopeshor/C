@@ -1,3 +1,4 @@
+// TODO: make this an extension
 export function getLineParametricFunction(p1, p2, dx = 0.03) {
 	const slope = (p2[1] - p1[1]) / (p2[0] - p1[0]);
 	if (slope === Infinity) {
