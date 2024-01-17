@@ -1,4 +1,5 @@
 /** @module Coordinate-Systems*/
+import { Colors } from "../c.js";
 import { C } from "../main.js";
 import { fill, fontSize, restore, save, scale, stroke } from "../settings.js";
 import { applyDefault, arange, fraction } from "../utils.js";
@@ -154,7 +155,7 @@ export function numberLine(configs = {}) {
 			length: parseInt(cvs.width),
 			originPosition: ORIGIN,
 			range: [-5, 5, 1],
-			strokeColor: "white",
+			strokeColor: Colors.white + "88",
 			axisLabel: "",
 			axisFont: 14,
 			axisLabelDirection: [1, -1],
@@ -437,7 +438,7 @@ export function numberPlane(configs = {}) {
 		subgrids: [1, 1],
 		gridStrokeWidth: 1.3,
 		subgridStrokeWidth: 0.8,
-		gridStrokeColor: "#58c4dddd",
+		gridStrokeColor: Colors.aqua + "44",
 		subgridStrokeColor: "#88888850",
 		originPosition: ORIGIN,
 	};
