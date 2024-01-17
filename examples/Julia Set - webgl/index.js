@@ -166,8 +166,7 @@ function draw(re = juliaSet.c[0], im = juliaSet.c[1], assignToInputs = true) {
 function drawEvent(evt) {
 	if (juliaSet.drag || evt.type == "click") {
 		let re =
-				evt.layerX / (juliaSet.scale[0] / (juliaSet.range[0] * 2)) -
-				juliaSet.range[0],
+				evt.layerX / (juliaSet.scale[0] / (juliaSet.range[0] * 2)) - juliaSet.range[0],
 			im = -(
 				evt.layerY / (juliaSet.scale[1] / (juliaSet.range[1] * 2)) -
 				juliaSet.range[1]

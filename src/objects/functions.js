@@ -158,8 +158,7 @@ export function parametricFunction(configs) {
 					let recentPoint = j > 0 ? p[j - 1] : closed ? p[p.length - 2] : p[0],
 						currentPoint = p[j],
 						nextPoint = p[j + 1],
-						secondNextPoint =
-							j != p.length - 2 ? p[j + 2] : closed ? p[1] : nextPoint,
+						secondNextPoint = j != p.length - 2 ? p[j + 2] : closed ? p[1] : nextPoint,
 						cp = getBezierControlPoints(
 							recentPoint,
 							currentPoint,
@@ -169,14 +168,7 @@ export function parametricFunction(configs) {
 					j++;
 					ctx.beginPath();
 					ctx.moveTo(currentPoint[0], currentPoint[1]);
-					ctx.bezierCurveTo(
-						cp[0],
-						cp[1],
-						cp[2],
-						cp[3],
-						nextPoint[0],
-						nextPoint[1],
-					);
+					ctx.bezierCurveTo(cp[0], cp[1], cp[2], cp[3], nextPoint[0], nextPoint[1]);
 					ctx.stroke();
 				};
 			}
@@ -264,14 +256,7 @@ export function heatPlot(configs) {
 	for (let x = min[0]; x <= max[0]; x += resolution * UVX) {
 		for (let y = min[1]; y <= max[1]; y += resolution * UVY) {
 			let v = plotFunction(x, y);
-			ctx.fillStyle = lerpColorArray(
-				v,
-				stopMax,
-				colors,
-				stopMin,
-				stopes,
-				interpolator,
-			);
+			ctx.fillStyle = lerpColorArray(v, stopMax, colors, stopMin, stopes, interpolator);
 			ctx.fillRect(x * unitSizeX, y * unitSizeY, resolution, resolution);
 		}
 	}

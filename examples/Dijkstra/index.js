@@ -1,28 +1,43 @@
-import { Colors, fill, fontSize, invertXAxis, invertYAxis, line, numberPlane, point, scale, stroke, strokeWidth, text, textAlign, textBaseline } from "../../src/c.js";
+import {
+	Colors,
+	fill,
+	fontSize,
+	invertXAxis,
+	invertYAxis,
+	line,
+	numberPlane,
+	point,
+	scale,
+	stroke,
+	strokeWidth,
+	text,
+	textAlign,
+	textBaseline,
+} from "../../src/c.js";
 import { C } from "../../src/main.js";
 
 var nodes = {
 	a: {
 		x: 2,
 		y: -2,
-		rel: ['b', 'c'],
+		rel: ["b", "c"],
 	},
 	b: {
 		x: 4,
 		y: 2,
-		rel: ['c'],
+		rel: ["c"],
 	},
 	c: {
 		x: 3,
 		y: 4,
-		rel: ['d'],
+		rel: ["d"],
 	},
 	d: {
 		x: -4,
 		y: -2,
-		rel: ['a'],
+		rel: ["a"],
 	},
-}
+};
 
 C(
 	() => {
@@ -32,20 +47,19 @@ C(
 		let settings = numberPlane({
 			xAxis: {
 				includeLabels: false,
-				strokeColor: Colors.white + "88"
+				strokeColor: Colors.white + "88",
 			},
 			yAxis: {
 				includeLabels: false,
-				strokeColor: Colors.white + "88"
+				strokeColor: Colors.white + "88",
 			},
-			gridStrokeColor: Colors.aqua + "44"
-
+			gridStrokeColor: Colors.aqua + "44",
 		});
 
-		settings.scaleCanvas()
+		settings.scaleCanvas();
 
 		stroke(Colors.aliceblue);
-		strokeWidth(.05);
+		strokeWidth(0.05);
 		/// edges
 		for (let node in nodes) {
 			let thisNode = nodes[node];
@@ -57,21 +71,19 @@ C(
 		}
 
 		/// nodes
-		fontSize(.4)
+		fontSize(0.4);
 		textAlign("center");
 		textBaseline("middle");
 		for (let node in nodes) {
 			fill(Colors.orange);
-			point(nodes[node].x, nodes[node].y, .7);
+			point(nodes[node].x, nodes[node].y, 0.7);
 			fill(Colors.black);
-			text(node, nodes[node].x, nodes[node].y + 0.17)
+			text(node, nodes[node].x, nodes[node].y + 0.17);
 		}
-
-
 	},
 	".cvs",
 	{
 		width: 500,
-		height: 500
-	}
+		height: 500,
+	},
 );

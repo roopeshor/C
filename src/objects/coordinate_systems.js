@@ -69,11 +69,11 @@ function getCartasianFunctions(configs) {
 			cfg.unitSpace = configs.unitSpace;
 			return plotPoints(cfg);
 		},
-		scaleCanvas: function() {
+		scaleCanvas: function () {
 			let unitSizeX = configs.unitSpace[0] / configs.unitValue[0];
 			let unitSizeY = configs.unitSpace[1] / configs.unitValue[1];
-			scale(unitSizeX, unitSizeY)
-		}
+			scale(unitSizeX, unitSizeY);
+		},
 	});
 }
 
@@ -310,9 +310,7 @@ export function numberLine(configs = {}) {
 		for (let i = start; i < end; i++) {
 			if (i >= labels.length) break;
 			let tick =
-				typeof labels[i] == "number"
-					? labels[i].toFixed(decimalPlaces)
-					: labels[i];
+				typeof labels[i] == "number" ? labels[i].toFixed(decimalPlaces) : labels[i];
 			if (
 				(tickList[i] == 0 && excludeOriginTick) || // exclude origin tick
 				numbersToExclude.indexOf(tickList[i]) > -1 // exclude ticks that were said to ignore explictly.
@@ -394,7 +392,6 @@ export function axes(configs = {}) {
 		yAxis: yAxisLine, // y axis confiurations from numberLine
 		unitSpace: [xAxisLine.unitSpace, yAxisLine.unitSpace], // space between two ticks in pixels
 		unitValue: [xAxisLine.unitValue, yAxisLine.unitValue], // value between two close ticks
-
 	});
 }
 
@@ -751,28 +748,20 @@ export function polarPlane(configs = {}) {
 			}`;
 			for (let division = 0; division < azimuthDivisions; division++) {
 				labels.push(
-					fraction(
-						numerator * division,
-						denominator,
-						true,
-						azimuthCompactFraction,
-						post,
-					),
+					fraction(numerator * division, denominator, true, azimuthCompactFraction, post),
 				);
 			}
 		} else if (azimuthUnit == "degrees") {
 			// Use Tex parser to generate fractions
 			for (let i = 0; i < azimuthDivisions; i++) {
 				labels.push(
-					((i * 360) / azimuthDivisions).toFixed(azimuthConfigs.decimalPoints) +
-						"°",
+					((i * 360) / azimuthDivisions).toFixed(azimuthConfigs.decimalPoints) + "°",
 				);
 			}
 		} else if (azimuthUnit == "gradians") {
 			for (let i = 0; i < azimuthDivisions; i++) {
 				labels.push(
-					((i * 400) / azimuthDivisions).toFixed(azimuthConfigs.decimalPoints) +
-						"ᵍ",
+					((i * 400) / azimuthDivisions).toFixed(azimuthConfigs.decimalPoints) + "ᵍ",
 				);
 			}
 		}

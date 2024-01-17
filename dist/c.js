@@ -1068,6 +1068,18 @@ Object.keys(_drawing).forEach(function (key) {
     }
   });
 });
+var _colors = require("./constants/colors.js");
+Object.keys(_colors).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _colors[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _colors[key];
+    }
+  });
+});
 var _math = require("./constants/math.js");
 Object.keys(_math).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
@@ -1345,7 +1357,7 @@ Object.keys(_webgl).forEach(function (key) {
   });
 });
 
-},{"./WebGL/settings.js":2,"./WebGL/webgl.js":3,"./color/color_converters.js":6,"./color/color_reader.js":7,"./color/gradients.js":8,"./color/interpolation.js":9,"./color/random.js":10,"./constants/color_palettes.js":11,"./constants/drawing.js":13,"./constants/math.js":14,"./image/image.js":15,"./image/processing.js":16,"./main.js":17,"./math/aritmetics.js":18,"./math/functions.js":19,"./math/points.js":20,"./math/random.js":21,"./math/rate_functions.js":22,"./objects/arrows.js":23,"./objects/braces.js":24,"./objects/coordinate_systems.js":25,"./objects/functions.js":26,"./objects/geometry.js":27,"./objects/more_shapes.js":28,"./objects/tex.js":29,"./objects/text.js":30,"./settings.js":31,"./utils.js":32}],6:[function(require,module,exports){
+},{"./WebGL/settings.js":2,"./WebGL/webgl.js":3,"./color/color_converters.js":6,"./color/color_reader.js":7,"./color/gradients.js":8,"./color/interpolation.js":9,"./color/random.js":10,"./constants/color_palettes.js":11,"./constants/colors.js":12,"./constants/drawing.js":13,"./constants/math.js":14,"./image/image.js":15,"./image/processing.js":16,"./main.js":17,"./math/aritmetics.js":18,"./math/functions.js":19,"./math/points.js":20,"./math/random.js":21,"./math/rate_functions.js":22,"./objects/arrows.js":23,"./objects/braces.js":24,"./objects/coordinate_systems.js":25,"./objects/functions.js":26,"./objects/geometry.js":27,"./objects/more_shapes.js":28,"./objects/tex.js":29,"./objects/text.js":30,"./settings.js":31,"./utils.js":32}],6:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1869,7 +1881,6 @@ exports.Colors = void 0;
 /** @module Colors */
 /* List of named CSS colors  */
 // prettier-ignore
-/** @type {Object<string, string>} */
 const Colors = {
   aliceblue: "#f0f8ff",
   antiquewhite: "#faebd7",
@@ -3602,7 +3613,7 @@ var _text = require("./text.js");
  * @param {Object} configs
  * @return {CartesianPlotters}
  */
-function getCartasianPlotters(configs) {
+function getCartasianFunctions(configs) {
   return Object.assign(configs, {
     getParametricFunction: function (cfg) {
       cfg.unitSpace = configs.unitSpace;
@@ -3625,6 +3636,11 @@ function getCartasianPlotters(configs) {
       cfg.unitValue = configs.unitValue;
       cfg.unitSpace = configs.unitSpace;
       return (0, _functions.plotPoints)(cfg);
+    },
+    scaleCanvas: function () {
+      let unitSizeX = configs.unitSpace[0] / configs.unitValue[0];
+      let unitSizeY = configs.unitSpace[1] / configs.unitValue[1];
+      (0, _settings.scale)(unitSizeX, unitSizeY);
     }
   });
 }
@@ -3908,7 +3924,7 @@ function axes(configs = {}) {
   const yAxisLine = numberLine(configs.yAxis); // draw y axis
 
   ctx.restore();
-  return getCartasianPlotters({
+  return getCartasianFunctions({
     originPosition: configs.originPosition,
     // originPosition of axis as [x, y] in px
     xAxis: xAxisLine,
@@ -4051,7 +4067,7 @@ function numberPlane(configs = {}) {
     ctx.stroke();
     ctx.closePath();
   }
-  return getCartasianPlotters({
+  return getCartasianFunctions({
     originPosition: originPosition,
     // position of origin of number plane
     unitValue: unitValue,

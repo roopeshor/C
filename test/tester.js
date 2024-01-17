@@ -78,8 +78,7 @@ function check(result, data) {
 		}
 	} else if (result !== data) {
 		passed = false;
-		message = "Value mismatch! expected: " + data +
-		"; \n                got: " + result;
+		message = "Value mismatch! expected: " + data + "; \n                got: " + result;
 		// for singular values there isn't any index.
 		// TODO: Decide if this is needed
 		errorIndexes = [-2];

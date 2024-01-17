@@ -45,11 +45,7 @@ C(
 			for (let pt of points) {
 				let y = pt[1];
 				let z = pt[2];
-				_points.push([
-					pt[0],
-					y * cosTheta - z * sinTheta,
-					z * cosTheta + y * sinTheta,
-				]);
+				_points.push([pt[0], y * cosTheta - z * sinTheta, z * cosTheta + y * sinTheta]);
 			}
 			return _points;
 		}
@@ -61,11 +57,7 @@ C(
 			for (let pt of points) {
 				let x = pt[0];
 				let y = pt[1];
-				_points.push([
-					x * cosTheta - y * sinTheta,
-					y * cosTheta + x * sinTheta,
-					pt[2],
-				]);
+				_points.push([x * cosTheta - y * sinTheta, y * cosTheta + x * sinTheta, pt[2]]);
 			}
 			return _points;
 		}
@@ -77,11 +69,7 @@ C(
 			for (var pt of points) {
 				var x = pt[0];
 				var z = pt[2];
-				_points.push([
-					x * cosTheta + z * sinTheta,
-					pt[1],
-					z * cosTheta - x * sinTheta,
-				]);
+				_points.push([x * cosTheta + z * sinTheta, pt[1], z * cosTheta - x * sinTheta]);
 			}
 			return _points;
 		}

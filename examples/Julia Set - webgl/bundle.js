@@ -325,13 +325,11 @@
 		b[3] *= 255;
 		let d = "#";
 		b.map((e, k) => {
-			3 > k &&
-				((e = Math.round(e).toString(16)), (d += 1 == e.length ? "0" + e : e));
+			3 > k && ((e = Math.round(e).toString(16)), (d += 1 == e.length ? "0" + e : e));
 		});
 		let f = "#";
 		b.map((e, k) => {
-			4 > k &&
-				((e = Math.round(e).toString(16)), (f += 1 == e.length ? "0" + e : e));
+			4 > k && ((e = Math.round(e).toString(16)), (f += 1 == e.length ? "0" + e : e));
 		});
 		b[3] = a;
 		return {
@@ -469,8 +467,7 @@
 				let r = `${c}: ${a} %crunning`,
 					t = ["color: yellow;"];
 				void 0 != k &&
-					((r += `%c for %c${k}ms`),
-					t.push("color: #adacdf;", "color: #9afcad;"));
+					((r += `%c for %c${k}ms`), t.push("color: #adacdf;", "color: #9afcad;"));
 				D.da.push({
 					canvas: h,
 					animationName: a,
@@ -591,10 +588,7 @@
 				}
 			}
 		}
-		a = x(
-			{ ia: 1, m: Ga, l: Ga, j: Fa, va: [], M: !0, closed: !1, Y: !0, N: 4e3 },
-			a,
-		);
+		a = x({ ia: 1, m: Ga, l: Ga, j: Fa, va: [], M: !0, closed: !1, Y: !0, N: 4e3 }, a);
 		let { pa: c, j: d, M: f, ia: e, va: k, closed: l } = a;
 		Array.isArray(d) && 2 == d.length && d.push((d[1] - d[0]) / 20);
 		let m = [[]];
@@ -942,12 +936,10 @@
 			e = f.La;
 		a = a.v;
 		Array.isArray(c.j)
-			? (isNaN(c.j[2]) && (c.j[2] = 1),
-			  (c.l = c.length / ((c.j[1] - c.j[0]) / c.j[2])))
+			? (isNaN(c.j[2]) && (c.j[2] = 1), (c.l = c.length / ((c.j[1] - c.j[0]) / c.j[2])))
 			: ((b = c.length / c.l / 2), (c.j = [-b, b, 1]));
 		Array.isArray(d.j)
-			? (isNaN(d.j[2]) && (d.j[2] = 1),
-			  (d.l = d.length / ((d.j[1] - d.j[0]) / d.j[2])))
+			? (isNaN(d.j[2]) && (d.j[2] = 1), (d.l = d.length / ((d.j[1] - d.j[0]) / d.j[2])))
 			: ((b = d.length / d.l / 2), (d.j = [-b, b, 1]));
 		b = c.j;
 		var k = d.j;
@@ -1075,9 +1067,7 @@
 			a.h.linkProgram(l);
 			a.h.getProgramParameter(l, a.h.LINK_STATUS)
 				? (a = l)
-				: (console.error(a.h.getProgramInfoLog(l)),
-				  a.h.deleteProgram(l),
-				  (a = null));
+				: (console.error(a.h.getProgramInfoLog(l)), a.h.deleteProgram(l), (a = null));
 		}
 		for (let l in b.attributes) f[l] = c.getAttribLocation(a, b.attributes[l]);
 		for (let l in b.u) d[l] = c.getUniformLocation(a, b.u[l]);
@@ -1315,10 +1305,7 @@
 	}
 	function ib(a) {
 		(T || "click" == a.type) &&
-			Z(
-				a.layerX / (S[0] / (2 * P[0])) - P[0],
-				-(a.layerY / (S[1] / (2 * P[1])) - P[1]),
-			);
+			Z(a.layerX / (S[0] / (2 * P[0])) - P[0], -(a.layerY / (S[1] / (2 * P[1])) - P[1]));
 	}
 	$a.addEventListener("input", function () {
 		gb = Number($a.value);
