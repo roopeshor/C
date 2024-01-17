@@ -4,6 +4,7 @@ export { C } from "./main.js";
 
 export * from "./constants/color_palettes.js";
 export * from "./constants/drawing.js";
+export * from "./constants/colors.js";
 export * from "./constants/math.js";
 
 export * from "./color/color_converters.js";
