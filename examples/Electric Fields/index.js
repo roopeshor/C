@@ -82,7 +82,7 @@ C(
 		sx = a.unitSpace[0] / range[2];
 		sy = a.unitSpace[1] / range[2];
 		background(0);
-		a.getHeatPlot({
+		a.plotHeatPlot({
 			colors: P,
 			resolution: 3,
 			plotFunction: (x, y) => {

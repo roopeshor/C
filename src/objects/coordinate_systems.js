@@ -26,9 +26,9 @@ import { fillText } from "./text.js";
 
 /**
  * @typedef {Object} CartesianPlotters
- * @property {Function} getParametricFunction see {@link parametricFunction}
- * @property {Function} getFunctionGraph see {@link functionGraph}
- * @property {Function} getHeatPlot see {@link heatPlot}
+ * @property {Function} plotParametricFunction see {@link parametricFunction}
+ * @property {Function} plotFunctionGraph see {@link functionGraph}
+ * @property {Function} plotHeatPlot see {@link heatPlot}
  * @property {Function} plotPoints see {@link plotPoints}
  */
 
@@ -48,17 +48,17 @@ import { fillText } from "./text.js";
  */
 function getCartasianFunctions(configs) {
 	return Object.assign(configs, {
-		getParametricFunction: function (cfg) {
+		plotParametricFunction: function (cfg) {
 			cfg.unitSpace = configs.unitSpace;
 			cfg.unitValue = configs.unitValue;
 			return parametricFunction(cfg);
 		},
-		getFunctionGraph: function (cfg) {
+		plotFunctionGraph: function (cfg) {
 			cfg.unitSpace = configs.unitSpace;
 			cfg.unitValue = configs.unitValue;
 			return functionGraph(cfg);
 		},
-		getHeatPlot: function (cfg) {
+		plotHeatPlot: function (cfg) {
 			cfg.unitSpace = configs.unitSpace;
 			cfg.unitValue = configs.unitValue;
 			cfg.min = configs.min || [configs.xAxis.range[0], configs.yAxis.range[0]];
@@ -90,11 +90,11 @@ function getPolarPlotters(configs) {
 			cfg.radialSpacing = cfg.radialSpacing || configs.radialSpacing;
 			plotPolarPoints(cfg);
 		},
-		parametricFunction: function (cfg) {
+		plotParametricFunction: function (cfg) {
 			cfg.radialSpacing = cfg.radialSpacing || configs.radialSpacing;
 			return polarParametricFunction(cfg);
 		},
-		functionGraph: function (cfg) {
+		plotFunctionGraph: function (cfg) {
 			cfg.radialSpacing = cfg.radialSpacing || configs.radialSpacing;
 			return polarFuntionGraph(cfg);
 		},
@@ -517,7 +517,7 @@ export function numberPlane(configs = {}) {
 		ctx.strokeStyle = configs.subgridStrokeColor;
 		let spacing = 1 / (subgrids[0] + 1); // space between two subgrids
 		// vertical subgrids
-		for (let k = xRange[0]; k <= xRange[1]; k+=spacing) {
+		for (let k = xRange[0]; k <= xRange[1]; k += spacing) {
 			if (k % unitValue[0] == 0) {
 				continue;
 			}
@@ -526,7 +526,7 @@ export function numberPlane(configs = {}) {
 		}
 		spacing = 1 / (subgrids[1] + 1);
 		// horizontal subgrids
-		for (let k = yRange[0]; k <= yRange[1]; k+=spacing) {
+		for (let k = yRange[0]; k <= yRange[1]; k += spacing) {
 			if (k % unitValue[1] == 0) {
 				continue;
 			}

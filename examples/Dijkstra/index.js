@@ -12,7 +12,7 @@ import {
 	strokeWidth,
 	text,
 	textAlign,
-	textBaseline
+	textBaseline,
 } from "../../src/c.js";
 import { C } from "../../src/main.js";
 

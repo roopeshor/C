@@ -53,7 +53,7 @@ C(
 			return [3 * sin(10 * t), 3 * sin(9 * t)];
 		}
 		drawAxis()
-			.getParametricFunction({
+			.plotParametricFunction({
 				plotter: ft,
 				range: [0, TAU, TAU / 400],
 				closed: true,
@@ -77,7 +77,7 @@ C(
 			];
 		}
 		drawAxis(-8, 8, 1)
-			.getParametricFunction({
+			.plotParametricFunction({
 				plotter: ft,
 				range: [0, limit, limit / 100],
 				closed: true,
@@ -98,7 +98,7 @@ C(
 			];
 		}
 		drawAxis(-5, 5, 1)
-			.getParametricFunction({
+			.plotParametricFunction({
 				plotter: ft,
 				range: [0, TAU, PI / 40],
 
@@ -120,7 +120,7 @@ C(
 			];
 		}
 		drawAxis(-4, 4, 1)
-			.getParametricFunction({
+			.plotParametricFunction({
 				plotter: ft,
 				range: [-TAU * 2, TAU * 2, 0.1],
 				closed: false,

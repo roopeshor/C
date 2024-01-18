@@ -91,7 +91,7 @@ for (var plot of plots) {
 					includeNumbers: plot.includeNumbers,
 					labelsToInclude: plot.labelsToInclude,
 				},
-			}).getHeatPlot({
+			}).plotHeatPlot({
 				colors: plot.colors,
 				resolution: plot.resolution,
 				plotFunction: plot._function,

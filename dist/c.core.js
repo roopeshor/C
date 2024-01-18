@@ -3560,6 +3560,7 @@ exports.axes = axes;
 exports.numberLine = numberLine;
 exports.numberPlane = numberPlane;
 exports.polarPlane = polarPlane;
+var _c = require("../c.js");
 var _main = require("../main.js");
 var _settings = require("../settings.js");
 var _utils = require("../utils.js");
@@ -3579,9 +3580,9 @@ var _text = require("./text.js");
 
 /**
  * @typedef {Object} CartesianPlotters
- * @property {Function} getParametricFunction see {@link parametricFunction}
- * @property {Function} getFunctionGraph see {@link functionGraph}
- * @property {Function} getHeatPlot see {@link heatPlot}
+ * @property {Function} plotParametricFunction see {@link parametricFunction}
+ * @property {Function} plotFunctionGraph see {@link functionGraph}
+ * @property {Function} plotHeatPlot see {@link heatPlot}
  * @property {Function} plotPoints see {@link plotPoints}
  */
 
@@ -3600,17 +3601,17 @@ var _text = require("./text.js");
  */
 function getCartasianFunctions(configs) {
   return Object.assign(configs, {
-    getParametricFunction: function (cfg) {
+    plotParametricFunction: function (cfg) {
       cfg.unitSpace = configs.unitSpace;
       cfg.unitValue = configs.unitValue;
       return (0, _functions.parametricFunction)(cfg);
     },
-    getFunctionGraph: function (cfg) {
+    plotFunctionGraph: function (cfg) {
       cfg.unitSpace = configs.unitSpace;
       cfg.unitValue = configs.unitValue;
       return (0, _functions.functionGraph)(cfg);
     },
-    getHeatPlot: function (cfg) {
+    plotHeatPlot: function (cfg) {
       cfg.unitSpace = configs.unitSpace;
       cfg.unitValue = configs.unitValue;
       cfg.min = configs.min || [configs.xAxis.range[0], configs.yAxis.range[0]];
@@ -3705,7 +3706,7 @@ function numberLine(configs = {}) {
     length: parseInt(cvs.width),
     originPosition: ORIGIN,
     range: [-5, 5, 1],
-    strokeColor: "white",
+    strokeColor: _c.Colors.white + "88",
     axisLabel: "",
     axisFont: 14,
     axisLabelDirection: [1, -1],
@@ -3928,7 +3929,7 @@ function axes(configs = {}) {
  * @param {Object} configs.xAxis Configurations for x axis. See {@link numberLine} for possible configurations.
  * @param {Object} configs.yAxis Configurations for y axis. See {@link numberLine} for possible configurations.
  * @param {number[]} configs.originPosition Center of number plane as [x, y] in px.
- * @param {number[]} [configs.subgrids] array number of sub-grid division in each axes. Default=[1,1]
+ * @param {number[]} [configs.subgrids] number of sub-grid lines in each cell. Default=[1,1]
  * @param {Object} configs.grid Set of styles to draw grid & subgrids. This can have following properties:
  * @param {number} [configs.gridStrokeWidth = 1]  stroke width of grid lines
  * @param {number} [configs.subgridStrokeWidth = 0.7]  stroke width of sub-grid
@@ -3964,7 +3965,7 @@ function numberPlane(configs = {}) {
     subgrids: [1, 1],
     gridStrokeWidth: 1.3,
     subgridStrokeWidth: 0.8,
-    gridStrokeColor: "#58c4dddd",
+    gridStrokeColor: _c.Colors.aqua + "44",
     subgridStrokeColor: "#88888850",
     originPosition: ORIGIN
   };
@@ -4025,29 +4026,28 @@ function numberPlane(configs = {}) {
     }
     ctx.stroke();
     ctx.closePath();
+
     // draw subgrid grid lines
+    ctx.beginPath();
     ctx.lineWidth = subgridStrokeWidth;
     ctx.strokeStyle = configs.subgridStrokeColor;
-    let spacing = 2 / (subgrids[0] + 1),
-      // space between two subgrids
-      totalSubGrids = xNums * (subgrids[0] + 1);
+    let spacing = 1 / (subgrids[0] + 1); // space between two subgrids
     // vertical subgrids
-    for (let k = xRange[0]; k <= totalSubGrids; k++) {
-      if (k % (subgrids[0] + 1) == 0) {
+    for (let k = xRange[0]; k <= xRange[1]; k += spacing) {
+      if (k % unitValue[0] == 0) {
         continue;
       }
-      ctx.moveTo(k * spacing, yRange[0]);
-      ctx.lineTo(k * spacing, yRange[1]);
+      ctx.moveTo(k, yRange[0]);
+      ctx.lineTo(k, yRange[1]);
     }
-    spacing = 2 / (subgrids[1] + 1);
-    totalSubGrids = yNums * (subgrids[1] + 1);
+    spacing = 1 / (subgrids[1] + 1);
     // horizontal subgrids
-    for (let k = yRange[0]; k <= totalSubGrids; k++) {
-      if (k % (subgrids[1] + 1) == 0) {
+    for (let k = yRange[0]; k <= yRange[1]; k += spacing) {
+      if (k % unitValue[1] == 0) {
         continue;
       }
-      ctx.moveTo(xRange[0], k * spacing);
-      ctx.lineTo(xRange[1], k * spacing);
+      ctx.moveTo(xRange[0], k);
+      ctx.lineTo(xRange[1], k);
     }
     ctx.stroke();
     ctx.closePath();
@@ -4327,7 +4327,7 @@ function polarPlane(configs = {}) {
   });
 }
 
-},{"../main.js":17,"../settings.js":31,"../utils.js":32,"./arrows.js":23,"./functions.js":26,"./geometry.js":27,"./tex.js":29,"./text.js":30}],26:[function(require,module,exports){
+},{"../c.js":4,"../main.js":17,"../settings.js":31,"../utils.js":32,"./arrows.js":23,"./functions.js":26,"./geometry.js":27,"./tex.js":29,"./text.js":30}],26:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
