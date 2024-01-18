@@ -402,7 +402,7 @@ export function axes(configs = {}) {
  * @param {Object} configs.xAxis Configurations for x axis. See {@link numberLine} for possible configurations.
  * @param {Object} configs.yAxis Configurations for y axis. See {@link numberLine} for possible configurations.
  * @param {number[]} configs.originPosition Center of number plane as [x, y] in px.
- * @param {number[]} [configs.subgrids] array number of sub-grid division in each axes. Default=[1,1]
+ * @param {number[]} [configs.subgrids] number of sub-grid lines in each cell. Default=[1,1]
  * @param {Object} configs.grid Set of styles to draw grid & subgrids. This can have following properties:
  * @param {number} [configs.gridStrokeWidth = 1]  stroke width of grid lines
  * @param {number} [configs.subgridStrokeWidth = 0.7]  stroke width of sub-grid
@@ -510,29 +510,28 @@ export function numberPlane(configs = {}) {
 
 		ctx.stroke();
 		ctx.closePath();
+
 		// draw subgrid grid lines
+		ctx.beginPath();
 		ctx.lineWidth = subgridStrokeWidth;
 		ctx.strokeStyle = configs.subgridStrokeColor;
-		let spacing = 2 / (subgrids[0] + 1), // space between two subgrids
-			totalSubGrids = xNums * (subgrids[0] + 1);
+		let spacing = 1 / (subgrids[0] + 1); // space between two subgrids
 		// vertical subgrids
-		for (let k = xRange[0]; k <= totalSubGrids; k++) {
-			if (k % (subgrids[0] + 1) == 0) {
+		for (let k = xRange[0]; k <= xRange[1]; k+=spacing) {
+			if (k % unitValue[0] == 0) {
 				continue;
 			}
-			ctx.moveTo(k * spacing, yRange[0]);
-			ctx.lineTo(k * spacing, yRange[1]);
+			ctx.moveTo(k, yRange[0]);
+			ctx.lineTo(k, yRange[1]);
 		}
-
-		spacing = 2 / (subgrids[1] + 1);
-		totalSubGrids = yNums * (subgrids[1] + 1);
+		spacing = 1 / (subgrids[1] + 1);
 		// horizontal subgrids
-		for (let k = yRange[0]; k <= totalSubGrids; k++) {
-			if (k % (subgrids[1] + 1) == 0) {
+		for (let k = yRange[0]; k <= yRange[1]; k+=spacing) {
+			if (k % unitValue[1] == 0) {
 				continue;
 			}
-			ctx.moveTo(xRange[0], k * spacing);
-			ctx.lineTo(xRange[1], k * spacing);
+			ctx.moveTo(xRange[0], k);
+			ctx.lineTo(xRange[1], k);
 		}
 		ctx.stroke();
 		ctx.closePath();
