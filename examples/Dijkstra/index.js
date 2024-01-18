@@ -1,18 +1,18 @@
 import {
 	Colors,
+	MIDDLE,
 	fill,
+	fontFamily,
 	fontSize,
-	invertXAxis,
 	invertYAxis,
 	line,
 	numberPlane,
 	point,
-	scale,
 	stroke,
 	strokeWidth,
 	text,
 	textAlign,
-	textBaseline,
+	textBaseline
 } from "../../src/c.js";
 import { C } from "../../src/main.js";
 
@@ -37,6 +37,21 @@ var nodes = {
 		y: -2,
 		rel: ["a"],
 	},
+	e: {
+		x: -4,
+		y: 4,
+		rel: ["c", "f"],
+	},
+	f: {
+		x: -1,
+		y: -1,
+		rel: ["d"],
+	},
+	g: {
+		x: 0,
+		y: -4,
+		rel: ["d", "f"],
+	},
 };
 
 C(
@@ -47,39 +62,21 @@ C(
 		let settings = numberPlane({
 			xAxis: {
 				includeLabels: false,
-				strokeColor: Colors.white + "88",
 			},
 			yAxis: {
 				includeLabels: false,
-				strokeColor: Colors.white + "88",
 			},
-			gridStrokeColor: Colors.aqua + "44",
 		});
 
 		settings.scaleCanvas();
-
-		stroke(Colors.aliceblue);
-		strokeWidth(0.05);
-		/// edges
-		for (let node in nodes) {
-			let thisNode = nodes[node];
-			let rels = thisNode.rel;
-			for (let rel of rels) {
-				let relNode = nodes[rel];
-				line(thisNode.x, thisNode.y, relNode.x, relNode.y);
-			}
-		}
-
-		/// nodes
 		fontSize(0.4);
 		textAlign("center");
-		textBaseline("middle");
-		for (let node in nodes) {
-			fill(Colors.orange);
-			point(nodes[node].x, nodes[node].y, 0.7);
-			fill(Colors.black);
-			text(node, nodes[node].x, nodes[node].y + 0.17);
-		}
+		textBaseline(MIDDLE);
+		fontFamily("Sans");
+
+		drawEdges();
+		tracePath(["a", "b", "c", "d", "f", "g"]);
+		drawNodes();
 	},
 	".cvs",
 	{
@@ -87,3 +84,36 @@ C(
 		height: 500,
 	},
 );
+
+function drawNodes() {
+	for (let node in nodes) {
+		fill(Colors.orange);
+		point(nodes[node].x, nodes[node].y, 0.7);
+		fill(Colors.black);
+		text(node, nodes[node].x, nodes[node].y + 0.14, 100);
+	}
+}
+
+function drawEdges() {
+	strokeWidth(0.03);
+	stroke(Colors.aliceblue);
+	for (let node in nodes) {
+		let thisNode = nodes[node];
+		let rels = thisNode.rel;
+		for (let rel of rels) {
+			let relNode = nodes[rel];
+			line(thisNode.x, thisNode.y, relNode.x, relNode.y);
+		}
+	}
+}
+
+function tracePath(path, color = Colors.limegreen) {
+	stroke(color);
+	strokeWidth(0.05);
+	let thisNode = nodes[path[0]];
+	for (let i = 1; i < path.length; i++) {
+		let currNode = nodes[path[i]];
+		line(thisNode.x, thisNode.y, currNode.x, currNode.y);
+		thisNode = currNode;
+	}
+}
