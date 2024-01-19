@@ -108,8 +108,8 @@ const ORIGIN = [0, 0];
  * @param {Object} configs configuration object
  *
  * @param {number} [configs.tipWidth = 13] width of arrow tip in px
- * @param {number} [configs.tipHeight = 10] height/width of tip
- * @param {number} [configs.longerTickMultiple = 1.5] Factor to increase height of ticks at elongated ticks
+ * @param {number} [configs.tipHeight = 10] height of tip
+ * @param {number} [configs.longerTickHeight = 15] Height of longer ticks
  * @param {number} [configs.tickHeight = 10] Height of ticks in px
  * @param {number} [configs.fontSize = 17] Font size of text
  * @param {number} [configs.textRotation = 0] Amount to rotate text
@@ -173,7 +173,7 @@ export function numberLine(configs = {}) {
 			textDirection: [0, -1],
 
 			tickHeight: 10,
-			longerTickMultiple: 1.5,
+			longerTickHeight: 15,
 			labelsToInclude: [],
 			numbersToExclude: [],
 			numbersWithElongatedTicks: [],
@@ -204,7 +204,7 @@ export function numberLine(configs = {}) {
 		labelsToInclude,
 		numbersToExclude,
 		excludeOriginTick,
-		longerTickMultiple,
+		longerTickHeight,
 		numbersWithElongatedTicks,
 	} = configs;
 
@@ -284,16 +284,14 @@ export function numberLine(configs = {}) {
 		let start = includeLeftTip ? 1 : 0,
 			end = includeRightTip ? tickList.length - 1 : tickList.length;
 		for (let i = start; i < end; i++) {
-			let tick = tickList[i],
-				tH = tickHeight;
+			let tick = tickList[i];
 			if (
 				(tick === 0 && excludeOriginTick) ||
-				numbersToExclude.indexOf(tickList[0][i]) >= 0
-			)
+				numbersToExclude.includes(tickList[0][i])
+			) {
 				continue;
-			if (numbersWithElongatedTicks.indexOf(tick) > -1) {
-				tH *= longerTickMultiple;
 			}
+			let tH = numbersWithElongatedTicks.includes(tick) ? tickHeight : longerTickHeight;
 			line(tick, -tH / 2, tick, tH / 2);
 		}
 	}

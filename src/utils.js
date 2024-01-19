@@ -146,6 +146,7 @@ export function latexToImg(latex) {
 
 /**
  * Generates tex code for given fraction.
+ * Used in coordinate system labeling
  *
  * @param {number} numerator numerator of fraction
  * @param {number} denominator denominator of fraction
