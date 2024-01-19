@@ -197,7 +197,7 @@ function formatObject(object, errorIndexes, initial, intent) {
 			intent +
 			k +
 			": " +
-			formatElement(object[k], errorIndexes.indexOf(k) > -1) +
+			formatElement(object[k], errorIndexes.includes(k)) +
 			"\n";
 	}
 	formattedText += initial + "}";
@@ -216,12 +216,7 @@ function formatObject(object, errorIndexes, initial, intent) {
 function formatArray(array, errorIndexes, intent, initial) {
 	let formattedText = "[";
 	for (let i = 0; i < array.length; i++) {
-		formattedText += formatElement(
-			array[i],
-			errorIndexes.indexOf(i) > -1,
-			intent,
-			initial,
-		);
+		formattedText += formatElement(array[i], errorIndexes.includes(i), intent, initial);
 	}
 	formattedText = pruneLast2Chars(formattedText) + "]";
 	return formattedText;

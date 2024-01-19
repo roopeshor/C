@@ -312,7 +312,7 @@ export function numberLine(configs = {}) {
 				typeof labels[i] == "number" ? labels[i].toFixed(decimalPlaces) : labels[i];
 			if (
 				(tickList[i] == 0 && excludeOriginTick) || // exclude origin tick
-				numbersToExclude.indexOf(tickList[i]) > -1 // exclude ticks that were said to ignore explictly.
+				numbersToExclude.includes(tickList[i]) // exclude ticks that were said to ignore explictly.
 			) {
 				continue;
 			}
@@ -681,28 +681,28 @@ export function polarPlane(configs = {}) {
 		xLabels = [],
 		yLabels = [];
 	// find labels for each wings of axis
-	if (radiusConfigs.labelAxis.indexOf(3) > -1) {
+	if (radiusConfigs.labelAxis.includes(3)) {
 		// add left wing of x-axis
 		xLabels = labels.reverse();
 	} else {
 		xLabels = new Array(maxRadius).fill("");
 	}
 
-	if (radiusConfigs.labelAxis.indexOf(1) > -1) {
+	if (radiusConfigs.labelAxis.includes(1)) {
 		// add right wing of x-axis
 		xLabels = xLabels.concat(labels);
 	} else {
 		xLabels.push(...new Array(maxRadius).fill(""));
 	}
 
-	if (radiusConfigs.labelAxis.indexOf(2) > -1) {
+	if (radiusConfigs.labelAxis.includes(2)) {
 		// add top wing of y-axis
 		yLabels = labels.reverse();
 	} else {
 		yLabels = new Array(maxRadius).fill("");
 	}
 
-	if (radiusConfigs.labelAxis.indexOf(4) > -1) {
+	if (radiusConfigs.labelAxis.includes(4)) {
 		// add bottom wing of y-axis
 		yLabels = yLabels.concat(labels.reverse());
 	} else {
