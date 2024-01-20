@@ -1,6 +1,5 @@
 import {
 	Colors,
-	MIDDLE,
 	fill,
 	fontFamily,
 	fontSize,
@@ -11,8 +10,6 @@ import {
 	stroke,
 	strokeWidth,
 	text,
-	textAlign,
-	textBaseline,
 } from "../../src/c.js";
 import { C } from "../../src/main.js";
 
@@ -60,12 +57,7 @@ C(
 		translate(CENTERX, CENTERY);
 		invertYAxis();
 		let settings = numberPlane({
-			xAxis: {
-				includeLabels: false,
-			},
-			yAxis: {
-				includeLabels: false,
-			},
+			includeLabels: false
 		});
 
 		settings.scaleCanvas();
