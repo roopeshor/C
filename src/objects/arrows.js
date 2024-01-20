@@ -16,19 +16,19 @@ const TRANSPARENT = "rgba(0,0,0,0)";
  * @param {number} y1 y position of start point
  * @param {number} x2 x position of end point
  * @param {number} y2 y position of end point
- * @param {number} width width of tip
- * @param {number} height height of tip
+ * @param {number} length length of tip
+ * @param {number} breadth breadth of tip
  */
-export function arrowTip(x1, y1, x2, y2, width, height) {
+export function arrowTip(x1, y1, x2, y2, length, breadth) {
 	let ctx = C.workingContext;
 	let thickness = ctx.lineWidth;
 	let distance = Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2);
-	if (isNaN(width)) width = distance;
-	height = height || width / 1.2;
-	let w = width - distance;
-	let r = Math.sqrt(w ** 2 + (height / 2) ** 2);
-	let t = Math.atan(height / (w * 2));
-	if (distance > width) t = t + Math.PI;
+	if (isNaN(length)) length = distance;
+	breadth = breadth || length / 1.2;
+	let w = length - distance;
+	let r = Math.sqrt(w ** 2 + (breadth / 2) ** 2);
+	let t = Math.atan(breadth / (w * 2));
+	if (distance > length) t = t + Math.PI;
 	let angleFromXAxis = Math.atan2(y2 - y1, x2 - x1);
 	let A = [x1 - Math.cos(t + angleFromXAxis) * r, y1 - Math.sin(t + angleFromXAxis) * r];
 	let B = [
@@ -61,8 +61,8 @@ export function arrowTip(x1, y1, x2, y2, width, height) {
  * @param {number} y1 starting y-axis coord
  * @param {number} x2 ending x-axis coord
  * @param {number} y2 ending y-axis coord
- * @param {number} [tipWidth=DEFAULT_TIP_WIDTH] width of tip
- * @param {number} tipHeight height of tip. Default value is tipWidth / 1.2
+ * @param {number} [tipLength=DEFAULT_TIP_WIDTH] width of tip
+ * @param {number} tipBreadth Breadth of tip. Default value is tipLength / 1.2
  * @param {number} [arrowCurving = 0] worping of arrow
  * @param {number} [spacing = 0] padding from end to tip
  *
@@ -72,8 +72,8 @@ export function arrow(
 	y1,
 	x2,
 	y2,
-	tipWidth = DEFAULT_TIP_WIDTH,
-	tipHeight = tipWidth / 1.2,
+	tipLength = DEFAULT_TIP_WIDTH,
+	tipBreadth = tipLength / 1.2,
 	arrowCurving = 0,
 	spacing = 0,
 ) {
@@ -85,15 +85,15 @@ export function arrow(
 	x2 -= xDiff;
 	y2 -= yDiff;
 
-	const xTipSpacing = Math.cos(angle) * (tipWidth - arrowCurving);
-	const yTipSpacing = Math.sin(angle) * (tipWidth - arrowCurving);
+	const xTipSpacing = Math.cos(angle) * (tipLength - arrowCurving);
+	const yTipSpacing = Math.sin(angle) * (tipLength - arrowCurving);
 	const ctx = C.workingContext;
 	const pathStarted = ctx.pathStarted;
 	if (!pathStarted) startShape();
 	ctx.moveTo(x1, y1);
 	ctx.lineTo(x2 - xTipSpacing, y2 - yTipSpacing);
 	ctx.stroke();
-	arrowTip(x2 - xTipSpacing, y2 - yTipSpacing, x2, y2, tipWidth, tipHeight);
+	arrowTip(x2 - xTipSpacing, y2 - yTipSpacing, x2, y2, tipLength, tipBreadth);
 	if (!pathStarted) {
 		doFillAndStroke(ctx);
 		endShape();
@@ -107,8 +107,8 @@ export function arrow(
  * @param {number} y1
  * @param {number} x2
  * @param {number} y2
- * @param {number} [tipWidth=DEFAULT_TIP_WIDTH] width of tip
- * @param {number} tipHeight height of tip. Default value is tipWidth / 1.2
+ * @param {number} [tipLength=DEFAULT_TIP_WIDTH] width of tip
+ * @param {number} [tipBreadth] breadth of tip. Default value is tipLength / 1.2
  * @param {number} [arrowCurving = 0]
  * @param {number} [spacing=0]
  */
@@ -117,15 +117,15 @@ export function doubleArrow(
 	y1,
 	x2,
 	y2,
-	tipWidth = DEFAULT_TIP_WIDTH,
-	tipHeight = tipWidth / 1.2,
+	tipLength = DEFAULT_TIP_WIDTH,
+	tipBreadth = tipLength / 1.2,
 	arrowCurving = 0,
 	spacing = 0,
 ) {
 	const angle = Math.atan2(y2 - y1, x2 - x1);
 
-	const xPadding = Math.cos(angle) * (tipWidth - arrowCurving);
-	const yPadding = Math.sin(angle) * (tipWidth - arrowCurving);
+	const xPadding = Math.cos(angle) * (tipLength - arrowCurving);
+	const yPadding = Math.sin(angle) * (tipLength - arrowCurving);
 
 	const ySpacing = Math.sin(angle) * spacing;
 	const xSpacing = Math.cos(angle) * spacing;
@@ -134,8 +134,8 @@ export function doubleArrow(
 	x1 += xPadding + xSpacing;
 	y1 += yPadding + ySpacing;
 
-	arrow(x1, y1, x2, y2, tipWidth, tipHeight, arrowCurving, spacing);
-	arrowTip(x1, y1, x1 - xPadding, y1 - yPadding, tipWidth, tipHeight);
+	arrow(x1, y1, x2, y2, tipLength, tipBreadth, arrowCurving, spacing);
+	arrowTip(x1, y1, x1 - xPadding, y1 - yPadding, tipLength, tipBreadth);
 	doFillAndStroke(C.workingContext);
 	endShape();
 }
@@ -148,8 +148,8 @@ export function doubleArrow(
  * @param {string} args.text text
  * @param {number[]} args.p1 first point
  * @param {number[]} args.p2 second point
- * @param {number} [args.tipWidth = 15] tip width
- * @param {number} [args.tipHeight = 12.5] tip height
+ * @param {number} [args.tipLength = 15] tip width
+ * @param {number} [args.tipBreadth = 12.5] tip height
  * @param {number} [args.spacing = 0] spacing
  * @param {string|number} args.background background of text
  * @param {number} args.innerPadding padding of text
@@ -161,8 +161,8 @@ export function measurement(args) {
 	const ctx = C.workingContext;
 	const defaults = {
 		background: TRANSPARENT,
-		tipWidth: DEFAULT_TIP_WIDTH,
-		tipHeight: DEFAULT_TIP_WIDTH / 1.2,
+		tipLength: DEFAULT_TIP_WIDTH,
+		tipBreadth: DEFAULT_TIP_WIDTH / 1.2,
 		innerPadding: 3,
 		outerPadding: 0,
 		textRotation: 0,
@@ -184,8 +184,8 @@ export function measurement(args) {
 		center[1] - innerPadding[1],
 		p1[0],
 		p1[1],
-		args.tipWidth,
-		args.tipHeight,
+		args.tipLength,
+		args.tipBreadth,
 		args.arrowCurving,
 		args.outerPadding,
 	);
@@ -194,8 +194,8 @@ export function measurement(args) {
 		center[1] + innerPadding[1],
 		p2[0],
 		p2[1],
-		args.tipWidth,
-		args.tipHeight,
+		args.tipLength,
+		args.tipBreadth,
 		args.arrowCurving,
 		args.outerPadding,
 	);
@@ -217,8 +217,8 @@ export function measurement(args) {
  * @param {number} radius radius of circle
  * @param {number} [angle=1.5707963267948966] central angle of arc
  * @param {number} [startAngle=0] starting angle
- * @param {number} [tipWidth=DEFAULT_TIP_WIDTH] width of tip
- * @param {number} tipHeight height of tip. Default value is tipWidth / 1.2
+ * @param {number} [tipLength=DEFAULT_TIP_WIDTH] width of tip
+ * @param {number} tipBreadth height of tip. Default value is tipLength / 1.2
  * @param {number} [arrowCurving=0] arrow curving constant
  * @param {number} [tipOffset=10] offset (padding) of tip from it's defined end
  * @param {boolean} [reverse=false] whether to reverse the direction of arrow
@@ -229,15 +229,15 @@ export function curvedArrow(
 	radius,
 	angle = Math.PI / 2,
 	startAngle = 0,
-	tipWidth = DEFAULT_TIP_WIDTH,
-	tipHeight = tipWidth / 1.2,
+	tipLength = DEFAULT_TIP_WIDTH,
+	tipBreadth = tipLength / 1.2,
 	arrowCurving = 0,
 	tipOffset = 0,
 	reverse = false,
 ) {
 	const ctx = C.workingContext;
 
-	const tipAngularDiameter = tipWidth / radius;
+	const tipAngularDiameter = tipLength / radius;
 	ctx.save();
 	arrowCurving /= radius;
 	let padding = tipAngularDiameter - arrowCurving;
@@ -253,8 +253,8 @@ export function curvedArrow(
 			y + radius * Math.sin(startAngle + padding),
 			x + radius * Math.cos(startAngle + tipOffset),
 			y + radius * Math.sin(startAngle + tipOffset),
-			tipWidth,
-			tipHeight,
+			tipLength,
+			tipBreadth,
 		);
 	} else {
 		angle -= tipOffset;
@@ -266,8 +266,8 @@ export function curvedArrow(
 			y + radius * Math.sin(startAngle + angle - padding),
 			x + radius * Math.cos(startAngle + angle),
 			y + radius * Math.sin(startAngle + angle),
-			tipWidth,
-			tipHeight,
+			tipLength,
+			tipBreadth,
 		);
 	}
 	ctx.restore();
@@ -281,8 +281,8 @@ export function curvedArrow(
  * @param {number} radius radius of circle
  * @param {number} [angle=1.5707963267948966] central angle of arrow in radians
  * @param {number} [startAngle=0] start angle of arrow in radians
- * @param {number} [tipWidth=DEFAULT_TIP_WIDTH] width of arrow tip
- * @param {number} tipHeight height of tip. Default value is tipWidth / 1.2
+ * @param {number} [tipLength=DEFAULT_TIP_WIDTH] width of arrow tip
+ * @param {number} tipBreadth height of tip. Default value is tipLength / 1.2
  * @param {number} [arrowCurving=0] curving of arrow
  * @param {number} [tipOffset=0] angular offset of arrow from radial boundaries in radians.
  */
@@ -292,14 +292,14 @@ export function curvedDoubleArrow(
 	radius,
 	angle = Math.PI / 2,
 	startAngle = 0,
-	tipWidth = DEFAULT_TIP_WIDTH,
-	tipHeight = tipWidth / 1.2,
+	tipLength = DEFAULT_TIP_WIDTH,
+	tipBreadth = tipLength / 1.2,
 	arrowCurving = 0,
 	tipOffset = 0,
 ) {
 	const ctx = C.workingContext;
 	ctx.save();
-	const tipAngularDiameter = tipWidth / radius;
+	const tipAngularDiameter = tipLength / radius;
 	const tangent = [
 		-Math.cos(startAngle + tipAngularDiameter / 2 + Math.PI / 2),
 		-Math.sin(startAngle + tipAngularDiameter / 2 + Math.PI / 2),
@@ -312,8 +312,8 @@ export function curvedDoubleArrow(
 		radius,
 		angle + arrowCurving / radius,
 		startAngle - arrowCurving / radius,
-		tipWidth,
-		tipHeight,
+		tipLength,
+		tipBreadth,
 		arrowCurving,
 		tipOffset,
 	);
@@ -321,10 +321,10 @@ export function curvedDoubleArrow(
 	arrowTip(
 		Math.cos(startAngle - arrowCurving / radius) * radius,
 		Math.sin(startAngle - arrowCurving / radius) * radius,
-		Math.cos(startAngle) * radius + tipWidth * tangent[0],
-		Math.sin(startAngle) * radius + tipWidth * tangent[1],
-		tipWidth,
-		tipHeight,
+		Math.cos(startAngle) * radius + tipLength * tangent[0],
+		Math.sin(startAngle) * radius + tipLength * tangent[1],
+		tipLength,
+		tipBreadth,
 	);
 	ctx.restore();
 }
@@ -335,8 +335,8 @@ export function curvedDoubleArrow(
  * @param {number[]} p1 start point
  * @param {number[]} p2 end point
  * @param {number} radius radius of circle
- * @param {number} [tipWidth=DEFAULT_TIP_WIDTH] width of tip
- * @param {number} tipHeight height of tip. Default value is tipWidth / 1.2
+ * @param {number} [tipLength=DEFAULT_TIP_WIDTH] width of tip
+ * @param {number} tipBreadth height of tip. Default value is tipLength / 1.2
  * @param {number} [arrowCurving=0] arrow curving const. Expressed in pixels
  * @param {number} [tipOffset=0] offset (padding) of tip from it's defined end. Expressed in radians
  * @param {boolean} [otherArc=false] whether to use other arc
@@ -347,8 +347,8 @@ export function curvedArrowBetweenPoints(
 	p1,
 	p2,
 	radius,
-	tipWidth = DEFAULT_TIP_WIDTH,
-	tipHeight = tipWidth / 1.2,
+	tipLength = DEFAULT_TIP_WIDTH,
+	tipBreadth = tipLength / 1.2,
 	arrowCurving = 0,
 	tipOffset = 0,
 	otherArc = false,
@@ -379,8 +379,8 @@ export function curvedArrowBetweenPoints(
 		radius,
 		angleBetweenPoints,
 		startAngle,
-		tipWidth,
-		tipHeight,
+		tipLength,
+		tipBreadth,
 		arrowCurving,
 		tipOffset,
 		reverse,
@@ -396,8 +396,8 @@ export function curvedArrowBetweenPoints(
  * @param {number[]} p1 start point
  * @param {number[]} p2 end point
  * @param {number} radius radius of circle
- * @param {number} [tipWidth=DEFAULT_TIP_WIDTH] width of tip
- * @param {number} tipHeight height of tip. Default value is tipWidth / 1.2
+ * @param {number} [tipLength=DEFAULT_TIP_WIDTH] width of tip
+ * @param {number} tipBreadth height of tip. Default value is tipLength / 1.2
  * @param {number} [arrowCurving=0] arrow curving const. Expressed in pixels
  * @param {number} [tipOffset=0] offset (padding) of tip from it's defined. Expressed in radians
  * @param {boolean} [otherArc=false] whether to use other arc
@@ -407,8 +407,8 @@ export function curvedDoubleArrowBetweenPoints(
 	p1,
 	p2,
 	radius,
-	tipWidth = DEFAULT_TIP_WIDTH,
-	tipHeight = tipWidth / 1.2,
+	tipLength = DEFAULT_TIP_WIDTH,
+	tipBreadth = tipLength / 1.2,
 	arrowCurving = 0,
 	tipOffset = 0,
 	otherArc = false,
@@ -420,7 +420,7 @@ export function curvedDoubleArrowBetweenPoints(
 	p1[1] -= center[1];
 	p2[0] -= center[0];
 	p2[1] -= center[1];
-	const tipAngularDiameter = tipWidth / radius;
+	const tipAngularDiameter = tipLength / radius;
 	const p1Angle = Math.atan2(p1[1], p1[0]);
 	const p2Angle = Math.atan2(p2[1], p2[0]) + tipAngularDiameter;
 	let angleBetweenPoints, startAngle;
@@ -438,8 +438,8 @@ export function curvedDoubleArrowBetweenPoints(
 		radius,
 		angleBetweenPoints + arrowCurving - tipOffset,
 		startAngle - arrowCurving + tipOffset,
-		tipWidth,
-		tipHeight,
+		tipLength,
+		tipBreadth,
 		arrowCurving * radius,
 		tipOffset,
 	);
@@ -450,8 +450,8 @@ export function curvedDoubleArrowBetweenPoints(
 		center[1] + radius * Math.sin(startAngle + padding),
 		center[0] + radius * Math.cos(startAngle + tipOffset),
 		center[1] + radius * Math.sin(startAngle + tipOffset),
-		tipWidth,
-		tipHeight,
+		tipLength,
+		tipBreadth,
 	);
 	ctx.restore();
 	return center;

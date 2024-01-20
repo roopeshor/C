@@ -2,7 +2,7 @@
 import { Colors } from "../c.js";
 import { C } from "../main.js";
 import { fill, fontSize, restore, save, scale, stroke } from "../settings.js";
-import { applyDefault, arange, fraction } from "../utils.js";
+import { applyDefault, arange, assignCommonPropsToAxis, fraction } from "../utils.js";
 import { arrowTip } from "./arrows.js";
 import {
 	functionGraph,
@@ -107,8 +107,8 @@ const ORIGIN = [0, 0];
  * Creates a numberLine with parameters in a object
  * @param {Object} configs configuration object
  *
- * @param {number} [configs.tipWidth = 13] width of arrow tip in px
- * @param {number} [configs.tipHeight = 10] height of tip
+ * @param {number} [configs.tipLength = 13] width of arrow tip in px
+ * @param {number} [configs.tipBreadth = 10] height of tip
  * @param {number} [configs.longerTickHeight = 15] Height of longer ticks
  * @param {number} [configs.tickHeight = 10] Height of ticks in px
  * @param {number} [configs.fontSize = 17] Font size of text
@@ -152,7 +152,7 @@ export function numberLine(configs = {}) {
 		{
 			rotation: 0,
 			strokeWidth: 2,
-			length: parseInt(cvs.width),
+			length: parseInt(cvs.style.width),
 			originPosition: ORIGIN,
 			range: [-5, 5, 1],
 			strokeColor: Colors.white + "88",
@@ -160,8 +160,8 @@ export function numberLine(configs = {}) {
 			axisFont: 14,
 			axisLabelDirection: [1, -1],
 
-			tipWidth: 13,
-			tipHeight: 10,
+			tipLength: 13,
+			tipBreadth: 10,
 
 			fontSize: 17,
 			fontFamily: "serif",
@@ -188,11 +188,11 @@ export function numberLine(configs = {}) {
 	);
 	let {
 		range,
-		tipWidth,
+		tipLength,
 		fontSize: labelFontSize,
 		axisFont,
 		axisLabel,
-		tipHeight,
+		tipBreadth,
 		tickHeight,
 		strokeColor,
 		strokeWidth,
@@ -235,11 +235,14 @@ export function numberLine(configs = {}) {
 		/** A list of numbers that'll be displayed if no labels are given through numberToInclude */
 		tickList = arange(min, max, step),
 		textRenderer = configs.textRenderer;
+
 	// scale everyting down
 	strokeWidth /= unitSpace;
-	tipWidth /= unitSpace;
-	tipHeight /= unitSpace;
+	tipLength /= unitSpace;
+	tipBreadth /= unitSpace;
 	tickHeight /= unitSpace;
+	longerTickHeight /= unitSpace;
+
 	save();
 	fontSize(axisFont);
 	ctx.translate(configs.originPosition[0], configs.originPosition[1]);
@@ -254,17 +257,22 @@ export function numberLine(configs = {}) {
 		ctx.lineWidth = strokeWidth;
 		fill(strokeColor);
 
-		let r = Math.atan(tipHeight / 2),
-			x1 = tickList[0],
-			x2 = tickList[tickList.length - 1];
+		let x1 = min,
+			x2 = max;
+
+		// save stroke state
+		const dS = ctx.doStroke;
+		ctx.doStroke = false;
 		if (includeLeftTip) {
-			arrowTip(x1 + tipWidth, 0, x1, 0, tipWidth, tipHeight);
-			x1 += tipWidth * Math.cos(r);
+			arrowTip(x1 + tipLength, 0, x1, 0, tipLength, tipBreadth);
+			x1 += tipLength;
 		}
 		if (includeRightTip) {
-			arrowTip(x2 - tipWidth, 0, x2, 0, tipWidth, tipHeight);
-			x2 -= tipWidth * Math.cos(r) * 1;
+			arrowTip(x2 - tipLength, 0, x2, 0, tipLength, tipBreadth);
+			x2 -= tipLength;
 		}
+		ctx.doStroke = dS;
+
 		line(x1, 0, x2, 0);
 		ctx.save();
 		fontSize(axisFont);
@@ -281,52 +289,53 @@ export function numberLine(configs = {}) {
 	function drawTicks() {
 		ctx.strokeStyle = strokeColor;
 		ctx.lineWidth = strokeWidth;
+
 		let start = includeLeftTip ? 1 : 0,
-			end = includeRightTip ? tickList.length - 1 : tickList.length;
+			end = tickList.length - (includeRightTip ? 1 : 0);
+
 		for (let i = start; i < end; i++) {
 			let tick = tickList[i];
 			if (
-				(tick === 0 && excludeOriginTick) ||
-				numbersToExclude.includes(tickList[0][i])
+				!(tick === 0 && excludeOriginTick) &&
+				!numbersToExclude.includes(tickList[0][i])
 			) {
-				continue;
+				let tH = numbersWithElongatedTicks.includes(tick) ? tickHeight : longerTickHeight;
+				line(tick, -tH / 2, tick, tH / 2);
 			}
-			let tH = numbersWithElongatedTicks.includes(tick) ? tickHeight : longerTickHeight;
-			line(tick, -tH / 2, tick, tH / 2);
 		}
 	}
 
 	function drawNumbers() {
 		ctx.fillStyle = configs.textColor;
-		fontSize(labelFontSize);
 		ctx.textAlign = configs.textAlign;
 		ctx.textBaseline = configs.textBaseline;
+		ctx.fontFamily = configs.fontFamily;
+		fontSize(labelFontSize);
+
 		let labels = labelsToInclude.length > 0 ? labelsToInclude : tickList,
 			start = includeLeftTip ? 1 : 0,
 			end = includeRightTip ? tickList.length - 1 : tickList.length;
 		ctx.save();
 		ctx.scale(1 / unitSpace, 1 / unitSpace);
-		for (let i = start; i < end; i++) {
-			if (i >= labels.length) break;
-			let tick =
-				typeof labels[i] == "number" ? labels[i].toFixed(decimalPlaces) : labels[i];
+		for (let i = start; i < end && i < labels.length; i++) {
 			if (
-				(tickList[i] == 0 && excludeOriginTick) || // exclude origin tick
-				numbersToExclude.includes(tickList[i]) // exclude ticks that were said to ignore explictly.
+				!(tickList[i] == 0 && excludeOriginTick) && // exclude origin tick
+				!numbersToExclude.includes(tickList[i]) // exclude ticks that were said to ignore explictly.
 			) {
-				continue;
+				let tick =
+					typeof labels[i] == "number" ? labels[i].toFixed(decimalPlaces) : labels[i];
+				let width = ctx.measureText(tick).width;
+
+				let xShift = tickList[i] - textDirection[0] * width;
+				let yShift = textDirection[1] * labelFontSize;
+				ctx.save();
+
+				// shift by text direction
+				ctx.translate(xShift * unitSpace, yShift);
+				ctx.rotate(textRotation);
+				textRenderer(tick, 0, 0);
+				ctx.restore();
 			}
-			let width = ctx.measureText(tick).width;
-
-			let xShift = tickList[i] - textDirection[0] * width;
-			let yShift = textDirection[1] * labelFontSize;
-			ctx.save();
-
-			// shift by text direction
-			ctx.translate(xShift * unitSpace, yShift);
-			ctx.rotate(textRotation);
-			textRenderer(tick, 0, 0);
-			ctx.restore();
 		}
 		ctx.restore();
 	}
@@ -356,31 +365,27 @@ export function axes(configs = {}) {
 	// configurations
 	configs = applyDefault(
 		{
-			xAxis: {
-				length: cvs.width,
-				includeTicks: true,
-				includeLeftTip: false,
-				includeRightTip: true,
-				excludeOriginTick: true,
-			},
+			xAxis: {},
 			yAxis: {
-				length: cvs.height,
 				rotation: Math.PI / 2,
 				textRotation: -Math.PI / 2,
 				textDirection: [0, 0.75],
-				includeTicks: true,
-				includeLeftTip: false,
-				includeRightTip: true,
-				excludeOriginTick: true,
 			},
 			originPosition: ORIGIN,
+			includeTicks: true,
+			includeLeftTip: false,
+			includeRightTip: true,
+			excludeOriginTick: true,
 		},
 		configs,
 	);
 	ctx.save();
 	// translate to originPosition
 	ctx.translate(configs.originPosition[0], configs.originPosition[1]);
-	// draws axes
+
+	assignCommonPropsToAxis(configs);
+
+	// draws number lines
 	const xAxisLine = numberLine(configs.xAxis); // draw x axis
 	const yAxisLine = numberLine(configs.yAxis); // draw y axis
 
@@ -414,25 +419,19 @@ export function numberPlane(configs = {}) {
 	const ctx = C.workingContext;
 	// default configurations
 	const defaultConfigs = {
-		xAxis: {
-			length: parseInt(cvs.style.width),
-			includeTicks: true,
-			includeLabels: true,
-			includeLeftTip: false,
-			includeRightTip: false,
-			excludeOriginTick: true,
-			unitSpace: 50,
-		},
+		xAxis: {},
 		yAxis: {
-			length: parseInt(cvs.style.height),
 			textRotation: -Math.PI / 2,
-			unitSpace: 50,
-			includeTicks: true,
-			includeLabels: true,
-			includeLeftTip: false,
-			includeRightTip: false,
-			excludeOriginTick: true,
 		},
+
+		includeTicks: true,
+		includeLabels: true,
+		includeLeftTip: false,
+		includeRightTip: false,
+		excludeOriginTick: true,
+
+		unitSpace: 50,
+
 		subgrids: [1, 1],
 		gridStrokeWidth: 1.3,
 		subgridStrokeWidth: 0.8,
@@ -443,28 +442,15 @@ export function numberPlane(configs = {}) {
 
 	// configurations
 	configs = applyDefault(defaultConfigs, configs);
-	let {
-		xAxis,
-		yAxis,
-		originPosition,
-		subgrids,
-		gridStrokeWidth,
-		subgridStrokeWidth,
-		gridStrokeColor,
-	} = configs;
+	let { originPosition, subgrids, gridStrokeWidth, subgridStrokeWidth, gridStrokeColor } =
+		configs;
 
 	// range of ticks in each axis
-	ctx.save();
-	const axesLines = axes({
-		xAxis: xAxis,
-		yAxis: yAxis,
-	});
-	const xRange = axesLines.xAxis.range;
-	const yRange = axesLines.yAxis.range;
-
-	// number of ticks in each axes
-	const xNums = (xRange[1] - xRange[0]) / xRange[2];
-	const yNums = (yRange[1] - yRange[0]) / yRange[2];
+	save();
+	const axesLines = axes(configs);
+	const { xAxis, yAxis } = axesLines;
+	const [xMin, xMax, xStep] = xAxis.range;
+	const [yMin, yMax, yStep] = yAxis.range;
 
 	// draw grids
 	const unitSpace = axesLines.unitSpace;
@@ -475,72 +461,70 @@ export function numberPlane(configs = {}) {
 	drawGridLines();
 
 	// size of a unit cell
-	ctx.restore();
+	restore();
 	function drawGridLines() {
 		// major grid lines
 		ctx.beginPath();
 		ctx.lineWidth = gridStrokeWidth;
 		ctx.strokeStyle = gridStrokeColor;
 		// vertical grid lines
-		let max = yRange[1] - (yRange[1] % yRange[2]);
-		for (let i = xRange[0]; i <= xRange[1]; i += xRange[2]) {
+		let max = yMax - (yMax % yStep);
+		for (let i = xMin; i <= xMax; i += xStep) {
 			if (
-				(xAxis.excludeOriginTick && i == 0) ||
-				(xAxis.includeLeftTip && i == xRange[0]) ||
-				(xAxis.includeRightTip && i == xRange[1])
-			)
-				continue;
-			ctx.moveTo(i, yRange[0]);
-			ctx.lineTo(i, max);
+				i != 0 &&
+				!((xAxis.includeLeftTip && i == xMin) || (xAxis.includeRightTip && i == xMax))
+			) {
+				ctx.moveTo(i, yMin);
+				ctx.lineTo(i, max);
+			}
 		}
 		// horizontal grid lines
-		max = xRange[1] - (xRange[1] % xRange[2]);
-		for (let i = yRange[0]; i <= yRange[1]; i += yRange[2]) {
+		max = xMax - (xMax % xStep);
+		for (let i = yMin; i <= yMax; i += yStep) {
 			if (
-				(yAxis.excludeOriginTick && i == 0) ||
-				(yAxis.includeLeftTip && i == yRange[0]) ||
-				(yAxis.includeRightTip && i == yRange[1])
-			)
-				continue;
-			ctx.moveTo(xRange[0], i);
-			ctx.lineTo(max, i);
+				i != 0 &&
+				!((yAxis.includeLeftTip && i == yMin) || (yAxis.includeRightTip && i == yMax))
+			) {
+				ctx.moveTo(xMin, i);
+				ctx.lineTo(max, i);
+			}
 		}
 
 		ctx.stroke();
 		ctx.closePath();
 
-		// draw subgrid grid lines
+		drawSubgrids();
+	}
+
+	function drawSubgrids() {
 		ctx.beginPath();
 		ctx.lineWidth = subgridStrokeWidth;
 		ctx.strokeStyle = configs.subgridStrokeColor;
 		let spacing = 1 / (subgrids[0] + 1); // space between two subgrids
 		// vertical subgrids
-		for (let k = xRange[0]; k <= xRange[1]; k += spacing) {
-			if (k % unitValue[0] == 0) {
-				continue;
+		for (let k = xMin; k <= xMax; k += spacing) {
+			if (k % unitValue[0] != 0) {
+				ctx.moveTo(k, yMin);
+				ctx.lineTo(k, yMax);
 			}
-			ctx.moveTo(k, yRange[0]);
-			ctx.lineTo(k, yRange[1]);
 		}
 		spacing = 1 / (subgrids[1] + 1);
 		// horizontal subgrids
-		for (let k = yRange[0]; k <= yRange[1]; k += spacing) {
-			if (k % unitValue[1] == 0) {
-				continue;
+		for (let k = yMin; k <= yMax; k += spacing) {
+			if (k % unitValue[1] != 0) {
+				ctx.moveTo(xMin, k);
+				ctx.lineTo(xMax, k);
 			}
-			ctx.moveTo(xRange[0], k);
-			ctx.lineTo(xRange[1], k);
 		}
 		ctx.stroke();
 		ctx.closePath();
 	}
-
 	return getCartasianFunctions({
 		originPosition: originPosition, // position of origin of number plane
 		unitValue: unitValue, // how much a unit is in its value
 		unitSpace: unitSpace, // how much a unit is in px
-		xAxis: axesLines.xAxis, // x axis confiurations from numberLine
-		yAxis: axesLines.yAxis, // y axis confiurations from numberLine
+		xAxis: xAxis, // x axis confiurations from numberLine
+		yAxis: yAxis, // y axis confiurations from numberLine
 		subgridUnit: subgrids, // subgrid unit size
 	});
 }

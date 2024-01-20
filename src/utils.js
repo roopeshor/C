@@ -39,7 +39,7 @@ export function defineProperties(source, target = globalThis, assignToC = false)
  * @param {number} end
  * @param {number} step
  * @param {boolean} [rev=false] return in reverse order
- * @return {Array}
+ * @return {number[][]}
  */
 export function arange(start, end, step, rev = false) {
 	let arr = [];
@@ -191,4 +191,21 @@ export function fraction(
 		}
 	}
 	return tex;
+}
+
+/**
+ * Assigns common configs to individual axis if they're not already defined, from call point
+ * @param {Object} configs
+ */
+export function assignCommonPropsToAxis(configs) {
+	for (let prop of Object.keys(configs)) {
+		if (prop != "xAxis" || prop != "yAxis") {
+			if (configs.xAxis[prop] === undefined) {
+				configs.xAxis[prop] = configs[prop];
+			}
+			if (configs.yAxis[prop] === undefined) {
+				configs.yAxis[prop] = configs[prop];
+			}
+		}
+	}
 }
