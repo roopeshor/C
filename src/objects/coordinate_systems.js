@@ -253,6 +253,7 @@ export function numberLine(configs = {}) {
 	drawAxis();
 
 	function drawAxis() {
+		save();
 		stroke(strokeColor);
 		ctx.lineWidth = strokeWidth;
 		fill(strokeColor);
@@ -261,7 +262,6 @@ export function numberLine(configs = {}) {
 			x2 = max;
 
 		// save stroke state
-		const dS = ctx.doStroke;
 		ctx.doStroke = false;
 		if (includeLeftTip) {
 			arrowTip(x1 + tipLength, 0, x1, 0, tipLength, tipBreadth);
@@ -271,10 +271,8 @@ export function numberLine(configs = {}) {
 			arrowTip(x2 - tipLength, 0, x2, 0, tipLength, tipBreadth);
 			x2 -= tipLength;
 		}
-		ctx.doStroke = dS;
 
 		line(x1, 0, x2, 0);
-		ctx.save();
 		fontSize(axisFont);
 		ctx.scale(1 / unitSpace, 1 / unitSpace);
 		ctx.translate(
@@ -283,7 +281,7 @@ export function numberLine(configs = {}) {
 		);
 		ctx.rotate(textRotation);
 		textRenderer(axisLabel, 0, 0);
-		ctx.restore();
+		restore();
 	}
 
 	function drawTicks() {
@@ -419,11 +417,6 @@ export function numberPlane(configs = {}) {
 	const ctx = C.workingContext;
 	// default configurations
 	const defaultConfigs = {
-		xAxis: {},
-		yAxis: {
-			textRotation: -Math.PI / 2,
-		},
-
 		includeTicks: true,
 		includeLabels: true,
 		includeLeftTip: false,

@@ -59,7 +59,6 @@ C(
 		let settings = numberPlane({
 			includeLabels: false
 		});
-
 		settings.scaleCanvas();
 		fontSize(0.4);
 		textAlign("center");
