@@ -1,6 +1,6 @@
 /** @module Coordinate-Systems*/
 
-import { Colors } from "../../c.js";
+import { Colors, axes } from "../../c.js";
 import { C } from "../../main.js";
 import { restore, save } from "../../settings.js";
 import { applyDefault } from "../../utils.js";
@@ -57,7 +57,6 @@ export function numberPlane(configs = {}) {
 		configs;
 
 	// range of ticks in each axis
-	save();
 	const axesLines = axes(configs);
 	const { xAxis, yAxis } = axesLines;
 	const [xMin, xMax, xStep] = xAxis.range;
@@ -66,13 +65,13 @@ export function numberPlane(configs = {}) {
 	// draw grids
 	const unitSpace = axesLines.unitSpace;
 	const unitValue = axesLines.unitValue;
-	ctx.scale(unitSpace[0], unitSpace[1]);
+	save();
+	axesLines.scaleCanvas();
 	gridStrokeWidth /= unitSpace[1];
 	subgridStrokeWidth /= unitSpace[1];
 	drawGridLines();
 
 	// size of a unit cell
-	restore();
 	function drawGridLines() {
 		// major grid lines
 		ctx.beginPath();
@@ -130,6 +129,7 @@ export function numberPlane(configs = {}) {
 		ctx.stroke();
 		ctx.closePath();
 	}
+	restore();
 	return getCartasianFunctions({
 		originPosition: originPosition, // position of origin of number plane
 		unitValue: unitValue, // how much a unit is in its value
