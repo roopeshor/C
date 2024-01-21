@@ -3,18 +3,24 @@ import { CENTER, RIGHT } from "../constants/drawing.js";
 import { C } from "../main.js";
 
 /**
+ * Checks whether tex to svg converter exists.
+ * @returns {boolean}
+ */
+export function tex2svgExists() {
+	return (
+		typeof globalThis["MathJax"] == "object" &&
+		typeof globalThis["MathJax"]["tex2svg"] == "function"
+	);
+}
+
+/**
  * Renders the input tex into a HTMLImageElement
  *
  * @param {string} input
  * @return {HTMLImageElement}
  */
 export function getImageFromTex(input) {
-	if (
-		!(
-			typeof globalThis["MathJax"] == "object" &&
-			typeof globalThis["MathJax"]["tex2svg"] == "function"
-		)
-	) {
+	if (!tex2svgExists()) {
 		throw new Error("MathJax is not found. Please include it.");
 	}
 	let ctx = C.workingContext,

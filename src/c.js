@@ -18,12 +18,15 @@ export * from "./image/processing.js";
 
 export * from "./objects/arrows.js";
 export * from "./objects/braces.js";
-export * from "./objects/coordinate_systems.js";
 export * from "./objects/functions.js";
 export * from "./objects/geometry.js";
 export * from "./objects/more_shapes.js";
 export * from "./objects/tex.js";
 export * from "./objects/text.js";
+export * from "./objects/coordinate_systems/number_plane.js";
+export * from "./objects/coordinate_systems/polar_plane.js";
+export * from "./objects/coordinate_systems/axes.js";
+export * from "./objects/coordinate_systems/number_line.js";
 
 export * from "./math/aritmetics.js";
 export * from "./math/functions.js";

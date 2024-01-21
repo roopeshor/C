@@ -18,7 +18,10 @@ import * as _objects$braces from "./objects/braces.js";
 import * as _objects$arrows from "./objects/arrows.js";
 import * as _objects$geometry from "./objects/geometry.js";
 import * as _objects$functions from "./objects/functions.js";
-import * as _objects$coordinate_systems from "./objects/coordinate_systems.js";
+import * as _objects$coordinate_systems$axes from "./objects/coordinate_systems/axes.js";
+import * as _objects$coordinate_systems$number_line from "./objects/coordinate_systems/number_line.js";
+import * as _objects$coordinate_systems$number_plane from "./objects/coordinate_systems/number_plane.js";
+import * as _objects$coordinate_systems$polar_plane from "./objects/coordinate_systems/polar_plane.js";
 import * as _objects$more_shapes from "./objects/more_shapes.js";
 import * as _math$functions from "./math/functions.js";
 import * as _math$points from "./math/points.js";
@@ -48,7 +51,10 @@ import * as _WebGL$settings from "./WebGL/settings.js";
 	_objects$arrows,
 	_objects$geometry,
 	_objects$functions,
-	_objects$coordinate_systems,
+	_objects$coordinate_systems$axes,
+	_objects$coordinate_systems$number_line,
+	_objects$coordinate_systems$number_plane,
+	_objects$coordinate_systems$polar_plane,
 	_objects$more_shapes,
 	_math$functions,
 	_math$points,

@@ -145,6 +145,22 @@ export function latexToImg(latex) {
 }
 
 /**
+ * Returns numerator and denominator strings for given fraction
+ * @param {number} numerator numerator of fraction
+ * @param {number} denominator denominator of fraction
+ * @param {boolean} [simplifyFraction=true] whether to simplify fraction by dividing numerator and denominator by gcd
+ * @param {boolean} [compact=true] whether to add ```multiple``` with numerator or simply append it to end of string
+ * @param {string} [multiple=""] an multiple
+ * @returns {[string, string]}
+ */
+function getReducedFraction(numerator, denominator) {
+	let _divider = gcd(numerator, denominator);
+	numerator /= _divider;
+	denominator /= _divider;
+	return [`${numerator}`, `${denominator}`];
+}
+
+/**
  * Generates tex code for given fraction.
  * Used in coordinate system labeling
  *
@@ -156,13 +172,50 @@ export function latexToImg(latex) {
  * @returns {string}
  *
  * @example
- * fraction(5, 10, false) // -> \frac{5}{10}
- * fraction(5, 10, true) // -> \frac{1}{2}
- * fraction(5, 10, true, true, "π") // -> \frac{π}{2}
- * fraction(5, 10, true, false, "π") // -> \frac{1}{2}π
- * fraction(5, 10, false, false, "π") // -> \frac{5}{10}π
- * fraction(5, 10, false, true, "π") // -> \frac{5π}{10}
+ * texFraction(5, 10, false) // -> \frac{5}{10}
+ * texFraction(5, 10, true) // -> \frac{1}{2}
+ * texFraction(5, 10, true, true, "π") // -> \frac{π}{2}
+ * texFraction(5, 10, true, false, "π") // -> \frac{1}{2}π
+ * texFraction(5, 10, false, false, "π") // -> \frac{5}{10}π
+ * texFraction(5, 10, false, true, "π") // -> \frac{5π}{10}
  * @ignore
+ */
+export function texFraction(
+	numerator,
+	denominator,
+	simplifyFraction = true,
+	compact = true,
+	multiple = "",
+) {
+	let num = numerator,
+		den = denominator;
+	if (simplifyFraction) {
+		[num, den] = getReducedFraction(num, den);
+	}
+	if (num == 0) {
+		tex = "0";
+	} else if (den == 1) {
+		tex = num;
+	} else if (compact) {
+		// if numerator is 1 and there is a multiple, add multiple without numerator
+		if (num == 1 && multiple != "") num = "";
+		tex = `\\frac{${num}${multiple}}{${den}}`;
+	} else {
+		tex = `\\frac{${num}}{${den}}${multiple}`;
+	}
+	return tex;
+}
+
+/**
+ * Generates text fraction for given fraction.
+ * Used in coordinate system labeling
+ *
+ * @param {number} numerator numerator of fraction
+ * @param {number} denominator denominator of fraction
+ * @param {boolean} [simplifyFraction=true] whether to simplify fraction by dividing numerator and denominator by gcd
+ * @param {boolean} [compact=true] whether to add ```multiple``` with numerator or simply append it to end of string
+ * @param {string} [multiple=""] an multiple
+ * @returns {string}
  */
 export function fraction(
 	numerator,
@@ -171,26 +224,24 @@ export function fraction(
 	compact = true,
 	multiple = "",
 ) {
+	let num = numerator,
+		den = denominator,
+		str = "";
 	if (simplifyFraction) {
-		let _divider = gcd(numerator, denominator);
-		numerator /= _divider;
-		denominator /= _divider;
+		[num, den] = getReducedFraction(num, den);
 	}
-	let tex = "";
-	if (numerator == 0) {
-		tex = "0";
-	} else if (denominator == 1) {
-		tex = numerator + multiple;
+	if (num == 0) {
+		str = "0";
+	} else if (den == 1) {
+		str = num + denominator;
+	} else if (compact) {
+		// if numerator is 1 and there is a multiple, add multiple without numerator
+		if (num == 1 && multiple != "") num = "";
+		str = `${num}${multiple}/${den}`;
 	} else {
-		if (compact) {
-			// if numerator is 1 and there is a multiple, add multiple without numerator
-			if (numerator == 1 && multiple != "") numerator = "";
-			tex = `\\frac{${numerator}${multiple}}{${denominator}}`;
-		} else {
-			tex = `\\frac{${numerator}}{${denominator}}${multiple}`;
-		}
+		str = `(${num}/${den})${multiple}`;
 	}
-	return tex;
+	return str;
 }
 
 /**

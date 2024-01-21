@@ -460,6 +460,7 @@ export function polarParametricFunction(configs) {
 		smoothen: configs.smoothen,
 	};
 }
+
 /**
  * Wrapper for {@link polarParametricFunction}
  * @param {Object} configs
