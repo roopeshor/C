@@ -1,5 +1,12 @@
 import { C } from "../../main.js";
-import { fontFamily, fontSize, restore, save } from "../../settings.js";
+import {
+	fontFamily,
+	fontSize,
+	restore,
+	save,
+	textAlign,
+	textBaseline,
+} from "../../settings.js";
 import { applyDefault, arange, fraction, texFraction } from "../../utils.js";
 import { tex, tex2svgExists } from "../tex.js";
 import { fillText } from "../text.js";
@@ -30,6 +37,9 @@ function getPolarPlotters(configs) {
 		plotFunctionGraph: function (cfg) {
 			cfg.radialSpacing = cfg.radialSpacing || configs.radialSpacing;
 			return polarFuntionGraph(cfg);
+		},
+		scaleCanvas: function () {
+			scale(configs.radialSpacing, configs.radialSpacing);
 		},
 	};
 }
@@ -82,10 +92,10 @@ export function polarPlane(configs = {}) {
 	let ctx = C.workingContext,
 		cvs = C.workingCanvas,
 		azimuthUnitsDict = {
-			"pi radians": 20,
-			"tau radians": 20,
-			degrees: 24,
-			gradians: 20,
+			pi: 20,
+			tau: 20,
+			deg: 24,
+			grad: 20,
 		};
 	configs = applyDefault(
 		{
@@ -131,82 +141,37 @@ export function polarPlane(configs = {}) {
 		},
 		configs,
 	);
-	let {
-		originPosition,
-		maxRadius,
-		size,
-		radiusStep,
-		azimuthUnit,
-		azimuthDivisions,
-		azimuthCompactFraction,
-		azimuthDirection,
-		radiusConfigs,
-		azimuthConfigs,
-		fadedLines,
-		fadedLineConfigs,
-		azimuthoffset,
-	} = configs;
-	azimuthUnit = azimuthUnit.toLowerCase().trim();
-	if (azimuthUnit == "pi") azimuthUnit = "pi radian";
-	else if (azimuthUnit == "tau") azimuthUnit = "tau radian";
+	const { originPosition, maxRadius, size, radiusStep, azimuthDivisions, radiusConfigs } =
+		configs;
+	let radialSpacing = size / maxRadius / 2;
 
-	// error catching
-	if (azimuthUnitsDict[azimuthUnit] != undefined) {
-		azimuthUnit = azimuthUnit;
-	} else {
-		throw new Error(
-			"Invalid azimuth units. Expected one of: PI radians, TAU radians, degrees, gradians.",
-		);
+	configs.azimuthUnit = getAzimuthUnit(configs.azimuthUnit);
+	configs.azimuthDirection = configs.azimuthDirection.toLowerCase();
+	configs.fadedLines++;
+
+	if (azimuthDivisions == 0 || isNaN(azimuthDivisions)) {
+		configs.azimuthDivisions = azimuthUnitsDict[configs.azimuthUnit] || 20;
 	}
 
-	if (azimuthDivisions == 0) {
-		azimuthDivisions = azimuthUnitsDict[azimuthUnit] || 20;
-	}
+	configs.tickList = arange(0, maxRadius, radiusStep);
 
-	save();
-	ctx.translate(originPosition[0], originPosition[1]);
-	let tickList = arange(0, maxRadius, radiusStep),
-		radialSpacing = size / maxRadius / 2;
-	azimuthConfigs.strokeWidth /= radialSpacing;
-	fadedLineConfigs.strokeWidth /= radialSpacing;
-	azimuthConfigs.fontSize /= radialSpacing;
-	let /** @type {Array} */
-		labels = Array.isArray(radiusConfigs.labelsToInclude)
-			? radiusConfigs.labelsToInclude
-			: tickList,
-		xLabels = [],
-		yLabels = [];
+	let labels = Array.isArray(radiusConfigs.labelsToInclude)
+		? radiusConfigs.labelsToInclude
+		: configs.tickList;
+
 	// find labels for each wings of axis
-	if (radiusConfigs.labelAxis.includes(3)) {
-		// add left wing of x-axis
-		xLabels.push(...labels.reverse());
-	} else {
-		xLabels = new Array(maxRadius).fill("");
-	}
-
-	if (radiusConfigs.labelAxis.includes(1)) {
-		// add right wing of x-axis
-		xLabels.push(...labels);
-	} else {
-		xLabels.push(...new Array(maxRadius).fill(""));
-	}
-
-	if (radiusConfigs.labelAxis.includes(2)) {
-		// add top wing of y-axis
-		yLabels.push(...labels.reverse());
-	} else {
-		yLabels.push(...new Array(maxRadius).fill(""));
-	}
-
-	if (radiusConfigs.labelAxis.includes(4)) {
-		// add bottom wing of y-axis
-		yLabels.push(...labels);
-	} else {
-		yLabels.push(...new Array(maxRadius).fill(""));
-	}
+	const [xLabels, yLabels] = fillLabels(maxRadius, labels, radiusConfigs.labelAxis);
 
 	radiusConfigs.range = [-maxRadius, maxRadius, radiusStep];
 	radiusConfigs.length = size;
+
+	configs.radiusConfigs = radiusConfigs;
+	configs.xLabels = xLabels;
+	configs.yLabels = yLabels;
+	configs.radialSpacing = radialSpacing;
+	configs.azimuthConfigs.strokeWidth /= radialSpacing;
+	configs.fadedLineConfigs.strokeWidth /= radialSpacing;
+	configs.azimuthConfigs.fontSize /= radialSpacing;
 
 	let xAxisCfgs = applyDefault(radiusConfigs, {
 			labelsToInclude: xLabels,
@@ -214,138 +179,239 @@ export function polarPlane(configs = {}) {
 		yAxisCfgs = applyDefault(radiusConfigs, {
 			labelsToInclude: yLabels,
 		});
+
+	save();
+	ctx.translate(originPosition[0], originPosition[1]);
 	ctx.scale(radialSpacing, radialSpacing);
-	drawAzimuthalLines();
+	drawAzimuthalLines(configs, ctx);
 	restore();
 	axes({
 		xAxis: xAxisCfgs,
 		yAxis: yAxisCfgs,
 	});
 
-	function drawAzimuthalLines() {
-		fadedLines++;
-
-		// draw azimuthal divisions
-		let labels = [];
-		fontSize(azimuthConfigs.fontSize);
-		fontFamily(azimuthConfigs.fontFamily);
-		ctx.textAlign = azimuthConfigs.textAlign;
-		ctx.textBaseline = azimuthConfigs.textBaseline;
-
-		// generate labels
-		if (azimuthUnit == "pi radians" || azimuthUnit == "tau radians") {
-			let numerator = 1,
-				denominator = azimuthDivisions,
-				generator,
-				post;
-
-			if (tex2svgExists()) {
-				azimuthConfigs.textRenderer = tex;
-				post = azimuthUnit == "tau radians" ? "\\tau" : "\\pi";
-				fontSize(azimuthConfigs.fontSize * radialSpacing);
-				generator = texFraction;
-			} else {
-				console.warn("MathJax not found, using fillText instead");
-				post = azimuthUnit == "pi radians" ? "π" : "τ";
-				generator = fraction;
-			}
-			for (let division = 0; division < azimuthDivisions; division++) {
-				labels.push(
-					generator(
-						numerator * division,
-						denominator,
-						true,
-						azimuthCompactFraction,
-						post,
-					),
-				);
-			}
-		} else if (azimuthUnit == "degrees") {
-			// Use Tex parser to generate fractions
-			for (let i = 0; i < azimuthDivisions; i++) {
-				labels.push(
-					((i * 360) / azimuthDivisions).toFixed(azimuthConfigs.decimalPoints) + "°",
-				);
-			}
-		} else if (azimuthUnit == "gradians") {
-			for (let i = 0; i < azimuthDivisions; i++) {
-				labels.push(
-					((i * 400) / azimuthDivisions).toFixed(azimuthConfigs.decimalPoints) + "ᵍ",
-				);
-			}
-		}
-
-		let angleIncrementor = (Math.PI * 2) / azimuthDivisions,
-			angle = 0;
-		if (azimuthDirection.toLowerCase() == "cw") angleIncrementor *= -1;
-		let scalar = 1;
-		if (azimuthUnit == "pi radians" || azimuthUnit == "tau radians") {
-			scalar = radialSpacing;
-		}
-
-		// draw radiating circles
-
-		ctx.doFill = false;
-		ctx.doStroke = true;
-		if (fadedLines > 1) {
-			// draw faded ones
-			ctx.strokeStyle = fadedLineConfigs.strokeColor;
-			ctx.lineWidth = fadedLineConfigs.strokeWidth;
-			let step = 1 / fadedLines;
-			let max = (tickList.length - 1) * fadedLines;
-			ctx.beginPath();
-			ctx.moveTo(0, 0);
-			for (let i = 0; i < max; i++) {
-				ctx.arc(0, 0, i * step, 0, Math.PI * 2);
-			}
-
-			max = azimuthDivisions / step / step;
-			ctx.lineWidth = fadedLineConfigs.strokeWidth;
-			for (let i = 0; i < max; i++) {
-				let angle = i * angleIncrementor * step;
-				ctx.moveTo(0, 0);
-				ctx.lineTo(
-					Math.cos(angle + azimuthoffset) * maxRadius,
-					Math.sin(angle + azimuthoffset) * maxRadius,
-				);
-			}
-			ctx.stroke();
-		}
-
-		// and majors
-		ctx.beginPath();
-		ctx.strokeStyle = azimuthConfigs.strokeColor;
-		ctx.lineWidth = azimuthConfigs.strokeWidth;
-		ctx.moveTo(0, 0);
-		for (let i = 0; i < tickList.length; i++) {
-			ctx.arc(0, 0, i, 0, Math.PI * 2);
-		}
-		for (let i = 0; i < azimuthDivisions; i++) {
-			let angle = i * angleIncrementor + azimuthoffset;
-			if (angle % (Math.PI / 2) != 0) {
-				// avoid axes
-				ctx.moveTo(0, 0);
-				ctx.lineTo(Math.cos(angle) * maxRadius, Math.sin(angle) * maxRadius);
-			}
-		}
-		ctx.stroke();
-
-		// draw azimuthal labels
-		if (azimuthConfigs.includeLabels) {
-			for (let i = 0; i < azimuthDivisions; i++) {
-				angle = i * angleIncrementor + azimuthoffset;
-				if (!azimuthConfigs.numbersToExclude.includes(angle)) {
-					azimuthConfigs.textRenderer(
-						labels[i],
-						Math.cos(angle) * (maxRadius + azimuthConfigs.labelBuff),
-						Math.sin(angle) * (maxRadius + azimuthConfigs.labelBuff),
-					);
-				}
-			}
-		}
-	}
 	return getPolarPlotters({
 		azimuthAnglularSpace: (2 * Math.PI) / azimuthDivisions,
 		radialSpacing: radialSpacing,
 	});
+}
+
+function drawAzimuthalLines(configs, ctx) {
+	let { azimuthDivisions, azimuthDirection, azimuthConfigs, fadedLines } = configs;
+
+	configs.labels = generateLabels(configs);
+
+	configs.angleIncrementor = (Math.PI * 2) / azimuthDivisions;
+	if (azimuthDirection == "cw") {
+		configs.angleIncrementor *= -1;
+	}
+
+	if (fadedLines > 1) {
+		drawMinors(configs, ctx);
+	}
+
+	drawMajors(configs, ctx);
+
+	if (azimuthConfigs.includeLabels) {
+		drawAzimuthalLabels(configs);
+	}
+}
+
+function generateLabels(configs) {
+	let labels = [];
+	const {
+		azimuthUnit,
+		radialSpacing,
+		azimuthConfigs,
+		azimuthDivisions,
+		azimuthCompactFraction,
+	} = configs;
+	if (azimuthUnit == "pi" || azimuthUnit == "tau") {
+		let numerator = 1,
+			denominator = azimuthDivisions,
+			generator,
+			post;
+
+		if (tex2svgExists()) {
+			azimuthConfigs.textRenderer = tex;
+			post = azimuthUnit == "tau" ? "\\tau" : "\\pi";
+			fontSize(azimuthConfigs.fontSize * radialSpacing);
+			generator = texFraction;
+		} else {
+			console.warn("MathJax not found, using fillText instead");
+			post = azimuthUnit == "pi" ? "π" : "τ";
+			generator = fraction;
+		}
+		for (let division = 0; division < azimuthDivisions; division++) {
+			labels.push(
+				generator(numerator * division, denominator, true, azimuthCompactFraction, post),
+			);
+		}
+	} else if (azimuthUnit == "deg") {
+		// Use Tex parser to generate fractions
+		for (let i = 0; i < azimuthDivisions; i++) {
+			labels.push(
+				((i * 360) / azimuthDivisions).toFixed(azimuthConfigs.decimalPoints) + "°",
+			);
+		}
+	} else if (azimuthUnit == "grad") {
+		for (let i = 0; i < azimuthDivisions; i++) {
+			labels.push(
+				((i * 400) / azimuthDivisions).toFixed(azimuthConfigs.decimalPoints) + "ᵍ",
+			);
+		}
+	}
+	return labels;
+}
+
+function drawMinors(configs, ctx) {
+	const {
+		maxRadius,
+		azimuthoffset,
+		angleIncrementor,
+		fadedLineConfigs,
+		azimuthDivisions,
+		fadedLines,
+		tickList,
+	} = configs;
+
+	const step = 1 / fadedLines,
+		radMax = (tickList.length - 1) * fadedLines,
+		azmMax = azimuthDivisions * fadedLines;
+
+	ctx.doFill = false;
+	ctx.doStroke = true;
+	ctx.strokeStyle = fadedLineConfigs.strokeColor;
+	ctx.lineWidth = fadedLineConfigs.strokeWidth;
+	ctx.beginPath();
+	ctx.moveTo(0, 0);
+
+	// radiating circle
+	for (let i = 0; i < radMax; i++) {
+		ctx.arc(0, 0, i * step, 0, Math.PI * 2);
+	}
+
+	ctx.lineWidth = fadedLineConfigs.strokeWidth;
+
+	for (let i = 0; i < azmMax; i++) {
+		let angle = i * angleIncrementor * step;
+		ctx.moveTo(0, 0);
+		ctx.lineTo(
+			Math.cos(angle + azimuthoffset) * maxRadius,
+			Math.sin(angle + azimuthoffset) * maxRadius,
+		);
+	}
+	ctx.stroke();
+}
+
+function drawMajors(configs, ctx) {
+	const {
+		azimuthConfigs,
+		tickList,
+		azimuthDivisions,
+		angleIncrementor,
+		azimuthoffset,
+		maxRadius,
+	} = configs;
+	ctx.beginPath();
+	ctx.strokeStyle = azimuthConfigs.strokeColor;
+	ctx.lineWidth = azimuthConfigs.strokeWidth;
+	ctx.moveTo(0, 0);
+	for (let i = 0; i < tickList.length; i++) {
+		ctx.arc(0, 0, i, 0, Math.PI * 2);
+	}
+	for (let i = 0; i < azimuthDivisions; i++) {
+		let angle = i * angleIncrementor + azimuthoffset;
+		if (angle % (Math.PI / 2) != 0) {
+			// avoid axes
+			ctx.moveTo(0, 0);
+			ctx.lineTo(Math.cos(angle) * maxRadius, Math.sin(angle) * maxRadius);
+		}
+	}
+	ctx.stroke();
+}
+
+function drawAzimuthalLabels(configs) {
+	const {
+		azimuthDivisions,
+		angleIncrementor,
+		azimuthoffset,
+		azimuthConfigs,
+		maxRadius,
+		labels,
+	} = configs;
+	fontSize(azimuthConfigs.fontSize);
+	fontFamily(azimuthConfigs.fontFamily);
+	textAlign(azimuthConfigs.textAlign);
+	textBaseline(azimuthConfigs.textBaseline);
+	for (let i = 0; i < azimuthDivisions; i++) {
+		let angle = i * angleIncrementor + azimuthoffset;
+		if (!azimuthConfigs.numbersToExclude.includes(angle)) {
+			azimuthConfigs.textRenderer(
+				labels[i],
+				Math.cos(angle) * (maxRadius + azimuthConfigs.labelBuff),
+				Math.sin(angle) * (maxRadius + azimuthConfigs.labelBuff),
+			);
+		}
+	}
+}
+
+/**
+ *
+ * @param {string} azmU
+ * @returns
+ */
+function getAzimuthUnit(azmU) {
+	azmU = azmU
+		.toLowerCase()
+		.trim()
+		.replace(/(rad.*|\s*)/, "rad");
+	if (/.*(pi|π).*/.test(azmU)) azmU = "pi";
+	else if (/.*(tau|τ).*/.test(azmU)) azmU = "tau";
+	else if (/.*(deg|°).*/.test(azmU)) azmU = "deg";
+	else if (/.*(grad|ᵍ).*/.test(azmU)) azmU = "grad";
+	else
+		throw new Error(
+			"Invalid azimuth units. Expected one of: PI radians, TAU radians, degrees, gradians.",
+		);
+
+	return azmU;
+}
+
+function fillLabels(maxRadius, labels, labelAxis) {
+	let xLabels = [],
+		yLabels = [],
+		// also remove last element
+		lrev = [...labels].reverse().slice(0, maxRadius),
+		EMPTY_ARR = new Array(maxRadius).fill("");
+
+	// left of x-axis
+	if (labelAxis.includes(3)) {
+		xLabels.push(...lrev);
+	} else {
+		xLabels.push(...EMPTY_ARR);
+	}
+
+	// right of x-axis
+	if (labelAxis.includes(1)) {
+		xLabels.push(...labels);
+	} else {
+		xLabels.push(...EMPTY_ARR);
+	}
+
+	// top of y-axis
+	if (labelAxis.includes(4)) {
+		yLabels.push(...lrev);
+	} else {
+		yLabels.push(...EMPTY_ARR);
+	}
+
+	// bottom of y-axis
+	if (labelAxis.includes(2)) {
+		yLabels.push(...labels);
+	} else {
+		yLabels.push(...EMPTY_ARR);
+	}
+
+	return [xLabels, yLabels];
 }
