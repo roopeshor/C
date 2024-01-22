@@ -143,7 +143,6 @@ export function replaceColorInImage(
 			nonOccurances++;
 		}
 	}
-	console.log(nonOccurances);
 	return newData;
 }
 

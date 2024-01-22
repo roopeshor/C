@@ -118,7 +118,6 @@ export function Arc(args) {
 		rx -= ctx.lineWidth / 2;
 		ry -= ctx.lineWidth / 2;
 	}
-	console.log(points);
 	return {
 		points: points, // list of computed points
 		dur: dur,
