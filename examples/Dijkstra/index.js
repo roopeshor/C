@@ -1,17 +1,17 @@
 import {
 	Colors,
 	fill,
-	fontFamily,
-	fontSize,
-	invertYAxis,
 	line,
-	numberPlane,
+	numberLine,
 	point,
+	polarPlane,
+	scale,
 	stroke,
 	strokeWidth,
 	text,
 } from "../../src/c.js";
 import { C } from "../../src/main.js";
+import { numberPlane } from "../../src/objects/coordinate_systems/number_plane.js";
 
 var nodes = {
 	a: {
@@ -56,18 +56,21 @@ C(
 		background(0);
 		translate(CENTERX, CENTERY);
 		invertYAxis();
-		let settings = numberPlane({
-			includeLabels: false
+		scale(0.9);
+		let settings = polarPlane({
+			includeLabels: false,
+			azimuthUnit: "degrees",
+			fadedLines: 2,
 		});
 		settings.scaleCanvas();
-		fontSize(0.4);
-		textAlign("center");
-		textBaseline(MIDDLE);
-		fontFamily("Sans");
+		// fontSize(0.4);
+		// textAlign("center");
+		// textBaseline(MIDDLE);
+		// fontFamily("Sans");
 
-		drawEdges();
-		tracePath(["a", "b", "c", "d", "f", "g"]);
-		drawNodes();
+		// drawEdges();
+		// tracePath(["a", "b", "c", "d", "f", "g"]);
+		// drawNodes();
 	},
 	".cvs",
 	{

@@ -243,20 +243,3 @@ export function fraction(
 	}
 	return str;
 }
-
-/**
- * Assigns common configs to individual axis if they're not already defined, from call point
- * @param {Object} configs
- */
-export function assignCommonPropsToAxis(configs) {
-	for (let prop of Object.keys(configs)) {
-		if (prop != "xAxis" || prop != "yAxis") {
-			if (configs.xAxis[prop] === undefined) {
-				configs.xAxis[prop] = configs[prop];
-			}
-			if (configs.yAxis[prop] === undefined) {
-				configs.yAxis[prop] = configs[prop];
-			}
-		}
-	}
-}
