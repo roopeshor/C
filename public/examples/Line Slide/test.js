@@ -1,6 +1,6 @@
-import { C } from "../../src/main.js";
-import { line } from "../../src/objects/geometry.js";
-import { initContrastedCanvas, stroke } from "../../src/settings.js";
+import { C } from "../../../src/main.js";
+import { line } from "../../../src/objects/geometry.js";
+import { initContrastedCanvas, stroke } from "../../../src/settings.js";
 
 C(
 	function () {

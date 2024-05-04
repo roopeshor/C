@@ -1,5 +1,5 @@
-import { log } from "../../src/c.js";
-import { translate } from "../../src/settings.js";
+import { ColorPalettes, PHI, lerpColorArray, sqrt } from "../../../src/c.js";
+import { background, loop, noLoop, translate } from "../../../src/settings.js";
 
 let coeffs = [
 		[0, 0],

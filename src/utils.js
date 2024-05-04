@@ -151,7 +151,7 @@ export function latexToImg(latex) {
  * @param {boolean} [simplifyFraction=true] whether to simplify fraction by dividing numerator and denominator by gcd
  * @param {boolean} [compact=true] whether to add ```multiple``` with numerator or simply append it to end of string
  * @param {string} [multiple=""] an multiple
- * @returns {[string, string]}
+ * @returns {string[]} returns two strings
  */
 function getReducedFraction(numerator, denominator) {
 	let _divider = gcd(numerator, denominator);
@@ -242,4 +242,10 @@ export function fraction(
 		str = `(${num}/${den})${multiple}`;
 	}
 	return str;
+}
+
+export function measureHeight(text) {
+	let { actualBoundingBoxAscent, actualBoundingBoxDescent } =
+		C.workingContext.measureText(text);
+	return actualBoundingBoxAscent + actualBoundingBoxDescent;
 }

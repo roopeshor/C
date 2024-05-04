@@ -1,3 +1,4 @@
+import { getBezierControlPoints } from "../../src/c.js";
 import { loop, noLoop } from "../../src/settings.js";
 import { animateFill } from "./constructs.js";
 (function () {

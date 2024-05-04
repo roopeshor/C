@@ -535,17 +535,6 @@ export function measureText(text) {
  * Sets font size
  * See {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/font} for more info.
  * @param {number|string} size
- * possible values:
- * * XX_SMALL
- * * X_SMALL
- * * SMALL
- * * MEDIUM
- * * LARGE
- * * X_LARGE
- * * XX_LARGE
- * * XXX_LARGE
- * * LARGER
- * * SMALLER
  */
 export function fontSize(size) {
 	let ctx = C.workingContext;

@@ -1,9 +1,9 @@
-/* input[type='checkbox'] {
+input[type="checkbox"] {
 	--form-control-border: var(--border);
 	appearance: none;
 }
 
-input[type='checkbox']::before {
+input[type="checkbox"]::before {
 	content: "";
 	display: inline-block;
 	width: 1em;
@@ -11,6 +11,6 @@ input[type='checkbox']::before {
 	border: 2px solid var(--border);
 }
 
-input[type='checkbox']:checked::before {
+input[type="checkbox"]:checked::before > d {
 	background-color: rgb(17, 144, 255);
-} */
+}

@@ -1,17 +1,22 @@
 import {
 	Colors,
+	background,
 	fill,
+	fontFamily,
+	fontSize,
+	invertYAxis,
 	line,
-	numberLine,
 	point,
 	polarPlane,
 	scale,
 	stroke,
 	strokeWidth,
 	text,
-} from "../../src/c.js";
-import { C } from "../../src/main.js";
-import { numberPlane } from "../../src/objects/coordinate_systems/number_plane.js";
+	textAlign,
+	textBaseline,
+	translate,
+} from "../../../src/c.js";
+import { C } from "../../../src/main.js";
 
 var nodes = {
 	a: {
@@ -63,14 +68,14 @@ C(
 			fadedLines: 2,
 		});
 		settings.scaleCanvas();
-		// fontSize(0.4);
-		// textAlign("center");
-		// textBaseline(MIDDLE);
-		// fontFamily("Sans");
+		fontSize(0.4);
+		textAlign("center");
+		textBaseline("middle");
+		fontFamily("Sans");
 
-		// drawEdges();
-		// tracePath(["a", "b", "c", "d", "f", "g"]);
-		// drawNodes();
+		drawEdges();
+		tracePath(["a", "b", "c", "d", "f", "g"]);
+		drawNodes();
 	},
 	".cvs",
 	{

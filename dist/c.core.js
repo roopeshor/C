@@ -81,7 +81,6 @@ class m4 {
       z = x[2];
       x = x[0]; //must be last
     }
-
     const len = Math.sqrt(x * x + y * y + z * z);
     x *= 1 / len;
     y *= 1 / len;
@@ -577,7 +576,6 @@ _webgl.WebGL.prototype.cube = function (size = 200) {
   // right
   20, 21, 22, 20, 22, 23 // left
   ];
-
   const indexBuffer = this.putBufferData(indices, gl.ELEMENT_ARRAY_BUFFER);
   gl.enable(gl.DEPTH_TEST); // Enable depth testing
   gl.depthFunc(gl.LEQUAL); // Near things obscure far things
@@ -616,7 +614,6 @@ _webgl.WebGL.prototype.cube = function (size = 200) {
   // stride
   0 // offset
   );
-
   gl.enableVertexAttribArray(this.program.attributes.vertexPosition);
 
   // Tell WebGL how to pull out the colors from the color buffer
@@ -937,7 +934,6 @@ class WebGL {
       attributes[attr] = gl.getAttribLocation(program_, nameInProgram);
       // gl.enableVertexAttribArray(src[attr]); // TODO: should all attributes be enabled?
     }
-
     for (let uniform in program.uniforms) {
       let nameInProgram = program.uniforms[uniform];
       uniforms[uniform] = gl.getUniformLocation(program_, nameInProgram);
@@ -968,7 +964,7 @@ class WebGL {
 }
 exports.WebGL = WebGL;
 
-},{"../main.js":17,"../utils.js":32,"./m4.js":1}],4:[function(require,module,exports){
+},{"../main.js":17,"../utils.js":36,"./m4.js":1}],4:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1160,18 +1156,6 @@ Object.keys(_braces).forEach(function (key) {
     }
   });
 });
-var _coordinate_systems = require("./objects/coordinate_systems.js");
-Object.keys(_coordinate_systems).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _coordinate_systems[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _coordinate_systems[key];
-    }
-  });
-});
 var _functions = require("./objects/functions.js");
 Object.keys(_functions).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
@@ -1229,6 +1213,54 @@ Object.keys(_text).forEach(function (key) {
     enumerable: true,
     get: function () {
       return _text[key];
+    }
+  });
+});
+var _number_plane = require("./objects/coordinate_systems/number_plane.js");
+Object.keys(_number_plane).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _number_plane[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _number_plane[key];
+    }
+  });
+});
+var _polar_plane = require("./objects/coordinate_systems/polar_plane.js");
+Object.keys(_polar_plane).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _polar_plane[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _polar_plane[key];
+    }
+  });
+});
+var _axes = require("./objects/coordinate_systems/axes.js");
+Object.keys(_axes).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _axes[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _axes[key];
+    }
+  });
+});
+var _number_line = require("./objects/coordinate_systems/number_line.js");
+Object.keys(_number_line).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _number_line[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _number_line[key];
     }
   });
 });
@@ -1317,7 +1349,7 @@ Object.keys(_webgl).forEach(function (key) {
   });
 });
 
-},{"./WebGL/settings.js":2,"./WebGL/webgl.js":3,"./color/color_converters.js":5,"./color/color_reader.js":6,"./color/gradients.js":7,"./color/interpolation.js":8,"./color/random.js":9,"./constants/color_palettes.js":10,"./constants/colors.js":11,"./constants/drawing.js":12,"./constants/math.js":13,"./image/image.js":15,"./image/processing.js":16,"./main.js":17,"./math/aritmetics.js":18,"./math/functions.js":19,"./math/points.js":20,"./math/random.js":21,"./math/rate_functions.js":22,"./objects/arrows.js":23,"./objects/braces.js":24,"./objects/coordinate_systems.js":25,"./objects/functions.js":26,"./objects/geometry.js":27,"./objects/more_shapes.js":28,"./objects/tex.js":29,"./objects/text.js":30,"./settings.js":31,"./utils.js":32}],5:[function(require,module,exports){
+},{"./WebGL/settings.js":2,"./WebGL/webgl.js":3,"./color/color_converters.js":5,"./color/color_reader.js":6,"./color/gradients.js":7,"./color/interpolation.js":8,"./color/random.js":9,"./constants/color_palettes.js":10,"./constants/colors.js":11,"./constants/drawing.js":12,"./constants/math.js":13,"./image/image.js":15,"./image/processing.js":16,"./main.js":17,"./math/aritmetics.js":18,"./math/functions.js":19,"./math/points.js":20,"./math/random.js":21,"./math/rate_functions.js":22,"./objects/arrows.js":23,"./objects/braces.js":24,"./objects/coordinate_systems/axes.js":25,"./objects/coordinate_systems/number_line.js":27,"./objects/coordinate_systems/number_plane.js":28,"./objects/coordinate_systems/polar_plane.js":29,"./objects/functions.js":30,"./objects/geometry.js":31,"./objects/more_shapes.js":32,"./objects/tex.js":33,"./objects/text.js":34,"./settings.js":35,"./utils.js":36}],5:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1634,7 +1666,7 @@ function linearGradient(initialPoint, finalPoint, colStops) {
   return gradient;
 }
 
-},{"../main.js":17,"../utils.js":32}],8:[function(require,module,exports){
+},{"../main.js":17,"../utils.js":36}],8:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1778,58 +1810,55 @@ exports.ColorPalettes = void 0;
 /** @module Color-Palettes */
 
 // prettier-ignore
-let colorPalettes = {
+const ColorPalettes = exports.ColorPalettes = {
   // This product includes color specifications and designs developed by Cynthia Brewer (http://colorbrewer.org/).
   // Please see license at http://colorbrewer.org/export/LICENSE.txt
-  YlGn: "#ffffe5 #f7fcb9 #d9f0a3 #addd8e #78c679 #41ab5d #238443 #006837 #004529",
-  GnBu: "#f7fcf0 #e0f3db #ccebc5 #a8ddb5 #7bccc4 #4eb3d3 #2b8cbe #0868ac #084081",
-  BuGn: "#f7fcfd #e5f5f9 #ccece6 #99d8c9 #66c2a4 #41ae76 #238b45 #006d2c #00441b",
-  PuBu: "#fff7fb #ece7f2 #d0d1e6 #a6bddb #74a9cf #3690c0 #0570b0 #045a8d #023858",
-  BuPu: "#f7fcfd #e0ecf4 #bfd3e6 #9ebcda #8c96c6 #8c6bb1 #88419d #810f7c #4d004b",
-  RdPu: "#fff7f3 #fde0dd #fcc5c0 #fa9fb5 #f768a1 #dd3497 #ae017e #7a0177 #49006a",
-  PuRd: "#f7f4f9 #e7e1ef #d4b9da #c994c7 #df65b0 #e7298a #ce1256 #980043 #67001f",
-  OrRd: "#fff7ec #fee8c8 #fdd49e #fdbb84 #fc8d59 #ef6548 #d7301f #b30000 #7f0000",
-  Reds: "#fff5f0 #fee0d2 #fcbba1 #fc9272 #fb6a4a #ef3b2c #cb181d #a50f15 #67000d",
-  Blues: "#f7fbff #deebf7 #c6dbef #9ecae1 #6baed6 #4292c6 #2171b5 #08519c #08306b",
-  Greys: "#ffffff #f0f0f0 #d9d9d9 #bdbdbd #969696 #737373 #525252 #252525 #000000",
-  YlGnBu: "#ffffd9 #edf8b1 #c7e9b4 #7fcdbb #41b6c4 #1d91c0 #225ea8 #253494 #081d58",
-  PuBuGn: "#fff7fb #ece2f0 #d0d1e6 #a6bddb #67a9cf #3690c0 #02818a #016c59 #014636",
-  YlOrRd: "#ffffcc #ffeda0 #fed976 #feb24c #fd8d3c #fc4e2a #e31a1c #bd0026 #800026",
-  YlOrBr: "#ffffe5 #fff7bc #fee391 #fec44f #fe9929 #ec7014 #cc4c02 #993404 #662506",
-  Greens: "#f7fcf5 #e5f5e0 #c7e9c0 #a1d99b #74c476 #41ab5d #238b45 #006d2c #00441b",
-  Purples: "#fcfbfd #efedf5 #dadaeb #bcbddc #9e9ac8 #807dba #6a51a3 #54278f #3f007d",
-  Oranges: "#fff5eb #fee6ce #fdd0a2 #fdae6b #fd8d3c #f16913 #d94801 #a63603 #7f2704",
-  PuOr: "#7f3b08 #b35806 #e08214 #fdb863 #fee0b6 #f7f7f7 #d8daeb #b2abd2 #8073ac #542788 #2d004b",
-  BrBG: "#543005 #8c510a #bf812d #dfc27d #f6e8c3 #f5f5f5 #c7eae5 #80cdc1 #35978f #01665e #003c30",
-  PRGn: "#40004b #762a83 #9970ab #c2a5cf #e7d4e8 #f7f7f7 #d9f0d3 #a6dba0 #5aae61 #1b7837 #00441b",
-  PiYG: "#8e0152 #c51b7d #de77ae #f1b6da #fde0ef #f7f7f7 #e6f5d0 #b8e186 #7fbc41 #4d9221 #276419",
-  RdBu: "#67001f #b2182b #d6604d #f4a582 #fddbc7 #f7f7f7 #d1e5f0 #92c5de #4393c3 #2166ac #053061",
-  RdGy: "#67001f #b2182b #d6604d #f4a582 #fddbc7 #ffffff #e0e0e0 #bababa #878787 #4d4d4d #1a1a1a",
-  RdYlBu: "#a50026 #d73027 #f46d43 #fdae61 #fee090 #ffffbf #e0f3f8 #abd9e9 #74add1 #4575b4 #313695",
-  RdYlGn: "#a50026 #d73027 #f46d43 #fdae61 #fee08b #ffffbf #d9ef8b #a6d96a #66bd63 #1a9850 #006837",
-  Spectral: "#9e0142 #d53e4f #f46d43 #fdae61 #fee08b #ffffbf #e6f598 #abdda4 #66c2a5 #3288bd #5e4fa2",
+  YlGn: "#ffffe5 #f7fcb9 #d9f0a3 #addd8e #78c679 #41ab5d #238443 #006837 #004529".split(" "),
+  GnBu: "#f7fcf0 #e0f3db #ccebc5 #a8ddb5 #7bccc4 #4eb3d3 #2b8cbe #0868ac #084081".split(" "),
+  BuGn: "#f7fcfd #e5f5f9 #ccece6 #99d8c9 #66c2a4 #41ae76 #238b45 #006d2c #00441b".split(" "),
+  PuBu: "#fff7fb #ece7f2 #d0d1e6 #a6bddb #74a9cf #3690c0 #0570b0 #045a8d #023858".split(" "),
+  BuPu: "#f7fcfd #e0ecf4 #bfd3e6 #9ebcda #8c96c6 #8c6bb1 #88419d #810f7c #4d004b".split(" "),
+  RdPu: "#fff7f3 #fde0dd #fcc5c0 #fa9fb5 #f768a1 #dd3497 #ae017e #7a0177 #49006a".split(" "),
+  PuRd: "#f7f4f9 #e7e1ef #d4b9da #c994c7 #df65b0 #e7298a #ce1256 #980043 #67001f".split(" "),
+  OrRd: "#fff7ec #fee8c8 #fdd49e #fdbb84 #fc8d59 #ef6548 #d7301f #b30000 #7f0000".split(" "),
+  Reds: "#fff5f0 #fee0d2 #fcbba1 #fc9272 #fb6a4a #ef3b2c #cb181d #a50f15 #67000d".split(" "),
+  Blues: "#f7fbff #deebf7 #c6dbef #9ecae1 #6baed6 #4292c6 #2171b5 #08519c #08306b".split(" "),
+  Greys: "#ffffff #f0f0f0 #d9d9d9 #bdbdbd #969696 #737373 #525252 #252525 #000000".split(" "),
+  YlGnBu: "#ffffd9 #edf8b1 #c7e9b4 #7fcdbb #41b6c4 #1d91c0 #225ea8 #253494 #081d58".split(" "),
+  PuBuGn: "#fff7fb #ece2f0 #d0d1e6 #a6bddb #67a9cf #3690c0 #02818a #016c59 #014636".split(" "),
+  YlOrRd: "#ffffcc #ffeda0 #fed976 #feb24c #fd8d3c #fc4e2a #e31a1c #bd0026 #800026".split(" "),
+  YlOrBr: "#ffffe5 #fff7bc #fee391 #fec44f #fe9929 #ec7014 #cc4c02 #993404 #662506".split(" "),
+  Greens: "#f7fcf5 #e5f5e0 #c7e9c0 #a1d99b #74c476 #41ab5d #238b45 #006d2c #00441b".split(" "),
+  Purples: "#fcfbfd #efedf5 #dadaeb #bcbddc #9e9ac8 #807dba #6a51a3 #54278f #3f007d".split(" "),
+  Oranges: "#fff5eb #fee6ce #fdd0a2 #fdae6b #fd8d3c #f16913 #d94801 #a63603 #7f2704".split(" "),
+  PuOr: "#7f3b08 #b35806 #e08214 #fdb863 #fee0b6 #f7f7f7 #d8daeb #b2abd2 #8073ac #542788 #2d004b".split(" "),
+  BrBG: "#543005 #8c510a #bf812d #dfc27d #f6e8c3 #f5f5f5 #c7eae5 #80cdc1 #35978f #01665e #003c30".split(" "),
+  PRGn: "#40004b #762a83 #9970ab #c2a5cf #e7d4e8 #f7f7f7 #d9f0d3 #a6dba0 #5aae61 #1b7837 #00441b".split(" "),
+  PiYG: "#8e0152 #c51b7d #de77ae #f1b6da #fde0ef #f7f7f7 #e6f5d0 #b8e186 #7fbc41 #4d9221 #276419".split(" "),
+  RdBu: "#67001f #b2182b #d6604d #f4a582 #fddbc7 #f7f7f7 #d1e5f0 #92c5de #4393c3 #2166ac #053061".split(" "),
+  RdGy: "#67001f #b2182b #d6604d #f4a582 #fddbc7 #ffffff #e0e0e0 #bababa #878787 #4d4d4d #1a1a1a".split(" "),
+  RdYlBu: "#a50026 #d73027 #f46d43 #fdae61 #fee090 #ffffbf #e0f3f8 #abd9e9 #74add1 #4575b4 #313695".split(" "),
+  RdYlGn: "#a50026 #d73027 #f46d43 #fdae61 #fee08b #ffffbf #d9ef8b #a6d96a #66bd63 #1a9850 #006837".split(" "),
+  Spectral: "#9e0142 #d53e4f #f46d43 #fdae61 #fee08b #ffffbf #e6f598 #abdda4 #66c2a5 #3288bd #5e4fa2".split(" "),
   // From Matlab
-  Heat: "#0000ff #00ffff #00ff00 #ffff00 #ff0000",
-  Jet: "#000080 #0000ff #0080ff #00ffff #80ff80 #ffff00 #ff8000 #ff0000 #800000",
-  Parula: "#352a87 #2450d0 #0a72de #128ad2 #06a4ca #1ab2b1 #51bd90 #92bf72 #c6bc5e #f6ba46 #f9d528 #f9fb0e",
+  Heat: "#0000ff #00ffff #00ff00 #ffff00 #ff0000".split(" "),
+  Jet: "#000080 #0000ff #0080ff #00ffff #80ff80 #ffff00 #ff8000 #ff0000 #800000".split(" "),
+  Parula: "#352a87 #2450d0 #0a72de #128ad2 #06a4ca #1ab2b1 #51bd90 #92bf72 #c6bc5e #f6ba46 #f9d528 #f9fb0e".split(" "),
   // From Matplotlib
-  Magma: "#000004 #120d31 #331067 #5a167e #7e2482 #a3307e #c83e73 #e95462 #f97b5d #fea973 #fed395 #fcfdbf",
+  Magma: "#000004 #120d31 #331067 #5a167e #7e2482 #a3307e #c83e73 #e95462 #f97b5d #fea973 #fed395 #fcfdbf".split(" "),
   // very close to CMRmap
-  Inferno: "#000004 #140b34 #390963 #61136e #85216b #a92e5e #cb4149 #e65d2f #f78212 #fcae12 #f5db4c #fcffa4",
-  Plasma: "#0d0887 #3e049c #6300a7 #8707a6 #a62098 #c03a83 #d5546e #e76f5a #f58c46 #fdae32 #fcd225 #f0f921",
-  Viridis: "#440154 #482173 #433e85 #38598c #2d708e #25858e #1e9b8a #2ab07f #50c46a #86d549 #c2df23 #fde725",
-  Cividis: "#00204d #00306f #2a406c #48526b #5e626e #727374 #878479 #9e9677 #b6a971 #d0be67 #ead357 #ffea46",
+  Inferno: "#000004 #140b34 #390963 #61136e #85216b #a92e5e #cb4149 #e65d2f #f78212 #fcae12 #f5db4c #fcffa4".split(" "),
+  Plasma: "#0d0887 #3e049c #6300a7 #8707a6 #a62098 #c03a83 #d5546e #e76f5a #f58c46 #fdae32 #fcd225 #f0f921".split(" "),
+  Viridis: "#440154 #482173 #433e85 #38598c #2d708e #25858e #1e9b8a #2ab07f #50c46a #86d549 #c2df23 #fde725".split(" "),
+  Cividis: "#00204d #00306f #2a406c #48526b #5e626e #727374 #878479 #9e9677 #b6a971 #d0be67 #ead357 #ffea46".split(" "),
   // Other
   GitHub: "#eeeeee #c6e48b #7bc96f #239a3b #196127",
   Turbo: "#30123b #4454c3 #448ffe #1fc9dd #2aefa1 #7dff56 #c1f334 #f1cb3a #fe932a #ea4e0d #be2102 #7a0403",
   Grey: "#000000 #ffffff",
   Gray: "#000000 #ffffff"
 };
-for (var p in colorPalettes) colorPalettes[p] = colorPalettes[p].split(" ");
 
-/** @type {Object<string, string[]>} */
-const ColorPalettes = colorPalettes;
-exports.ColorPalettes = ColorPalettes;
+// for (var p in ColorPalettes) ColorPalettes[p] = ColorPalettes[p].split(" ");
 
 },{}],11:[function(require,module,exports){
 "use strict";
@@ -1841,7 +1870,7 @@ exports.Colors = void 0;
 /** @module Colors */
 /* List of named CSS colors  */
 // prettier-ignore
-const Colors = {
+const Colors = exports.Colors = {
   aliceblue: "#f0f8ff",
   antiquewhite: "#faebd7",
   aqua: "#00ffff",
@@ -1991,7 +2020,6 @@ const Colors = {
   yellow: "#ffff00",
   yellowgreen: "#9acd32"
 };
-exports.Colors = Colors;
 
 },{}],12:[function(require,module,exports){
 "use strict";
@@ -1999,95 +2027,46 @@ exports.Colors = Colors;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.X_SMALL = exports.X_LARGE = exports.XX_SMALL = exports.XX_LARGE = exports.XXX_LARGE = exports.ULTRA_EXPANDED = exports.ULTRA_CONDENSED = exports.TOP = exports.START = exports.SQUARE = exports.SMALLER = exports.SMALL = exports.SEMI_EXPANDED = exports.SEMI_CONDENSED = exports.ROUND = exports.RIGHT = exports.OBLIQUE = exports.NORMAL = exports.MITER = exports.MILTER = exports.MIDDLE = exports.MEDIUM = exports.LEFT = exports.LARGER = exports.LARGE = exports.ITALIC = exports.IDEOGRAPHIC = exports.HANGING = exports.EXTRA_EXPANDED = exports.EXTRA_CONDENSED = exports.EXPANDED = exports.END = exports.CONDENSED = exports.CENTER = exports.BUTT = exports.BOTTOM = exports.BEVEL = exports.ALPHABETIC = void 0;
-const BUTT = "butt",
-  SQUARE = "square",
-  ROUND = "round",
-  MILTER = "milter",
-  BEVEL = "bevel",
-  MITER = "miter",
-  LEFT = "left",
-  RIGHT = "right",
-  CENTER = "center",
-  START = "start",
-  END = "end",
-  TOP = "top",
-  HANGING = "hanging",
-  MIDDLE = "middle",
-  ALPHABETIC = "alphabetic",
-  IDEOGRAPHIC = "ideographic",
-  BOTTOM = "bottom",
+exports.ULTRA_EXPANDED = exports.ULTRA_CONDENSED = exports.TOP = exports.START = exports.SQUARE = exports.SEMI_EXPANDED = exports.SEMI_CONDENSED = exports.ROUND = exports.RIGHT = exports.OBLIQUE = exports.NORMAL = exports.MITER = exports.MILTER = exports.MIDDLE = exports.LEFT = exports.ITALIC = exports.IDEOGRAPHIC = exports.HANGING = exports.EXTRA_EXPANDED = exports.EXTRA_CONDENSED = exports.EXPANDED = exports.END = exports.CONDENSED = exports.CENTER = exports.BUTT = exports.BOTTOM = exports.BEVEL = exports.ALPHABETIC = void 0;
+const BUTT = exports.BUTT = "butt",
+  SQUARE = exports.SQUARE = "square",
+  ROUND = exports.ROUND = "round",
+  MILTER = exports.MILTER = "milter",
+  BEVEL = exports.BEVEL = "bevel",
+  MITER = exports.MITER = "miter",
+  LEFT = exports.LEFT = "left",
+  RIGHT = exports.RIGHT = "right",
+  CENTER = exports.CENTER = "center",
+  START = exports.START = "start",
+  END = exports.END = "end",
+  TOP = exports.TOP = "top",
+  HANGING = exports.HANGING = "hanging",
+  MIDDLE = exports.MIDDLE = "middle",
+  ALPHABETIC = exports.ALPHABETIC = "alphabetic",
+  IDEOGRAPHIC = exports.IDEOGRAPHIC = "ideographic",
+  BOTTOM = exports.BOTTOM = "bottom",
   // font stretch properties
-  ULTRA_CONDENSED = "ultra-condensed",
+  ULTRA_CONDENSED = exports.ULTRA_CONDENSED = "ultra-condensed",
   // 50%
-  EXTRA_CONDENSED = "extra-condensed",
+  EXTRA_CONDENSED = exports.EXTRA_CONDENSED = "extra-condensed",
   // 62.5%
-  CONDENSED = "condensed",
+  CONDENSED = exports.CONDENSED = "condensed",
   // 75%
-  SEMI_CONDENSED = "semi-condensed",
+  SEMI_CONDENSED = exports.SEMI_CONDENSED = "semi-condensed",
   // 87.5%
-  NORMAL = "normal",
+  NORMAL = exports.NORMAL = "normal",
   // 100%
-  SEMI_EXPANDED = "semi-expanded",
+  SEMI_EXPANDED = exports.SEMI_EXPANDED = "semi-expanded",
   // 112.5%
-  EXPANDED = "expanded",
+  EXPANDED = exports.EXPANDED = "expanded",
   // 125%
-  EXTRA_EXPANDED = "extra-expanded",
+  EXTRA_EXPANDED = exports.EXTRA_EXPANDED = "extra-expanded",
   // 150%
-  ULTRA_EXPANDED = "ultra-expanded",
+  ULTRA_EXPANDED = exports.ULTRA_EXPANDED = "ultra-expanded",
   // 200%
-  // font size properties
-  XX_SMALL = "xx-small",
-  X_SMALL = "x-small",
-  SMALL = "small",
-  MEDIUM = "medium",
-  LARGE = "large",
-  X_LARGE = "x-large",
-  XX_LARGE = "xx-large",
-  XXX_LARGE = "xxx-large",
-  LARGER = "larger",
-  SMALLER = "smaller",
   // font style properties
-  ITALIC = "italic",
-  OBLIQUE = "oblique";
-exports.OBLIQUE = OBLIQUE;
-exports.ITALIC = ITALIC;
-exports.SMALLER = SMALLER;
-exports.LARGER = LARGER;
-exports.XXX_LARGE = XXX_LARGE;
-exports.XX_LARGE = XX_LARGE;
-exports.X_LARGE = X_LARGE;
-exports.LARGE = LARGE;
-exports.MEDIUM = MEDIUM;
-exports.SMALL = SMALL;
-exports.X_SMALL = X_SMALL;
-exports.XX_SMALL = XX_SMALL;
-exports.ULTRA_EXPANDED = ULTRA_EXPANDED;
-exports.EXTRA_EXPANDED = EXTRA_EXPANDED;
-exports.EXPANDED = EXPANDED;
-exports.SEMI_EXPANDED = SEMI_EXPANDED;
-exports.NORMAL = NORMAL;
-exports.SEMI_CONDENSED = SEMI_CONDENSED;
-exports.CONDENSED = CONDENSED;
-exports.EXTRA_CONDENSED = EXTRA_CONDENSED;
-exports.ULTRA_CONDENSED = ULTRA_CONDENSED;
-exports.BOTTOM = BOTTOM;
-exports.IDEOGRAPHIC = IDEOGRAPHIC;
-exports.ALPHABETIC = ALPHABETIC;
-exports.MIDDLE = MIDDLE;
-exports.HANGING = HANGING;
-exports.TOP = TOP;
-exports.END = END;
-exports.START = START;
-exports.CENTER = CENTER;
-exports.RIGHT = RIGHT;
-exports.LEFT = LEFT;
-exports.MITER = MITER;
-exports.BEVEL = BEVEL;
-exports.MILTER = MILTER;
-exports.ROUND = ROUND;
-exports.SQUARE = SQUARE;
-exports.BUTT = BUTT;
+  ITALIC = exports.ITALIC = "italic",
+  OBLIQUE = exports.OBLIQUE = "oblique";
 
 },{}],13:[function(require,module,exports){
 "use strict";
@@ -2096,34 +2075,21 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.TWO_PI = exports.TIERCE_PI = exports.TAU = exports.SQRT2 = exports.RAD = exports.QUATER_PI = exports.PI = exports.PHI = exports.LN2 = exports.LN10 = exports.HALF_PI = exports.E = exports.DEG = void 0;
-const E = 2.71828182845904523,
-  LN2 = 0.6931471805599453,
-  LN10 = 2.30258509299404568,
-  PI = 3.14159265358979323,
-  HALF_PI = 1.57079632679489661,
-  TIERCE_PI = 1.04719755119659774,
-  QUATER_PI = 0.7853981633974483,
-  TAU = 6.28318530717958647,
-  TWO_PI = 6.28318530717958647,
-  SQRT2 = 1.41421356237309504,
-  PHI = 1.618033988749894,
+const E = exports.E = 2.71828182845904523,
+  LN2 = exports.LN2 = 0.6931471805599453,
+  LN10 = exports.LN10 = 2.30258509299404568,
+  PI = exports.PI = 3.14159265358979323,
+  HALF_PI = exports.HALF_PI = 1.57079632679489661,
+  TIERCE_PI = exports.TIERCE_PI = 1.04719755119659774,
+  QUATER_PI = exports.QUATER_PI = 0.7853981633974483,
+  TAU = exports.TAU = 6.28318530717958647,
+  TWO_PI = exports.TWO_PI = 6.28318530717958647,
+  SQRT2 = exports.SQRT2 = 1.41421356237309504,
+  PHI = exports.PHI = 1.618033988749894,
   // conversion factors
-  DEG = Math.PI / 180,
+  DEG = exports.DEG = Math.PI / 180,
   // degree to radian
-  RAD = 180 / Math.PI; // radian to degree
-exports.RAD = RAD;
-exports.DEG = DEG;
-exports.PHI = PHI;
-exports.SQRT2 = SQRT2;
-exports.TWO_PI = TWO_PI;
-exports.TAU = TAU;
-exports.QUATER_PI = QUATER_PI;
-exports.TIERCE_PI = TIERCE_PI;
-exports.HALF_PI = HALF_PI;
-exports.PI = PI;
-exports.LN10 = LN10;
-exports.LN2 = LN2;
-exports.E = E;
+  RAD = exports.RAD = 180 / Math.PI; // radian to degree
 
 },{}],14:[function(require,module,exports){
 "use strict";
@@ -2141,8 +2107,8 @@ var Geometry = _interopRequireWildcard(require("./objects/geometry.js"));
 var Functions = _interopRequireWildcard(require("./math/functions.js"));
 var _points = require("./math/points.js");
 var Random = _interopRequireWildcard(require("./math/random.js"));
-function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
-function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function (e) { return e ? t : r; })(e); }
+function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
 // important functions & constants
 
 [{
@@ -2150,7 +2116,7 @@ function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && 
   dist: _points.dist
 }, Utils, Settings, _Math, Drawing, Gradients, Interpolation, Image, Text, Geometry, Functions, Random].forEach(value => Utils.defineProperties(value));
 
-},{"./color/gradients.js":7,"./color/interpolation.js":8,"./constants/drawing.js":12,"./constants/math.js":13,"./image/image.js":15,"./main.js":17,"./math/functions.js":19,"./math/points.js":20,"./math/random.js":21,"./objects/geometry.js":27,"./objects/text.js":30,"./settings.js":31,"./utils.js":32}],15:[function(require,module,exports){
+},{"./color/gradients.js":7,"./color/interpolation.js":8,"./constants/drawing.js":12,"./constants/math.js":13,"./image/image.js":15,"./main.js":17,"./math/functions.js":19,"./math/points.js":20,"./math/random.js":21,"./objects/geometry.js":31,"./objects/text.js":34,"./settings.js":35,"./utils.js":36}],15:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2372,7 +2338,6 @@ function replaceColorInImage(image, toReplace, replaced, matchAlpha = false, tol
       nonOccurances++;
     }
   }
-  console.log(nonOccurances);
   return newData;
 }
 
@@ -2676,7 +2641,7 @@ defineConstant({
 // register to globalThis
 globalThis["C"] = C;
 
-},{"./utils.js":32}],18:[function(require,module,exports){
+},{"./utils.js":36}],18:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3169,19 +3134,19 @@ const TRANSPARENT = "rgba(0,0,0,0)";
  * @param {number} y1 y position of start point
  * @param {number} x2 x position of end point
  * @param {number} y2 y position of end point
- * @param {number} width width of tip
- * @param {number} height height of tip
+ * @param {number} length length of tip
+ * @param {number} breadth breadth of tip
  */
-function arrowTip(x1, y1, x2, y2, width, height) {
+function arrowTip(x1, y1, x2, y2, length, breadth) {
   let ctx = _main.C.workingContext;
   let thickness = ctx.lineWidth;
   let distance = Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2);
-  if (isNaN(width)) width = distance;
-  height = height || width / 1.2;
-  let w = width - distance;
-  let r = Math.sqrt(w ** 2 + (height / 2) ** 2);
-  let t = Math.atan(height / (w * 2));
-  if (distance > width) t = t + Math.PI;
+  if (isNaN(length)) length = distance;
+  breadth = breadth || length / 1.2;
+  let w = length - distance;
+  let r = Math.sqrt(w ** 2 + (breadth / 2) ** 2);
+  let t = Math.atan(breadth / (w * 2));
+  if (distance > length) t = t + Math.PI;
   let angleFromXAxis = Math.atan2(y2 - y1, x2 - x1);
   let A = [x1 - Math.cos(t + angleFromXAxis) * r, y1 - Math.sin(t + angleFromXAxis) * r];
   let B = [x1 - Math.cos(-t + angleFromXAxis) * r, y1 - Math.sin(-t + angleFromXAxis) * r];
@@ -3211,13 +3176,13 @@ function arrowTip(x1, y1, x2, y2, width, height) {
  * @param {number} y1 starting y-axis coord
  * @param {number} x2 ending x-axis coord
  * @param {number} y2 ending y-axis coord
- * @param {number} [tipWidth=DEFAULT_TIP_WIDTH] width of tip
- * @param {number} tipHeight height of tip. Default value is tipWidth / 1.2
+ * @param {number} [tipLength=DEFAULT_TIP_WIDTH] width of tip
+ * @param {number} tipBreadth Breadth of tip. Default value is tipLength / 1.2
  * @param {number} [arrowCurving = 0] worping of arrow
  * @param {number} [spacing = 0] padding from end to tip
  *
  */
-function arrow(x1, y1, x2, y2, tipWidth = DEFAULT_TIP_WIDTH, tipHeight = tipWidth / 1.2, arrowCurving = 0, spacing = 0) {
+function arrow(x1, y1, x2, y2, tipLength = DEFAULT_TIP_WIDTH, tipBreadth = tipLength / 1.2, arrowCurving = 0, spacing = 0) {
   const angle = Math.atan2(y2 - y1, x2 - x1); // angle from plain
   const yDiff = Math.sin(angle) * spacing;
   const xDiff = Math.cos(angle) * spacing;
@@ -3225,15 +3190,15 @@ function arrow(x1, y1, x2, y2, tipWidth = DEFAULT_TIP_WIDTH, tipHeight = tipWidt
   // decrease the length of tip by `spacing`
   x2 -= xDiff;
   y2 -= yDiff;
-  const xTipSpacing = Math.cos(angle) * (tipWidth - arrowCurving);
-  const yTipSpacing = Math.sin(angle) * (tipWidth - arrowCurving);
+  const xTipSpacing = Math.cos(angle) * (tipLength - arrowCurving);
+  const yTipSpacing = Math.sin(angle) * (tipLength - arrowCurving);
   const ctx = _main.C.workingContext;
   const pathStarted = ctx.pathStarted;
   if (!pathStarted) (0, _settings.startShape)();
   ctx.moveTo(x1, y1);
   ctx.lineTo(x2 - xTipSpacing, y2 - yTipSpacing);
   ctx.stroke();
-  arrowTip(x2 - xTipSpacing, y2 - yTipSpacing, x2, y2, tipWidth, tipHeight);
+  arrowTip(x2 - xTipSpacing, y2 - yTipSpacing, x2, y2, tipLength, tipBreadth);
   if (!pathStarted) {
     (0, _utils.doFillAndStroke)(ctx);
     (0, _settings.endShape)();
@@ -3247,22 +3212,22 @@ function arrow(x1, y1, x2, y2, tipWidth = DEFAULT_TIP_WIDTH, tipHeight = tipWidt
  * @param {number} y1
  * @param {number} x2
  * @param {number} y2
- * @param {number} [tipWidth=DEFAULT_TIP_WIDTH] width of tip
- * @param {number} tipHeight height of tip. Default value is tipWidth / 1.2
+ * @param {number} [tipLength=DEFAULT_TIP_WIDTH] width of tip
+ * @param {number} [tipBreadth] breadth of tip. Default value is tipLength / 1.2
  * @param {number} [arrowCurving = 0]
  * @param {number} [spacing=0]
  */
-function doubleArrow(x1, y1, x2, y2, tipWidth = DEFAULT_TIP_WIDTH, tipHeight = tipWidth / 1.2, arrowCurving = 0, spacing = 0) {
+function doubleArrow(x1, y1, x2, y2, tipLength = DEFAULT_TIP_WIDTH, tipBreadth = tipLength / 1.2, arrowCurving = 0, spacing = 0) {
   const angle = Math.atan2(y2 - y1, x2 - x1);
-  const xPadding = Math.cos(angle) * (tipWidth - arrowCurving);
-  const yPadding = Math.sin(angle) * (tipWidth - arrowCurving);
+  const xPadding = Math.cos(angle) * (tipLength - arrowCurving);
+  const yPadding = Math.sin(angle) * (tipLength - arrowCurving);
   const ySpacing = Math.sin(angle) * spacing;
   const xSpacing = Math.cos(angle) * spacing;
   (0, _settings.startShape)();
   x1 += xPadding + xSpacing;
   y1 += yPadding + ySpacing;
-  arrow(x1, y1, x2, y2, tipWidth, tipHeight, arrowCurving, spacing);
-  arrowTip(x1, y1, x1 - xPadding, y1 - yPadding, tipWidth, tipHeight);
+  arrow(x1, y1, x2, y2, tipLength, tipBreadth, arrowCurving, spacing);
+  arrowTip(x1, y1, x1 - xPadding, y1 - yPadding, tipLength, tipBreadth);
   (0, _utils.doFillAndStroke)(_main.C.workingContext);
   (0, _settings.endShape)();
 }
@@ -3275,8 +3240,8 @@ function doubleArrow(x1, y1, x2, y2, tipWidth = DEFAULT_TIP_WIDTH, tipHeight = t
  * @param {string} args.text text
  * @param {number[]} args.p1 first point
  * @param {number[]} args.p2 second point
- * @param {number} [args.tipWidth = 15] tip width
- * @param {number} [args.tipHeight = 12.5] tip height
+ * @param {number} [args.tipLength = 15] tip width
+ * @param {number} [args.tipBreadth = 12.5] tip height
  * @param {number} [args.spacing = 0] spacing
  * @param {string|number} args.background background of text
  * @param {number} args.innerPadding padding of text
@@ -3288,8 +3253,8 @@ function measurement(args) {
   const ctx = _main.C.workingContext;
   const defaults = {
     background: TRANSPARENT,
-    tipWidth: DEFAULT_TIP_WIDTH,
-    tipHeight: DEFAULT_TIP_WIDTH / 1.2,
+    tipLength: DEFAULT_TIP_WIDTH,
+    tipBreadth: DEFAULT_TIP_WIDTH / 1.2,
     innerPadding: 3,
     outerPadding: 0,
     textRotation: 0,
@@ -3308,8 +3273,8 @@ function measurement(args) {
   const center = [(p1[0] + p2[0]) / 2, (p1[1] + p2[1]) / 2];
 
   // draw arrows
-  arrow(center[0] - innerPadding[0], center[1] - innerPadding[1], p1[0], p1[1], args.tipWidth, args.tipHeight, args.arrowCurving, args.outerPadding);
-  arrow(center[0] + innerPadding[0], center[1] + innerPadding[1], p2[0], p2[1], args.tipWidth, args.tipHeight, args.arrowCurving, args.outerPadding);
+  arrow(center[0] - innerPadding[0], center[1] - innerPadding[1], p1[0], p1[1], args.tipLength, args.tipBreadth, args.arrowCurving, args.outerPadding);
+  arrow(center[0] + innerPadding[0], center[1] + innerPadding[1], p2[0], p2[1], args.tipLength, args.tipBreadth, args.arrowCurving, args.outerPadding);
   (0, _settings.save)();
   ctx.translate(center[0], center[1]);
   ctx.textAlign = _drawing.CENTER;
@@ -3327,15 +3292,15 @@ function measurement(args) {
  * @param {number} radius radius of circle
  * @param {number} [angle=1.5707963267948966] central angle of arc
  * @param {number} [startAngle=0] starting angle
- * @param {number} [tipWidth=DEFAULT_TIP_WIDTH] width of tip
- * @param {number} tipHeight height of tip. Default value is tipWidth / 1.2
+ * @param {number} [tipLength=DEFAULT_TIP_WIDTH] width of tip
+ * @param {number} tipBreadth height of tip. Default value is tipLength / 1.2
  * @param {number} [arrowCurving=0] arrow curving constant
  * @param {number} [tipOffset=10] offset (padding) of tip from it's defined end
  * @param {boolean} [reverse=false] whether to reverse the direction of arrow
  */
-function curvedArrow(x, y, radius, angle = Math.PI / 2, startAngle = 0, tipWidth = DEFAULT_TIP_WIDTH, tipHeight = tipWidth / 1.2, arrowCurving = 0, tipOffset = 0, reverse = false) {
+function curvedArrow(x, y, radius, angle = Math.PI / 2, startAngle = 0, tipLength = DEFAULT_TIP_WIDTH, tipBreadth = tipLength / 1.2, arrowCurving = 0, tipOffset = 0, reverse = false) {
   const ctx = _main.C.workingContext;
-  const tipAngularDiameter = tipWidth / radius;
+  const tipAngularDiameter = tipLength / radius;
   ctx.save();
   arrowCurving /= radius;
   let padding = tipAngularDiameter - arrowCurving;
@@ -3345,13 +3310,13 @@ function curvedArrow(x, y, radius, angle = Math.PI / 2, startAngle = 0, tipWidth
     ctx.arc(x, y, radius, padding + startAngle, angle + startAngle);
     ctx.stroke();
     ctx.closePath();
-    arrowTip(x + radius * Math.cos(startAngle + padding), y + radius * Math.sin(startAngle + padding), x + radius * Math.cos(startAngle + tipOffset), y + radius * Math.sin(startAngle + tipOffset), tipWidth, tipHeight);
+    arrowTip(x + radius * Math.cos(startAngle + padding), y + radius * Math.sin(startAngle + padding), x + radius * Math.cos(startAngle + tipOffset), y + radius * Math.sin(startAngle + tipOffset), tipLength, tipBreadth);
   } else {
     angle -= tipOffset;
     ctx.arc(x, y, radius, startAngle, angle - padding + startAngle);
     ctx.stroke();
     ctx.closePath();
-    arrowTip(x + radius * Math.cos(startAngle + angle - padding), y + radius * Math.sin(startAngle + angle - padding), x + radius * Math.cos(startAngle + angle), y + radius * Math.sin(startAngle + angle), tipWidth, tipHeight);
+    arrowTip(x + radius * Math.cos(startAngle + angle - padding), y + radius * Math.sin(startAngle + angle - padding), x + radius * Math.cos(startAngle + angle), y + radius * Math.sin(startAngle + angle), tipLength, tipBreadth);
   }
   ctx.restore();
 }
@@ -3364,20 +3329,20 @@ function curvedArrow(x, y, radius, angle = Math.PI / 2, startAngle = 0, tipWidth
  * @param {number} radius radius of circle
  * @param {number} [angle=1.5707963267948966] central angle of arrow in radians
  * @param {number} [startAngle=0] start angle of arrow in radians
- * @param {number} [tipWidth=DEFAULT_TIP_WIDTH] width of arrow tip
- * @param {number} tipHeight height of tip. Default value is tipWidth / 1.2
+ * @param {number} [tipLength=DEFAULT_TIP_WIDTH] width of arrow tip
+ * @param {number} tipBreadth height of tip. Default value is tipLength / 1.2
  * @param {number} [arrowCurving=0] curving of arrow
  * @param {number} [tipOffset=0] angular offset of arrow from radial boundaries in radians.
  */
-function curvedDoubleArrow(x, y, radius, angle = Math.PI / 2, startAngle = 0, tipWidth = DEFAULT_TIP_WIDTH, tipHeight = tipWidth / 1.2, arrowCurving = 0, tipOffset = 0) {
+function curvedDoubleArrow(x, y, radius, angle = Math.PI / 2, startAngle = 0, tipLength = DEFAULT_TIP_WIDTH, tipBreadth = tipLength / 1.2, arrowCurving = 0, tipOffset = 0) {
   const ctx = _main.C.workingContext;
   ctx.save();
-  const tipAngularDiameter = tipWidth / radius;
+  const tipAngularDiameter = tipLength / radius;
   const tangent = [-Math.cos(startAngle + tipAngularDiameter / 2 + Math.PI / 2), -Math.sin(startAngle + tipAngularDiameter / 2 + Math.PI / 2)];
   angle -= tipAngularDiameter;
   startAngle += tipAngularDiameter + tipOffset * 2;
-  curvedArrow(x, y, radius, angle + arrowCurving / radius, startAngle - arrowCurving / radius, tipWidth, tipHeight, arrowCurving, tipOffset);
-  arrowTip(Math.cos(startAngle - arrowCurving / radius) * radius, Math.sin(startAngle - arrowCurving / radius) * radius, Math.cos(startAngle) * radius + tipWidth * tangent[0], Math.sin(startAngle) * radius + tipWidth * tangent[1], tipWidth, tipHeight);
+  curvedArrow(x, y, radius, angle + arrowCurving / radius, startAngle - arrowCurving / radius, tipLength, tipBreadth, arrowCurving, tipOffset);
+  arrowTip(Math.cos(startAngle - arrowCurving / radius) * radius, Math.sin(startAngle - arrowCurving / radius) * radius, Math.cos(startAngle) * radius + tipLength * tangent[0], Math.sin(startAngle) * radius + tipLength * tangent[1], tipLength, tipBreadth);
   ctx.restore();
 }
 
@@ -3387,15 +3352,15 @@ function curvedDoubleArrow(x, y, radius, angle = Math.PI / 2, startAngle = 0, ti
  * @param {number[]} p1 start point
  * @param {number[]} p2 end point
  * @param {number} radius radius of circle
- * @param {number} [tipWidth=DEFAULT_TIP_WIDTH] width of tip
- * @param {number} tipHeight height of tip. Default value is tipWidth / 1.2
+ * @param {number} [tipLength=DEFAULT_TIP_WIDTH] width of tip
+ * @param {number} tipBreadth height of tip. Default value is tipLength / 1.2
  * @param {number} [arrowCurving=0] arrow curving const. Expressed in pixels
  * @param {number} [tipOffset=0] offset (padding) of tip from it's defined end. Expressed in radians
  * @param {boolean} [otherArc=false] whether to use other arc
  * @param {boolean} [reverse=false] whether to reverse the direction of arrow.
  * @return {number[]} coordiante of the center of arc as [x, y]
  */
-function curvedArrowBetweenPoints(p1, p2, radius, tipWidth = DEFAULT_TIP_WIDTH, tipHeight = tipWidth / 1.2, arrowCurving = 0, tipOffset = 0, otherArc = false, reverse = false) {
+function curvedArrowBetweenPoints(p1, p2, radius, tipLength = DEFAULT_TIP_WIDTH, tipBreadth = tipLength / 1.2, arrowCurving = 0, tipOffset = 0, otherArc = false, reverse = false) {
   const ctx = _main.C.workingContext;
   const pathStarted = ctx.pathStarted;
   ctx.save();
@@ -3415,7 +3380,7 @@ function curvedArrowBetweenPoints(p1, p2, radius, tipWidth = DEFAULT_TIP_WIDTH, 
     startAngle = p2Angle;
     angleBetweenPoints = p1Angle - p2Angle;
   }
-  curvedArrow(center[0], center[1], radius, angleBetweenPoints, startAngle, tipWidth, tipHeight, arrowCurving, tipOffset, reverse);
+  curvedArrow(center[0], center[1], radius, angleBetweenPoints, startAngle, tipLength, tipBreadth, arrowCurving, tipOffset, reverse);
   if (!pathStarted) ctx.closePath();
   ctx.restore();
   return center;
@@ -3427,14 +3392,14 @@ function curvedArrowBetweenPoints(p1, p2, radius, tipWidth = DEFAULT_TIP_WIDTH, 
  * @param {number[]} p1 start point
  * @param {number[]} p2 end point
  * @param {number} radius radius of circle
- * @param {number} [tipWidth=DEFAULT_TIP_WIDTH] width of tip
- * @param {number} tipHeight height of tip. Default value is tipWidth / 1.2
+ * @param {number} [tipLength=DEFAULT_TIP_WIDTH] width of tip
+ * @param {number} tipBreadth height of tip. Default value is tipLength / 1.2
  * @param {number} [arrowCurving=0] arrow curving const. Expressed in pixels
  * @param {number} [tipOffset=0] offset (padding) of tip from it's defined. Expressed in radians
  * @param {boolean} [otherArc=false] whether to use other arc
  * @return {number[]} coordiante of the center of arc as [x, y]
  */
-function curvedDoubleArrowBetweenPoints(p1, p2, radius, tipWidth = DEFAULT_TIP_WIDTH, tipHeight = tipWidth / 1.2, arrowCurving = 0, tipOffset = 0, otherArc = false) {
+function curvedDoubleArrowBetweenPoints(p1, p2, radius, tipLength = DEFAULT_TIP_WIDTH, tipBreadth = tipLength / 1.2, arrowCurving = 0, tipOffset = 0, otherArc = false) {
   const ctx = _main.C.workingContext;
   ctx.save();
   const center = (0, _points.circleIntersection)(p1, radius, p2, radius)[0];
@@ -3442,7 +3407,7 @@ function curvedDoubleArrowBetweenPoints(p1, p2, radius, tipWidth = DEFAULT_TIP_W
   p1[1] -= center[1];
   p2[0] -= center[0];
   p2[1] -= center[1];
-  const tipAngularDiameter = tipWidth / radius;
+  const tipAngularDiameter = tipLength / radius;
   const p1Angle = Math.atan2(p1[1], p1[0]);
   const p2Angle = Math.atan2(p2[1], p2[0]) + tipAngularDiameter;
   let angleBetweenPoints, startAngle;
@@ -3454,15 +3419,15 @@ function curvedDoubleArrowBetweenPoints(p1, p2, radius, tipWidth = DEFAULT_TIP_W
     angleBetweenPoints = p1Angle - p2Angle;
   }
   arrowCurving /= radius;
-  curvedArrow(center[0], center[1], radius, angleBetweenPoints + arrowCurving - tipOffset, startAngle - arrowCurving + tipOffset, tipWidth, tipHeight, arrowCurving * radius, tipOffset);
+  curvedArrow(center[0], center[1], radius, angleBetweenPoints + arrowCurving - tipOffset, startAngle - arrowCurving + tipOffset, tipLength, tipBreadth, arrowCurving * radius, tipOffset);
   let padding = tipAngularDiameter - arrowCurving + tipOffset;
   startAngle -= tipAngularDiameter;
-  arrowTip(center[0] + radius * Math.cos(startAngle + padding), center[1] + radius * Math.sin(startAngle + padding), center[0] + radius * Math.cos(startAngle + tipOffset), center[1] + radius * Math.sin(startAngle + tipOffset), tipWidth, tipHeight);
+  arrowTip(center[0] + radius * Math.cos(startAngle + padding), center[1] + radius * Math.sin(startAngle + padding), center[0] + radius * Math.cos(startAngle + tipOffset), center[1] + radius * Math.sin(startAngle + tipOffset), tipLength, tipBreadth);
   ctx.restore();
   return center;
 }
 
-},{"../constants/drawing.js":12,"../main.js":17,"../math/points.js":20,"../settings.js":31,"../utils.js":32,"./text.js":30}],24:[function(require,module,exports){
+},{"../constants/drawing.js":12,"../main.js":17,"../math/points.js":20,"../settings.js":35,"../utils.js":36,"./text.js":34}],24:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3557,27 +3522,91 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.axes = axes;
-exports.numberLine = numberLine;
-exports.numberPlane = numberPlane;
-exports.polarPlane = polarPlane;
-var _c = require("../c.js");
-var _main = require("../main.js");
-var _settings = require("../settings.js");
-var _utils = require("../utils.js");
-var _arrows = require("./arrows.js");
-var _functions = require("./functions.js");
-var _geometry = require("./geometry.js");
-var _tex = require("./tex.js");
-var _text = require("./text.js");
-/** @module Coordinate-Systems*/
+var _main = require("../../main.js");
+var _utils = require("../../utils.js");
+var _cartesian_plotters = require("./cartesian_plotters.js");
+var _number_line = require("./number_line.js");
+const ORIGIN = [0, 0];
 
 /**
- * @typedef {Object} PolarPlotters
- * @property {Function} plotPoints see {@link plotPolarPoints}
- * @property {Function} parametricFunction see {@link polarParametricFunction}
- * @property {Function} functionGraph see {@link polarFuntionGraph}
+ * Creates a axes.
+ * @param {Object} configs Possible configurations are:
+ * @param {Object} configs.xAxis Configurations for x axis. (See {@link numberLine} for more configurations)
+ * @param {Object} configs.yAxis Configurations for y axis. (See {@link numberLine} for more configurations)
+ * @param {number[]} [configs.originPosition = ORIGIN] originPosition of axes
+ *
+ * @returns {CartesianPlotters}
  */
 
+function axes(configs = {}) {
+  const ctx = _main.C.workingContext;
+  // configurations
+  configs = (0, _utils.applyDefault)({
+    xAxis: {
+      axisLabel: "x"
+    },
+    yAxis: {
+      axisLabel: "y",
+      rotation: Math.PI / 2,
+      textRotation: -Math.PI / 2,
+      labelDirection: [0, 0.8],
+      textAlign: "right",
+      axisLabelDirection: [0.3, 0.5],
+      axisLabelSize: 20
+    },
+    originPosition: ORIGIN,
+    numbersToExclude: [0],
+    includeTicks: true,
+    includeLeftTip: false,
+    includeRightTip: true
+  }, configs);
+  ctx.save();
+  assignCommonPropsToAxis(configs);
+
+  // draws number lines
+  const xAxisLine = (0, _number_line.numberLine)(configs.xAxis); // draw x axis
+  const yAxisLine = (0, _number_line.numberLine)(configs.yAxis); // draw y axis
+
+  ctx.restore();
+  return (0, _cartesian_plotters.getCartasianFunctions)({
+    originPosition: configs.originPosition,
+    // originPosition of axis as [x, y] in px
+    xAxis: xAxisLine,
+    // x axis confiurations from numberLine
+    yAxis: yAxisLine,
+    // y axis confiurations from numberLine
+    unitSpace: [xAxisLine.unitSpace, yAxisLine.unitSpace],
+    // space between two ticks in pixels
+    unitValue: [xAxisLine.unitValue, yAxisLine.unitValue] // value between two close ticks
+  });
+}
+
+/**
+ * Assigns common configs to individual axis if they're not already defined, from call point
+ * @param {Object} configs
+ */
+function assignCommonPropsToAxis(configs) {
+  for (let prop of Object.keys(configs)) {
+    if (prop != "xAxis" || prop != "yAxis") {
+      if (configs.xAxis[prop] === undefined) {
+        configs.xAxis[prop] = configs[prop];
+      }
+      if (configs.yAxis[prop] === undefined) {
+        configs.yAxis[prop] = configs[prop];
+      }
+    }
+  }
+}
+
+},{"../../main.js":17,"../../utils.js":36,"./cartesian_plotters.js":26,"./number_line.js":27}],26:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.getCartasianFunctions = getCartasianFunctions;
+var _settings = require("../../settings.js");
+var _functions = require("../functions.js");
 /**
  * @typedef {Object} CartesianPlotters
  * @property {Function} plotParametricFunction see {@link parametricFunction}
@@ -3586,13 +3615,6 @@ var _text = require("./text.js");
  * @property {Function} plotPoints see {@link plotPoints}
  */
 
-/**
- * @typedef {Object} NumberLineConfigs configurations about the number line
- * @property {number[]} originPosition - Center of the number line in px
- * @property {number[]} tickList - List of tick inervals
- * @property {number} unitValue - How much a unit is in its value in x and y directions.
- * @property {number} unitSpace - How much a unit is in px in x and y directions.
- */
 /**
  * returns list of plotting functions based on given cartesian parameters
  *
@@ -3613,7 +3635,7 @@ function getCartasianFunctions(configs) {
     },
     plotHeatPlot: function (cfg) {
       cfg.unitSpace = configs.unitSpace;
-      cfg.unitValue = configs.unitValue;
+      console.log(cfg.unitSpace);
       cfg.min = configs.min || [configs.xAxis.range[0], configs.yAxis.range[0]];
       cfg.max = configs.max || [configs.xAxis.range[1], configs.yAxis.range[1]];
       return (0, _functions.heatPlot)(cfg);
@@ -3631,37 +3653,31 @@ function getCartasianFunctions(configs) {
   });
 }
 
-/**
- * returns list of plotting functions based on given polar parameters
- *
- * @param {Object} configs
- * @return {PolarPlotters}
- */
-function getPolarPlotters(configs) {
-  return {
-    plotPoints: function (cfg) {
-      cfg.radialSpacing = cfg.radialSpacing || configs.radialSpacing;
-      (0, _functions.plotPolarPoints)(cfg);
-    },
-    parametricFunction: function (cfg) {
-      cfg.radialSpacing = cfg.radialSpacing || configs.radialSpacing;
-      return (0, _functions.polarParametricFunction)(cfg);
-    },
-    functionGraph: function (cfg) {
-      cfg.radialSpacing = cfg.radialSpacing || configs.radialSpacing;
-      return (0, _functions.polarFuntionGraph)(cfg);
-    }
-  };
-}
+},{"../../settings.js":35,"../functions.js":30}],27:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.numberLine = numberLine;
+var _c = require("../../c.js");
+var _main = require("../../main.js");
+var _settings = require("../../settings.js");
+var _utils = require("../../utils.js");
+var _arrows = require("../arrows.js");
+var _geometry = require("../geometry.js");
+var _text = require("../text.js");
+/** @module Coordinate-Systems*/
+
 const ORIGIN = [0, 0];
 
 /**
  * Creates a numberLine with parameters in a object
  * @param {Object} configs configuration object
  *
- * @param {number} [configs.tipWidth = 13] width of arrow tip in px
- * @param {number} [configs.tipHeight = 10] height/width of tip
- * @param {number} [configs.longerTickMultiple = 1.5] Factor to increase height of ticks at elongated ticks
+ * @param {number} [configs.tipLength = 13] width of arrow tip in px
+ * @param {number} [configs.tipBreadth = 10] height of tip
+ * @param {number} [configs.longerTickHeight = 15] Height of longer ticks
  * @param {number} [configs.tickHeight = 10] Height of ticks in px
  * @param {number} [configs.fontSize = 17] Font size of text
  * @param {number} [configs.textRotation = 0] Amount to rotate text
@@ -3673,13 +3689,12 @@ const ORIGIN = [0, 0];
  * @param {string} [configs.strokeColor = "white"] Color of axis and ticks
  * @param {string} [configs.textColor = "white"] Color of text
  *
- * @param {number[]} [configs.textDirection = TEXT_DIR] Direction of text relative to nearby tick
+ * @param {number[]} [configs.labelDirection = [0, -1]] Direction of text relative to nearby tick
  * @param {number[]} [configs.numbersWithElongatedTicks] list of numbers where tick line should be longer
  * @param {number[]} [configs.originPosition = ORIGIN] position of the origin of number line in pixels.
  * @param {number[]} [configs.range] range of numbers to draw ticks and numbers. Default: [-5, 5, 1]
  * @param {number[]} [configs.labelsToInclude] list of labels to be displayed instead of default numbers
  * @param {number[]} [configs.numbersToExclude] list of numbers that shouldn't be displayed
- * @param {number[]} [configs.textDirection = [0, -1]]
 
  * @param {boolean} [configs.includeTicks = true] Whether ticks should be added
  * @param {boolean} [configs.includeLeftTip = false] whether to add an arrow tip at left
@@ -3703,54 +3718,37 @@ function numberLine(configs = {}) {
   configs = (0, _utils.applyDefault)({
     rotation: 0,
     strokeWidth: 2,
-    length: parseInt(cvs.width),
+    length: parseInt(cvs.style.width),
     originPosition: ORIGIN,
     range: [-5, 5, 1],
     strokeColor: _c.Colors.white + "88",
     axisLabel: "",
-    axisFont: 14,
-    axisLabelDirection: [1, -1],
-    tipWidth: 13,
-    tipHeight: 10,
+    axisLabelSize: 24,
+    axisLabelColor: "#fff",
+    axisLabelDirection: [0.5, 1.5],
+    tipLength: 13,
+    tipBreadth: 10,
     fontSize: 17,
     fontFamily: "serif",
     textRenderer: _text.fillText,
-    textAlign: "center",
     textBaseline: "middle",
-    textColor: "white",
+    textColor: "#fff",
+    textAlign: "center",
     textRotation: 0,
-    textDirection: [0, -1],
+    labelDirection: [0, -1.6],
     tickHeight: 10,
-    longerTickMultiple: 1.5,
+    longerTickHeight: 15,
     labelsToInclude: [],
     numbersToExclude: [],
     numbersWithElongatedTicks: [],
     includeTicks: true,
     includeLabels: true,
     includeLeftTip: false,
-    includeRightTip: false,
-    excludeOriginTick: false
+    includeRightTip: false
   }, configs);
   let {
     range,
-    tipWidth,
-    fontSize: labelFontSize,
-    axisFont,
-    axisLabel,
-    tipHeight,
-    tickHeight,
-    strokeColor,
-    strokeWidth,
-    textRotation,
-    decimalPlaces,
-    textDirection,
-    includeLeftTip,
-    includeRightTip,
-    labelsToInclude,
-    numbersToExclude,
-    excludeOriginTick,
-    longerTickMultiple,
-    numbersWithElongatedTicks
+    decimalPlaces
   } = configs;
   if (Array.isArray(range) && range.length > 0) {
     if (range.length === 1) {
@@ -3765,101 +3763,22 @@ function numberLine(configs = {}) {
 
   // if number of decimal places is not defined, find it using `step`
   if (isNaN(decimalPlaces) && decimalPlaces >= 0) {
-    decimalPlaces = (range[2].toString().split(".")[1] || []).length;
+    configs.decimalPlaces = (range[2].toString().split(".")[1] || []).length;
   }
-  let min = range[0],
-    max = range[1],
-    step = range[2],
+  let step = range[2],
     /** Space between two ticks in pixels*/
-    unitSpace = configs.length / (max - min),
+    unitSpace = configs.length / (range[1] - range[0]),
     /** A list of numbers that'll be displayed if no labels are given through numberToInclude */
-    tickList = (0, _utils.arange)(min, max, step),
-    textRenderer = configs.textRenderer;
-  // scale everyting down
-  strokeWidth /= unitSpace;
-  tipWidth /= unitSpace;
-  tipHeight /= unitSpace;
-  tickHeight /= unitSpace;
+    tickList = (0, _utils.arange)(range[0], range[1], step);
+  configs.tickList = tickList;
   (0, _settings.save)();
-  (0, _settings.fontSize)(axisFont);
-  ctx.translate(configs.originPosition[0], configs.originPosition[1]);
-  ctx.scale(unitSpace, unitSpace);
+  ctx.translate(configs.originPosition[0] * unitSpace, configs.originPosition[1] * unitSpace);
   ctx.rotate(configs.rotation);
-  if (configs.includeTicks) drawTicks();
-  if (configs.includeLabels) drawNumbers();
-  drawAxis();
-  function drawAxis() {
-    (0, _settings.stroke)(strokeColor);
-    ctx.lineWidth = strokeWidth;
-    (0, _settings.fill)(strokeColor);
-    let r = Math.atan(tipHeight / 2),
-      x1 = tickList[0],
-      x2 = tickList[tickList.length - 1];
-    if (includeLeftTip) {
-      (0, _arrows.arrowTip)(x1 + tipWidth, 0, x1, 0, tipWidth, tipHeight);
-      x1 += tipWidth * Math.cos(r);
-    }
-    if (includeRightTip) {
-      (0, _arrows.arrowTip)(x2 - tipWidth, 0, x2, 0, tipWidth, tipHeight);
-      x2 -= tipWidth * Math.cos(r) * 1;
-    }
-    (0, _geometry.line)(x1, 0, x2, 0);
-    ctx.save();
-    (0, _settings.fontSize)(axisFont);
-    ctx.scale(1 / unitSpace, 1 / unitSpace);
-    ctx.translate((x2 + configs.axisLabelDirection[0]) * unitSpace, -configs.axisLabelDirection[1] * axisFont);
-    ctx.rotate(textRotation);
-    textRenderer(axisLabel, 0, 0);
-    ctx.restore();
-  }
-  function drawTicks() {
-    ctx.strokeStyle = strokeColor;
-    ctx.lineWidth = strokeWidth;
-    let start = includeLeftTip ? 1 : 0,
-      end = includeRightTip ? tickList.length - 1 : tickList.length;
-    for (let i = start; i < end; i++) {
-      let tick = tickList[i],
-        tH = tickHeight;
-      if (tick === 0 && excludeOriginTick || numbersToExclude.indexOf(tickList[0][i]) >= 0) continue;
-      if (numbersWithElongatedTicks.indexOf(tick) > -1) {
-        tH *= longerTickMultiple;
-      }
-      (0, _geometry.line)(tick, -tH / 2, tick, tH / 2);
-    }
-  }
-  function drawNumbers() {
-    ctx.fillStyle = configs.textColor;
-    (0, _settings.fontSize)(labelFontSize);
-    ctx.textAlign = configs.textAlign;
-    ctx.textBaseline = configs.textBaseline;
-    let labels = labelsToInclude.length > 0 ? labelsToInclude : tickList,
-      start = includeLeftTip ? 1 : 0,
-      end = includeRightTip ? tickList.length - 1 : tickList.length;
-    ctx.save();
-    ctx.scale(1 / unitSpace, 1 / unitSpace);
-    for (let i = start; i < end; i++) {
-      if (i >= labels.length) break;
-      let tick = typeof labels[i] == "number" ? labels[i].toFixed(decimalPlaces) : labels[i];
-      if (tickList[i] == 0 && excludeOriginTick ||
-      // exclude origin tick
-      numbersToExclude.indexOf(tickList[i]) > -1 // exclude ticks that were said to ignore explictly.
-      ) {
-        continue;
-      }
-      let width = ctx.measureText(tick).width;
-      let xShift = tickList[i] - textDirection[0] * width;
-      let yShift = textDirection[1] * labelFontSize;
-      ctx.save();
-
-      // shift by text direction
-      ctx.translate(xShift * unitSpace, yShift);
-      ctx.rotate(textRotation);
-      textRenderer(tick, 0, 0);
-      ctx.restore();
-    }
-    ctx.restore();
-  }
-  (0, _settings.restore)();
+  configs.unitSpace = unitSpace;
+  if (configs.includeTicks) drawTicks(configs, ctx);
+  if (configs.includeLabels) drawLabels(configs, ctx);
+  drawAxis(configs, ctx);
+  (0, _settings.restore)(configs);
   return {
     range: range,
     originPosition: configs.originPosition,
@@ -3868,60 +3787,129 @@ function numberLine(configs = {}) {
     unitSpace: unitSpace
   };
 }
+function drawAxis(configs, ctx) {
+  let {
+    includeLeftTip,
+    includeRightTip,
+    unitSpace,
+    axisLabelDirection,
+    range,
+    tipLength,
+    tipBreadth,
+    axisLabel
+  } = configs;
+  let [min, max] = range;
+  (0, _settings.save)();
+  (0, _settings.stroke)(configs.strokeColor);
+  ctx.lineWidth = configs.strokeWidth;
+  (0, _settings.fill)(configs.strokeColor);
+  let x1 = min * unitSpace,
+    x2 = max * unitSpace;
+  ctx.doStroke = false;
+  if (includeLeftTip) {
+    (0, _arrows.arrowTip)(x1 + tipLength, 0, x1, 0, tipLength, tipBreadth);
+    x1 += tipLength;
+  }
+  if (includeRightTip) {
+    (0, _arrows.arrowTip)(x2 - tipLength, 0, x2, 0, tipLength, tipBreadth);
+    x2 -= tipLength;
+  }
+  (0, _geometry.line)(x1, 0, x2, 0);
+  (0, _settings.fontSize)(configs.axisLabelSize);
+  (0, _settings.fontFamily)(configs.fontFamily);
+  (0, _settings.fill)(configs.axisLabelColor);
+  let height = (0, _utils.measureHeight)(axisLabel);
+  ctx.translate(x2 + axisLabelDirection[0] * height, axisLabelDirection[1] * height);
+  ctx.rotate(configs.textRotation);
+  configs.textRenderer(axisLabel, 0, 0);
+  (0, _settings.restore)();
+}
+function drawTicks(configs, ctx) {
+  let {
+    includeLeftTip,
+    includeRightTip,
+    tickList,
+    numbersToExclude,
+    numbersWithElongatedTicks,
+    longerTickHeight,
+    tickHeight,
+    unitSpace
+  } = configs;
+  ctx.strokeStyle = configs.strokeColor;
+  ctx.lineWidth = configs.strokeWidth;
+  let start = includeLeftTip ? 1 : 0,
+    end = tickList.length - (includeRightTip ? 1 : 0);
+  for (let i = start; i < end; i++) {
+    let tick = tickList[i];
+    if (!numbersToExclude.includes(tick)) {
+      let tH = numbersWithElongatedTicks.includes(tick) ? longerTickHeight : tickHeight;
+      (0, _geometry.line)(tick * unitSpace, -tH / 2, tick * unitSpace, tH / 2);
+    }
+  }
+}
 
 /**
- * Creates a axes.
- * @param {Object} configs Possible configurations are:
- * @param {Object} configs.xAxis Configurations for x axis. (See {@link numberLine} for more configurations)
- * @param {Object} configs.yAxis Configurations for y axis. (See {@link numberLine} for more configurations)
- * @param {number[]} [configs.originPosition = ORIGIN] originPosition of axes
  *
- * @returns {CartesianPlotters}
+ * @param {Object} configs
+ * @param {CanvasRenderingContext2D} ctx
  */
-function axes(configs = {}) {
-  const ctx = _main.C.workingContext;
-  const cvs = _main.C.workingCanvas;
-  // configurations
-  configs = (0, _utils.applyDefault)({
-    xAxis: {
-      length: cvs.width,
-      includeTicks: true,
-      includeLeftTip: false,
-      includeRightTip: true,
-      excludeOriginTick: true
-    },
-    yAxis: {
-      length: cvs.height,
-      rotation: Math.PI / 2,
-      textRotation: -Math.PI / 2,
-      textDirection: [0, 0.75],
-      includeTicks: true,
-      includeLeftTip: false,
-      includeRightTip: true,
-      excludeOriginTick: true
-    },
-    originPosition: ORIGIN
-  }, configs);
-  ctx.save();
-  // translate to originPosition
-  ctx.translate(configs.originPosition[0], configs.originPosition[1]);
-  // draws axes
-  const xAxisLine = numberLine(configs.xAxis); // draw x axis
-  const yAxisLine = numberLine(configs.yAxis); // draw y axis
-
-  ctx.restore();
-  return getCartasianFunctions({
-    originPosition: configs.originPosition,
-    // originPosition of axis as [x, y] in px
-    xAxis: xAxisLine,
-    // x axis confiurations from numberLine
-    yAxis: yAxisLine,
-    // y axis confiurations from numberLine
-    unitSpace: [xAxisLine.unitSpace, yAxisLine.unitSpace],
-    // space between two ticks in pixels
-    unitValue: [xAxisLine.unitValue, yAxisLine.unitValue] // value between two close ticks
-  });
+function drawLabels(configs, ctx) {
+  let {
+    includeLeftTip,
+    includeRightTip,
+    tickList,
+    numbersToExclude,
+    labelsToInclude,
+    labelDirection,
+    unitSpace
+  } = configs;
+  ctx.fillStyle = configs.textColor;
+  ctx.textAlign = configs.textAlign;
+  ctx.textBaseline = configs.textBaseline;
+  ctx.fontFamily = configs.fontFamily;
+  let labels = labelsToInclude.length > 0 ? labelsToInclude : tickList,
+    start = includeLeftTip ? 1 : 0,
+    end = includeRightTip ? tickList.length - 1 : tickList.length;
+  (0, _settings.fontSize)(configs.fontSize);
+  for (let i = start; i < end && i < labels.length; i++) {
+    if (!numbersToExclude.includes(tickList[i])) {
+      let tick = typeof labels[i] == "number" ? labels[i].toFixed(configs.decimalPlaces) : labels[i];
+      let height = (0, _utils.measureHeight)(tick);
+      let xAdjust = labelDirection[0] * height;
+      let yAdjust = labelDirection[1] * height;
+      let xShift = tickList[i];
+      ctx.save();
+      ctx.translate(xShift * unitSpace + xAdjust, yAdjust);
+      ctx.rotate(configs.textRotation);
+      configs.textRenderer(tick, 0, 0);
+      ctx.restore();
+    }
+  }
 }
+
+},{"../../c.js":4,"../../main.js":17,"../../settings.js":35,"../../utils.js":36,"../arrows.js":23,"../geometry.js":31,"../text.js":34}],28:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.numberPlane = numberPlane;
+var _c = require("../../c.js");
+var _main = require("../../main.js");
+var _settings = require("../../settings.js");
+var _utils = require("../../utils.js");
+var _cartesian_plotters = require("./cartesian_plotters.js");
+/** @module Coordinate-Systems*/
+
+const ORIGIN = [0, 0];
+
+/**
+ * @typedef {Object} NumberLineConfigs configurations about the number line
+ * @property {number[]} originPosition - Center of the number line in px
+ * @property {number[]} tickList - List of tick inervals
+ * @property {number} unitValue - How much a unit is in its value in x and y directions.
+ * @property {number} unitSpace - How much a unit is in px in x and y directions.
+ */
 
 /**
  * Creates a numberPlane based on following parameters inside a Object
@@ -3939,29 +3927,15 @@ function axes(configs = {}) {
  * @returns {CartesianPlotters}
  */
 function numberPlane(configs = {}) {
-  const cvs = _main.C.workingCanvas;
   const ctx = _main.C.workingContext;
   // default configurations
   const defaultConfigs = {
-    xAxis: {
-      length: parseInt(cvs.style.width),
-      includeTicks: true,
-      includeLabels: true,
-      includeLeftTip: false,
-      includeRightTip: false,
-      excludeOriginTick: true,
-      unitSpace: 50
-    },
-    yAxis: {
-      length: parseInt(cvs.style.height),
-      textRotation: -Math.PI / 2,
-      unitSpace: 50,
-      includeTicks: true,
-      includeLabels: true,
-      includeLeftTip: false,
-      includeRightTip: false,
-      excludeOriginTick: true
-    },
+    includeTicks: true,
+    includeLabels: true,
+    includeLeftTip: false,
+    includeRightTip: false,
+    excludeOriginTick: true,
+    unitSpace: 50,
     subgrids: [1, 1],
     gridStrokeWidth: 1.3,
     subgridStrokeWidth: 0.8,
@@ -3973,8 +3947,6 @@ function numberPlane(configs = {}) {
   // configurations
   configs = (0, _utils.applyDefault)(defaultConfigs, configs);
   let {
-    xAxis,
-    yAxis,
     originPosition,
     subgrids,
     gridStrokeWidth,
@@ -3983,89 +3955,135 @@ function numberPlane(configs = {}) {
   } = configs;
 
   // range of ticks in each axis
-  ctx.save();
-  const axesLines = axes({
-    xAxis: xAxis,
-    yAxis: yAxis
-  });
-  const xRange = axesLines.xAxis.range;
-  const yRange = axesLines.yAxis.range;
-
-  // number of ticks in each axes
-  const xNums = (xRange[1] - xRange[0]) / xRange[2];
-  const yNums = (yRange[1] - yRange[0]) / yRange[2];
+  const axesLines = (0, _c.axes)(configs);
+  const {
+    xAxis,
+    yAxis
+  } = axesLines;
+  const [xMin, xMax, xStep] = xAxis.range;
+  const [yMin, yMax, yStep] = yAxis.range;
 
   // draw grids
   const unitSpace = axesLines.unitSpace;
   const unitValue = axesLines.unitValue;
-  ctx.scale(unitSpace[0], unitSpace[1]);
+  (0, _settings.save)();
+  axesLines.scaleCanvas();
+  ctx.translate(originPosition[0], originPosition[1]);
   gridStrokeWidth /= unitSpace[1];
   subgridStrokeWidth /= unitSpace[1];
   drawGridLines();
 
   // size of a unit cell
-  ctx.restore();
   function drawGridLines() {
     // major grid lines
     ctx.beginPath();
     ctx.lineWidth = gridStrokeWidth;
     ctx.strokeStyle = gridStrokeColor;
     // vertical grid lines
-    let max = yRange[1] - yRange[1] % yRange[2];
-    for (let i = xRange[0]; i <= xRange[1]; i += xRange[2]) {
-      if (xAxis.excludeOriginTick && i == 0 || xAxis.includeLeftTip && i == xRange[0] || xAxis.includeRightTip && i == xRange[1]) continue;
-      ctx.moveTo(i, yRange[0]);
-      ctx.lineTo(i, max);
+    let max = yMax - yMax % yStep;
+    for (let i = xMin; i <= xMax; i += xStep) {
+      if (i != 0 && !(xAxis.includeLeftTip && i == xMin || xAxis.includeRightTip && i == xMax)) {
+        ctx.moveTo(i, yMin);
+        ctx.lineTo(i, max);
+      }
     }
     // horizontal grid lines
-    max = xRange[1] - xRange[1] % xRange[2];
-    for (let i = yRange[0]; i <= yRange[1]; i += yRange[2]) {
-      if (yAxis.excludeOriginTick && i == 0 || yAxis.includeLeftTip && i == yRange[0] || yAxis.includeRightTip && i == yRange[1]) continue;
-      ctx.moveTo(xRange[0], i);
-      ctx.lineTo(max, i);
+    max = xMax - xMax % xStep;
+    for (let i = yMin; i <= yMax; i += yStep) {
+      if (i != 0 && !(yAxis.includeLeftTip && i == yMin || yAxis.includeRightTip && i == yMax)) {
+        ctx.moveTo(xMin, i);
+        ctx.lineTo(max, i);
+      }
     }
     ctx.stroke();
     ctx.closePath();
-
-    // draw subgrid grid lines
+    drawSubgrids();
+  }
+  function drawSubgrids() {
     ctx.beginPath();
     ctx.lineWidth = subgridStrokeWidth;
     ctx.strokeStyle = configs.subgridStrokeColor;
     let spacing = 1 / (subgrids[0] + 1); // space between two subgrids
     // vertical subgrids
-    for (let k = xRange[0]; k <= xRange[1]; k += spacing) {
-      if (k % unitValue[0] == 0) {
-        continue;
+    for (let k = xMin; k <= xMax; k += spacing) {
+      if (k % unitValue[0] != 0) {
+        ctx.moveTo(k, yMin);
+        ctx.lineTo(k, yMax);
       }
-      ctx.moveTo(k, yRange[0]);
-      ctx.lineTo(k, yRange[1]);
     }
     spacing = 1 / (subgrids[1] + 1);
     // horizontal subgrids
-    for (let k = yRange[0]; k <= yRange[1]; k += spacing) {
-      if (k % unitValue[1] == 0) {
-        continue;
+    for (let k = yMin; k <= yMax; k += spacing) {
+      if (k % unitValue[1] != 0) {
+        ctx.moveTo(xMin, k);
+        ctx.lineTo(xMax, k);
       }
-      ctx.moveTo(xRange[0], k);
-      ctx.lineTo(xRange[1], k);
     }
     ctx.stroke();
     ctx.closePath();
   }
-  return getCartasianFunctions({
+  (0, _settings.restore)();
+  return (0, _cartesian_plotters.getCartasianFunctions)({
     originPosition: originPosition,
     // position of origin of number plane
     unitValue: unitValue,
     // how much a unit is in its value
     unitSpace: unitSpace,
     // how much a unit is in px
-    xAxis: axesLines.xAxis,
+    xAxis: xAxis,
     // x axis confiurations from numberLine
-    yAxis: axesLines.yAxis,
+    yAxis: yAxis,
     // y axis confiurations from numberLine
     subgridUnit: subgrids // subgrid unit size
   });
 }
+
+},{"../../c.js":4,"../../main.js":17,"../../settings.js":35,"../../utils.js":36,"./cartesian_plotters.js":26}],29:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.polarPlane = polarPlane;
+var _main = require("../../main.js");
+var _settings = require("../../settings.js");
+var _utils = require("../../utils.js");
+var _tex = require("../tex.js");
+var _text = require("../text.js");
+var _axes = require("./axes.js");
+/**
+ * @typedef {Object} PolarPlotters
+ * @property {Function} plotPoints see {@link plotPolarPoints}
+ * @property {Function} parametricFunction see {@link polarParametricFunction}
+ * @property {Function} functionGraph see {@link polarFuntionGraph}
+ */
+
+/**
+ * returns list of plotting functions based on given polar parameters
+ *
+ * @param {Object} configs
+ * @return {PolarPlotters}
+ */
+function getPolarPlotters(configs) {
+  return {
+    plotPoints: function (cfg) {
+      cfg.radialSpacing = cfg.radialSpacing || configs.radialSpacing;
+      plotPolarPoints(cfg);
+    },
+    plotParametricFunction: function (cfg) {
+      cfg.radialSpacing = cfg.radialSpacing || configs.radialSpacing;
+      return polarParametricFunction(cfg);
+    },
+    plotFunctionGraph: function (cfg) {
+      cfg.radialSpacing = cfg.radialSpacing || configs.radialSpacing;
+      return polarFuntionGraph(cfg);
+    },
+    scaleCanvas: function () {
+      (0, _settings.scale)(configs.radialSpacing, configs.radialSpacing);
+    }
+  };
+}
+const ORIGIN = [0, 0];
 
 /**
  * Creates a polar plane. change following configs to customize the plane
@@ -4091,7 +4109,7 @@ function numberPlane(configs = {}) {
  * @param {number} [configs.radiusConfigs.fontSize = 22] font size of the radial axis in pixels
  * @param {number} [configs.radiusConfigs.decimalPoints = 0] number of decimal points to show up in the radial axis labels
  * @param {Function} [configs.radiusConfigs.textRenderer = fillText] function that renders text. you can use strokeText to get stroked text, or something else to get custom text
- * @param {number[]} [configs.radiusConfigs.textDirection = [-1.4, -1.2]] direction of the radial axis label. This'll align labels correctly in the position.
+ * @param {number[]} [configs.radiusConfigs.labelDirection = [-1.4, -1.2]] direction of the radial axis label. This'll align labels correctly in the position.
  * @param {number[]} [configs.radiusConfigs.labelAxis = [1, 0]] axis to labels
  * @param {boolean} [configs.radiusConfigs.includeLabels = true] whether to draw radial labels or not
 
@@ -4113,10 +4131,10 @@ function polarPlane(configs = {}) {
   let ctx = _main.C.workingContext,
     cvs = _main.C.workingCanvas,
     azimuthUnitsDict = {
-      "pi radians": 20,
-      "tau radians": 20,
-      degrees: 24,
-      gradians: 20
+      pi: 20,
+      tau: 20,
+      deg: 24,
+      grad: 20
     };
   configs = (0, _utils.applyDefault)({
     originPosition: ORIGIN,
@@ -4135,9 +4153,9 @@ function polarPlane(configs = {}) {
       includeRightTip: false,
       strokeColor: "#fff",
       strokeWidth: 2,
-      fontSize: 22,
+      fontSize: 16,
       fontFamily: "serif",
-      textDirection: [0.8, -0.75],
+      labelDirection: [0.4, -1],
       labelAxis: [1],
       numbersToExclude: [0]
     },
@@ -4151,183 +4169,258 @@ function polarPlane(configs = {}) {
       strokeColor: "#58c4ddaa",
       strokeWidth: 1.3,
       textRenderer: _text.fillText,
-      decimalPoints: 0
+      decimalPoints: 0,
+      numbersToExclude: [0]
     },
     fadedLineConfigs: {
       strokeColor: "#8888",
       strokeWidth: 1
     }
   }, configs);
-  let {
+  const {
     originPosition,
     maxRadius,
     size,
     radiusStep,
-    azimuthUnit,
     azimuthDivisions,
-    azimuthCompactFraction,
-    azimuthDirection,
-    radiusConfigs,
-    azimuthConfigs,
-    fadedLines,
-    fadedLineConfigs,
-    azimuthoffset
+    radiusConfigs
   } = configs;
-  azimuthUnit = azimuthUnit.toLowerCase();
-  // error catching
-  if (azimuthUnitsDict[azimuthUnit] != undefined) {
-    azimuthUnit = azimuthUnit;
-  } else {
-    throw new Error("Invalid azimuth units. Expected one of: PI radians, TAU radians, degrees, gradians.");
+  let radialSpacing = size / maxRadius / 2;
+  configs.azimuthUnit = getAzimuthUnit(configs.azimuthUnit);
+  configs.azimuthDirection = configs.azimuthDirection.toLowerCase();
+  configs.fadedLines++;
+  if (azimuthDivisions == 0 || isNaN(azimuthDivisions)) {
+    configs.azimuthDivisions = azimuthUnitsDict[configs.azimuthUnit] || 20;
   }
-  if (azimuthDivisions == 0) {
-    azimuthDivisions = azimuthUnitsDict[azimuthUnit] || 20;
-  }
-  (0, _settings.save)();
-  ctx.translate(originPosition[0], originPosition[1]);
-  let tickList = (0, _utils.arange)(0, maxRadius, radiusStep),
-    radialSpacing = size / maxRadius / 2;
-  azimuthConfigs.strokeWidth /= radialSpacing;
-  fadedLineConfigs.strokeWidth /= radialSpacing;
-  azimuthConfigs.fontSize /= radialSpacing;
-  let /** @type {Array} */
-    labels = Array.isArray(radiusConfigs.labelsToInclude) ? radiusConfigs.labelsToInclude : tickList,
-    xLabels = [],
-    yLabels = [];
+  configs.tickList = (0, _utils.arange)(0, maxRadius, radiusStep);
+  let labels = Array.isArray(radiusConfigs.labelsToInclude) ? radiusConfigs.labelsToInclude : configs.tickList;
+
   // find labels for each wings of axis
-  if (radiusConfigs.labelAxis.indexOf(3) > -1) {
-    // add left wing of x-axis
-    xLabels = labels.reverse();
-  } else {
-    xLabels = new Array(maxRadius).fill("");
-  }
-  if (radiusConfigs.labelAxis.indexOf(1) > -1) {
-    // add right wing of x-axis
-    xLabels = xLabels.concat(labels);
-  } else {
-    xLabels.push(...new Array(maxRadius).fill(""));
-  }
-  if (radiusConfigs.labelAxis.indexOf(2) > -1) {
-    // add top wing of y-axis
-    yLabels = labels.reverse();
-  } else {
-    yLabels = new Array(maxRadius).fill("");
-  }
-  if (radiusConfigs.labelAxis.indexOf(4) > -1) {
-    // add bottom wing of y-axis
-    yLabels = yLabels.concat(labels.reverse());
-  } else {
-    yLabels.push(...new Array(maxRadius).fill(""));
-  }
+  const [xLabels, yLabels] = fillLabels(maxRadius, labels, radiusConfigs.labelAxis);
   radiusConfigs.range = [-maxRadius, maxRadius, radiusStep];
   radiusConfigs.length = size;
+  configs.radiusConfigs = radiusConfigs;
+  configs.xLabels = xLabels;
+  configs.yLabels = yLabels;
+  configs.radialSpacing = radialSpacing;
   let xAxisCfgs = (0, _utils.applyDefault)(radiusConfigs, {
-      labelsToInclude: xLabels
+      labelsToInclude: xLabels,
+      originPosition,
+      axisLabel: ""
     }),
     yAxisCfgs = (0, _utils.applyDefault)(radiusConfigs, {
-      labelsToInclude: yLabels
+      labelsToInclude: yLabels,
+      originPosition,
+      axisLabel: ""
     });
-  ctx.scale(radialSpacing, radialSpacing);
-  drawAzimuthalLines();
+  (0, _settings.save)();
+  ctx.translate(originPosition[0] * radialSpacing, originPosition[1] * radialSpacing);
+  drawAzimuthalLines(configs, ctx);
   (0, _settings.restore)();
-  axes({
+  (0, _axes.axes)({
     xAxis: xAxisCfgs,
     yAxis: yAxisCfgs
   });
-  function drawAzimuthalLines() {
-    fadedLines++;
-
-    // draw azimuthal divisions
-    let labels = [];
-    ctx.font = `${azimuthConfigs.fontSize}px ${azimuthConfigs.fontFamily}`;
-    ctx.textAlign = azimuthConfigs.textAlign;
-    ctx.textBaseline = azimuthConfigs.textBaseline;
-
-    // generate labels
-    if (azimuthUnit == "pi radians" || azimuthUnit == "tau radians") {
-      let numerator = 1,
-        denominator = azimuthDivisions;
-      azimuthConfigs.textRenderer = _tex.tex;
-      let post = azimuthUnit == "tau radians" ? "\\tau" : "\\pi";
-      ctx.font = `${azimuthConfigs.fontSize * radialSpacing}px ${azimuthConfigs.fontFamily}`;
-      for (let division = 0; division < azimuthDivisions; division++) {
-        labels.push((0, _utils.fraction)(numerator * division, denominator, true, azimuthCompactFraction, post));
-      }
-    } else if (azimuthUnit == "degrees") {
-      // Use Tex parser to generate fractions
-      for (let i = 0; i < azimuthDivisions; i++) {
-        labels.push((i * 360 / azimuthDivisions).toFixed(azimuthConfigs.decimalPoints) + "°");
-      }
-    } else if (azimuthUnit == "gradians") {
-      for (let i = 0; i < azimuthDivisions; i++) {
-        labels.push((i * 400 / azimuthDivisions).toFixed(azimuthConfigs.decimalPoints) + "ᵍ");
-      }
-    }
-    let angleIncrementor = Math.PI * 2 / azimuthDivisions,
-      angle = 0;
-    if (azimuthDirection.toLowerCase() == "cw") angleIncrementor *= -1;
-    let scalar = 1;
-    if (azimuthUnit == "pi radians" || azimuthUnit == "tau radians") {
-      scalar = radialSpacing;
-    }
-
-    // draw radiating circles
-
-    ctx.doFill = false;
-    ctx.doStroke = true;
-    if (fadedLines > 1) {
-      // draw faded ones
-      ctx.strokeStyle = fadedLineConfigs.strokeColor;
-      ctx.lineWidth = fadedLineConfigs.strokeWidth;
-      let step = 1 / fadedLines;
-      let max = tickList.length / step - fadedLines;
-      ctx.beginPath();
-      ctx.moveTo(0, 0);
-      for (let i = 0; i < max; i++) {
-        ctx.arc(0, 0, i * step, 0, Math.PI * 2);
-      }
-      max = azimuthDivisions / step / step;
-      ctx.lineWidth = fadedLineConfigs.strokeWidth;
-      for (let i = 0; i < max; i += step) {
-        let angle = i * angleIncrementor;
-        ctx.moveTo(0, 0);
-        ctx.lineTo(Math.cos(angle + azimuthoffset) * maxRadius, Math.sin(angle + azimuthoffset) * maxRadius);
-      }
-      ctx.stroke();
-    }
-
-    // and majors
-    ctx.beginPath();
-    ctx.strokeStyle = azimuthConfigs.strokeColor;
-    ctx.lineWidth = azimuthConfigs.strokeWidth;
-    ctx.moveTo(0, 0);
-    for (let i = 0; i < tickList.length; i++) {
-      ctx.arc(0, 0, i, 0, Math.PI * 2);
-    }
-    for (let i = 0; i < azimuthDivisions; i++) {
-      // draw azimuthal lines only if it isn't over axis lines
-      let angle = i * angleIncrementor + azimuthoffset;
-      if (angle % (Math.PI / 2) != 0) {
-        ctx.moveTo(0, 0);
-        ctx.lineTo(Math.cos(angle) * maxRadius, Math.sin(angle) * maxRadius);
-      }
-    }
-    ctx.stroke();
-    // draw azimuthal labels
-    if (azimuthConfigs.includeLabels) {
-      for (let i = 0; i < azimuthDivisions; i++) {
-        angle = i * angleIncrementor + azimuthoffset;
-        azimuthConfigs.textRenderer(labels[i], Math.cos(angle) * (maxRadius + azimuthConfigs.labelBuff) * scalar, Math.sin(angle) * (maxRadius + azimuthConfigs.labelBuff) * scalar);
-      }
-    }
-  }
   return getPolarPlotters({
     azimuthAnglularSpace: 2 * Math.PI / azimuthDivisions,
     radialSpacing: radialSpacing
   });
 }
+function drawAzimuthalLines(configs, ctx) {
+  let {
+    azimuthDivisions,
+    azimuthDirection,
+    azimuthConfigs,
+    fadedLines
+  } = configs;
+  configs.labels = generateLabels(configs);
+  configs.angleIncrementor = Math.PI * 2 / azimuthDivisions;
+  if (azimuthDirection == "cw") {
+    configs.angleIncrementor *= -1;
+  }
+  if (fadedLines > 1) {
+    drawMinors(configs, ctx);
+  }
+  drawMajors(configs, ctx);
+  if (azimuthConfigs.includeLabels) {
+    drawAzimuthalLabels(configs);
+  }
+}
+function generateLabels(configs) {
+  let labels = [];
+  const {
+    azimuthUnit,
+    radialSpacing,
+    azimuthConfigs,
+    azimuthDivisions,
+    azimuthCompactFraction
+  } = configs;
+  if (azimuthUnit == "pi" || azimuthUnit == "tau") {
+    let numerator = 1,
+      denominator = azimuthDivisions,
+      generator,
+      post;
+    if ((0, _tex.tex2svgExists)()) {
+      azimuthConfigs.textRenderer = _tex.tex;
+      post = azimuthUnit == "tau" ? "\\tau" : "\\pi";
+      (0, _settings.fontSize)(azimuthConfigs.fontSize * radialSpacing);
+      generator = _utils.texFraction;
+    } else {
+      console.warn("MathJax not found, using fillText instead");
+      post = azimuthUnit == "pi" ? "π" : "τ";
+      generator = _utils.fraction;
+    }
+    for (let division = 0; division < azimuthDivisions; division++) {
+      labels.push(generator(numerator * division, denominator, true, azimuthCompactFraction, post));
+    }
+  } else if (azimuthUnit == "deg") {
+    // Use Tex parser to generate fractions
+    for (let i = 0; i < azimuthDivisions; i++) {
+      labels.push((i * 360 / azimuthDivisions).toFixed(azimuthConfigs.decimalPoints) + "°");
+    }
+  } else if (azimuthUnit == "grad") {
+    for (let i = 0; i < azimuthDivisions; i++) {
+      labels.push((i * 400 / azimuthDivisions).toFixed(azimuthConfigs.decimalPoints) + "ᵍ");
+    }
+  }
+  return labels;
+}
 
-},{"../c.js":4,"../main.js":17,"../settings.js":31,"../utils.js":32,"./arrows.js":23,"./functions.js":26,"./geometry.js":27,"./tex.js":29,"./text.js":30}],26:[function(require,module,exports){
+/**
+ *
+ * @param {Object} configs
+ * @param {CanvasRenderingContext2D} ctx
+ */
+function drawMinors(configs, ctx) {
+  const {
+    maxRadius,
+    azimuthoffset,
+    angleIncrementor,
+    fadedLineConfigs,
+    azimuthDivisions,
+    fadedLines,
+    tickList,
+    radialSpacing
+  } = configs;
+  const step = 1 / fadedLines,
+    radMax = (tickList.length - 1) * fadedLines,
+    azmMax = azimuthDivisions * fadedLines;
+  ctx.doFill = false;
+  ctx.doStroke = true;
+  ctx.strokeStyle = fadedLineConfigs.strokeColor;
+  ctx.lineWidth = fadedLineConfigs.strokeWidth;
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+
+  // radiating circle
+  for (let i = 0; i < radMax; i++) {
+    ctx.arc(0, 0, i * step * radialSpacing, 0, Math.PI * 2);
+  }
+  ctx.lineWidth = fadedLineConfigs.strokeWidth;
+  for (let i = 0; i < azmMax; i++) {
+    let angle = i * angleIncrementor * step;
+    ctx.moveTo(0, 0);
+    ctx.lineTo(Math.cos(angle + azimuthoffset) * maxRadius * radialSpacing, Math.sin(angle + azimuthoffset) * maxRadius * radialSpacing);
+  }
+  ctx.stroke();
+}
+function drawMajors(configs, ctx) {
+  const {
+    azimuthConfigs,
+    tickList,
+    azimuthDivisions,
+    angleIncrementor,
+    azimuthoffset,
+    maxRadius,
+    radialSpacing
+  } = configs;
+  ctx.beginPath();
+  ctx.strokeStyle = azimuthConfigs.strokeColor;
+  ctx.lineWidth = azimuthConfigs.strokeWidth;
+  ctx.moveTo(0, 0);
+  for (let i = 0; i < tickList.length; i++) {
+    ctx.arc(0, 0, i * radialSpacing, 0, Math.PI * 2);
+  }
+  for (let i = 0; i < azimuthDivisions; i++) {
+    let angle = i * angleIncrementor + azimuthoffset;
+    if (angle % (Math.PI / 2) != 0) {
+      // avoid axes
+      ctx.moveTo(0, 0);
+      ctx.lineTo(Math.cos(angle) * maxRadius * radialSpacing, Math.sin(angle) * maxRadius * radialSpacing);
+    }
+  }
+  ctx.stroke();
+}
+function drawAzimuthalLabels(configs) {
+  const {
+    azimuthDivisions,
+    angleIncrementor,
+    azimuthoffset,
+    azimuthConfigs,
+    maxRadius,
+    labels,
+    radialSpacing
+  } = configs;
+  (0, _settings.fontSize)(azimuthConfigs.fontSize);
+  (0, _settings.fontFamily)(azimuthConfigs.fontFamily);
+  (0, _settings.textAlign)(azimuthConfigs.textAlign);
+  (0, _settings.textBaseline)(azimuthConfigs.textBaseline);
+  for (let i = 0; i < azimuthDivisions; i++) {
+    let angle = i * angleIncrementor + azimuthoffset;
+    if (!azimuthConfigs.numbersToExclude.includes(angle)) {
+      azimuthConfigs.textRenderer(labels[i], Math.cos(angle) * (maxRadius + azimuthConfigs.labelBuff) * radialSpacing, Math.sin(angle) * (maxRadius + azimuthConfigs.labelBuff) * radialSpacing);
+    }
+  }
+}
+
+/**
+ *
+ * @param {string} azmU
+ * @returns {string}
+ */
+function getAzimuthUnit(azmU) {
+  azmU = azmU.toLowerCase().trim().replace(/(rad.*|\s*)/, "rad");
+  if (/.*(pi|π).*/.test(azmU)) azmU = "pi";else if (/.*(tau|τ).*/.test(azmU)) azmU = "tau";else if (/.*(deg|°).*/.test(azmU)) azmU = "deg";else if (/.*(grad|ᵍ).*/.test(azmU)) azmU = "grad";else throw new Error("Invalid azimuth units. Expected one of: PI radians, TAU radians, degrees, gradians.");
+  return azmU;
+}
+function fillLabels(maxRadius, labels, labelAxis) {
+  let xLabels = [],
+    yLabels = [],
+    // also remove last element
+    lrev = [...labels].reverse().slice(0, maxRadius),
+    EMPTY_ARR = new Array(maxRadius).fill("");
+
+  // left of x-axis
+  if (labelAxis.includes(3)) {
+    xLabels.push(...lrev);
+  } else {
+    xLabels.push(...EMPTY_ARR);
+  }
+
+  // right of x-axis
+  if (labelAxis.includes(1)) {
+    xLabels.push(...labels);
+  } else {
+    xLabels.push(...EMPTY_ARR);
+  }
+
+  // top of y-axis
+  if (labelAxis.includes(4)) {
+    yLabels.push(...lrev);
+  } else {
+    yLabels.push(...EMPTY_ARR);
+  }
+
+  // bottom of y-axis
+  if (labelAxis.includes(2)) {
+    yLabels.push(...labels);
+  } else {
+    yLabels.push(...EMPTY_ARR);
+  }
+  return [xLabels, yLabels];
+}
+
+},{"../../main.js":17,"../../settings.js":35,"../../utils.js":36,"../tex.js":33,"../text.js":34,"./axes.js":25}],30:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4364,12 +4457,14 @@ var _geometry = require("./geometry.js");
  * @property {string} fill fill style
  * @property {string} stroke stroke styles
  */
+
 /**
  * @typedef {Object} ParametricPlotter
  * @property {number[][]} points : Array of computed points in the function
  * @property {Function} draw : Function that draws the plot
  * @property {Function} animate : Function that animates the drawing of the shape. Accept argument `duration` which is the duration of animation.
  */
+
 const animationEventChain = {
   then: function (f) {
     f();
@@ -4787,6 +4882,7 @@ function polarParametricFunction(configs) {
     smoothen: configs.smoothen
   };
 }
+
 /**
  * Wrapper for {@link polarParametricFunction}
  * @param {Object} configs
@@ -4798,7 +4894,7 @@ function polarFuntionGraph(configs) {
   return polarParametricFunction(configs);
 }
 
-},{"../color/color_reader.js":6,"../main.js":17,"../settings.js":31,"../utils.js":32,"./geometry.js":27}],27:[function(require,module,exports){
+},{"../color/color_reader.js":6,"../main.js":17,"../settings.js":35,"../utils.js":36,"./geometry.js":31}],31:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4867,7 +4963,7 @@ function point(x, y, size = 10, doStroke = false) {
   ctx.arc(x, y, size / 2, 0, Math.PI * 2);
   ctx.fill();
   if (doStroke) ctx.stroke();
-  ctx.beginPath(); // close path don't work
+  ctx.closePath();
 }
 
 /**
@@ -5333,7 +5429,7 @@ function regularPolygonWithRadius(x, y, sides, radius, rotation = 0) {
   if (ctx.doStroke) ctx.stroke();
 }
 
-},{"../main.js":17,"../math/points.js":20,"../utils.js":32}],28:[function(require,module,exports){
+},{"../main.js":17,"../math/points.js":20,"../utils.js":36}],32:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5400,7 +5496,7 @@ function lens(c1, r1, c2, r2) {
   ctx.closePath();
 }
 
-},{"../main.js":17,"../math/points.js":20}],29:[function(require,module,exports){
+},{"../main.js":17,"../math/points.js":20}],33:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5408,9 +5504,18 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.getImageFromTex = getImageFromTex;
 exports.tex = tex;
+exports.tex2svgExists = tex2svgExists;
 var _drawing = require("../constants/drawing.js");
 var _main = require("../main.js");
 /** @module Tex */
+
+/**
+ * Checks whether tex to svg converter exists.
+ * @returns {boolean}
+ */
+function tex2svgExists() {
+  return typeof globalThis["MathJax"] == "object" && typeof globalThis["MathJax"]["tex2svg"] == "function";
+}
 
 /**
  * Renders the input tex into a HTMLImageElement
@@ -5419,7 +5524,7 @@ var _main = require("../main.js");
  * @return {HTMLImageElement}
  */
 function getImageFromTex(input) {
-  if (!(typeof globalThis["MathJax"] == "object" && typeof globalThis["MathJax"]["tex2svg"] == "function")) {
+  if (!tex2svgExists()) {
     throw new Error("MathJax is not found. Please include it.");
   }
   let ctx = _main.C.workingContext,
@@ -5490,7 +5595,7 @@ function tex(input, x = 0, y = 0) {
   return image;
 }
 
-},{"../constants/drawing.js":12,"../main.js":17}],30:[function(require,module,exports){
+},{"../constants/drawing.js":12,"../main.js":17}],34:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5560,7 +5665,7 @@ function strokeText(text, x = 0, y = 0, maxwidth = undefined) {
   ctx.restore();
 }
 
-},{"../main.js":17}],31:[function(require,module,exports){
+},{"../main.js":17}],35:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6119,17 +6224,6 @@ function measureText(text) {
  * Sets font size
  * See {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/font} for more info.
  * @param {number|string} size
- * possible values:
- * * XX_SMALL
- * * X_SMALL
- * * SMALL
- * * MEDIUM
- * * LARGE
- * * X_LARGE
- * * XX_LARGE
- * * XXX_LARGE
- * * LARGER
- * * SMALLER
  */
 function fontSize(size) {
   let ctx = _main.C.workingContext;
@@ -6298,7 +6392,7 @@ function textBaseline(baseline) {
   _main.C.workingContext.textBaseline = baseline;
 }
 
-},{"./color/color_reader.js":6,"./main.js":17,"./utils.js":32}],32:[function(require,module,exports){
+},{"./color/color_reader.js":6,"./main.js":17,"./utils.js":36}],36:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6311,6 +6405,8 @@ exports.doFillAndStroke = doFillAndStroke;
 exports.fraction = fraction;
 exports.inArray = inArray;
 exports.latexToImg = latexToImg;
+exports.measureHeight = measureHeight;
+exports.texFraction = texFraction;
 exports.type = void 0;
 var _c = require("./c.js");
 var _main = require("./main.js");
@@ -6351,7 +6447,7 @@ function defineProperties(source, target = globalThis, assignToC = false) {
  * @param {number} end
  * @param {number} step
  * @param {boolean} [rev=false] return in reverse order
- * @return {Array}
+ * @return {number[][]}
  */
 function arange(start, end, step, rev = false) {
   let arr = [];
@@ -6462,7 +6558,24 @@ function latexToImg(latex) {
 }
 
 /**
+ * Returns numerator and denominator strings for given fraction
+ * @param {number} numerator numerator of fraction
+ * @param {number} denominator denominator of fraction
+ * @param {boolean} [simplifyFraction=true] whether to simplify fraction by dividing numerator and denominator by gcd
+ * @param {boolean} [compact=true] whether to add ```multiple``` with numerator or simply append it to end of string
+ * @param {string} [multiple=""] an multiple
+ * @returns {string[]} returns two strings
+ */
+function getReducedFraction(numerator, denominator) {
+  let _divider = (0, _c.gcd)(numerator, denominator);
+  numerator /= _divider;
+  denominator /= _divider;
+  return [`${numerator}`, `${denominator}`];
+}
+
+/**
  * Generates tex code for given fraction.
+ * Used in coordinate system labeling
  *
  * @param {number} numerator numerator of fraction
  * @param {number} denominator denominator of fraction
@@ -6472,35 +6585,71 @@ function latexToImg(latex) {
  * @returns {string}
  *
  * @example
- * fraction(5, 10, false) // -> \frac{5}{10}
- * fraction(5, 10, true) // -> \frac{1}{2}
- * fraction(5, 10, true, true, "π") // -> \frac{π}{2}
- * fraction(5, 10, true, false, "π") // -> \frac{1}{2}π
- * fraction(5, 10, false, false, "π") // -> \frac{5}{10}π
- * fraction(5, 10, false, true, "π") // -> \frac{5π}{10}
+ * texFraction(5, 10, false) // -> \frac{5}{10}
+ * texFraction(5, 10, true) // -> \frac{1}{2}
+ * texFraction(5, 10, true, true, "π") // -> \frac{π}{2}
+ * texFraction(5, 10, true, false, "π") // -> \frac{1}{2}π
+ * texFraction(5, 10, false, false, "π") // -> \frac{5}{10}π
+ * texFraction(5, 10, false, true, "π") // -> \frac{5π}{10}
  * @ignore
  */
-function fraction(numerator, denominator, simplifyFraction = true, compact = true, multiple = "") {
+function texFraction(numerator, denominator, simplifyFraction = true, compact = true, multiple = "") {
+  let num = numerator,
+    den = denominator;
   if (simplifyFraction) {
-    let _divider = (0, _c.gcd)(numerator, denominator);
-    numerator /= _divider;
-    denominator /= _divider;
+    [num, den] = getReducedFraction(num, den);
   }
-  let tex = "";
-  if (numerator == 0) {
+  if (num == 0) {
     tex = "0";
-  } else if (denominator == 1) {
-    tex = numerator + multiple;
+  } else if (den == 1) {
+    tex = num;
+  } else if (compact) {
+    // if numerator is 1 and there is a multiple, add multiple without numerator
+    if (num == 1 && multiple != "") num = "";
+    tex = `\\frac{${num}${multiple}}{${den}}`;
   } else {
-    if (compact) {
-      // if numerator is 1 and there is a multiple, add multiple without numerator
-      if (numerator == 1 && multiple != "") numerator = "";
-      tex = `\\frac{${numerator}${multiple}}{${denominator}}`;
-    } else {
-      tex = `\\frac{${numerator}}{${denominator}}${multiple}`;
-    }
+    tex = `\\frac{${num}}{${den}}${multiple}`;
   }
   return tex;
+}
+
+/**
+ * Generates text fraction for given fraction.
+ * Used in coordinate system labeling
+ *
+ * @param {number} numerator numerator of fraction
+ * @param {number} denominator denominator of fraction
+ * @param {boolean} [simplifyFraction=true] whether to simplify fraction by dividing numerator and denominator by gcd
+ * @param {boolean} [compact=true] whether to add ```multiple``` with numerator or simply append it to end of string
+ * @param {string} [multiple=""] an multiple
+ * @returns {string}
+ */
+function fraction(numerator, denominator, simplifyFraction = true, compact = true, multiple = "") {
+  let num = numerator,
+    den = denominator,
+    str = "";
+  if (simplifyFraction) {
+    [num, den] = getReducedFraction(num, den);
+  }
+  if (num == 0) {
+    str = "0";
+  } else if (den == 1) {
+    str = num + denominator;
+  } else if (compact) {
+    // if numerator is 1 and there is a multiple, add multiple without numerator
+    if (num == 1 && multiple != "") num = "";
+    str = `${num}${multiple}/${den}`;
+  } else {
+    str = `(${num}/${den})${multiple}`;
+  }
+  return str;
+}
+function measureHeight(text) {
+  let {
+    actualBoundingBoxAscent,
+    actualBoundingBoxDescent
+  } = _main.C.workingContext.measureText(text);
+  return actualBoundingBoxAscent + actualBoundingBoxDescent;
 }
 
 },{"./c.js":4,"./main.js":17}]},{},[14]);

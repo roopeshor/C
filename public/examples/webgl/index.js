@@ -1,6 +1,6 @@
-import { Manim } from "../../Extensions/Colors/importable.js";
-import { C } from "../../src/main.js";
-import { createWebGL } from "../../src/WebGL/webgl.js";
+import { Manim } from "../../../Extensions/Colors/importable.js";
+import { C } from "../../../src/main.js";
+import { createWebGL } from "../../../src/WebGL/webgl.js";
 const { BLUE, PURPLE, RED, TEAL } = Manim;
 C(
 	() => {

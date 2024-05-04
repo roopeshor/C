@@ -1,29 +1,32 @@
-import { Manim } from "../../Extensions/Colors/importable.js";
-import { ColorPalettes, smooth } from "../../src/c.js";
-import { C } from "../../src/main.js";
-import { arrow } from "../../src/objects/arrows.js";
+import { Manim } from "../../../Extensions/Colors/importable.js";
+import { ColorPalettes, abs, axes, readColor, round, sigmoid } from "../../../src/c.js";
+import { C } from "../../../src/main.js";
+import { arrow } from "../../../src/objects/arrows.js";
 import {
 	lerpColorArray,
 	getInterpolatedColorList,
-} from "../../src/color/interpolation.js";
-import { point } from "../../src/objects/geometry.js";
-import { fillText } from "../../src/objects/text.js";
+} from "../../../src/color/interpolation.js";
+import { point } from "../../../src/objects/geometry.js";
+import { fillText } from "../../../src/objects/text.js";
 import {
 	background,
 	clear,
 	fill,
+	fontSize,
 	noStroke,
+	scale,
 	stroke,
 	strokeWidth,
 	textAlign,
 	textBaseline,
-} from "../../src/settings.js";
+	translate,
+} from "../../../src/settings.js";
 window.i = 0;
 const W = 432,
 	H = 432,
-	{ TEAL, GREEN, RED, PURPLE, BLUE, YELLOW, DARK_BROWN } = Manim;
+	{ RED, BLUE } = Manim;
 let k = -0.5;
-let range = [-4, 4, 0.1];
+let range = [-4, 4, 1];
 let charges = [
 	{
 		x: 0,
@@ -60,13 +63,13 @@ let charges = [
 ];
 
 let dt = 0.01;
-let sx = (W / abs(range[1] - range[0])) * Math.round(window.devicePixelRatio),
-	sy = (H / abs(range[1] - range[0])) * Math.round(window.devicePixelRatio);
+let sx = (W / abs(range[1] - range[0])) * round(window.devicePixelRatio),
+	sy = (H / abs(range[1] - range[0])) * round(window.devicePixelRatio);
 let P = getInterpolatedColorList(ColorPalettes.Heat, 0, 3, 0.2);
 console.log(P);
 C(
 	() => {
-		centreCanvas();
+		translate(CENTERX, CENTERY);
 		let a = axes({
 			xAxis: {
 				range: range,
@@ -107,8 +110,8 @@ C(
 );
 C(
 	() => {
-		centreCanvas();
-		scale(sx, -sy);
+		translate(CENTERX, CENTERY);
+		scale(sx, sy);
 		textAlign("center");
 		textBaseline("middle");
 		draw();
@@ -169,7 +172,7 @@ function drawCharges(charges) {
 		else fill(RED);
 		point(ch.x, ch.y, abs(ch.q));
 		fill("#000");
-		fontSize(abs(ch.q) ** 0.8);
+		fontSize(abs(ch.q) / 2);
 		fillText((ch.q > 0 ? "+" : "") + ch.q, ch.x, ch.y);
 	}
 }

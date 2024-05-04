@@ -1,9 +1,9 @@
-import { Manim } from "../../Extensions/Colors/importable.js";
-import { E, PI, TAU } from "../../src/constants/math.js";
-import { C } from "../../src/main.js";
-import { lcm } from "../../src/math/aritmetics.js";
-import { abs, cos, sgn, sin } from "../../src/math/functions.js";
-import { axes } from "../../src/objects/coordinate_systems.js";
+import { Manim } from "../../../Extensions/Colors/importable.js";
+import { E, PI, TAU } from "../../../src/constants/math.js";
+import { C } from "../../../src/main.js";
+import { lcm } from "../../../src/math/aritmetics.js";
+import { abs, cos, sgn, sin } from "../../../src/math/functions.js";
+import { axes } from "../../../src/objects/coordinate_systems/axes.js";
 import {
 	background,
 	noFill,
@@ -11,7 +11,7 @@ import {
 	stroke,
 	strokeWidth,
 	translate,
-} from "../../src/settings.js";
+} from "../../../src/settings.js";
 
 const W = 300;
 const H = 300;

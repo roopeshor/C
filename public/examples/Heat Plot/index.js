@@ -1,9 +1,9 @@
-import { getInterpolatedColorList } from "../../src/color/interpolation.js";
-import { ColorPalettes } from "../../src/constants/color_palettes.js";
-import { PI, TAU } from "../../src/constants/math.js";
-import { C } from "../../src/main.js";
-import { axes } from "../../src/objects/coordinate_systems.js";
-import { background } from "../../src/settings.js";
+import { axes } from "../../../src/c.js";
+import { getInterpolatedColorList } from "../../../src/color/interpolation.js";
+import { ColorPalettes } from "../../../src/constants/color_palettes.js";
+import { PI, TAU } from "../../../src/constants/math.js";
+import { C } from "../../../src/main.js";
+import { background, translate } from "../../../src/settings.js";
 
 const container = document.querySelector(".container");
 const W = 300;
@@ -79,7 +79,7 @@ for (var plot of plots) {
 	C(
 		() => {
 			background(0);
-			centreCanvas();
+			translate(CENTERX, CENTERY);
 			axes({
 				xAxis: {
 					range: plot.range?.xAxis,

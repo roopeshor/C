@@ -20,10 +20,6 @@ module.exports = function (grunt) {
 				src: "src/core.js",
 				dest: "dist/c.core.js",
 			},
-			custom: {
-				src: "examples/cutting/index.js",
-				dest: "examples/cutting/bundle.js",
-			},
 		},
 		uglify: {
 			options: {
@@ -42,10 +38,6 @@ module.exports = function (grunt) {
 			core: {
 				src: "dist/c.core.js",
 				dest: "dist/c.core.min.js",
-			},
-			custom: {
-				src: "examples/cutting/bundle.js",
-				dest: "examples/cutting/bundle.min.js",
 			},
 		},
 		jsdoc: {
@@ -69,5 +61,4 @@ module.exports = function (grunt) {
 	]);
 	grunt.registerTask("docs", ["jsdoc"]);
 	grunt.registerTask("core", ["browserify:core", "uglify:core"]);
-	grunt.registerTask("custom", ["browserify:custom", "uglify:custom"]);
 };

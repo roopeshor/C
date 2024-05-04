@@ -1,33 +1,33 @@
-import { linearGradient } from "../../src/color/gradients.js";
-import { Colors } from "../../src/constants/colors.js";
-import { C } from "../../src/main.js";
-import { rect } from "../../src/objects/geometry.js";
-import { text } from "../../src/objects/text.js";
+import { linearGradient } from "../../../src/color/gradients.js";
+import { Colors } from "../../../src/constants/colors.js";
+import { C } from "../../../src/main.js";
+import { rect } from "../../../src/objects/geometry.js";
+import { text } from "../../../src/objects/text.js";
 import {
 	background,
 	fill,
+	fontFamily,
 	fontSize,
 	measureText,
 	noFill,
 	stroke,
 	translate,
-} from "../../src/settings.js";
+} from "../../../src/settings.js";
 const W = 780;
 
 C(
 	function () {
 		background(0);
-		let w = 120;
+		let w = 130;
 		const h = 50;
 		let paddingX = 10;
 		const paddingY = 30;
 		let boxW = w * 6 + paddingX * 2;
 		let boxH = h * 8 + paddingY * 2;
 
-		fontSize("19px");
-		// fontFamily("CMU Serif")
+		fontSize(19);
+		fontFamily("CMU Serif");
 		translate((W - boxW) / 2, 20);
-		// debugger;
 		function box(name, k) {
 			// background
 			if (name === "BLACK") stroke("white");
@@ -66,7 +66,6 @@ C(
 			noFill();
 			stroke(Manim.BLUE);
 			rect(0, 0, boxW, boxH);
-			stroke("black");
 			translate(paddingX, paddingY);
 			fill(Manim.BLUE_A);
 			for (let i = 0; i < colors.length; i++) {
@@ -127,7 +126,6 @@ C(
 					col[k] = Manim[col[k]];
 				}
 				translate(0, h);
-
 				// name of set
 				fill(linearGradient([0, 0], [measureText(name).width, 0], col));
 				if (k > 4) {

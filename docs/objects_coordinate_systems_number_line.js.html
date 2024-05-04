@@ -3,7 +3,7 @@
 <head>
     
     <meta charset="utf-8">
-    <title>constants/colors.js - Documentation</title>
+    <title>objects/coordinate_systems/number_line.js - Documentation</title>
     
     
     <script src="scripts/prettify/prettify.js"></script>
@@ -35,7 +35,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">constants/colors.js</h1>
+    <h1 class="page-title">objects/coordinate_systems/number_line.js</h1>
     
 
     
@@ -45,159 +45,263 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>/** @module Colors */
-/* List of named CSS colors  */
-// prettier-ignore
-export const Colors = {
-	aliceblue           : "#f0f8ff",
-	antiquewhite        : "#faebd7",
-	aqua                : "#00ffff",
-	aquamarine          : "#7fffd4",
-	azure               : "#f0ffff",
-	beige               : "#f5f5dc",
-	bisque              : "#ffe4c4",
-	black               : "#000000",
-	blanchedalmond      : "#ffebcd",
-	blue                : "#0000ff",
-	blueviolet          : "#8a2be2",
-	brown               : "#a52a2a",
-	burlywood           : "#deb887",
-	cadetblue           : "#5f9ea0",
-	chartreuse          : "#7fff00",
-	chocolate           : "#d2691e",
-	coral               : "#ff7f50",
-	cornflowerblue      : "#6495ed",
-	cornsilk            : "#fff8dc",
-	crimson             : "#dc143c",
-	cyan                : "#00ffff",
-	darkblue            : "#00008b",
-	darkcyan            : "#008b8b",
-	darkgoldenrod       : "#b8860b",
-	darkgray            : "#a9a9a9",
-	darkgreen           : "#006400",
-	darkgrey            : "#a9a9a9",
-	darkkhaki           : "#bdb76b",
-	darkmagenta         : "#8b008b",
-	darkolivegreen      : "#556b2f",
-	darkorange          : "#ff8c00",
-	darkorchid          : "#9932cc",
-	darkred             : "#8b0000",
-	darksalmon          : "#e9967a",
-	darkseagreen        : "#8fbc8f",
-	darkslateblue       : "#483d8b",
-	darkslategray       : "#2f4f4f",
-	darkslategrey       : "#2f4f4f",
-	darkturquoise       : "#00ced1",
-	darkviolet          : "#9400d3",
-	deeppink            : "#ff1493",
-	deepskyblue         : "#00bfff",
-	dimgray             : "#696969",
-	dimgrey             : "#696969",
-	dodgerblue          : "#1e90ff",
-	firebrick           : "#b22222",
-	floralwhite         : "#fffaf0",
-	forestgreen         : "#228b22",
-	fuchsia             : "#ff00ff",
-	gainsboro           : "#dcdcdc",
-	ghostwhite          : "#f8f8ff",
-	gold                : "#ffd700",
-	goldenrod           : "#daa520",
-	gray                : "#808080",
-	green               : "#008000",
-	greenyellow         : "#adff2f",
-	grey                : "#808080",
-	honeydew            : "#f0fff0",
-	hotpink             : "#ff69b4",
-	indianred           : "#cd5c5c",
-	indigo              : "#4b0082",
-	ivory               : "#fffff0",
-	khaki               : "#f0e68c",
-	lavender            : "#e6e6fa",
-	lavenderblush       : "#fff0f5",
-	lawngreen           : "#7cfc00",
-	lemonchiffon        : "#fffacd",
-	lightblue           : "#add8e6",
-	lightcoral          : "#f08080",
-	lightcyan           : "#e0ffff",
-	lightgoldenrodyellow: "#fafad2",
-	lightgray           : "#d3d3d3",
-	lightgreen          : "#90ee90",
-	lightgrey           : "#d3d3d3",
-	lightpink           : "#ffb6c1",
-	lightsalmon         : "#ffa07a",
-	lightseagreen       : "#20b2aa",
-	lightskyblue        : "#87cefa",
-	lightslategray      : "#778899",
-	lightslategrey      : "#778899",
-	lightsteelblue      : "#b0c4de",
-	lightyellow         : "#ffffe0",
-	lime                : "#00ff00",
-	limegreen           : "#32cd32",
-	linen               : "#faf0e6",
-	magenta             : "#ff00ff",
-	maroon              : "#800000",
-	mediumaquamarine    : "#66cdaa",
-	mediumblue          : "#0000cd",
-	mediumorchid        : "#ba55d3",
-	mediumpurple        : "#9370db",
-	mediumseagreen      : "#3cb371",
-	mediumslateblue     : "#7b68ee",
-	mediumspringgreen   : "#00fa9a",
-	mediumturquoise     : "#48d1cc",
-	mediumvioletred     : "#c71585",
-	midnightblue        : "#191970",
-	mintcream           : "#f5fffa",
-	mistyrose           : "#ffe4e1",
-	moccasin            : "#ffe4b5",
-	navajowhite         : "#ffdead",
-	navy                : "#000080",
-	oldlace             : "#fdf5e6",
-	olive               : "#808000",
-	olivedrab           : "#6b8e23",
-	orange              : "#ffa500",
-	orangered           : "#ff4500",
-	orchid              : "#da70d6",
-	palegoldenrod       : "#eee8aa",
-	palegreen           : "#98fb98",
-	paleturquoise       : "#afeeee",
-	palevioletred       : "#db7093",
-	papayawhip          : "#ffefd5",
-	peachpuff           : "#ffdab9",
-	peru                : "#cd853f",
-	pink                : "#ffc0cb",
-	plum                : "#dda0dd",
-	powderblue          : "#b0e0e6",
-	purple              : "#800080",
-	rebeccapurple       : "#663399",
-	red                 : "#ff0000",
-	rosybrown           : "#bc8f8f",
-	royalblue           : "#4169e1",
-	saddlebrown         : "#8b4513",
-	salmon              : "#fa8072",
-	sandybrown          : "#f4a460",
-	seagreen            : "#2e8b57",
-	seashell            : "#fff5ee",
-	sienna              : "#a0522d",
-	silver              : "#c0c0c0",
-	skyblue             : "#87ceeb",
-	slateblue           : "#6a5acd",
-	slategray           : "#708090",
-	slategrey           : "#708090",
-	snow                : "#fffafa",
-	springgreen         : "#00ff7f",
-	steelblue           : "#4682b4",
-	tan                 : "#d2b48c",
-	teal                : "#008080",
-	thistle             : "#d8bfd8",
-	tomato              : "#ff6347",
-	turquoise           : "#40e0d0",
-	violet              : "#ee82ee",
-	wheat               : "#f5deb3",
-	white               : "#ffffff",
-	whitesmoke          : "#f5f5f5",
-	yellow              : "#ffff00",
-	yellowgreen         : "#9acd32",
-};
+            <pre class="prettyprint source linenums"><code>/** @module Coordinate-Systems*/
+
+import { Colors } from "../../c.js";
+import { C } from "../../main.js";
+import { fill, fontFamily, fontSize, restore, save, stroke } from "../../settings.js";
+import { applyDefault, arange, measureHeight } from "../../utils.js";
+import { arrowTip } from "../arrows.js";
+import { line, point } from "../geometry.js";
+import { fillText } from "../text.js";
+
+const ORIGIN = [0, 0];
+
+/**
+ * Creates a numberLine with parameters in a object
+ * @param {Object} configs configuration object
+ *
+ * @param {number} [configs.tipLength = 13] width of arrow tip in px
+ * @param {number} [configs.tipBreadth = 10] height of tip
+ * @param {number} [configs.longerTickHeight = 15] Height of longer ticks
+ * @param {number} [configs.tickHeight = 10] Height of ticks in px
+ * @param {number} [configs.fontSize = 17] Font size of text
+ * @param {number} [configs.textRotation = 0] Amount to rotate text
+ * @param {number} [configs.decimalPlaces] Number of decimal places in text. By default value is number of decimals in step
+ * @param {number} [configs.rotation = 0] Amound to rotate the numberline from origin
+ * @param {number} [configs.strokeWidth = 2] Width of lines in px
+ * @param {number} [configs.length] Total length of numberline in pixels. Default is the width of canvas
+ *
+ * @param {string} [configs.strokeColor = "white"] Color of axis and ticks
+ * @param {string} [configs.textColor = "white"] Color of text
+ *
+ * @param {number[]} [configs.labelDirection = [0, -1]] Direction of text relative to nearby tick
+ * @param {number[]} [configs.numbersWithElongatedTicks] list of numbers where tick line should be longer
+ * @param {number[]} [configs.originPosition = ORIGIN] position of the origin of number line in pixels.
+ * @param {number[]} [configs.range] range of numbers to draw ticks and numbers. Default: [-5, 5, 1]
+ * @param {number[]} [configs.labelsToInclude] list of labels to be displayed instead of default numbers
+ * @param {number[]} [configs.numbersToExclude] list of numbers that shouldn't be displayed
+
+ * @param {boolean} [configs.includeTicks = true] Whether ticks should be added
+ * @param {boolean} [configs.includeLeftTip = false] whether to add an arrow tip at left
+ * @param {boolean} [configs.includeRightTip = false] whether to add an arrow tip at right
+ * @param {boolean} [configs.excludeOriginTick = false] Whether exclude ticks at origin
+ * @param {boolean} [configs.includeLabels = true] whether to display labels
+ *
+ * @param {string} [configs.fontFamily = "serif"] font Family to use
+ * @param {string} [configs.textAlign = "center"] to align text in x-axis
+ * @param {string} [configs.textBaseline = "middle"] to align text in y-axis
+ *
+ * @param {Function} [configs.textRenderer = fillText] function that is used to render text.
+ *
+ * * You can adjust textAlign and textBaseline if you want to adjust alignment of labels.
+ * @returns {NumberLineConfigs}
+ */
+
+export function numberLine(configs = {}) {
+	const ctx = C.workingContext;
+	const cvs = C.workingCanvas;
+	configs = applyDefault(
+		{
+			rotation: 0,
+			strokeWidth: 2,
+			length: parseInt(cvs.style.width),
+			originPosition: ORIGIN,
+			range: [-5, 5, 1],
+			strokeColor: Colors.white + "88",
+			axisLabel: "",
+			axisLabelSize: 24,
+			axisLabelColor: "#fff",
+			axisLabelDirection: [0.5, 1.5],
+
+			tipLength: 13,
+			tipBreadth: 10,
+
+			fontSize: 17,
+			fontFamily: "serif",
+			textRenderer: fillText,
+			textBaseline: "middle",
+			textColor: "#fff",
+			textAlign: "center",
+			textRotation: 0,
+			labelDirection: [0, -1.6],
+
+			tickHeight: 10,
+			longerTickHeight: 15,
+			labelsToInclude: [],
+			numbersToExclude: [],
+			numbersWithElongatedTicks: [],
+
+			includeTicks: true,
+			includeLabels: true,
+			includeLeftTip: false,
+			includeRightTip: false,
+		},
+		configs,
+	);
+
+	let { range, decimalPlaces } = configs;
+	if (Array.isArray(range) &amp;&amp; range.length > 0) {
+		if (range.length === 1) {
+			range = [0, range[0], 1];
+		}
+		if (range.length === 2) {
+			range = [range[0], range[1], 1];
+		}
+	} else {
+		throw new Error(
+			"NumberLine: range must be a array that have atleast one item. Got: " +
+				range.toString(),
+		);
+	}
+
+	// if number of decimal places is not defined, find it using `step`
+	if (isNaN(decimalPlaces) &amp;&amp; decimalPlaces >= 0) {
+		configs.decimalPlaces = (range[2].toString().split(".")[1] || []).length;
+	}
+
+	let step = range[2],
+		/** Space between two ticks in pixels*/
+		unitSpace = configs.length / (range[1] - range[0]),
+		/** A list of numbers that'll be displayed if no labels are given through numberToInclude */
+		tickList = arange(range[0], range[1], step);
+
+	configs.tickList = tickList;
+
+	save();
+
+	ctx.translate(
+		configs.originPosition[0] * unitSpace,
+		configs.originPosition[1] * unitSpace,
+	);
+	ctx.rotate(configs.rotation);
+	configs.unitSpace = unitSpace;
+
+	if (configs.includeTicks) drawTicks(configs, ctx);
+	if (configs.includeLabels) drawLabels(configs, ctx);
+	drawAxis(configs, ctx);
+
+	restore(configs);
+	return {
+		range: range,
+		originPosition: configs.originPosition,
+		tickList: tickList,
+		unitValue: step,
+		unitSpace: unitSpace,
+	};
+}
+
+function drawAxis(configs, ctx) {
+	let {
+		includeLeftTip,
+		includeRightTip,
+		unitSpace,
+		axisLabelDirection,
+		range,
+		tipLength,
+		tipBreadth,
+		axisLabel,
+	} = configs;
+	let [min, max] = range;
+	save();
+	stroke(configs.strokeColor);
+	ctx.lineWidth = configs.strokeWidth;
+	fill(configs.strokeColor);
+
+	let x1 = min * unitSpace,
+		x2 = max * unitSpace;
+	ctx.doStroke = false;
+	if (includeLeftTip) {
+		arrowTip(x1 + tipLength, 0, x1, 0, tipLength, tipBreadth);
+		x1 += tipLength;
+	}
+	if (includeRightTip) {
+		arrowTip(x2 - tipLength, 0, x2, 0, tipLength, tipBreadth);
+		x2 -= tipLength;
+	}
+	line(x1, 0, x2, 0);
+	fontSize(configs.axisLabelSize);
+	fontFamily(configs.fontFamily);
+	fill(configs.axisLabelColor);
+	let height = measureHeight(axisLabel);
+	ctx.translate(x2 + axisLabelDirection[0] * height, axisLabelDirection[1] * height);
+	ctx.rotate(configs.textRotation);
+	configs.textRenderer(axisLabel, 0, 0);
+	restore();
+}
+
+function drawTicks(configs, ctx) {
+	let {
+		includeLeftTip,
+		includeRightTip,
+		tickList,
+		numbersToExclude,
+		numbersWithElongatedTicks,
+		longerTickHeight,
+		tickHeight,
+		unitSpace,
+	} = configs;
+	ctx.strokeStyle = configs.strokeColor;
+	ctx.lineWidth = configs.strokeWidth;
+
+	let start = includeLeftTip ? 1 : 0,
+		end = tickList.length - (includeRightTip ? 1 : 0);
+
+	for (let i = start; i &lt; end; i++) {
+		let tick = tickList[i];
+		if (!numbersToExclude.includes(tick)) {
+			let tH = numbersWithElongatedTicks.includes(tick) ? longerTickHeight : tickHeight;
+			line(tick * unitSpace, -tH / 2, tick * unitSpace, tH / 2);
+		}
+	}
+}
+
+/**
+ *
+ * @param {Object} configs
+ * @param {CanvasRenderingContext2D} ctx
+ */
+function drawLabels(configs, ctx) {
+	let {
+		includeLeftTip,
+		includeRightTip,
+		tickList,
+		numbersToExclude,
+		labelsToInclude,
+		labelDirection,
+		unitSpace,
+	} = configs;
+	ctx.fillStyle = configs.textColor;
+	ctx.textAlign = configs.textAlign;
+	ctx.textBaseline = configs.textBaseline;
+	ctx.fontFamily = configs.fontFamily;
+
+	let labels = labelsToInclude.length > 0 ? labelsToInclude : tickList,
+		start = includeLeftTip ? 1 : 0,
+		end = includeRightTip ? tickList.length - 1 : tickList.length;
+
+	fontSize(configs.fontSize);
+
+	for (let i = start; i &lt; end &amp;&amp; i &lt; labels.length; i++) {
+		if (!numbersToExclude.includes(tickList[i])) {
+			let tick =
+				typeof labels[i] == "number"
+					? labels[i].toFixed(configs.decimalPlaces)
+					: labels[i];
+			let height = measureHeight(tick);
+			let xAdjust = labelDirection[0] * height;
+			let yAdjust = labelDirection[1] * height;
+			let xShift = tickList[i];
+
+			ctx.save();
+			ctx.translate(xShift * unitSpace + xAdjust, yAdjust);
+			ctx.rotate(configs.textRotation);
+			configs.textRenderer(tick, 0, 0);
+
+			ctx.restore();
+		}
+	}
+}
 </code></pre>
         </article>
     </section>

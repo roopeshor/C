@@ -1,6 +1,6 @@
-import { lerpColor } from "../../src/c.js";
-import { C } from "../../src/main.js";
-import { background, translate } from "../../src/settings.js";
+import { lerpColor } from "../../../src/c.js";
+import { C } from "../../../src/main.js";
+import { background, scale, translate } from "../../../src/settings.js";
 
 const W = 300,
 	H = 300;

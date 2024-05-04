@@ -1,8 +1,8 @@
-import { Manim } from "../../Extensions/Colors/importable.js";
-import { PI, TAU } from "../../src/constants/math.js";
-import { C } from "../../src/main.js";
-import { cos, min, sin } from "../../src/math/functions.js";
-import { line } from "../../src/objects/geometry.js";
+import { Manim } from "../../../Extensions/Colors/importable.js";
+import { PI, TAU } from "../../../src/constants/math.js";
+import { C } from "../../../src/main.js";
+import { cos, min, sin } from "../../../src/math/functions.js";
+import { line } from "../../../src/objects/geometry.js";
 import {
 	background,
 	loop,
@@ -10,7 +10,7 @@ import {
 	noLoop,
 	stroke,
 	translate,
-} from "../../src/settings.js";
+} from "../../../src/settings.js";
 
 const WIDTH = min(C.getWindowWidth(), 400);
 const HEIGHT = WIDTH;

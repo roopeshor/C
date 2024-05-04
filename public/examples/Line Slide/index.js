@@ -1,7 +1,7 @@
-import { Manim } from "../../Extensions/Colors/importable.js";
-import { Line, Arc } from "../../Extensions/Animations/constructs.js";
-import { C } from "../../src/main.js";
-import { background, stroke, strokeWidth } from "../../src/settings.js";
+import { Manim } from "../../../Extensions/Colors/importable.js";
+import { Line, Arc } from "../../../Extensions/Animations/constructs.js";
+import { C } from "../../../src/main.js";
+import { background, stroke, strokeWidth, translate } from "../../../src/settings.js";
 
 const W = 400;
 const H = 400;
@@ -29,7 +29,7 @@ function createAxis(canvasID, xAxis, yAxis) {
 C(
 	() => {
 		background(0);
-		centreCanvas();
+		translate(CENTERX, CENTERY);
 		stroke(ORANGE);
 		createAxis(
 			"main",

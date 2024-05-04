@@ -1,11 +1,11 @@
-import { linearGradient } from "../../src/color/gradients.js";
-import { Manim } from "../../Extensions/Colors/importable.js";
-import { CENTER, MIDDLE } from "../../src/constants/drawing.js";
-import { PI, RAD, TWO_PI } from "../../src/constants/math.js";
-import { C } from "../../src/main.js";
-import { rotateAroundOrigin } from "../../src/math/points.js";
-import { doubleArrow, measurement } from "../../src/objects/arrows.js";
-import { arcBrace } from "../../src/objects/braces.js";
+import { linearGradient } from "../../../src/color/gradients.js";
+import { Manim } from "../../../Extensions/Colors/importable.js";
+import { CENTER, MIDDLE } from "../../../src/constants/drawing.js";
+import { PI, RAD, TWO_PI } from "../../../src/constants/math.js";
+import { C } from "../../../src/main.js";
+import { rotateAroundOrigin } from "../../../src/math/points.js";
+import { doubleArrow, measurement } from "../../../src/objects/arrows.js";
+import { arcBrace } from "../../../src/objects/braces.js";
 import {
 	angle,
 	circle,
@@ -13,8 +13,8 @@ import {
 	line,
 	point,
 	sector,
-} from "../../src/objects/geometry.js";
-import { fillText, text } from "../../src/objects/text.js";
+} from "../../../src/objects/geometry.js";
+import { fillText, text } from "../../../src/objects/text.js";
 import {
 	background,
 	fill,
@@ -27,7 +27,7 @@ import {
 	textAlign,
 	textBaseline,
 	translate,
-} from "../../src/settings.js";
+} from "../../../src/settings.js";
 
 const W = 300,
 	H = 300,
@@ -40,7 +40,7 @@ C(
 			leftStart = -radius - padding;
 		const pointOnCircle = rotateAroundOrigin(PI / 6, radius);
 		background(0);
-		centreCanvas();
+		translate(CENTERX, CENTERY);
 		stroke("white");
 		fill(TEAL);
 		translate(0, -30);
@@ -86,7 +86,7 @@ C(
 C(
 	() => {
 		background(0);
-		centreCanvas();
+		translate(CENTERX, CENTERY);
 		stroke(GREEN);
 		fill(RED);
 		const line1 = [
@@ -129,7 +129,7 @@ C(
 C(
 	() => {
 		background(0);
-		centreCanvas();
+		translate(CENTERX, CENTERY);
 		stroke(GREEN);
 		var r = 120;
 		const color = linearGradient(

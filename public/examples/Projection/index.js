@@ -1,8 +1,8 @@
-import { DEG } from "../../src/constants/math.js";
-import { C } from "../../src/main.js";
-import { cos, sin } from "../../src/math/functions.js";
-import { line, point } from "../../src/objects/geometry.js";
-import { background, loop, stroke, translate } from "../../src/settings.js";
+import { DEG } from "../../../src/constants/math.js";
+import { C } from "../../../src/main.js";
+import { cos, sin } from "../../../src/math/functions.js";
+import { line, point } from "../../../src/objects/geometry.js";
+import { background, loop, stroke, translate } from "../../../src/settings.js";
 const W = 400;
 const H = 400;
 

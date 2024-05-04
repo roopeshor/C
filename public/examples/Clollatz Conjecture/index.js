@@ -1,101 +1,104 @@
-import { ColorPalettes } from "../../src/constants/color_palettes.js";
-import { pixel } from "../../src/image/image.js";
-import { C } from "../../src/main.js";
-import { numberPlane } from "../../src/objects/coordinate_systems.js";
-import { background, translate } from "../../src/settings.js";
+import {
+	ColorPalettes,
+	background,
+	numberPlane,
+	pixel,
+	translate,
+} from "../../../src/c.js";
 
 // complex operators
-/**
- * multiplies two complex numbers
- * @param {number[]} a first complex number
- * @param {number[]} b second complex number
- * @returns {number[]}
- */
-const cmul = (a, b) => {
-	return [a[0] * b[0] - a[1] * b[1], a[0] * b[1] + a[1] * b[0]];
-};
+{
+	/**
+	 * multiplies two complex numbers
+	 * @param {number[]} a first complex number
+	 * @param {number[]} b second complex number
+	 * @returns {number[]}
+	 */
+	const cmul = (a, b) => {
+		return [a[0] * b[0] - a[1] * b[1], a[0] * b[1] + a[1] * b[0]];
+	};
 
-/**
- * multiplies a real number and a complex number
- */
-const rmul = (a, b) => {
-	return [a * b[0], a * b[1]];
-};
+	/**
+	 * multiplies a real number and a complex number
+	 */
+	const rmul = (a, b) => {
+		return [a * b[0], a * b[1]];
+	};
 
-/**
- * adds two complex numbers
- */
-const cadd = (a, b) => {
-	return [a[0] + b[0], a[1] + b[1]];
-};
+	/**
+	 * adds two complex numbers
+	 */
+	const cadd = (a, b) => {
+		return [a[0] + b[0], a[1] + b[1]];
+	};
 
-/**
- * divides two complex numbers
- */
-const cdiv = (a, b) => {
-	const d = b[0] * b[0] + b[1] * b[1];
-	return [(a[0] * b[0] + a[1] * b[1]) / d, (a[1] * b[0] - a[0] * b[1]) / d];
-};
+	/**
+	 * divides two complex numbers
+	 */
+	const cdiv = (a, b) => {
+		const d = b[0] * b[0] + b[1] * b[1];
+		return [(a[0] * b[0] + a[1] * b[1]) / d, (a[1] * b[0] - a[0] * b[1]) / d];
+	};
 
-/**
- * divides a complex number by a real number
- */
-const cdivr = (a, b) => {
-	return [a[0] / b, a[1] / b];
-};
+	/**
+	 * divides a complex number by a real number
+	 */
+	const cdivr = (a, b) => {
+		return [a[0] / b, a[1] / b];
+	};
 
-/**
- * returns the sin of a complex number
- */
-const csin = (a) => {
-	return [Math.sin(a[0]) * Math.cosh(a[1]), Math.cos(a[0]) * Math.sinh(a[1])];
-};
-/**
- * returns the cos of a complex number
- */
-const ccos = (a) => {
-	return [Math.cos(a[0]) * Math.cosh(a[1]), -Math.sin(a[0]) * Math.sinh(a[1])];
-};
+	/**
+	 * returns the sin of a complex number
+	 */
+	const csin = (a) => {
+		return [Math.sin(a[0]) * Math.cosh(a[1]), Math.cos(a[0]) * Math.sinh(a[1])];
+	};
+	/**
+	 * returns the cos of a complex number
+	 */
+	const ccos = (a) => {
+		return [Math.cos(a[0]) * Math.cosh(a[1]), -Math.sin(a[0]) * Math.sinh(a[1])];
+	};
 
-/**
- * returns the square of a complex number
- */
-const csqr = (a) => {
-	return [a[0] * a[0] - a[1] * a[1], 2 * a[0] * a[1]];
-};
+	/**
+	 * returns the square of a complex number
+	 */
+	const csqr = (a) => {
+		return [a[0] * a[0] - a[1] * a[1], 2 * a[0] * a[1]];
+	};
 
-/**
- * returns the square of cos of a complex number
- */
-const ccos2 = (a) => {
-	let cr = Math.cos(a[0]) * Math.cosh(a[1]),
-		ci = -Math.sin(a[0]) * Math.sinh(a[1]);
-	return [cr * cr - ci * ci, 2 * cr * ci];
-};
+	/**
+	 * returns the square of cos of a complex number
+	 */
+	const ccos2 = (a) => {
+		let cr = Math.cos(a[0]) * Math.cosh(a[1]),
+			ci = -Math.sin(a[0]) * Math.sinh(a[1]);
+		return [cr * cr - ci * ci, 2 * cr * ci];
+	};
 
-/**
- * returns the square of sin of a complex number
- */
-const csin2 = (a) => {
-	let cr = Math.sin(a[0]) * Math.cosh(a[1]),
-		ci = Math.cos(a[0]) * Math.sinh(a[1]);
-	return [cr * cr - ci * ci, 2 * cr * ci];
-};
+	/**
+	 * returns the square of sin of a complex number
+	 */
+	const csin2 = (a) => {
+		let cr = Math.sin(a[0]) * Math.cosh(a[1]),
+			ci = Math.cos(a[0]) * Math.sinh(a[1]);
+		return [cr * cr - ci * ci, 2 * cr * ci];
+	};
 
-/**
- * adds a real number and a complex number
- */
-const radd = (a, b) => {
-	return [a + b[0], b[1]];
-};
+	/**
+	 * adds a real number and a complex number
+	 */
+	const radd = (a, b) => {
+		return [a + b[0], b[1]];
+	};
 
-/**
- * substract two complex numbers
- */
-const csub = (a, b) => {
-	return [a[0] - b[0], a[1] - b[1]];
-};
-
+	/**
+	 * substract two complex numbers
+	 */
+	const csub = (a, b) => {
+		return [a[0] - b[0], a[1] - b[1]];
+	};
+}
 C(
 	() => {
 		background(0);
@@ -106,10 +109,9 @@ C(
 			},
 			yAxis: {
 				range: [-2, 2],
-				textDirection: [-0.6, -1],
-				excludeOriginTick: false,
+				labelDirection: [0, -2],
 			},
-			center: [-2, 0],
+			originPosition: [-2, 0],
 		});
 
 		let h_W = 400 / 2;
@@ -136,7 +138,7 @@ C(
 					b = b - (c1 * ssnh + (b / 2) * ccsh);
 				}
 				ColorPalettes;
-				pixel(x, y, `hsl(${(1 - i / iters) * 360}, 50%, 50%, 50%)`, 0.5);
+				pixel(x, y, `hsla(${(1 - i / iters) * 360}, 50%, 50%, 80%)`, 0.5);
 			}
 		}
 		console.timeEnd("cl");

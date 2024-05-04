@@ -37,7 +37,7 @@ export function point(x, y, size = 10, doStroke = false) {
 	ctx.arc(x, y, size / 2, 0, Math.PI * 2);
 	ctx.fill();
 	if (doStroke) ctx.stroke();
-	ctx.beginPath(); // close path don't work
+	ctx.closePath();
 }
 
 /**

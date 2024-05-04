@@ -25,17 +25,6 @@ export const BUTT = "butt",
 	EXPANDED = "expanded", // 125%
 	EXTRA_EXPANDED = "extra-expanded", // 150%
 	ULTRA_EXPANDED = "ultra-expanded", // 200%
-	// font size properties
-	XX_SMALL = "xx-small",
-	X_SMALL = "x-small",
-	SMALL = "small",
-	MEDIUM = "medium",
-	LARGE = "large",
-	X_LARGE = "x-large",
-	XX_LARGE = "xx-large",
-	XXX_LARGE = "xxx-large",
-	LARGER = "larger",
-	SMALLER = "smaller",
 	// font style properties
 	ITALIC = "italic",
 	OBLIQUE = "oblique";

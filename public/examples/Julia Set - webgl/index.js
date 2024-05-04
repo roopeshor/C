@@ -1,16 +1,17 @@
-import { C } from "../../src/main.js";
-import { numberPlane } from "../../src/objects/coordinate_systems.js";
-import { point } from "../../src/objects/geometry.js";
-import { text } from "../../src/objects/text.js";
+import { C } from "../../../src/main.js";
+import { numberPlane } from "../../../src/objects/coordinate_systems/number_plane.js";
+import { point } from "../../../src/objects/geometry.js";
+import { text } from "../../../src/objects/text.js";
 import {
 	background,
 	clear,
 	fontSize,
 	cssBackground,
 	translate,
-} from "../../src/settings.js";
-import { createWebGL } from "../../src/WebGL/webgl.js";
-import {} from "../../src/WebGL/settings.js";
+	invertYAxis,
+} from "../../../src/settings.js";
+import { createWebGL } from "../../../src/WebGL/webgl.js";
+import {} from "../../../src/WebGL/settings.js";
 
 themeToggler(document.querySelector("#themeSelector"), {});
 
@@ -93,7 +94,7 @@ window.onload = () =>
 				gl = GL.gl;
 			juliaSet.GL = GL;
 			juliaSet.gl = gl;
-			centreCanvas();
+			translate(CENTERX, CENTERY);
 			invertYAxis();
 			background(0);
 			numberPlane({

@@ -1,6 +1,7 @@
-import { C } from "../../src/main.js";
-import { numberPlane } from "../../src/objects/coordinate_systems.js";
-import { background, translate } from "../../src/settings.js";
+import { pixel } from "../../../src/c.js";
+import { C } from "../../../src/main.js";
+import { numberPlane } from "../../../src/objects/coordinate_systems/number_plane.js";
+import { background, translate } from "../../../src/settings.js";
 
 C(
 	() => {
@@ -17,12 +18,6 @@ C(
 				range: [-2, 2],
 			},
 		});
-		// let GL = createWebGL();
-		// GL.background(0);
-		// let minx = -2;
-		// let maxx = 2;
-		// let miny = -2;
-		// let maxy = 2;
 		for (let x = -h_W; x <= h_W; x += 1) {
 			for (let y = -h_H; y <= h_H; y += 1) {
 				let a = x / 50,
@@ -50,7 +45,6 @@ C(
 );
 
 function cmul(p, x, y) {
-	//prettier-ignore
 	let k = p[0] * x - p[1] * y;
 	p[1] = p[0] * p[1] + x * p[1];
 	p[0] = k;

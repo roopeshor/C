@@ -1,7 +1,7 @@
-import { Circle, Line } from "../../Extensions/Animations/constructs.js";
-import { C } from "../../src/main.js";
-import { circleIntersection, lineIntersection } from "../../src/math/points.js";
-import { background, strokeWidth } from "../../src/settings.js";
+import { Circle, Line } from "../../../Extensions/Animations/constructs.js";
+import { C } from "../../../src/main.js";
+import { circleIntersection, lineIntersection } from "../../../src/math/points.js";
+import { background, stroke, strokeWidth, translate } from "../../../src/settings.js";
 
 const W = 300;
 const H = 300;
@@ -10,7 +10,7 @@ C.debug(true);
 C(
 	() => {
 		background(0);
-		centreCanvas();
+		translate(CENTERX, CENTERY);
 		const radius = 80;
 		const c1 = [-radius / 2, radius / 2],
 			c2 = [radius / 2, -radius / 2];
@@ -71,7 +71,7 @@ C(
 C(
 	() => {
 		background(0);
-		centreCanvas();
+		translate(CENTERX, CENTERY);
 		const p1 = [-80, 80],
 			p2 = [80, -112],
 			p3 = [-128, -80],
@@ -80,6 +80,7 @@ C(
 		let angle = Math.atan2(p2[1] - p1[1], p2[0] - p1[0]);
 		let dx = Math.cos(angle) * radius;
 		let dy = Math.sin(angle) * radius;
+		stroke("#fff");
 		showCreation(
 			Circle({
 				name: "p1",

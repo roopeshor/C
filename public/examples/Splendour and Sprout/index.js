@@ -1,9 +1,9 @@
-import { Manim } from "../../Extensions/Colors/importable.js";
-import { PI } from "../../src/constants/math.js";
-import { C } from "../../src/main.js";
-import { abs, cos, round, sin } from "../../src/math/functions.js";
-import { circle, line } from "../../src/objects/geometry.js";
-import { text } from "../../src/objects/text.js";
+import { Manim } from "../../../Extensions/Colors/importable.js";
+import { PI } from "../../../src/constants/math.js";
+import { C } from "../../../src/main.js";
+import { abs, cos, round, sin } from "../../../src/math/functions.js";
+import { circle, line, rect } from "../../../src/objects/geometry.js";
+import { text } from "../../../src/objects/text.js";
 import {
 	background,
 	clear,
@@ -11,15 +11,15 @@ import {
 	loop,
 	noFill,
 	noLoop,
+	noStroke,
 	stroke,
 	strokeWidth,
 	translate,
-} from "../../src/settings.js";
+} from "../../../src/settings.js";
 let W, H, radius, animatedDrawingCfg, staticDrawingCfg;
 
 function initSize() {
 	W = C.getWindowWidth() / 1.2;
-	// W *= 1.5;
 	H = (W / 16) * 9;
 	radius = round(H / 2.1);
 	animatedDrawingCfg = {
@@ -165,9 +165,9 @@ function drawAnimated() {
 			noLoop();
 		} else {
 			linePairs(i, points.length);
-			clear(100, -100, 200, 20);
+			clear(W - 100, 0, 100, 30);
 			fill(Manim.WHITE);
-			text(fps.toFixed(3), 130, -100);
+			text(fps.toFixed(3), W / 2 - 80, -H / 2 + 20);
 		}
 	}, "animatedCvs");
 }
@@ -176,8 +176,6 @@ function drawEverything() {
 	C(drawStatic, Static, staticDrawingCfg);
 	C(drawAnimated, animated, animatedDrawingCfg);
 }
-
-drawEverything();
 
 window.updateDC = function updateDC(id, reverse) {
 	let i1 = $("#" + id);
@@ -245,3 +243,5 @@ C(
 	animated,
 	animatedDrawingCfg,
 );
+
+drawEverything();

@@ -109,7 +109,7 @@ N14 X50 Z35`;
 						length: H / 1.3,
 						range: [-50, 50, 10],
 						includeRightTip: false,
-						textDirection: [0, -1.2],
+						labelDirection: [0, -1.2],
 						fontSize: 13,
 						axisFont: 20,
 						axisLabel: "x",

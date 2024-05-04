@@ -1,13 +1,13 @@
-import { TAU } from "../../src/constants/math.js";
-import { C } from "../../src/main.js";
-import { extendFromOrigin } from "../../src/math/points.js";
-import { generatePointsInArc } from "../../src/misc/point_generator.js";
-import { bezier, point } from "../../src/objects/geometry.js";
-import { background, fill, noFill, stroke } from "../../src/settings.js";
+import { TAU } from "../../../src/constants/math.js";
+import { C } from "../../../src/main.js";
+import { extendFromOrigin } from "../../../src/math/points.js";
+import { generatePointsInArc } from "../../../src/misc/point_generator.js";
+import { bezier, point } from "../../../src/objects/geometry.js";
+import { background, fill, noFill, stroke, translate } from "../../../src/settings.js";
 
 C(
 	() => {
-		centreCanvas();
+		translate(CENTERX, CENTERY);
 		background(0);
 		stroke("yellow");
 		let pointArr = [],
