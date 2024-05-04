@@ -29,7 +29,7 @@ export function getCartasianFunctions(configs) {
 		},
 		plotHeatPlot: function (cfg) {
 			cfg.unitSpace = configs.unitSpace;
-			cfg.unitValue = configs.unitValue;
+			console.log(cfg.unitSpace);
 			cfg.min = configs.min || [configs.xAxis.range[0], configs.yAxis.range[0]];
 			cfg.max = configs.max || [configs.xAxis.range[1], configs.yAxis.range[1]];
 			return heatPlot(cfg);

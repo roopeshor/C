@@ -2,10 +2,10 @@
 
 import { Colors } from "../../c.js";
 import { C } from "../../main.js";
-import { fill, fontSize, restore, save, stroke } from "../../settings.js";
-import { applyDefault, arange } from "../../utils.js";
+import { fill, fontFamily, fontSize, restore, save, stroke } from "../../settings.js";
+import { applyDefault, arange, measureHeight } from "../../utils.js";
 import { arrowTip } from "../arrows.js";
-import { line } from "../geometry.js";
+import { line, point } from "../geometry.js";
 import { fillText } from "../text.js";
 
 const ORIGIN = [0, 0];
@@ -28,13 +28,12 @@ const ORIGIN = [0, 0];
  * @param {string} [configs.strokeColor = "white"] Color of axis and ticks
  * @param {string} [configs.textColor = "white"] Color of text
  *
- * @param {number[]} [configs.textDirection = TEXT_DIR] Direction of text relative to nearby tick
+ * @param {number[]} [configs.labelDirection = [0, -1]] Direction of text relative to nearby tick
  * @param {number[]} [configs.numbersWithElongatedTicks] list of numbers where tick line should be longer
  * @param {number[]} [configs.originPosition = ORIGIN] position of the origin of number line in pixels.
  * @param {number[]} [configs.range] range of numbers to draw ticks and numbers. Default: [-5, 5, 1]
  * @param {number[]} [configs.labelsToInclude] list of labels to be displayed instead of default numbers
  * @param {number[]} [configs.numbersToExclude] list of numbers that shouldn't be displayed
- * @param {number[]} [configs.textDirection = [0, -1]]
 
  * @param {boolean} [configs.includeTicks = true] Whether ticks should be added
  * @param {boolean} [configs.includeLeftTip = false] whether to add an arrow tip at left
@@ -64,8 +63,9 @@ export function numberLine(configs = {}) {
 			range: [-5, 5, 1],
 			strokeColor: Colors.white + "88",
 			axisLabel: "",
-			axisFont: 14,
-			axisLabelDirection: [1, -1],
+			axisLabelSize: 24,
+			axisLabelColor: "#fff",
+			axisLabelDirection: [0.5, 1.5],
 
 			tipLength: 13,
 			tipBreadth: 10,
@@ -73,11 +73,11 @@ export function numberLine(configs = {}) {
 			fontSize: 17,
 			fontFamily: "serif",
 			textRenderer: fillText,
+			textBaseline: "middle",
+			textColor: "#fff",
 			textAlign: "center",
-			textBaseline: "ideographic",
-			textColor: "white",
 			textRotation: 0,
-			textDirection: [-0.1, -0.45],
+			labelDirection: [0, -1.6],
 
 			tickHeight: 10,
 			longerTickHeight: 15,
@@ -89,7 +89,6 @@ export function numberLine(configs = {}) {
 			includeLabels: true,
 			includeLeftTip: false,
 			includeRightTip: false,
-			excludeOriginTick: false,
 		},
 		configs,
 	);
@@ -120,25 +119,19 @@ export function numberLine(configs = {}) {
 		/** A list of numbers that'll be displayed if no labels are given through numberToInclude */
 		tickList = arange(range[0], range[1], step);
 
-	// scale everyting down
-	configs.strokeWidth /= unitSpace;
-	configs.tipLength /= unitSpace;
-	configs.tipBreadth /= unitSpace;
-	configs.tickHeight /= unitSpace;
-	configs.fontSize /= unitSpace;
-	configs.axisFont /= unitSpace;
-	configs.longerTickHeight /= unitSpace;
-	configs.unitSpace = unitSpace;
 	configs.tickList = tickList;
 
 	save();
 
-	ctx.translate(configs.originPosition[0], configs.originPosition[1]);
-	ctx.scale(unitSpace, unitSpace);
+	ctx.translate(
+		configs.originPosition[0] * unitSpace,
+		configs.originPosition[1] * unitSpace,
+	);
 	ctx.rotate(configs.rotation);
+	configs.unitSpace = unitSpace;
 
 	if (configs.includeTicks) drawTicks(configs, ctx);
-	if (configs.includeLabels) drawNumbers(configs, ctx);
+	if (configs.includeLabels) drawLabels(configs, ctx);
 	drawAxis(configs, ctx);
 
 	restore(configs);
@@ -155,21 +148,21 @@ function drawAxis(configs, ctx) {
 	let {
 		includeLeftTip,
 		includeRightTip,
-		axisFont,
 		unitSpace,
 		axisLabelDirection,
 		range,
 		tipLength,
 		tipBreadth,
+		axisLabel,
 	} = configs;
-	let min = range[0],
-		max = range[1];
+	let [min, max] = range;
+	save();
 	stroke(configs.strokeColor);
 	ctx.lineWidth = configs.strokeWidth;
 	fill(configs.strokeColor);
 
-	let x1 = min,
-		x2 = max;
+	let x1 = min * unitSpace,
+		x2 = max * unitSpace;
 	ctx.doStroke = false;
 	if (includeLeftTip) {
 		arrowTip(x1 + tipLength, 0, x1, 0, tipLength, tipBreadth);
@@ -179,16 +172,14 @@ function drawAxis(configs, ctx) {
 		arrowTip(x2 - tipLength, 0, x2, 0, tipLength, tipBreadth);
 		x2 -= tipLength;
 	}
-
 	line(x1, 0, x2, 0);
-	// ctx.scale(1 / unitSpace, 1 / unitSpace);
-	fontSize(configs.axisFont);
-	ctx.translate(
-		(x2 + axisLabelDirection[0]) * unitSpace,
-		-axisLabelDirection[1] * axisFont,
-	);
+	fontSize(configs.axisLabelSize);
+	fontFamily(configs.fontFamily);
+	fill(configs.axisLabelColor);
+	let height = measureHeight(axisLabel);
+	ctx.translate(x2 + axisLabelDirection[0] * height, axisLabelDirection[1] * height);
 	ctx.rotate(configs.textRotation);
-	configs.textRenderer(configs.axisLabel, 0, 0);
+	configs.textRenderer(axisLabel, 0, 0);
 	restore();
 }
 
@@ -197,11 +188,11 @@ function drawTicks(configs, ctx) {
 		includeLeftTip,
 		includeRightTip,
 		tickList,
-		excludeOriginTick,
 		numbersToExclude,
 		numbersWithElongatedTicks,
 		longerTickHeight,
 		tickHeight,
+		unitSpace,
 	} = configs;
 	ctx.strokeStyle = configs.strokeColor;
 	ctx.lineWidth = configs.strokeWidth;
@@ -211,57 +202,56 @@ function drawTicks(configs, ctx) {
 
 	for (let i = start; i < end; i++) {
 		let tick = tickList[i];
-		if (
-			!(tick === 0 && excludeOriginTick) &&
-			!numbersToExclude.includes(tickList[0][i])
-		) {
-			let tH = numbersWithElongatedTicks.includes(tick) ? tickHeight : longerTickHeight;
-			line(tick, -tH / 2, tick, tH / 2);
+		if (!numbersToExclude.includes(tick)) {
+			let tH = numbersWithElongatedTicks.includes(tick) ? longerTickHeight : tickHeight;
+			line(tick * unitSpace, -tH / 2, tick * unitSpace, tH / 2);
 		}
 	}
 }
 
-function drawNumbers(configs, ctx) {
+/**
+ *
+ * @param {Object} configs
+ * @param {CanvasRenderingContext2D} ctx
+ */
+function drawLabels(configs, ctx) {
 	let {
 		includeLeftTip,
 		includeRightTip,
 		tickList,
-		excludeOriginTick,
 		numbersToExclude,
 		labelsToInclude,
-		textDirection,
+		labelDirection,
+		unitSpace,
 	} = configs;
 	ctx.fillStyle = configs.textColor;
 	ctx.textAlign = configs.textAlign;
 	ctx.textBaseline = configs.textBaseline;
 	ctx.fontFamily = configs.fontFamily;
-	fontSize(configs.fontSize);
 
 	let labels = labelsToInclude.length > 0 ? labelsToInclude : tickList,
 		start = includeLeftTip ? 1 : 0,
 		end = includeRightTip ? tickList.length - 1 : tickList.length;
-	ctx.save();
-	let yAdjust = (ctx.yAxisInverted ? 1 : -1) * Math.cos(configs.textRotation) * 0.25;
-	let xAdjust = (ctx.yAxisInverted ? 1 : -1) * Math.sin(configs.textRotation) * 0.25;
+
+	fontSize(configs.fontSize);
+
 	for (let i = start; i < end && i < labels.length; i++) {
-		if (
-			!(tickList[i] == 0 && excludeOriginTick) && // exclude origin tick
-			!numbersToExclude.includes(tickList[i]) // exclude ticks that were said to ignore explictly.
-		) {
+		if (!numbersToExclude.includes(tickList[i])) {
 			let tick =
 				typeof labels[i] == "number"
 					? labels[i].toFixed(configs.decimalPlaces)
 					: labels[i];
-			let { width, emHeightAscent } = ctx.measureText(tick);
-			let xShift = tickList[i] + textDirection[0] * width + emHeightAscent * xAdjust;
-			let yShift = (textDirection[1] - yAdjust) * emHeightAscent;
+			let height = measureHeight(tick);
+			let xAdjust = labelDirection[0] * height;
+			let yAdjust = labelDirection[1] * height;
+			let xShift = tickList[i];
+
 			ctx.save();
-			// shift by text direction
-			ctx.translate(xShift, yShift);
+			ctx.translate(xShift * unitSpace + xAdjust, yAdjust);
 			ctx.rotate(configs.textRotation);
 			configs.textRenderer(tick, 0, 0);
+
 			ctx.restore();
 		}
 	}
-	ctx.restore();
 }

@@ -20,24 +20,27 @@ export function axes(configs = {}) {
 	// configurations
 	configs = applyDefault(
 		{
-			xAxis: {},
+			xAxis: {
+				axisLabel: "x",
+			},
 			yAxis: {
+				axisLabel: "y",
 				rotation: Math.PI / 2,
 				textRotation: -Math.PI / 2,
-				textDirection: [0, 0.35],
+				labelDirection: [0, 0.8],
+				textAlign: "right",
+				axisLabelDirection: [0.3, 0.5],
+				axisLabelSize: 20,
 			},
 			originPosition: ORIGIN,
+			numbersToExclude: [0],
 			includeTicks: true,
 			includeLeftTip: false,
 			includeRightTip: true,
-			excludeOriginTick: true,
 		},
 		configs,
 	);
 	ctx.save();
-	// translate to originPosition
-	ctx.translate(configs.originPosition[0], configs.originPosition[1]);
-
 	assignCommonPropsToAxis(configs);
 
 	// draws number lines

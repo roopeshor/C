@@ -4,12 +4,14 @@ import {
 	fontSize,
 	restore,
 	save,
+	scale,
 	textAlign,
 	textBaseline,
 } from "../../settings.js";
 import { applyDefault, arange, fraction, texFraction } from "../../utils.js";
 import { tex, tex2svgExists } from "../tex.js";
 import { fillText } from "../text.js";
+import { axes } from "./axes.js";
 
 /**
  * @typedef {Object} PolarPlotters
@@ -70,7 +72,7 @@ const ORIGIN = [0, 0];
  * @param {number} [configs.radiusConfigs.fontSize = 22] font size of the radial axis in pixels
  * @param {number} [configs.radiusConfigs.decimalPoints = 0] number of decimal points to show up in the radial axis labels
  * @param {Function} [configs.radiusConfigs.textRenderer = fillText] function that renders text. you can use strokeText to get stroked text, or something else to get custom text
- * @param {number[]} [configs.radiusConfigs.textDirection = [-1.4, -1.2]] direction of the radial axis label. This'll align labels correctly in the position.
+ * @param {number[]} [configs.radiusConfigs.labelDirection = [-1.4, -1.2]] direction of the radial axis label. This'll align labels correctly in the position.
  * @param {number[]} [configs.radiusConfigs.labelAxis = [1, 0]] axis to labels
  * @param {boolean} [configs.radiusConfigs.includeLabels = true] whether to draw radial labels or not
 
@@ -117,7 +119,7 @@ export function polarPlane(configs = {}) {
 				strokeWidth: 2,
 				fontSize: 16,
 				fontFamily: "serif",
-				textDirection: [0.5, -0.3],
+				labelDirection: [0.4, -1],
 				labelAxis: [1],
 				numbersToExclude: [0],
 			},
@@ -169,20 +171,20 @@ export function polarPlane(configs = {}) {
 	configs.xLabels = xLabels;
 	configs.yLabels = yLabels;
 	configs.radialSpacing = radialSpacing;
-	configs.azimuthConfigs.strokeWidth /= radialSpacing;
-	configs.fadedLineConfigs.strokeWidth /= radialSpacing;
-	configs.azimuthConfigs.fontSize /= radialSpacing;
 
 	let xAxisCfgs = applyDefault(radiusConfigs, {
 			labelsToInclude: xLabels,
+			originPosition,
+			axisLabel: "",
 		}),
 		yAxisCfgs = applyDefault(radiusConfigs, {
 			labelsToInclude: yLabels,
+			originPosition,
+			axisLabel: "",
 		});
 
 	save();
-	ctx.translate(originPosition[0], originPosition[1]);
-	ctx.scale(radialSpacing, radialSpacing);
+	ctx.translate(originPosition[0] * radialSpacing, originPosition[1] * radialSpacing);
 	drawAzimuthalLines(configs, ctx);
 	restore();
 	axes({
@@ -264,6 +266,11 @@ function generateLabels(configs) {
 	return labels;
 }
 
+/**
+ *
+ * @param {Object} configs
+ * @param {CanvasRenderingContext2D} ctx
+ */
 function drawMinors(configs, ctx) {
 	const {
 		maxRadius,
@@ -273,6 +280,7 @@ function drawMinors(configs, ctx) {
 		azimuthDivisions,
 		fadedLines,
 		tickList,
+		radialSpacing,
 	} = configs;
 
 	const step = 1 / fadedLines,
@@ -288,7 +296,7 @@ function drawMinors(configs, ctx) {
 
 	// radiating circle
 	for (let i = 0; i < radMax; i++) {
-		ctx.arc(0, 0, i * step, 0, Math.PI * 2);
+		ctx.arc(0, 0, i * step * radialSpacing, 0, Math.PI * 2);
 	}
 
 	ctx.lineWidth = fadedLineConfigs.strokeWidth;
@@ -297,8 +305,8 @@ function drawMinors(configs, ctx) {
 		let angle = i * angleIncrementor * step;
 		ctx.moveTo(0, 0);
 		ctx.lineTo(
-			Math.cos(angle + azimuthoffset) * maxRadius,
-			Math.sin(angle + azimuthoffset) * maxRadius,
+			Math.cos(angle + azimuthoffset) * maxRadius * radialSpacing,
+			Math.sin(angle + azimuthoffset) * maxRadius * radialSpacing,
 		);
 	}
 	ctx.stroke();
@@ -312,20 +320,24 @@ function drawMajors(configs, ctx) {
 		angleIncrementor,
 		azimuthoffset,
 		maxRadius,
+		radialSpacing,
 	} = configs;
 	ctx.beginPath();
 	ctx.strokeStyle = azimuthConfigs.strokeColor;
 	ctx.lineWidth = azimuthConfigs.strokeWidth;
 	ctx.moveTo(0, 0);
 	for (let i = 0; i < tickList.length; i++) {
-		ctx.arc(0, 0, i, 0, Math.PI * 2);
+		ctx.arc(0, 0, i * radialSpacing, 0, Math.PI * 2);
 	}
 	for (let i = 0; i < azimuthDivisions; i++) {
 		let angle = i * angleIncrementor + azimuthoffset;
 		if (angle % (Math.PI / 2) != 0) {
 			// avoid axes
 			ctx.moveTo(0, 0);
-			ctx.lineTo(Math.cos(angle) * maxRadius, Math.sin(angle) * maxRadius);
+			ctx.lineTo(
+				Math.cos(angle) * maxRadius * radialSpacing,
+				Math.sin(angle) * maxRadius * radialSpacing,
+			);
 		}
 	}
 	ctx.stroke();
@@ -339,6 +351,7 @@ function drawAzimuthalLabels(configs) {
 		azimuthConfigs,
 		maxRadius,
 		labels,
+		radialSpacing,
 	} = configs;
 	fontSize(azimuthConfigs.fontSize);
 	fontFamily(azimuthConfigs.fontFamily);
@@ -349,8 +362,8 @@ function drawAzimuthalLabels(configs) {
 		if (!azimuthConfigs.numbersToExclude.includes(angle)) {
 			azimuthConfigs.textRenderer(
 				labels[i],
-				Math.cos(angle) * (maxRadius + azimuthConfigs.labelBuff),
-				Math.sin(angle) * (maxRadius + azimuthConfigs.labelBuff),
+				Math.cos(angle) * (maxRadius + azimuthConfigs.labelBuff) * radialSpacing,
+				Math.sin(angle) * (maxRadius + azimuthConfigs.labelBuff) * radialSpacing,
 			);
 		}
 	}
@@ -359,7 +372,7 @@ function drawAzimuthalLabels(configs) {
 /**
  *
  * @param {string} azmU
- * @returns
+ * @returns {string}
  */
 function getAzimuthUnit(azmU) {
 	azmU = azmU

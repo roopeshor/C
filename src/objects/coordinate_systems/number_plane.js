@@ -67,6 +67,7 @@ export function numberPlane(configs = {}) {
 	const unitValue = axesLines.unitValue;
 	save();
 	axesLines.scaleCanvas();
+	ctx.translate(originPosition[0], originPosition[1]);
 	gridStrokeWidth /= unitSpace[1];
 	subgridStrokeWidth /= unitSpace[1];
 	drawGridLines();
