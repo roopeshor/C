@@ -2,44 +2,17 @@ import { C } from "../../main.js";
 import { applyDefault } from "../../utils.js";
 import { getCartasianFunctions } from "./cartesian_plotters.js";
 import { numberLine } from "./number_line.js";
-
-const ORIGIN = [0, 0];
+import { AxesConfigs } from "./types.js";
 
 /**
  * Creates a axes.
- * @param {Object} configs Possible configurations are:
- * @param {Object} configs.xAxis Configurations for x axis. (See {@link numberLine} for more configurations)
- * @param {Object} configs.yAxis Configurations for y axis. (See {@link numberLine} for more configurations)
- * @param {number[]} [configs.originPosition = ORIGIN] originPosition of axes
- *
+ * @param {AxesConfigs} configs
  * @returns {CartesianPlotters}
  */
-
 export function axes(configs = {}) {
 	const ctx = C.workingContext;
 	// configurations
-	configs = applyDefault(
-		{
-			xAxis: {
-				axisLabel: "x",
-			},
-			yAxis: {
-				axisLabel: "y",
-				rotation: Math.PI / 2,
-				textRotation: -Math.PI / 2,
-				labelDirection: [0, 0.8],
-				textAlign: "right",
-				axisLabelDirection: [0.3, 0.5],
-				axisLabelSize: 20,
-			},
-			originPosition: ORIGIN,
-			numbersToExclude: [0],
-			includeTicks: true,
-			includeLeftTip: false,
-			includeRightTip: true,
-		},
-		configs,
-	);
+	configs = applyDefault(AxesConfigs, configs);
 	ctx.save();
 	assignCommonPropsToAxis(configs);
 

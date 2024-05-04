@@ -46,7 +46,7 @@ export function point(x, y, size = 10, doStroke = false) {
  * @param {number} x x-axis coordinate of center of circular sector
  * @param {number} y y-axis coordinate of center of circular sector
  * @param {number} r radius of the circular sector
- * @param {number} [angle=1.5707963267948966] central angle
+ * @param {number} [angle=PI/2] central angle
  * @param {number} [startAngle=0] The angle at which the arc starts in radians, measured from the positive x-axis.
  */
 export function circularSegment(x, y, r, angle = Math.PI / 2, startAngle = 0) {

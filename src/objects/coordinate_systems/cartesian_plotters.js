@@ -1,13 +1,6 @@
 import { scale } from "../../settings.js";
 import { functionGraph, heatPlot, parametricFunction, plotPoints } from "../functions.js";
-
-/**
- * @typedef {Object} CartesianPlotters
- * @property {Function} plotParametricFunction see {@link parametricFunction}
- * @property {Function} plotFunctionGraph see {@link functionGraph}
- * @property {Function} plotHeatPlot see {@link heatPlot}
- * @property {Function} plotPoints see {@link plotPoints}
- */
+import { CartesianPlotters } from "./types.js";
 
 /**
  * returns list of plotting functions based on given cartesian parameters

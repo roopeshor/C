@@ -1,4 +1,4 @@
-import { applyDefault, defineProperties } from "./utils.js";
+import { applyDefault, defineConstant, defineProperties } from "./utils.js";
 
 /**
  * Main Function
@@ -247,25 +247,6 @@ C.functions = {};
 
 C.COLORLIST = {}; //list of colors
 
-function defineConstant(constantList) {
-	let constants = Object.keys(constantList);
-	for (let i = 0; i < constants.length; i++) {
-		let constant = constants[i];
-		Object.defineProperty(globalThis, constant, {
-			configurable: true,
-			enumerable: true,
-			get: constantList[constant],
-			set: function (val) {
-				Object.defineProperty(globalThis, constant, {
-					configurable: true,
-					enumerable: true,
-					value: val,
-					writable: true,
-				});
-			},
-		});
-	}
-}
 defineConstant({
 	CENTERX: function () {
 		return C.workingCanvas.rWidth / 2;
@@ -273,7 +254,13 @@ defineConstant({
 	CENTERY: function () {
 		return C.workingCanvas.rHeight / 2;
 	},
+	WIDTH: function () {
+		return parseInt(C.workingCanvas.rWidth);
+	},
+	HEIGHT: function () {
+		return parseInt(C.workingCanvas.rHeight);
+	},
 });
 
 // register to globalThis
-globalThis["C"] = C;
+globalThis.C = C;

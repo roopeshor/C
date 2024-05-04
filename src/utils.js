@@ -249,3 +249,27 @@ export function measureHeight(text) {
 		C.workingContext.measureText(text);
 	return actualBoundingBoxAscent + actualBoundingBoxDescent;
 }
+
+/**
+ *
+ * @param {Object<string:Function>} constantList
+ */
+export function defineConstant(constantList) {
+	let constants = Object.keys(constantList);
+	for (let i = 0; i < constants.length; i++) {
+		let constant = constants[i];
+		Object.defineProperty(globalThis, constant, {
+			configurable: true,
+			enumerable: true,
+			get: constantList[constant],
+			set: function (val) {
+				Object.defineProperty(globalThis, constant, {
+					configurable: true,
+					enumerable: true,
+					value: val,
+					writable: true,
+				});
+			},
+		});
+	}
+}

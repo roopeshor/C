@@ -11,4 +11,5 @@ export const E = 2.71828182845904523,
 	PHI = 1.618033988749894,
 	// conversion factors
 	DEG = Math.PI / 180, // degree to radian
-	RAD = 180 / Math.PI; // radian to degree
+	RAD = 180 / Math.PI, // radian to degree
+	ORIGIN = [0, 0];
