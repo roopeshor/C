@@ -43,7 +43,7 @@ module.exports = function (grunt) {
 		jsdoc: {
 			dist: {
 				options: {
-					configure: "./c.json",
+					configure: "./docs.json",
 				},
 			},
 		},
