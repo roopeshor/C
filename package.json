@@ -12,7 +12,7 @@
 		"gcc-main": "npx google-closure-compiler --entry_point \"./src/app.js\" --js_output_file \"./dist/c.gcc.js\" --flagfile gcc.conf ",
 		"gcc-core": "npx google-closure-compiler --entry_point \"./src/core.js\" --js_output_file \"./dist/c.core.gcc.js\" --flagfile gcc.conf ",
 		"gcc-custom": "npx google-closure-compiler --flagfile gcc-custom.conf",
-		"all": "npm run fmt && npm run build && npm run map"
+		"all": "npm run fmt && npm run build"
 	},
 	"repository": {
 		"type": "git",
@@ -26,7 +26,7 @@
 	"homepage": "https://github.com/Roopesh2/C#readme",
 	"devDependencies": {
 		"docdash": "^2.0.1",
-		"esmify": "^0.1.2",
+		"esmify": "^2.1.1",
 		"google-closure-compiler": "^20211107.0.0",
 		"grunt": "^1.6.1",
 		"grunt-browserify": "^6.0.0",
