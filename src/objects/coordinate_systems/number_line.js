@@ -2,7 +2,7 @@
 
 import { C } from "../../main.js";
 import { fill, fontFamily, fontSize, restore, save, stroke } from "../../settings.js";
-import { applyDefault, arange, measureHeight } from "../../utils.js";
+import { applyDefault, arange, isLabel, measureHeight } from "../../utils.js";
 import { arrowTip } from "../arrows.js";
 import { line } from "../geometry.js";
 import { NumberLineConfigs } from "./types.js";
@@ -70,6 +70,10 @@ export function numberLine(configs = {}) {
 	};
 }
 
+/**
+ * @param {NumberLineConfigs} configs
+ * @param {CanvasRenderingContext2D} ctx
+ */
 function drawAxis(configs, ctx) {
 	let {
 		includeLeftTip,
@@ -99,16 +103,22 @@ function drawAxis(configs, ctx) {
 		x2 -= tipLength;
 	}
 	line(x1, 0, x2, 0);
-	fontSize(configs.axisLabelSize);
-	fontFamily(configs.fontFamily);
-	fill(configs.axisLabelColor);
-	let height = measureHeight(axisLabel);
-	ctx.translate(x2 + axisLabelDirection[0] * height, axisLabelDirection[1] * height);
-	ctx.rotate(configs.textRotation);
-	configs.textRenderer(axisLabel, 0, 0);
+	if (isLabel(axisLabel)) {
+		fontSize(configs.axisLabelSize);
+		fontFamily(configs.fontFamily);
+		fill(configs.axisLabelColor);
+		let height = measureHeight(axisLabel);
+		ctx.translate(x2 + axisLabelDirection[0] * height, axisLabelDirection[1] * height);
+		ctx.rotate(configs.textRotation);
+		configs.textRenderer(axisLabel, 0, 0);
+	}
 	restore();
 }
 
+/**
+ * @param {NumberLineConfigs} configs
+ * @param {CanvasRenderingContext2D} ctx
+ */
 function drawTicks(configs, ctx) {
 	let {
 		includeLeftTip,
@@ -136,8 +146,7 @@ function drawTicks(configs, ctx) {
 }
 
 /**
- *
- * @param {Object} configs
+ * @param {NumberLineConfigs} configs
  * @param {CanvasRenderingContext2D} ctx
  */
 function drawLabels(configs, ctx) {

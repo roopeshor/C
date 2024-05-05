@@ -1,6 +1,6 @@
 /** @module Vector */
-import { ColorPalettes, lerpColorArray } from "../../c.js";
-import { applyDefault, type } from "../../utils.js";
+import { ColorPalettes } from "../../constants/color_palettes.js";
+import { applyDefault } from "../../utils.js";
 
 export function vectorField(configs) {
 	let W = parseInt(cvs.style.width);

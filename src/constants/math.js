@@ -12,4 +12,5 @@ export const E = 2.71828182845904523,
 	// conversion factors
 	DEG = Math.PI / 180, // degree to radian
 	RAD = 180 / Math.PI, // radian to degree
-	ORIGIN = [0, 0];
+	ORIGIN = [0, 0],
+	UNIT_VEC = [1, 1];

@@ -654,7 +654,7 @@ _webgl.WebGL.prototype.perspective = function (fov, aspect, near, far) {
   // this.computeMatrix();
 };
 
-},{"../color/color_reader.js":7,"./m4.js":1,"./webgl.js":3}],3:[function(require,module,exports){
+},{"../color/color_reader.js":6,"./m4.js":1,"./webgl.js":3}],3:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -964,7 +964,7 @@ class WebGL {
 }
 exports.WebGL = WebGL;
 
-},{"../main.js":17,"../utils.js":37,"./m4.js":1}],4:[function(require,module,exports){
+},{"../main.js":16,"../utils.js":37,"./m4.js":1}],4:[function(require,module,exports){
 "use strict";
 
 var _utils = require("./utils.js");
@@ -1007,392 +1007,7 @@ function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; 
   C: _main.C
 }, _settings, _constants$math, _constants$drawing, _constants$color_palettes, _color$gradients, _color$random, _color$color_reader, _color$interpolation, _color$color_converters, _image$image, _image$processing, _objects$tex, _objects$text, _objects$braces, _objects$arrows, _objects$geometry, _objects$functions, _objects$coordinate_systems$axes, _objects$coordinate_systems$number_line, _objects$coordinate_systems$number_plane, _objects$coordinate_systems$polar_plane, _objects$more_shapes, _math$functions, _math$points, _math$random, _math$aritmetics, _math$rate_functions, _WebGL$webgl, _WebGL$settings].forEach(value => (0, _utils.defineProperties)(value));
 
-},{"./WebGL/settings.js":2,"./WebGL/webgl.js":3,"./color/color_converters.js":6,"./color/color_reader.js":7,"./color/gradients.js":8,"./color/interpolation.js":9,"./color/random.js":10,"./constants/color_palettes.js":11,"./constants/drawing.js":13,"./constants/math.js":14,"./image/image.js":15,"./image/processing.js":16,"./main.js":17,"./math/aritmetics.js":18,"./math/functions.js":19,"./math/points.js":20,"./math/random.js":21,"./math/rate_functions.js":22,"./objects/arrows.js":23,"./objects/braces.js":24,"./objects/coordinate_systems/axes.js":25,"./objects/coordinate_systems/number_line.js":27,"./objects/coordinate_systems/number_plane.js":28,"./objects/coordinate_systems/polar_plane.js":29,"./objects/functions.js":31,"./objects/geometry.js":32,"./objects/more_shapes.js":33,"./objects/tex.js":34,"./objects/text.js":35,"./settings.js":36,"./utils.js":37}],5:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-var _exportNames = {
-  defineProperties: true,
-  C: true
-};
-Object.defineProperty(exports, "C", {
-  enumerable: true,
-  get: function () {
-    return _main.C;
-  }
-});
-Object.defineProperty(exports, "defineProperties", {
-  enumerable: true,
-  get: function () {
-    return _utils.defineProperties;
-  }
-});
-var _utils = require("./utils.js");
-var _settings = require("./settings.js");
-Object.keys(_settings).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _settings[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _settings[key];
-    }
-  });
-});
-var _main = require("./main.js");
-var _color_palettes = require("./constants/color_palettes.js");
-Object.keys(_color_palettes).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _color_palettes[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _color_palettes[key];
-    }
-  });
-});
-var _drawing = require("./constants/drawing.js");
-Object.keys(_drawing).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _drawing[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _drawing[key];
-    }
-  });
-});
-var _colors = require("./constants/colors.js");
-Object.keys(_colors).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _colors[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _colors[key];
-    }
-  });
-});
-var _math = require("./constants/math.js");
-Object.keys(_math).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _math[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _math[key];
-    }
-  });
-});
-var _color_converters = require("./color/color_converters.js");
-Object.keys(_color_converters).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _color_converters[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _color_converters[key];
-    }
-  });
-});
-var _color_reader = require("./color/color_reader.js");
-Object.keys(_color_reader).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _color_reader[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _color_reader[key];
-    }
-  });
-});
-var _gradients = require("./color/gradients.js");
-Object.keys(_gradients).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _gradients[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _gradients[key];
-    }
-  });
-});
-var _interpolation = require("./color/interpolation.js");
-Object.keys(_interpolation).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _interpolation[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _interpolation[key];
-    }
-  });
-});
-var _random = require("./color/random.js");
-Object.keys(_random).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _random[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _random[key];
-    }
-  });
-});
-var _image = require("./image/image.js");
-Object.keys(_image).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _image[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _image[key];
-    }
-  });
-});
-var _processing = require("./image/processing.js");
-Object.keys(_processing).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _processing[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _processing[key];
-    }
-  });
-});
-var _arrows = require("./objects/arrows.js");
-Object.keys(_arrows).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _arrows[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _arrows[key];
-    }
-  });
-});
-var _braces = require("./objects/braces.js");
-Object.keys(_braces).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _braces[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _braces[key];
-    }
-  });
-});
-var _functions = require("./objects/functions.js");
-Object.keys(_functions).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _functions[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _functions[key];
-    }
-  });
-});
-var _geometry = require("./objects/geometry.js");
-Object.keys(_geometry).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _geometry[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _geometry[key];
-    }
-  });
-});
-var _more_shapes = require("./objects/more_shapes.js");
-Object.keys(_more_shapes).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _more_shapes[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _more_shapes[key];
-    }
-  });
-});
-var _tex = require("./objects/tex.js");
-Object.keys(_tex).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _tex[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _tex[key];
-    }
-  });
-});
-var _text = require("./objects/text.js");
-Object.keys(_text).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _text[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _text[key];
-    }
-  });
-});
-var _number_plane = require("./objects/coordinate_systems/number_plane.js");
-Object.keys(_number_plane).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _number_plane[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _number_plane[key];
-    }
-  });
-});
-var _polar_plane = require("./objects/coordinate_systems/polar_plane.js");
-Object.keys(_polar_plane).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _polar_plane[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _polar_plane[key];
-    }
-  });
-});
-var _axes = require("./objects/coordinate_systems/axes.js");
-Object.keys(_axes).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _axes[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _axes[key];
-    }
-  });
-});
-var _number_line = require("./objects/coordinate_systems/number_line.js");
-Object.keys(_number_line).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _number_line[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _number_line[key];
-    }
-  });
-});
-var _aritmetics = require("./math/aritmetics.js");
-Object.keys(_aritmetics).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _aritmetics[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _aritmetics[key];
-    }
-  });
-});
-var _functions2 = require("./math/functions.js");
-Object.keys(_functions2).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _functions2[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _functions2[key];
-    }
-  });
-});
-var _points = require("./math/points.js");
-Object.keys(_points).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _points[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _points[key];
-    }
-  });
-});
-var _random2 = require("./math/random.js");
-Object.keys(_random2).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _random2[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _random2[key];
-    }
-  });
-});
-var _rate_functions = require("./math/rate_functions.js");
-Object.keys(_rate_functions).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _rate_functions[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _rate_functions[key];
-    }
-  });
-});
-var _settings2 = require("./WebGL/settings.js");
-Object.keys(_settings2).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _settings2[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _settings2[key];
-    }
-  });
-});
-var _webgl = require("./WebGL/webgl.js");
-Object.keys(_webgl).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _webgl[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _webgl[key];
-    }
-  });
-});
-
-},{"./WebGL/settings.js":2,"./WebGL/webgl.js":3,"./color/color_converters.js":6,"./color/color_reader.js":7,"./color/gradients.js":8,"./color/interpolation.js":9,"./color/random.js":10,"./constants/color_palettes.js":11,"./constants/colors.js":12,"./constants/drawing.js":13,"./constants/math.js":14,"./image/image.js":15,"./image/processing.js":16,"./main.js":17,"./math/aritmetics.js":18,"./math/functions.js":19,"./math/points.js":20,"./math/random.js":21,"./math/rate_functions.js":22,"./objects/arrows.js":23,"./objects/braces.js":24,"./objects/coordinate_systems/axes.js":25,"./objects/coordinate_systems/number_line.js":27,"./objects/coordinate_systems/number_plane.js":28,"./objects/coordinate_systems/polar_plane.js":29,"./objects/functions.js":31,"./objects/geometry.js":32,"./objects/more_shapes.js":33,"./objects/tex.js":34,"./objects/text.js":35,"./settings.js":36,"./utils.js":37}],6:[function(require,module,exports){
+},{"./WebGL/settings.js":2,"./WebGL/webgl.js":3,"./color/color_converters.js":5,"./color/color_reader.js":6,"./color/gradients.js":7,"./color/interpolation.js":8,"./color/random.js":9,"./constants/color_palettes.js":10,"./constants/drawing.js":12,"./constants/math.js":13,"./image/image.js":14,"./image/processing.js":15,"./main.js":16,"./math/aritmetics.js":17,"./math/functions.js":18,"./math/points.js":19,"./math/random.js":20,"./math/rate_functions.js":21,"./objects/arrows.js":22,"./objects/braces.js":23,"./objects/coordinate_systems/axes.js":24,"./objects/coordinate_systems/number_line.js":26,"./objects/coordinate_systems/number_plane.js":27,"./objects/coordinate_systems/polar_plane.js":28,"./objects/functions.js":30,"./objects/geometry.js":31,"./objects/more_shapes.js":32,"./objects/tex.js":33,"./objects/text.js":34,"./settings.js":36,"./utils.js":37}],5:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1521,7 +1136,7 @@ function HSVToRGB(hue, saturation, value) {
   return [r, g, b];
 }
 
-},{}],7:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1648,7 +1263,7 @@ function readColor(...color) {
   };
 }
 
-},{"../constants/colors.js":12}],8:[function(require,module,exports){
+},{"../constants/colors.js":11}],7:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1709,7 +1324,7 @@ function linearGradient(initialPoint, finalPoint, colStops) {
   return gradient;
 }
 
-},{"../main.js":17,"../utils.js":37}],9:[function(require,module,exports){
+},{"../main.js":16,"../utils.js":37}],8:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1805,7 +1420,7 @@ function getInterpolatedColorList(colorPalatte, min = 0, max = 5, alpha) {
   return colorObj;
 }
 
-},{"./color_reader.js":7}],10:[function(require,module,exports){
+},{"./color_reader.js":6}],9:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1843,7 +1458,7 @@ function randomDefinedColor() {
   return _colors.Colors[definedColorList[(0, _random.randomInt)(definedColorList.length - 1)]];
 }
 
-},{"../constants/colors.js":12,"../math/random.js":21}],11:[function(require,module,exports){
+},{"../constants/colors.js":11,"../math/random.js":20}],10:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1902,7 +1517,7 @@ const ColorPalettes = exports.ColorPalettes = {
 };
 for (var p in ColorPalettes) ColorPalettes[p] = ColorPalettes[p].split(" ");
 
-},{}],12:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2063,7 +1678,7 @@ const Colors = exports.Colors = {
   yellowgreen: "#9acd32"
 };
 
-},{}],13:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2110,13 +1725,13 @@ const BUTT = exports.BUTT = "butt",
   ITALIC = exports.ITALIC = "italic",
   OBLIQUE = exports.OBLIQUE = "oblique";
 
-},{}],14:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.TWO_PI = exports.TIERCE_PI = exports.TAU = exports.SQRT2 = exports.RAD = exports.QUATER_PI = exports.PI = exports.PHI = exports.ORIGIN = exports.LN2 = exports.LN10 = exports.HALF_PI = exports.E = exports.DEG = void 0;
+exports.UNIT_VEC = exports.TWO_PI = exports.TIERCE_PI = exports.TAU = exports.SQRT2 = exports.RAD = exports.QUATER_PI = exports.PI = exports.PHI = exports.ORIGIN = exports.LN2 = exports.LN10 = exports.HALF_PI = exports.E = exports.DEG = void 0;
 const E = exports.E = 2.71828182845904523,
   LN2 = exports.LN2 = 0.6931471805599453,
   LN10 = exports.LN10 = 2.30258509299404568,
@@ -2133,9 +1748,10 @@ const E = exports.E = 2.71828182845904523,
   // degree to radian
   RAD = exports.RAD = 180 / Math.PI,
   // radian to degree
-  ORIGIN = exports.ORIGIN = [0, 0];
+  ORIGIN = exports.ORIGIN = [0, 0],
+  UNIT_VEC = exports.UNIT_VEC = [1, 1];
 
-},{}],15:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2219,7 +1835,7 @@ function loadImagePromise(url) {
   });
 }
 
-},{"../main.js":17}],16:[function(require,module,exports){
+},{"../main.js":16}],15:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2382,7 +1998,7 @@ function imageToData(image, x, y, width, height, smoothen = false) {
   return ctx.getImageData(x, y, width, height);
 }
 
-},{"../color/color_reader.js":7,"../main.js":17}],17:[function(require,module,exports){
+},{"../color/color_reader.js":6,"../main.js":16}],16:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2647,7 +2263,7 @@ C.COLORLIST = {}; //list of colors
 // register to globalThis
 globalThis.C = C;
 
-},{"./utils.js":37}],18:[function(require,module,exports){
+},{"./utils.js":37}],17:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2708,7 +2324,7 @@ function lcmArray(list) {
   return n;
 }
 
-},{}],19:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2771,7 +2387,7 @@ function sigmoid(t) {
   return 1.0 / (1 + Math.exp(-t));
 }
 
-},{}],20:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2887,7 +2503,7 @@ function extendFromOrigin(point, len = 10) {
   return extendFromPoint([0, 0], point, len);
 }
 
-},{}],21:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2906,7 +2522,7 @@ function randomInt(max = 10, min = 0) {
   return Math.round(Math.random() * (max - min) + min);
 }
 
-},{}],22:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3109,7 +2725,7 @@ function exponentialDecay(t, halfLife = 0.1) {
 // 	return bezier([0, 0, pullFactor, pullFactor, 1, 1, 1])(t);
 // }
 
-},{"./functions.js":19}],23:[function(require,module,exports){
+},{"./functions.js":18}],22:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3433,7 +3049,7 @@ function curvedDoubleArrowBetweenPoints(p1, p2, radius, tipLength = DEFAULT_TIP_
   return center;
 }
 
-},{"../constants/drawing.js":13,"../main.js":17,"../math/points.js":20,"../settings.js":36,"../utils.js":37,"./text.js":35}],24:[function(require,module,exports){
+},{"../constants/drawing.js":12,"../main.js":16,"../math/points.js":19,"../settings.js":36,"../utils.js":37,"./text.js":34}],23:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3521,7 +3137,7 @@ function arcBrace(x, y, radius = 100, angle = Math.PI / 2, startAngle = 0, small
   return [(largerRadius + extender) * Math.cos(angle / 2 + startAngle) + x, (largerRadius + extender) * Math.sin(angle / 2 + startAngle) + y];
 }
 
-},{"../main.js":17}],25:[function(require,module,exports){
+},{"../main.js":16}],24:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3552,11 +3168,11 @@ function axes(configs = {}) {
   ctx.restore();
   return (0, _cartesian_plotters.getCartasianFunctions)({
     originPosition: configs.originPosition,
-    // originPosition of axis as [x, y] in px
+    // originPosition of axis in terms of `unitSpaces`
     xAxis: xAxisLine,
-    // x axis confiurations from numberLine
+    // x axis configurations from numberLine
     yAxis: yAxisLine,
-    // y axis confiurations from numberLine
+    // y axis configurations from numberLine
     unitSpace: [xAxisLine.unitSpace, yAxisLine.unitSpace],
     // space between two ticks in pixels
     unitValue: [xAxisLine.unitValue, yAxisLine.unitValue] // value between two close ticks
@@ -3580,7 +3196,7 @@ function assignCommonPropsToAxis(configs) {
   }
 }
 
-},{"../../main.js":17,"../../utils.js":37,"./cartesian_plotters.js":26,"./number_line.js":27,"./types.js":30}],26:[function(require,module,exports){
+},{"../../main.js":16,"../../utils.js":37,"./cartesian_plotters.js":25,"./number_line.js":26,"./types.js":29}],25:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3628,7 +3244,7 @@ function getCartasianFunctions(configs) {
   });
 }
 
-},{"../../settings.js":36,"../functions.js":31,"./types.js":30}],27:[function(require,module,exports){
+},{"../../settings.js":36,"../functions.js":30,"./types.js":29}],26:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3695,6 +3311,11 @@ function numberLine(configs = {}) {
     unitSpace: unitSpace
   };
 }
+
+/**
+ * @param {NumberLineConfigs} configs
+ * @param {CanvasRenderingContext2D} ctx
+ */
 function drawAxis(configs, ctx) {
   let {
     includeLeftTip,
@@ -3723,15 +3344,22 @@ function drawAxis(configs, ctx) {
     x2 -= tipLength;
   }
   (0, _geometry.line)(x1, 0, x2, 0);
-  (0, _settings.fontSize)(configs.axisLabelSize);
-  (0, _settings.fontFamily)(configs.fontFamily);
-  (0, _settings.fill)(configs.axisLabelColor);
-  let height = (0, _utils.measureHeight)(axisLabel);
-  ctx.translate(x2 + axisLabelDirection[0] * height, axisLabelDirection[1] * height);
-  ctx.rotate(configs.textRotation);
-  configs.textRenderer(axisLabel, 0, 0);
+  if ((0, _utils.isLabel)(axisLabel)) {
+    (0, _settings.fontSize)(configs.axisLabelSize);
+    (0, _settings.fontFamily)(configs.fontFamily);
+    (0, _settings.fill)(configs.axisLabelColor);
+    let height = (0, _utils.measureHeight)(axisLabel);
+    ctx.translate(x2 + axisLabelDirection[0] * height, axisLabelDirection[1] * height);
+    ctx.rotate(configs.textRotation);
+    configs.textRenderer(axisLabel, 0, 0);
+  }
   (0, _settings.restore)();
 }
+
+/**
+ * @param {NumberLineConfigs} configs
+ * @param {CanvasRenderingContext2D} ctx
+ */
 function drawTicks(configs, ctx) {
   let {
     includeLeftTip,
@@ -3757,8 +3385,7 @@ function drawTicks(configs, ctx) {
 }
 
 /**
- *
- * @param {Object} configs
+ * @param {NumberLineConfigs} configs
  * @param {CanvasRenderingContext2D} ctx
  */
 function drawLabels(configs, ctx) {
@@ -3795,14 +3422,14 @@ function drawLabels(configs, ctx) {
   }
 }
 
-},{"../../main.js":17,"../../settings.js":36,"../../utils.js":37,"../arrows.js":23,"../geometry.js":32,"./types.js":30}],28:[function(require,module,exports){
+},{"../../main.js":16,"../../settings.js":36,"../../utils.js":37,"../arrows.js":22,"../geometry.js":31,"./types.js":29}],27:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.numberPlane = numberPlane;
-var _c = require("../../c.js");
+var _axes = require("./axes.js");
 var _main = require("../../main.js");
 var _settings = require("../../settings.js");
 var _utils = require("../../utils.js");
@@ -3827,7 +3454,7 @@ function numberPlane(configs = {}) {
   } = configs;
 
   // range of ticks in each axis
-  const axesLines = (0, _c.axes)(configs);
+  const axesLines = (0, _axes.axes)(configs);
   const {
     xAxis,
     yAxis
@@ -3910,7 +3537,7 @@ function numberPlane(configs = {}) {
   });
 }
 
-},{"../../c.js":5,"../../main.js":17,"../../settings.js":36,"../../utils.js":37,"./cartesian_plotters.js":26,"./types.js":30}],29:[function(require,module,exports){
+},{"../../main.js":16,"../../settings.js":36,"../../utils.js":37,"./axes.js":24,"./cartesian_plotters.js":25,"./types.js":29}],28:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4209,14 +3836,15 @@ function fillLabels(maxRadius, labels, labelAxis) {
   return [xLabels, yLabels];
 }
 
-},{"../../main.js":17,"../../settings.js":36,"../../utils.js":37,"../tex.js":34,"./axes.js":25,"./types.js":30}],30:[function(require,module,exports){
+},{"../../main.js":16,"../../settings.js":36,"../../utils.js":37,"../tex.js":33,"./axes.js":24,"./types.js":29}],29:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.ScalarSpaceProperties = exports.PolarPlotters = exports.PolarPlaneConfigs = exports.NumberPlaneConfigs = exports.NumberLineConfigs = exports.CartesianPlotters = exports.AxesConfigs = void 0;
-var _c = require("../../c.js");
+var _text = require("../text.js");
+var _math = require("../../constants/math.js");
 /**
  * @typedef {Object} ScalarSpaceProperties configurations about the number line
  * @property {number[]} range -  range of numbers to draw ticks and numbers
@@ -4230,40 +3858,49 @@ const ScalarSpaceProperties = exports.ScalarSpaceProperties = {};
 /**
  * @typedef {Object} NumberLineConfigs configurations given tonumberLine
  *
- * @property {number} [rotation=0]
- * @property {number} [strokeWidth=2]
- * @property {number} [length=WIDTH]
- * @property {number[]} [originPosition=ORIGIN]
+ * @property {number} [rotation=0] rotation of line around its origin
+ * @property {number} [strokeWidth=2] stroke width of number line and ticks
+ * @property {number} [length=WIDTH] length of number line (in terms of pixels)
+ * @property {number[]} [originPosition=ORIGIN] position of origin relative to unitSize
  * @property {number[]} [range=[-5, 5, 1]] range of numbers to draw ticks and numbers. Default: [-5, 5, 1]
- * @property {string} [strokeColor="#ffffff88"]
- * @property {string} [axisLabel=""]
- * @property {number} [axisLabelSize=24]
- * @property {string} [axisLabelColor="#fff"]
- * @property {number[]} [axisLabelDirection=[0.5, 1.5]]
- * @property {number} [tipLength=13]
- * @property {number} [tipBreadth=10]
- * @property {number} [fontSize=17]
- * @property {string} [fontFamily="serif"]
- * @property {string} [textRenderer=fillText]
- * @property {string} [textBaseline="middle"]
- * @property {string} [textColor="#ffffff"]
- * @property {string} [textAlign="center"]
- * @property {number} [textRotation=0]
- * @property {number[]} [labelDirection=[0, -1.6]]
- * @property {number} [tickHeight=10]
- * @property {number} [longerTickHeight=15]
- * @property {number[]|string[]} [labelsToInclude=[]]
- * @property {number[]} [numbersToExclude=[]]
- * @property {number[]} [numbersWithElongatedTicks=[]]
- * @property {boolean} [includeTicks=true]
- * @property {boolean} [includeLabels=true]
- * @property {boolean} [includeLeftTip=false]
- * @property {boolean} [includeRightTip=false]
+ * @property {string} [strokeColor="#ffffff88"] color of number line and ticks
+ * @property {string} [axisLabel=""] label of axis. By default no axis label is drawn
+ * @property {number} [axisLabelSize=24] font size of axis label
+ * @property {string} [axisLabelColor="#fff"] color of axis label
+ * @property {number[]} [axisLabelDirection=[0.5, 1.5]] position of axis label relative to right tip
+ *   end in terms of height of axis label.See {@link measureHeight}
+ * @property {number} [tipLength=13] length of tip (horizontal stretch)
+ * @property {number} [tipBreadth=10] height of tip
+ * @property {number} [fontSize=17] size of tick labels
+ * @property {string} [fontFamily="serif"] font of tick labels
+ * @property {string} [textRenderer=fillText] function used to render text. Eg: fillText, strokeText
+ * @property {string} [textBaseline="middle"] baseline of labels
+ * @property {string} [textColor="#ffffff"] color of labels
+ * @property {string} [textAlign="center"] horizontal alignment of label
+ * @property {number} [textRotation=0] rotatoin of label around its center
+ *   (works with default values of textBaseline and textAlign)
+ * @property {number[]} [labelDirection=[0, -1.6]] position of tick labels relative to their ticks
+ *   in number line in terms of height of label.See {@link measureHeight}
+ * @property {number} [tickHeight=10] height of ticks in pixels
+ * @property {number} [longerTickHeight=15] height of longer ticks (marked by
+ *   numbersWithElongatedTicks) in terms of pixels
+ * @property {number[]|string[]} [labelsToInclude=[]] labels to display instead of numbers
+ *   generated from range. Contents of this array will be displayed, if this is included
+ *   in configs.
+ * @property {number[]} [numbersToExclude=[]] numbers to exclude from displaying. These numbers
+ *   are part of default labels
+ * @property {number[]} [numbersWithElongatedTicks=[]] numbers that should be displayed elongated
+ * @property {boolean} [includeTicks=true] whether to display ticks
+ * @property {boolean} [includeLabels=true] whether to display labels
+ * @property {boolean} [includeLeftTip=false] whether to display left tip. It will
+ *   remove left-most tick
+ * @property {boolean} [includeRightTip=false] whether to display right tip. It will
+ *   remove right-most tick
  */
 const NumberLineConfigs = exports.NumberLineConfigs = {
   rotation: 0,
   strokeWidth: 2,
-  originPosition: _c.ORIGIN,
+  originPosition: _math.ORIGIN,
   range: [-5, 5, 1],
   strokeColor: "#ffffff88",
   axisLabel: "",
@@ -4274,7 +3911,7 @@ const NumberLineConfigs = exports.NumberLineConfigs = {
   tipBreadth: 10,
   fontSize: 17,
   fontFamily: "serif",
-  textRenderer: _c.fillText,
+  textRenderer: _text.fillText,
   textBaseline: "middle",
   textColor: "#fff",
   textAlign: "center",
@@ -4297,6 +3934,12 @@ const NumberLineConfigs = exports.NumberLineConfigs = {
  * @property {Function} plotFunctionGraph plots a ordinary single valued function. see {@link functionGraph}
  * @property {Function} plotHeatPlot plots a 2D heatPlot. see {@link heatPlot}
  * @property {Function} plotPoints plots a list of points. see {@link plotPoints}
+ * @property {Function} originPosition Center of of axis in terms of `unitSpaces`
+ * @property {Function} scaleCanvas scales cavas by `unitSpaces`/`unitSize`
+ * @property {ScalarSpaceProperties} xAxis properties of x axis
+ * @property {ScalarSpaceProperties} yAxis properties of y axis
+ * @property {number[]} unitSpace space between two ticks in pixels
+ * @property {number[]} unitValue value between two close ticks
  */
 const CartesianPlotters = exports.CartesianPlotters = {};
 
@@ -4306,7 +3949,6 @@ const CartesianPlotters = exports.CartesianPlotters = {};
  * @property {NumberLineConfigs} yAxis Configurations for y axis. See {@link numberLine} for possible configurations.
  * @property {number[]} originPosition Center of number plane as [x, y] in px.
  * @property {number[]} [subgrids] number of sub-grid lines in each cell. Default=[1,1]
- * @property {Object} grid Set of styles to draw grid & subgrids. This can have following properties:
  * @property {number} [gridStrokeWidth = 1]  stroke width of grid lines
  * @property {number} [subgridStrokeWidth = 0.7]  stroke width of sub-grid
  * @property {string} [gridStrokeColor = "#58c4dda0"]  color of grid lines
@@ -4318,21 +3960,24 @@ const NumberPlaneConfigs = exports.NumberPlaneConfigs = {
   includeLeftTip: false,
   includeRightTip: false,
   excludeOriginTick: true,
-  unitSpace: 50,
   subgrids: [1, 1],
   gridStrokeWidth: 1.3,
   subgridStrokeWidth: 0.8,
   gridStrokeColor: "#00ffff44",
   subgridStrokeColor: "#88888850",
-  originPosition: _c.ORIGIN
+  originPosition: _math.ORIGIN
 };
 
 /**
  * @typedef {Object} AxesConfigs
- * @property {Object} xAxis Configurations for x axis. (See {@link numberLine} for more configurations)
- * @property {Object} yAxis Configurations for y axis. (See {@link numberLine} for more configurations)
+ * @property {NumberLineConfigs} xAxis Configurations for x axis. (See {@link numberLine} for more configurations)
+ * @property {NumberLineConfigs} yAxis Configurations for y axis. (See {@link numberLine} for more configurations)
  * @property {number[]} [originPosition = ORIGIN] originPosition of axes
- *
+ * @property {boolean} [includeTicks=true] whether to display ticks. This is passed to each numberLines
+ * @property {boolean} [includeLeftTip=false] whether to display left tip. It will
+ *   remove left-most tick. This is passed to each numberLines
+ * @property {boolean} [includeRightTip=false] whether to display right tip. It will
+ *   remove right-most tick. This is passed to each numberLines
  */
 const AxesConfigs = exports.AxesConfigs = {
   xAxis: {
@@ -4347,7 +3992,7 @@ const AxesConfigs = exports.AxesConfigs = {
     axisLabelDirection: [0.3, 0.5],
     axisLabelSize: 20
   },
-  originPosition: _c.ORIGIN,
+  originPosition: _math.ORIGIN,
   numbersToExclude: [0],
   includeTicks: true,
   includeLeftTip: false,
@@ -4364,9 +4009,13 @@ const AxesConfigs = exports.AxesConfigs = {
  *  * "PI radians" or "TAU radians": 20
  *  * "degrees": 36
  *  * "gradians": 40
- * @property {number} [azimuthDivisions = 0]  The number of divisions in the azimuth (also known as the angular coordinate or polar angle). If None is specified then it will use the default specified by azimuthUnit
- * @property {Array.<*>} [radialLabels = []] Labels for the radial axis. If nothing is specified then the labels will be automatically generated using the radialStep.
- * @property {string} [azimuthDirection = "ccw"] direction of the azimuthal labels. This can be either 'ccw' or 'cw'
+ * @property {number} [azimuthDivisions = 0]  The number of divisions in the azimuth
+ *   (also known as the angular coordinate or polar angle). If None is
+ *   specified then it will use the default specified by azimuthUnit
+ * @property {Array.<*>} [radialLabels = []] Labels for the radial axis. If nothing
+ *   is specified then the labels will be automatically generated using the radialStep.
+ * @property {string} [azimuthDirection = "ccw"] direction of the azimuthal labels.
+ *   This can be either 'ccw' or 'cw'
 
  * @property {Object} [radiusConfigs] radial axis configurations
  * @property {string} [radiusConfigs.strokeColor = "#fff"] stroke color of the radial axis
@@ -4375,9 +4024,11 @@ const AxesConfigs = exports.AxesConfigs = {
  * @property {string} [radiusConfigs.textBaseline = "middle"] text baseline of the radial axis labels
  * @property {number} [radiusConfigs.strokeWidth = 2] stroke width of the radial axis in pixels
  * @property {number} [radiusConfigs.fontSize = 22] font size of the radial axis in pixels
- * @property {number} [radiusConfigs.decimalPoints = 0] number of decimal points to show up in the radial axis labels
- * @property {Function} [radiusConfigs.textRenderer = fillText] function that renders text. you can use strokeText to get stroked text, or something else to get custom text
- * @property {number[]} [radiusConfigs.labelDirection = [-1.4, -1.2]] direction of the radial axis label. This'll align labels correctly in the position.
+ * @property {number} [radiusConfigs.decimalPoints = 0] number of decimal points to showup in the radial axis labels
+ * @property {Function} [radiusConfigs.textRenderer = fillText] function that renders text.
+ *   You can use strokeText to get stroked text, or something else to get custom text
+ * @property {number[]} [radiusConfigs.labelDirection = [-1.4, -1.2]] direction of the radial axis label.
+ *   This will align labels correctly in the position.
  * @property {number[]} [radiusConfigs.labelAxis = [1, 0]] axis to labels
  * @property {boolean} [radiusConfigs.includeLabels = true] whether to draw radial labels or not
 
@@ -4390,11 +4041,12 @@ const AxesConfigs = exports.AxesConfigs = {
  * @property {number} [azimuth.decimalPoints = 0] number of decimal points to show up in the azimuthal labels
  * @property {string} [azimuth.fontFamily = "serif"] font family of the azimuthal labels
  * @property {string} [azimuth.strokeColor = "#58c4dddd"] stroke color of the azimuthal labels
- * @property {Function} [azimuth.textRenderer = fillText] function that renders text. you can use strokeText to get stroked text, or something else to get custom text
+ * @property {Function} [azimuth.textRenderer = fillText] function that renders text.
+ *   You can use strokeText to get stroked text, or something else to get custom text
  * @property {boolean} [azimuth.includeLabels = true] whether to draw azimuthal labels or not
   */
 const PolarPlaneConfigs = exports.PolarPlaneConfigs = {
-  originPosition: _c.ORIGIN,
+  originPosition: _math.ORIGIN,
   maxRadius: 4.0,
   radiusStep: 1,
   azimuthUnit: "PI radians",
@@ -4424,7 +4076,7 @@ const PolarPlaneConfigs = exports.PolarPlaneConfigs = {
     textBaseline: "middle",
     strokeColor: "#58c4ddaa",
     strokeWidth: 1.3,
-    textRenderer: _c.fillText,
+    textRenderer: _text.fillText,
     decimalPoints: 0,
     numbersToExclude: [0]
   },
@@ -4443,7 +4095,7 @@ const PolarPlaneConfigs = exports.PolarPlaneConfigs = {
  */
 const PolarPlotters = exports.PolarPlotters = {};
 
-},{"../../c.js":5}],31:[function(require,module,exports){
+},{"../../constants/math.js":13,"../text.js":34}],30:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4461,32 +4113,8 @@ var _main = require("../main.js");
 var _settings = require("../settings.js");
 var _utils = require("../utils.js");
 var _geometry = require("./geometry.js");
+var _types = require("./types.js");
 /**@module Plottter-Functions */
-
-/**
- * @typedef {Object} CartesianPoint
- * @property {number} x
- * @property {number} y
- * @property {number} radius radius of point
- * @property {string} fill fill style
- * @property {string} stroke stroke styles
- */
-
-/**
- * @typedef {Object} PolarPoint
- * @property {number} r distance from origin
- * @property {number} phi radial distance from +x axis in CCW direction
- * @property {number} radius radius of point
- * @property {string} fill fill style
- * @property {string} stroke stroke styles
- */
-
-/**
- * @typedef {Object} ParametricPlotter
- * @property {number[][]} points : Array of computed points in the function
- * @property {Function} draw : Function that draws the plot
- * @property {Function} animate : Function that animates the drawing of the shape. Accept argument `duration` which is the duration of animation.
- */
 
 const animationEventChain = {
   then: function (f) {
@@ -4497,41 +4125,14 @@ const animationEventChain = {
 let counter = {
   parametricFunction: 1
 };
-const RANGE = [0, 10, 0.1];
-const UNIT_VEC = [1, 1];
+
 /**
  * Draws a parametric functions
- * This accept parameters as object.
- * @param {Object} configs configurations
- * @param {Function} configs.plotter function to plot. Must recieve one argument and return a array of point as [x, y]
- * @param {number} [configs.tension = 1] Smoothness tension.
- * @param {number[]} [configs.range = RANGE] Range as [min, max, dt]
- * @param {number[]} [configs.discontinuities] Array of t where the curve discontinues.
- * @param {number[]} [configs.unitValue = [1, 1]] Value of each unit space
- * @param {number[]} [configs.unitSpace = [1, 1]] Length of each unit in pixels
- * @param {boolean} [configs.smoothen = true] Whether to smoothen the shape.
- * @param {boolean} [configs.closed = false] Whether the function draws a closed shape.
- * @param {boolean} [configs.draw = true] Wheteher to draw the function graph right now.
- * @param {number} [configs.strokeWidth = 2]
- * @param {number} [configs.discontinuityRadius = range[2]]
- *
+ * @param {ParametricFunctionConfigs} configs
  * @returns {ParametricPlotter}
  */
 function parametricFunction(configs) {
-  let defaultConfigs = {
-    tension: 1,
-    unitValue: UNIT_VEC,
-    unitSpace: UNIT_VEC,
-    // length of each unit in pixels
-    range: RANGE,
-    discontinuities: [],
-    smoothen: true,
-    closed: false,
-    draw: true,
-    // for animation
-    dur: 4000
-  };
-  configs = (0, _utils.applyDefault)(defaultConfigs, configs);
+  configs = (0, _utils.applyDefault)(_types.ParametricFunctionConfigs, configs);
   let {
     plotter,
     range,
@@ -4541,10 +4142,8 @@ function parametricFunction(configs) {
     closed
   } = configs;
   if (Array.isArray(range) && range.length == 2) range.push((range[1] - range[0]) / 20);
-  let points = [[]],
-    min = range[0],
-    max = range[1],
-    step = range[2];
+  let points = [[]];
+  let [min, max, step] = range;
   if (!Array.isArray(discontinuities)) discontinuities = [];
 
   // generate points
@@ -4642,7 +4241,7 @@ function parametricFunction(configs) {
  * Draws graph of funciton
  * See {@link parametricFunction} For arguments
  *
- * @param {Object} configs
+ * @param {ParametricFunctionConfigs} configs
  * @return {ParametricPlotter}
  */
 function functionGraph(configs) {
@@ -4653,39 +4252,11 @@ function functionGraph(configs) {
 
 /**
  * Draws a heat plot of given function. The function must take atleast 2 arguments and return a number.
- * More precisely f: ℜ² → ℜ
  * All parameters should be enclosed in a object.
- * @param {Object} configs
- * Possible parameters are:
- *
- * @param {Function} configs.plotFunction function to be plotted.
- * @param {number[]} [configs.min] minimum point. Default: [-4, -4]
- * @param {number[]} [configs.max] maximum point. Default: [4, 4]
- * @param {Object} configs.colors object of color map
- * @param {number[]} [configs.unitValue = UNIT_VEC] Value of each unit space
- * @param {number[]} [configs.unitSpace = UNIT_VEC] Length of each unit in pixels
- * @param {number} [configs.resolution = 1] resolution of plot
- * @param {Function} [configs.interpolator = linear] function to interpolate color.
+ * @param {HeatPlotConfigs} configs
  */
 function heatPlot(configs) {
-  let defaultConfigs = {
-    min: [-4, -4],
-    max: [4, 4],
-    colors: {
-      "-5": "#b36e38b0",
-      "-3": "#ff9c52b0",
-      "-1": "#ffcea9b0",
-      0: "#dcdcddb0",
-      1: "#9fcaedb0",
-      3: "#3d96dab0",
-      5: "#2b6b99b0"
-    },
-    unitSpace: UNIT_VEC,
-    unitValue: UNIT_VEC,
-    resolution: 1,
-    interpolator: x => x
-  };
-  configs = (0, _utils.applyDefault)(defaultConfigs, configs, false);
+  configs = (0, _utils.applyDefault)(_types.HeatPlotConfigs, configs, false);
   let {
       min,
       max,
@@ -4734,20 +4305,10 @@ function heatPlot(configs) {
 
 /**
  * Plots a list of points
- * @param {Object} configs arguments
- * @param {CartesianPoint[]} configs.points list of points
- * @param {number[]} [configs.unitValue=[1,2]] unit Value
- * @param {number[]} [configs.unitSpace=[1,2]] unit Space
- *
+ * @param {CartesianPointPlotterConfigs} configs arguments
  */
 function plotPoints(configs) {
-  configs = (0, _utils.applyDefault)({
-    unitValue: UNIT_VEC,
-    unitSpace: UNIT_VEC,
-    fill: "white",
-    stroke: "#0000",
-    radius: 5
-  }, configs);
+  configs = (0, _utils.applyDefault)(PointPlotterConfigs, configs);
   let {
       points,
       unitValue,
@@ -4774,18 +4335,10 @@ function plotPoints(configs) {
 
 /**
  * Plots a bunch of points in polar plane
- * @param {Object} configs configurations
- * @param {PolarPoint[]} configs.points list of points
- * @param {number} configs.radialSpacing size of each unit radius in pixels
+ * @param {PolarPointPlotterConfigs} configs
  */
 function plotPolarPoints(configs) {
-  configs = (0, _utils.applyDefault)({
-    radialSpacing: 2,
-    fill: "white",
-    stroke: "#0000",
-    radius: 5,
-    points: []
-  }, configs);
+  configs = (0, _utils.applyDefault)(_types.PolarPointPlotterConfigs, configs);
   let ctx = _main.C.workingContext;
   let {
       points,
@@ -4813,29 +4366,11 @@ function plotPolarPoints(configs) {
 
 /**
  * Plots a parametric function in polar plane
- * @param {Object} configs
- * @param {Function} configs.plotter function that takes one arguments t and returns a coordinate as [radius, angle]
- * @param {number} [configs.tension = 1]
- * @param {number} [configs.radialSpacing = 1]
- * @param {number[]} [configs.range = [0, Math.PI * 2, Math.PI / 50]]
- * @param {Array} [configs.discontinuities = []]
- * @param {boolean} [configs.smoothen = true]
- * @param {boolean} [configs.closed = false]
- * @param {number} [configs.strokeWidth = 2]
- * @param {number} [configs.discontinuityRadius = range[2]]
-
- * @returns {Object}
+ * @param {PolarParametricFunctionConfigs} configs
+ * @returns {PolarParametricFunctionRes}
  */
 function polarParametricFunction(configs) {
-  configs = (0, _utils.applyDefault)({
-    tension: 1,
-    radialSpacing: 1,
-    range: [0, Math.PI * 2, Math.PI / 50],
-    discontinuities: [],
-    smoothen: true,
-    closed: false,
-    strokeWidth: 2
-  }, configs);
+  configs = (0, _utils.applyDefault)(_types.PolarParametricFunctionConfigs, configs);
   let {
     plotter,
     range,
@@ -4908,8 +4443,8 @@ function polarParametricFunction(configs) {
 
 /**
  * Wrapper for {@link polarParametricFunction}
- * @param {Object} configs
- * @returns {Object}
+ * @param {PolarParametricFunctionConfigs} configs
+ * @returns {PolarParametricFunctionRes}
  */
 function polarFuntionGraph(configs) {
   let plotter = configs.plotter;
@@ -4917,7 +4452,7 @@ function polarFuntionGraph(configs) {
   return polarParametricFunction(configs);
 }
 
-},{"../color/color_reader.js":7,"../main.js":17,"../settings.js":36,"../utils.js":37,"./geometry.js":32}],32:[function(require,module,exports){
+},{"../color/color_reader.js":6,"../main.js":16,"../settings.js":36,"../utils.js":37,"./geometry.js":31,"./types.js":35}],31:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5452,7 +4987,7 @@ function regularPolygonWithRadius(x, y, sides, radius, rotation = 0) {
   if (ctx.doStroke) ctx.stroke();
 }
 
-},{"../main.js":17,"../math/points.js":20,"../utils.js":37}],33:[function(require,module,exports){
+},{"../main.js":16,"../math/points.js":19,"../utils.js":37}],32:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5519,7 +5054,7 @@ function lens(c1, r1, c2, r2) {
   ctx.closePath();
 }
 
-},{"../main.js":17,"../math/points.js":20}],34:[function(require,module,exports){
+},{"../main.js":16,"../math/points.js":19}],33:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5618,7 +5153,7 @@ function tex(input, x = 0, y = 0) {
   return image;
 }
 
-},{"../constants/drawing.js":13,"../main.js":17}],35:[function(require,module,exports){
+},{"../constants/drawing.js":12,"../main.js":16}],34:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5688,7 +5223,176 @@ function strokeText(text, x = 0, y = 0, maxwidth = undefined) {
   ctx.restore();
 }
 
-},{"../main.js":17}],36:[function(require,module,exports){
+},{"../main.js":16}],35:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.PolarPointPlotterConfigs = exports.PolarPoint = exports.PolarParametricFunctionRes = exports.PolarParametricFunctionConfigs = exports.ParametricPlotter = exports.ParametricFunctionConfigs = exports.HeatPlotConfigs = exports.CartesianPointPlotterConfigs = exports.CartesianPoint = void 0;
+var _math = require("../constants/math.js");
+/**
+ * @typedef {Object} CartesianPoint
+ * @property {number} x
+ * @property {number} y
+ * @property {number} radius radius of point
+ * @property {string} fill fill style
+ * @property {string} stroke stroke styles
+ */
+const CartesianPoint = exports.CartesianPoint = {};
+/**
+ * @typedef {Object} PolarPoint
+ * @property {number} r distance from origin
+ * @property {number} phi radial distance from +x axis in CCW direction
+ * @property {number} radius radius of point
+ * @property {string} fill fill style
+ * @property {string} stroke stroke styles
+ */
+const PolarPoint = exports.PolarPoint = {};
+
+/**
+ * @typedef {Object} ParametricPlotter
+ * @property {number[][]} points : Array of computed points in the function
+ * @property {Function} draw : Function that draws the plot
+ * @property {Function} animate : Function that animates the drawing of the shape. Accept argument `duration` which is the duration of animation.
+ * @property {number[]} points
+ * @property {number} dur
+ * @property {string} name
+ * @property {boolean} closed
+ * @property {number} tension
+ * @property {boolean} smoothen
+ * @property {Function} rateFunction
+ * @property {boolean} syncWithTime
+ */
+const ParametricPlotter = exports.ParametricPlotter = {};
+
+/**
+ * @typedef {Object} ParametricFunctionConfigs
+ * @property {Function} plotter function to plot. Must recieve one argument and return a array of point as [x, y]
+ * @property {number} [tension=1] Smoothness tension.
+ * @property {number[]} [range=RANGE] Range as [min, max, dt]
+ * @property {number[]} [discontinuities] Array of t where the curve discontinues.
+ * @property {number[]} [unitValue=[1, 1]] Value of each unit space
+ * @property {number[]} [unitSpace=[1, 1]] Length of each unit in pixels
+ * @property {boolean} [smoothen=true] Whether to smoothen the shape.
+ * @property {boolean} [closed=false] Whether the function draws a closed shape.
+ * @property {boolean} [draw=true] Wheteher to draw the function graph right now.
+ * @property {number} [strokeWidth=2]
+ * @property {number} [discontinuityRadius=range[2]]
+ *
+ */
+const RANGE = [0, 10, 0.1];
+const ParametricFunctionConfigs = exports.ParametricFunctionConfigs = {
+  tension: 1,
+  unitValue: _math.UNIT_VEC,
+  unitSpace: _math.UNIT_VEC,
+  // length of each unit in pixels
+  range: RANGE,
+  discontinuities: [],
+  smoothen: true,
+  closed: false,
+  draw: true,
+  // for animation
+  dur: 4000
+};
+
+/**
+ * @typedef {Object} HeatPlotConfigs
+ * @property {Function} plotFunction function to be plotted.
+ * @property {number[]} [min=[-4, -4]] minimum point
+ * @property {number[]} [max=[4, 4]] maximum point
+ * @property {Object} [colors] object of color map
+ * @property {number[]} [unitValue=UNIT_VEC] Value of each unit space
+ * @property {number[]} [unitSpace=UNIT_VEC] Length of each unit in pixels
+ * @property {number} [resolution=1] resolution of plot in pixels
+ * @property {Function} [interpolator=linear] function to interpolate color.
+ */
+const HeatPlotConfigs = exports.HeatPlotConfigs = {
+  min: [-4, -4],
+  max: [4, 4],
+  colors: {
+    "-5": "#b36e38b0",
+    "-3": "#ff9c52b0",
+    "-1": "#ffcea9b0",
+    0: "#dcdcddb0",
+    1: "#9fcaedb0",
+    3: "#3d96dab0",
+    5: "#2b6b99b0"
+  },
+  unitSpace: _math.UNIT_VEC,
+  unitValue: _math.UNIT_VEC,
+  resolution: 1,
+  interpolator: x => x
+};
+
+/**
+ * @typedef {Object} CartesianPointPlotterConfigs
+ * @property {CartesianPoint[]} points list of points
+ * @property {number[]} [unitValue=[1,2]] unit Value
+ * @property {number[]} [unitSpace=[1,2]] unit Space
+ * @property {string} [fill="#ffffff"] color to fill point
+ * @property {string} [stroke="#00000000"] color of stroke around point
+ * @property {number} [radius=5] radius of point
+ */
+const CartesianPointPlotterConfigs = exports.CartesianPointPlotterConfigs = {
+  unitValue: _math.UNIT_VEC,
+  unitSpace: _math.UNIT_VEC,
+  fill: "#ffffff",
+  stroke: "#00000000",
+  radius: 5
+};
+
+/**
+ * @typedef {Object} PolarPointPlotterConfigs
+ * @property {PolarPoint[]} points list of points
+ * @property {number} radialSpacing size of each unit radius in pixels
+ * @property {number[]} [unitValue=[1,2]] unit Value
+ * @property {number[]} [unitSpace=[1,2]] unit Space
+ * @property {string} [fill="#ffffff"] color to fill point
+ * @property {string} [stroke="#00000000"] color of stroke around point
+ * @property {number} [radius=5] radius of point
+ */
+const PolarPointPlotterConfigs = exports.PolarPointPlotterConfigs = {
+  unitValue: _math.UNIT_VEC,
+  unitSpace: _math.UNIT_VEC,
+  fill: "#ffffff",
+  stroke: "#00000000",
+  radius: 5,
+  radialSpacing: 2
+};
+
+/**
+ * @typedef {Object} PolarParametricFunctionConfigs
+ * @property {Function} plotter function that takes one arguments t and returns a coordinate as [radius, angle]
+ * @property {number} [tension=1]
+ * @property {number} [radialSpacing=1]
+ * @property {number[]} [range=[0, Math.PI * 2, Math.PI / 50]]
+ * @property {Array} [discontinuities=[]]
+ * @property {boolean} [smoothen=true]
+ * @property {boolean} [closed=false]
+ * @property {number} [strokeWidth=2]
+ * @property {number} [discontinuityRadius=range[2]]
+ */
+const PolarParametricFunctionConfigs = exports.PolarParametricFunctionConfigs = {
+  tension: 1,
+  radialSpacing: 1,
+  range: [0, Math.PI * 2, Math.PI / 50],
+  discontinuities: [],
+  smoothen: true,
+  closed: false,
+  strokeWidth: 2
+};
+
+/**
+ * @typedef {Object} PolarParametricFunctionRes
+ * @property {number[][]} points
+ * @property {boolean} closed
+ * @property {number} tension
+ * @property {boolean} smoothen
+ */
+const PolarParametricFunctionRes = exports.PolarParametricFunctionRes = {};
+
+},{"../constants/math.js":13}],36:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6415,7 +6119,7 @@ function textBaseline(baseline) {
   _main.C.workingContext.textBaseline = baseline;
 }
 
-},{"./color/color_reader.js":7,"./main.js":17,"./utils.js":37}],37:[function(require,module,exports){
+},{"./color/color_reader.js":6,"./main.js":16,"./utils.js":37}],37:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6428,11 +6132,12 @@ exports.defineProperties = defineProperties;
 exports.doFillAndStroke = doFillAndStroke;
 exports.fraction = fraction;
 exports.inArray = inArray;
+exports.isLabel = isLabel;
 exports.latexToImg = latexToImg;
 exports.measureHeight = measureHeight;
 exports.texFraction = texFraction;
 exports.type = void 0;
-var _c = require("./c.js");
+var _aritmetics = require("./math/aritmetics.js");
 var _main = require("./main.js");
 /** @module Utils */
 
@@ -6591,7 +6296,7 @@ function latexToImg(latex) {
  * @returns {string[]} returns two strings
  */
 function getReducedFraction(numerator, denominator) {
-  let _divider = (0, _c.gcd)(numerator, denominator);
+  let _divider = (0, _aritmetics.gcd)(numerator, denominator);
   numerator /= _divider;
   denominator /= _divider;
   return [`${numerator}`, `${denominator}`];
@@ -6699,5 +6404,8 @@ function defineConstant(constantList) {
     });
   }
 }
+function isLabel(s) {
+  return s != null && s != "";
+}
 
-},{"./c.js":5,"./main.js":17}]},{},[4]);
+},{"./main.js":16,"./math/aritmetics.js":17}]},{},[4]);

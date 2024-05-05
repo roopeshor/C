@@ -2,7 +2,7 @@ import { C } from "../../main.js";
 import { applyDefault } from "../../utils.js";
 import { getCartasianFunctions } from "./cartesian_plotters.js";
 import { numberLine } from "./number_line.js";
-import { AxesConfigs } from "./types.js";
+import { AxesConfigs, CartesianPlotters } from "./types.js";
 
 /**
  * Creates a axes.
@@ -22,9 +22,9 @@ export function axes(configs = {}) {
 
 	ctx.restore();
 	return getCartasianFunctions({
-		originPosition: configs.originPosition, // originPosition of axis as [x, y] in px
-		xAxis: xAxisLine, // x axis confiurations from numberLine
-		yAxis: yAxisLine, // y axis confiurations from numberLine
+		originPosition: configs.originPosition, // originPosition of axis in terms of `unitSpaces`
+		xAxis: xAxisLine, // x axis configurations from numberLine
+		yAxis: yAxisLine, // y axis configurations from numberLine
 		unitSpace: [xAxisLine.unitSpace, yAxisLine.unitSpace], // space between two ticks in pixels
 		unitValue: [xAxisLine.unitValue, yAxisLine.unitValue], // value between two close ticks
 	});

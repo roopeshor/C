@@ -4,30 +4,15 @@ import { C } from "../main.js";
 import { loop, noLoop } from "../settings.js";
 import { applyDefault, inArray, doFillAndStroke } from "../utils.js";
 import { getBezierControlPoints, line, smoothCurveThroughPoints } from "./geometry.js";
-/**
- * @typedef {Object} CartesianPoint
- * @property {number} x
- * @property {number} y
- * @property {number} radius radius of point
- * @property {string} fill fill style
- * @property {string} stroke stroke styles
- */
-
-/**
- * @typedef {Object} PolarPoint
- * @property {number} r distance from origin
- * @property {number} phi radial distance from +x axis in CCW direction
- * @property {number} radius radius of point
- * @property {string} fill fill style
- * @property {string} stroke stroke styles
- */
-
-/**
- * @typedef {Object} ParametricPlotter
- * @property {number[][]} points : Array of computed points in the function
- * @property {Function} draw : Function that draws the plot
- * @property {Function} animate : Function that animates the drawing of the shape. Accept argument `duration` which is the duration of animation.
- */
+import {
+	HeatPlotConfigs,
+	ParametricFunctionConfigs,
+	ParametricPlotter,
+	CartesianPointPlotterConfigs,
+	PolarPointPlotterConfigs,
+	PolarParametricFunctionConfigs,
+	PolarParametricFunctionRes,
+} from "./types.js";
 
 const animationEventChain = {
 	then: function (f) {
@@ -39,49 +24,18 @@ const animationEventChain = {
 let counter = {
 	parametricFunction: 1,
 };
-const RANGE = [0, 10, 0.1];
-const UNIT_VEC = [1, 1];
+
 /**
  * Draws a parametric functions
- * This accept parameters as object.
- * @param {Object} configs configurations
- * @param {Function} configs.plotter function to plot. Must recieve one argument and return a array of point as [x, y]
- * @param {number} [configs.tension = 1] Smoothness tension.
- * @param {number[]} [configs.range = RANGE] Range as [min, max, dt]
- * @param {number[]} [configs.discontinuities] Array of t where the curve discontinues.
- * @param {number[]} [configs.unitValue = [1, 1]] Value of each unit space
- * @param {number[]} [configs.unitSpace = [1, 1]] Length of each unit in pixels
- * @param {boolean} [configs.smoothen = true] Whether to smoothen the shape.
- * @param {boolean} [configs.closed = false] Whether the function draws a closed shape.
- * @param {boolean} [configs.draw = true] Wheteher to draw the function graph right now.
- * @param {number} [configs.strokeWidth = 2]
- * @param {number} [configs.discontinuityRadius = range[2]]
- *
+ * @param {ParametricFunctionConfigs} configs
  * @returns {ParametricPlotter}
  */
 export function parametricFunction(configs) {
-	let defaultConfigs = {
-		tension: 1,
-
-		unitValue: UNIT_VEC,
-		unitSpace: UNIT_VEC, // length of each unit in pixels
-		range: RANGE,
-		discontinuities: [],
-
-		smoothen: true,
-		closed: false,
-		draw: true,
-
-		// for animation
-		dur: 4000,
-	};
-	configs = applyDefault(defaultConfigs, configs);
+	configs = applyDefault(ParametricFunctionConfigs, configs);
 	let { plotter, range, smoothen, tension, discontinuities, closed } = configs;
 	if (Array.isArray(range) && range.length == 2) range.push((range[1] - range[0]) / 20);
-	let points = [[]],
-		min = range[0],
-		max = range[1],
-		step = range[2];
+	let points = [[]];
+	let [min, max, step] = range;
 	if (!Array.isArray(discontinuities)) discontinuities = [];
 
 	// generate points
@@ -192,7 +146,7 @@ export function parametricFunction(configs) {
  * Draws graph of funciton
  * See {@link parametricFunction} For arguments
  *
- * @param {Object} configs
+ * @param {ParametricFunctionConfigs} configs
  * @return {ParametricPlotter}
  */
 export function functionGraph(configs) {
@@ -203,39 +157,11 @@ export function functionGraph(configs) {
 
 /**
  * Draws a heat plot of given function. The function must take atleast 2 arguments and return a number.
- * More precisely f: ℜ² → ℜ
  * All parameters should be enclosed in a object.
- * @param {Object} configs
- * Possible parameters are:
- *
- * @param {Function} configs.plotFunction function to be plotted.
- * @param {number[]} [configs.min] minimum point. Default: [-4, -4]
- * @param {number[]} [configs.max] maximum point. Default: [4, 4]
- * @param {Object} configs.colors object of color map
- * @param {number[]} [configs.unitValue = UNIT_VEC] Value of each unit space
- * @param {number[]} [configs.unitSpace = UNIT_VEC] Length of each unit in pixels
- * @param {number} [configs.resolution = 1] resolution of plot
- * @param {Function} [configs.interpolator = linear] function to interpolate color.
+ * @param {HeatPlotConfigs} configs
  */
 export function heatPlot(configs) {
-	let defaultConfigs = {
-		min: [-4, -4],
-		max: [4, 4],
-		colors: {
-			"-5": "#b36e38b0",
-			"-3": "#ff9c52b0",
-			"-1": "#ffcea9b0",
-			0: "#dcdcddb0",
-			1: "#9fcaedb0",
-			3: "#3d96dab0",
-			5: "#2b6b99b0",
-		},
-		unitSpace: UNIT_VEC,
-		unitValue: UNIT_VEC,
-		resolution: 1,
-		interpolator: (x) => x,
-	};
-	configs = applyDefault(defaultConfigs, configs, false);
+	configs = applyDefault(HeatPlotConfigs, configs, false);
 	let { min, max, colors, resolution, plotFunction, interpolator } = configs,
 		ctx = C.workingContext,
 		unitSizeX = configs.unitSpace[0] / configs.unitValue[0],
@@ -288,23 +214,10 @@ export function heatPlot(configs) {
 
 /**
  * Plots a list of points
- * @param {Object} configs arguments
- * @param {CartesianPoint[]} configs.points list of points
- * @param {number[]} [configs.unitValue=[1,2]] unit Value
- * @param {number[]} [configs.unitSpace=[1,2]] unit Space
- *
+ * @param {CartesianPointPlotterConfigs} configs arguments
  */
 export function plotPoints(configs) {
-	configs = applyDefault(
-		{
-			unitValue: UNIT_VEC,
-			unitSpace: UNIT_VEC,
-			fill: "white",
-			stroke: "#0000",
-			radius: 5,
-		},
-		configs,
-	);
+	configs = applyDefault(PointPlotterConfigs, configs);
 	let { points, unitValue, unitSpace } = configs,
 		ctx = C.workingContext,
 		unitSizeX = unitSpace[0] / unitValue[0],
@@ -327,21 +240,10 @@ export function plotPoints(configs) {
 
 /**
  * Plots a bunch of points in polar plane
- * @param {Object} configs configurations
- * @param {PolarPoint[]} configs.points list of points
- * @param {number} configs.radialSpacing size of each unit radius in pixels
+ * @param {PolarPointPlotterConfigs} configs
  */
 export function plotPolarPoints(configs) {
-	configs = applyDefault(
-		{
-			radialSpacing: 2,
-			fill: "white",
-			stroke: "#0000",
-			radius: 5,
-			points: [],
-		},
-		configs,
-	);
+	configs = applyDefault(PolarPointPlotterConfigs, configs);
 	let ctx = C.workingContext;
 	let { points, radialSpacing } = configs,
 		defaultFill = configs.fill || ctx.fillStyle,
@@ -366,32 +268,11 @@ export function plotPolarPoints(configs) {
 
 /**
  * Plots a parametric function in polar plane
- * @param {Object} configs
- * @param {Function} configs.plotter function that takes one arguments t and returns a coordinate as [radius, angle]
- * @param {number} [configs.tension = 1]
- * @param {number} [configs.radialSpacing = 1]
- * @param {number[]} [configs.range = [0, Math.PI * 2, Math.PI / 50]]
- * @param {Array} [configs.discontinuities = []]
- * @param {boolean} [configs.smoothen = true]
- * @param {boolean} [configs.closed = false]
- * @param {number} [configs.strokeWidth = 2]
- * @param {number} [configs.discontinuityRadius = range[2]]
-
- * @returns {Object}
+ * @param {PolarParametricFunctionConfigs} configs
+ * @returns {PolarParametricFunctionRes}
  */
 export function polarParametricFunction(configs) {
-	configs = applyDefault(
-		{
-			tension: 1,
-			radialSpacing: 1,
-			range: [0, Math.PI * 2, Math.PI / 50],
-			discontinuities: [],
-			smoothen: true,
-			closed: false,
-			strokeWidth: 2,
-		},
-		configs,
-	);
+	configs = applyDefault(PolarParametricFunctionConfigs, configs);
 	let { plotter, range, radialSpacing, smoothen, tension, discontinuities, closed } =
 		configs;
 	if (Array.isArray(range) && range.length == 2) range.push((range[1] - range[0]) / 20);
@@ -463,8 +344,8 @@ export function polarParametricFunction(configs) {
 
 /**
  * Wrapper for {@link polarParametricFunction}
- * @param {Object} configs
- * @returns {Object}
+ * @param {PolarParametricFunctionConfigs} configs
+ * @returns {PolarParametricFunctionRes}
  */
 export function polarFuntionGraph(configs) {
 	let plotter = configs.plotter;

@@ -1,5 +1,5 @@
 /** @module Utils */
-import { gcd } from "./c.js";
+import { gcd } from "./math/aritmetics.js";
 import { C } from "./main.js";
 
 /**
@@ -272,4 +272,8 @@ export function defineConstant(constantList) {
 			},
 		});
 	}
+}
+
+export function isLabel(s) {
+	return s != null && s != "";
 }

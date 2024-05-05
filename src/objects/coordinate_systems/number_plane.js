@@ -1,6 +1,6 @@
 /** @module Coordinate-Systems*/
 
-import { ORIGIN, axes } from "../../c.js";
+import { axes } from "./axes.js";
 import { C } from "../../main.js";
 import { restore, save } from "../../settings.js";
 import { applyDefault } from "../../utils.js";
