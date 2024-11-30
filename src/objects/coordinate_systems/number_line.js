@@ -35,7 +35,7 @@ export function numberLine(configs = {}) {
 	}
 
 	// if number of decimal places is not defined, find it using `step`
-	if (isNaN(decimalPlaces) && decimalPlaces >= 0) {
+	if (isNaN(decimalPlaces)) {
 		configs.decimalPlaces = (range[2].toString().split(".")[1] || []).length;
 	}
 
