@@ -177,7 +177,7 @@ export function scale(x, y = x) {
  */
 export function invertYAxis() {
 	C.workingContext.scale(1, -1);
-	C.workingContext.yAxisInverted = true;
+	C.workingContext.yAxisInverted = !C.workingContext.yAxisInverted;
 }
 
 /**
@@ -185,7 +185,7 @@ export function invertYAxis() {
  */
 export function invertXAxis() {
 	C.workingContext.scale(-1, 1);
-	C.workingContext.xAxisInverted = true;
+	C.workingContext.xAxisInverted = !C.workingContext.xAxisInverted;
 }
 
 /**
