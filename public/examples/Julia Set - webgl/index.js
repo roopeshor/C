@@ -10,7 +10,8 @@ import {
 	translate,
 	invertYAxis,
 } from "../../../src/settings.js";
-import { createWebGL } from "../../../src/WebGL/webgl.js";
+import { createWebGL, WebGL } from "../../../src/WebGL/webgl.js";
+import {} from "../../../src/WebGL/settings.js";
 import {} from "../../../src/WebGL/settings.js";
 
 themeToggler(document.querySelector("#themeSelector"), {});
@@ -48,6 +49,7 @@ let juliaSet = {
 	c: [-1.61, 0],
 	range: range,
 	resolution: r,
+	/** @type {WebGL} */
 	GL: null,
 	/** @type {WebGLRenderingContext} */
 	gl: null,
@@ -153,7 +155,7 @@ function draw(re = juliaSet.c[0], im = juliaSet.c[1], assignToInputs = true) {
 		}
 		juliaSet.GL.clear();
 		juliaSet.gl.uniform2f(juliaSet.program.uniforms.c, re, im);
-		juliaSet.gl.drawArrays(juliaSet.gl.POINTS, 0, juliaSet.points.length);
+		juliaSet.gl.drawArrays(juliaSet.gl.POINTS, 0, juliaSet.points.length / 2);
 		juliaSet.lastDrawn = Date.now();
 		clear();
 		let x = ((re + juliaSet.range[0]) * juliaSet.scale[0]) / (juliaSet.range[0] * 2);
