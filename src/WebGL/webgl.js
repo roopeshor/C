@@ -178,42 +178,42 @@ export class WebGL {
 	 * Returns a shader from given source and type
 	 * @param {number} type either gl.VERTEX_SHADER or gl.FRAGMENT_SHADER
 	 * @param {string} source source code of shader
-	 * @returns {WebGLShader} shader
+	 * @returns {WebGLShader|null} shader
 	 */
 	createShader(type, source) {
 		const shader = this.gl.createShader(type);
 		this.gl.shaderSource(shader, source);
 		this.gl.compileShader(shader);
-		if (!this.gl.getShaderParameter(shader, this.gl.COMPILE_STATUS)) {
-			console.error(this.gl.getShaderInfoLog(shader));
-			this.gl.deleteShader(shader);
-			return null;
-		}
-		return shader;
+		let success = this.gl.getShaderParameter(shader, this.gl.COMPILE_STATUS);
+		if (success) return shader;
+
+		console.error(this.gl.getShaderInfoLog(shader));
+		this.gl.deleteShader(shader);
+		return null;
 	}
 	/**
 	 * creates a program from given shaders
 	 * @param {WebGLShader} vertexShader
 	 * @param {WebGLShader} fragmentShader
-	 * @returns {WebGLProgram}
+	 * @returns {WebGLProgram|null}
 	 */
 	createProgram(vertexShader, fragmentShader) {
 		const program = this.gl.createProgram();
 		this.gl.attachShader(program, vertexShader);
 		this.gl.attachShader(program, fragmentShader);
 		this.gl.linkProgram(program);
-		if (!this.gl.getProgramParameter(program, this.gl.LINK_STATUS)) {
-			console.error(this.gl.getProgramInfoLog(program));
-			this.gl.deleteProgram(program);
-			return null;
-		}
-		return program;
+		let success = this.gl.getProgramParameter(program, this.gl.LINK_STATUS);
+		if (success) return program;
+
+		console.error(this.gl.getProgramInfoLog(program));
+		this.gl.deleteProgram(program);
+		return null;
 	}
 	/**
 	 * Creates program from given vertex and fragment shader source
 	 * @param {string} vertexShaderSource
 	 * @param {string} fragmentShaderSource
-	 * @returns {WebGLProgram}
+	 * @returns {WebGLProgram|null}
 	 */
 	createProgramFromSource(vertexShaderSource, fragmentShaderSource) {
 		const vertexShader = this.createShader(this.gl.VERTEX_SHADER, vertexShaderSource);
@@ -276,8 +276,8 @@ export class WebGL {
 	/**
 	 * Creates a custom program from sources and retuns program and variables
 	 * @param {Object} program program that contains shader sources and variables of shaders
-	 * @param {string|HTMLScriptElement} program.vertex vertex shader program
-	 * @param {string|HTMLScriptElement} program.fragment fragment shader program
+	 * @param {string|HTMLElement} program.vertex vertex shader program
+	 * @param {string|HTMLElement} program.fragment fragment shader program
 	 * @param {Object.<string,string>} program.uniforms uniform variables of program. format: {uniformName: name_in_shader}
 	 * @param {Object.<string,string>} program.attributes attributes of program. format: {attrName: name_in_shader}
 	 */
@@ -285,26 +285,26 @@ export class WebGL {
 		let gl = this.gl,
 			uniforms = {},
 			attributes = {},
-			program_;
+			_program;
 
-		if (program.vertex instanceof HTMLScriptElement) {
+		// accept any html element text
+		if (program.vertex instanceof HTMLElement) {
 			program.vertex = program.vertex.textContent.trim();
 		}
-		if (program.fragment instanceof HTMLScriptElement) {
+		if (program.fragment instanceof HTMLElement) {
 			program.fragment = program.fragment.textContent.trim();
 		}
-		program_ = this.createProgramFromSource(program.vertex, program.fragment);
-		for (let attr in program.attributes) {
-			let nameInProgram = program.attributes[attr];
-			attributes[attr] = gl.getAttribLocation(program_, nameInProgram);
-			// gl.enableVertexAttribArray(src[attr]); // TODO: should all attributes be enabled?
+		_program = this.createProgramFromSource(program.vertex, program.fragment);
+		for (let attrIndex in program.attributes) {
+			let attrName = program.attributes[attrIndex];
+			attributes[attrIndex] = gl.getAttribLocation(_program, attrName);
 		}
 		for (let uniform in program.uniforms) {
 			let nameInProgram = program.uniforms[uniform];
-			uniforms[uniform] = gl.getUniformLocation(program_, nameInProgram);
+			uniforms[uniform] = gl.getUniformLocation(_program, nameInProgram);
 		}
 		return {
-			program: program_,
+			program: _program,
 			uniforms: uniforms,
 			attributes: attributes,
 			vertex: program.vertex,
