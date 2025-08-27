@@ -123,12 +123,12 @@ export function HSVToRGB(hue, saturation, value) {
 		t = value * (1 - (1 - f) * saturation);
 
 	i %= 6;
-	if (i == 0) (r = value), (g = t), (b = p);
-	else if (i == 1) (r = q), (g = value), (b = p);
-	else if (i == 2) (r = p), (g = value), (b = t);
-	else if (i == 3) (r = p), (g = q), (b = value);
-	else if (i == 4) (r = t), (g = p), (b = value);
-	else if (i == 5) (r = value), (g = p), (b = q);
+	if (i == 0) ((r = value), (g = t), (b = p));
+	else if (i == 1) ((r = q), (g = value), (b = p));
+	else if (i == 2) ((r = p), (g = value), (b = t));
+	else if (i == 3) ((r = p), (g = q), (b = value));
+	else if (i == 4) ((r = t), (g = p), (b = value));
+	else if (i == 5) ((r = value), (g = p), (b = q));
 
 	return [r, g, b];
 }

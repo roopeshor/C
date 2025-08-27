@@ -218,7 +218,7 @@ WebGL.prototype.fillRect = function () {
 		w,
 		h,
 		i = 0;
-	(x = arguments[i++]), (y = arguments[i++]);
+	((x = arguments[i++]), (y = arguments[i++]));
 	// if there is no z component in position, let z = 0
 	if (arguments.length == 4) z = 0;
 	else z = arguments[i++];

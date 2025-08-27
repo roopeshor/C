@@ -25,7 +25,7 @@
 	},
 	"homepage": "https://github.com/Roopesh2/C#readme",
 	"devDependencies": {
-		"docdash": "^2.0.1",
+		"docdash": "^2.0.2",
 		"esmify": "^2.1.1",
 		"google-closure-compiler": "^20211107.0.0",
 		"grunt": "^1.6.1",
